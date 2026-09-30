@@ -1,0 +1,21 @@
+# Mall OS — Normalización de saltos de línea
+# Todos los archivos de texto usan LF en el repositorio
+
+* text=auto eol=lf
+
+# Archivos binarios — sin conversión
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text eol=lf
+*.ttf binary
+*.woff binary
+*.woff2 binary
+*.docx binary
+*.pdf binary
+
+# Scripts de shell — LF obligatorio
+*.sh text eol=lf
+*.sql text eol=lf

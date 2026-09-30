@@ -1,0 +1,20 @@
+{
+  "name": "mall-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mall OS — Plataforma digital multi-mall",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,js}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "turbo": "^2.1.2",
+    "typescript": "^5.5.4"
+  },
+  "packageManager": "pnpm@9.9.0"
+}
