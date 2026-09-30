@@ -1,7 +1,4 @@
 {
-  "cli": {
-    "appVersionSource": "remote"
-  },
   "expo": {
     "name": "Mall OS",
     "slug": "osmall",
@@ -28,17 +25,17 @@
     "experiments": {
       "typedRoutes": true
     },
+    "extra": {
+      "eas": {
+        "projectId": "15776f99-b12a-45bb-85cd-5fca8a4a5c4a"
+      }
+    },
     "owner": "osmalls-team",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
       "url": "https://u.expo.dev/15776f99-b12a-45bb-85cd-5fca8a4a5c4a"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "15776f99-b12a-45bb-85cd-5fca8a4a5c4a"
-      }
     }
   }
 }

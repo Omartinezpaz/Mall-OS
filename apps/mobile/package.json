@@ -34,5 +34,12 @@
     "@mallos/config": "workspace:*",
     "@types/react": "~18.2.45",
     "typescript": "^5.5.4"
+  },
+  "expo": {
+    "install": {
+      "exclude": [
+        "typescript"
+      ]
+    }
   }
 }
