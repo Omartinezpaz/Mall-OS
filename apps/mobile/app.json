@@ -28,9 +28,15 @@
     },
     "extra": {
       "eas": {
-        "projectId": "15776f99-b12a-45bb-85cd-5fca8a4"
+        "projectId": "15776f99-b12a-45bb-85cd-5fca8a4a5c4a"
       }
     },
-    "owner": "osmall"
+    "owner": "osmalls-team",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/15776f99-b12a-45bb-85cd-5fca8a4a5c4a"
+    }
   }
 }
