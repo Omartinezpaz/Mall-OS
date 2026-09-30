@@ -5,9 +5,10 @@
   "main": "expo-router/entry",
   "scripts": {
     "dev": "expo start",
-    "android": "expo start --android",
+    "android": "expo run:android",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint app src --ext .ts,.tsx"
+    "lint": "eslint app src --ext .ts,.tsx",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@mallos/design-tokens": "workspace:*",
@@ -21,6 +22,7 @@
     "expo-linking": "~6.3.1",
     "expo-router": "~3.5.23",
     "expo-status-bar": "~1.12.1",
+    "expo-system-ui": "~3.0.7",
     "expo-updates": "~0.25.28",
     "react": "18.2.0",
     "react-native": "0.74.5",

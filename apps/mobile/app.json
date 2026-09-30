@@ -37,6 +37,9 @@
     },
     "updates": {
       "url": "https://u.expo.dev/15776f99-b12a-45bb-85cd-5fca8a4a5c4a"
+    },
+    "cli": {
+      "appVersionSource": "remote"
     }
   }
 }
