@@ -5,8 +5,9 @@ Al iniciar CUALQUIER sesión, lee en este orden:
 
 1. `docs/governance/PROJECT.md` — alcance y decisiones de producto
 2. `docs/governance/RULES.md` — reglas obligatorias de código y seguridad
-3. `docs/governance/MEMORY.md` — decisiones y contexto acumulado
-4. `docs/governance/TASKS.md` — tarea activa y criterios de aceptación
+3. `docs/governance/DESIGN.md` — sistema de diseño, tokens y reglas UX
+4. `docs/governance/MEMORY.md` — decisiones y contexto acumulado
+5. `docs/governance/TASKS.md` — tarea activa y criterios de aceptación
 
 Reglas mínimas (detalle en RULES.md):
 - Una tarea a la vez; no construyas nada fuera del alcance de PROJECT.md.
