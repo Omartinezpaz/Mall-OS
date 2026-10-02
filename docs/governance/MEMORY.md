@@ -54,3 +54,6 @@
 ## Log de sesiones
 <!-- Añadir al final: fecha | modelo usado | qué se hizo | qué queda pendiente -->
 - 2026-09-29 | Gemini 3.7 Flash | Inicialización del monorepo Turborepo + pnpm, gobernanza y migraciones base Supabase | Configuración de packages y apps |
+- 2026-10-01 | Gemini 3.7 Flash | Implementación de Sprint 2: Directorio offline, fichas de locales, mapas por pisos PB/P1, tokens de diseño y validadores | Sprint 3: Flujo de activación y canje de cupones |
+- 2026-10-01 | Gemini 3.7 Flash | Implementación de Sprint 3: Ofertas, activación de cupones con código Crockford de 8 chars, visor de tickets con QR, portal de canje para tenants y cola de aprobación para Mall Admin | Sprint 4: Concierge IA y Landing |
+- 2026-10-01 | Gemini 3.7 Flash | Implementación de Sprint 4: Concierge IA conversacional en Edge Function y App Móvil, Dashboard analítico de conversión para Mall Admin, y Landing Page oficial con descarga APK y enlaces legales | Plataforma lista para validación con la junta del mall |
