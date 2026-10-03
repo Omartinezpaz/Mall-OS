@@ -7,6 +7,7 @@ import {
   LEVEL_AUTOPISTA,
   LEVEL_ACUARIO,
   LEVEL_LIBERTADOR,
+  LEVEL_FERIA,
   LEVEL_DIVERSION,
   findRoute,
   findRouteToStore,
@@ -429,14 +430,15 @@ test('routeMode distingue estado preview (punteado sin flechas) de active (cinta
   assert.ok(activeArrows.length > 0);
 });
 
-// ---------- Sambil Chacao (4 Niveles) ----------
-test('sambilMall tiene exactamente 4 niveles oficiales configurados', () => {
-  assert.equal(sambilMall.floors.length, 4);
+// ---------- Sambil Chacao (5 Niveles) ----------
+test('sambilMall tiene exactamente 5 niveles oficiales configurados', () => {
+  assert.equal(sambilMall.floors.length, 5);
   const floorIds = sambilMall.floors.map((f) => f.id);
   assert.deepEqual(floorIds, [
     LEVEL_AUTOPISTA,
     LEVEL_ACUARIO,
     LEVEL_LIBERTADOR,
+    LEVEL_FERIA,
     LEVEL_DIVERSION,
   ]);
 });
@@ -445,12 +447,14 @@ test('sambilMall contiene las tiendas ancla principales en sus niveles correctos
   const tijerazo = sambilMall.stores.find((s) => s.id === 'tijerazo');
   const zara = sambilMall.stores.find((s) => s.id === 'zara');
   const balu = sambilMall.stores.find((s) => s.id === 'balu');
-  const mango = sambilMall.stores.find((s) => s.id === 'mango_bajito');
+  const cinex = sambilMall.stores.find((s) => s.id === 'cinex');
+  const hardRock = sambilMall.stores.find((s) => s.id === 'hard_rock_cafe');
 
   assert.ok(tijerazo && tijerazo.floorId === LEVEL_AUTOPISTA);
   assert.ok(zara && zara.floorId === LEVEL_ACUARIO);
   assert.ok(balu && balu.floorId === LEVEL_LIBERTADOR);
-  assert.ok(mango && mango.floorId === LEVEL_DIVERSION);
+  assert.ok(cinex && cinex.floorId === LEVEL_FERIA);
+  assert.ok(hardRock && hardRock.floorId === LEVEL_DIVERSION);
 });
 
 test('sambilMall supera la validación estructural sin errores bloqueantes', () => {
@@ -529,11 +533,53 @@ test('sambilMall Nivel Libertador incluye todas las tiendas y anclas del plano a
   }
 });
 
+test('sambilMall Nivel Feria incluye todas las tiendas y anclas del plano arquitectónico oficial', () => {
+  const feriaStores = sambilMall.stores.filter((s) => s.floorId === LEVEL_FERIA);
+  assert.ok(feriaStores.length >= 45, `Se esperaban >= 45 locales en Nivel Feria, encontrados: ${feriaStores.length}`);
+
+  // Anclas y tiendas del plano
+  const expectedFeriaKeys = [
+    'cinex', 'palacio_blumer_feria', 'shoe_box', 'farmatodo_feria', 'anfiteatro_feria',
+    'forever_21', 'mcdonalds_feria', 'banesco_feria', 'canon', 'pandora_feria',
+    'mr_sub_feria', 'charles_feria', 'pollo_dorado', 'zona_gourmet', 'chino_feria', 'chicken_grill_feria',
+    'burritos_feria', 'burger_shack_feria', 'pizza_mia_feria', 'casio_cubitt', 'yogy', 'cuadro_feria',
+    'orange_market', 'st_jacks_feria', 'gelateria_4d', 'chop_chop', 'caracas_burger',
+    'beijing', 'full_pizza', 'covas', 'athletic_feria', 'moda_colors', 'dezuca',
+    'galaxy_feria', 'optica_hd', 'everlast_feria', 'roselab', 'la_nota', 'kfc_feria',
+    'jr_petare', 'sportline_feria', 'levis_feria', 'seac', 'american_eagle',
+    'carters', 'zona_tech', 'opticolor_feria', 'arg_store', 'childrens_place',
+    'latin_lover_feria', 'casa_plus', 'mimi_joyeria', 'swarovski_feria', 'uppomi',
+    'armi_colombia', 'istore_feria', 'original_penguin', 'nine_west', 'scalpers_feria',
+    'hugo_boss', 'sambil_online', 'altana_feria', 'tumi_feria', 'samsung_clx', 'skechers_feria',
+    'arturo_calle', 'amira_fuad', 'acuario_tienda', 'carolina_herrera', 'cortefiel_feria'
+  ];
+
+  for (const key of expectedFeriaKeys) {
+    const store = feriaStores.find((s) => s.id === key);
+    assert.ok(store, `Falta la tienda esperada: ${key} en Nivel Feria`);
+  }
+});
+
+test('sambilMall Nivel Diversión incluye locales de entretenimiento, terrazas y gastronomía', () => {
+  const diversionStores = sambilMall.stores.filter((s) => s.floorId === LEVEL_DIVERSION);
+  assert.ok(diversionStores.length >= 10, `Se esperaban >= 10 locales en Nivel Diversión, encontrados: ${diversionStores.length}`);
+
+  const expectedDiversionKeys = [
+    'hard_rock_cafe', 'lidotel_sambil', 'bowling_sambil', 'magic_park',
+    'sambil_arena_events', 'cinex_vip_diversion', 'valet_vip_diversion'
+  ];
+
+  for (const key of expectedDiversionKeys) {
+    const store = diversionStores.find((s) => s.id === key);
+    assert.ok(store, `Falta el local esperado: ${key} en Nivel Diversión`);
+  }
+});
+
 test('generateMallQualityReport genera reporte de calidad 100% aprobado para Sambil Chacao', () => {
   const report = generateMallQualityReport(sambilMall);
   assert.equal(report.isValid, true, `Reporte falló con ${report.navigationErrors.unreachableStores} inalcanzables y ${report.rawValidationIssuesCount} issues`);
-  assert.equal(report.floorsCount, 4);
-  assert.ok(report.storesCount >= 100, `Total locales >= 100, encontrados: ${report.storesCount}`);
+  assert.equal(report.floorsCount, 5);
+  assert.ok(report.storesCount >= 200, `Total locales >= 200, encontrados: ${report.storesCount}`);
   assert.equal(report.geometryErrors.outOfBounds, 0);
   assert.equal(report.geometryErrors.overlaps, 0);
   assert.equal(report.navigationErrors.unreachableStores, 0);
@@ -565,7 +611,7 @@ test('sambilMall calcula rutas exitosas entre plazas y tiendas en todos los sect
   const routeLibertador = findRouteToStore(sambilMall, `pj-${LEVEL_LIBERTADOR}`, 'balu');
   assert.ok(routeLibertador && routeLibertador.nodeIds.length >= 2);
 
-  const routeDiversion = findRouteToStore(sambilMall, `pj-${LEVEL_DIVERSION}`, 'mango_bajito');
+  const routeDiversion = findRouteToStore(sambilMall, `pj-${LEVEL_DIVERSION}`, 'cinex');
   assert.ok(routeDiversion && routeDiversion.nodeIds.length >= 2);
 });
 

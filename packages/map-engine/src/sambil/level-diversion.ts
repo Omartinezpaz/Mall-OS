@@ -2,90 +2,129 @@ import type { MapFloor, MapStore, NavNode, MapProp } from '../types';
 import { LEVEL_DIVERSION } from './constants';
 
 export const propsSambilDiversion: MapProp[] = [
-  { id: 'fnt-div-1', kind: 'fountain', rect: { x: 152, y: 52, w: 14, h: 14 } },
-  { id: 'arb-div1', kind: 'tree', x: 90, y: 235 },
+  { id: 'fnt-div-1', kind: 'fountain', rect: { x: 350, y: 195, w: 14, h: 14 } },
+  { id: 'arb-div1', kind: 'tree', x: 100, y: 220 },
   { id: 'arb-div2', kind: 'tree', x: 310, y: 220 },
-  { id: 'arb-div3', kind: 'tree', x: 550, y: 235 },
-  { id: 'banca-div1', kind: 'bench', rect: { x: 130, y: 135, w: 14, h: 4 } },
-  { id: 'banca-div2', kind: 'bench', rect: { x: 430, y: 135, w: 14, h: 4 } },
-  { id: 'esc-div1', kind: 'escalator', rect: { x: 135, y: 35, w: 10, h: 16 }, flow: 'max' },
-  { id: 'esc-div2', kind: 'escalator', rect: { x: 515, y: 35, w: 10, h: 16 }, flow: 'max' },
-  { id: 'esc-div3', kind: 'escalator', rect: { x: 330, y: 280, w: 16, h: 10 }, flow: 'max' },
-  { id: 'info-div1', kind: 'poi', poi: 'info', x: 350, y: 245, z: 18 },
-  { id: 'wc-div1', kind: 'poi', poi: 'wc', x: 72, y: 260, z: 16 },
-  { id: 'atm-div1', kind: 'poi', poi: 'atm', x: 540, y: 55, z: 16 },
+  { id: 'arb-div3', kind: 'tree', x: 550, y: 120 },
+  { id: 'banca-div1', kind: 'bench', rect: { x: 150, y: 135, w: 14, h: 4 } },
+  { id: 'banca-div2', kind: 'bench', rect: { x: 450, y: 135, w: 14, h: 4 } },
+  { id: 'esc-div1', kind: 'escalator', rect: { x: 175, y: 35, w: 10, h: 16 }, flow: 'max' },
+  { id: 'esc-div2', kind: 'escalator', rect: { x: 530, y: 35, w: 10, h: 16 }, flow: 'max' },
+  { id: 'info-div1', kind: 'poi', poi: 'info', x: 350, y: 235, z: 18 },
+  { id: 'wc-div1', kind: 'poi', poi: 'wc', x: 50, y: 245, z: 16 },
+  { id: 'wc-div2', kind: 'poi', poi: 'wc', x: 610, y: 60, z: 16 },
+  { id: 'atm-div1', kind: 'poi', poi: 'atm', x: 340, y: 235, z: 16 },
 ];
 
 export const storesSambilDiversion: MapStore[] = [
-  { id: 'mango_bajito', name: 'Mango Bajito (2.136 m²)', category: 'home', floorId: LEVEL_DIVERSION, x: 20, y: 20, w: 140, h: 48, height: 14, doorNodeId: 'door-mango' },
-  { id: 'anfiteatro', name: 'Anfiteatro Terrazas VIP', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 480, y: 20, w: 110, h: 48, height: 14, doorNodeId: 'door-anfi' },
-  { id: 'bonsai_sushi', name: 'Bonsai Sushi Bar & Lounge', category: 'food', floorId: LEVEL_DIVERSION, x: 185, y: 155, w: 24, h: 25, height: 8, doorNodeId: 'door-bonsai' },
-  { id: 'bk', name: 'Burger King', category: 'food', floorId: LEVEL_DIVERSION, x: 20, y: 260, w: 40, h: 22, height: 8, doorNodeId: 'door-bk' },
-  { id: 'migas_cafe', name: "Miga's Café", category: 'food', floorId: LEVEL_DIVERSION, x: 20, y: 285, w: 40, h: 22, height: 9, doorNodeId: 'door-migas' },
-  { id: 'pizza_hut', name: 'Pizza Hut Sambil', category: 'food', floorId: LEVEL_DIVERSION, x: 105, y: 265, w: 38, h: 45, height: 8, doorNodeId: 'door-pizzahut' },
-  { id: 'allegre', name: 'Allegre Trattoria', category: 'food', floorId: LEVEL_DIVERSION, x: 365, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-allegre' },
-  { id: 'tibon_grill', name: 'Tibón Grill Steakhouse', category: 'food', floorId: LEVEL_DIVERSION, x: 392, y: 265, w: 24, h: 45, height: 9, doorNodeId: 'door-tibon' },
+  // --- ENTRETENIMIENTO Y GRANDES ATRACCIONES (Nivel Diversión / Piso 5) ---
+  { id: 'hard_rock_cafe', name: 'Hard Rock Cafe Caracas', category: 'food', floorId: LEVEL_DIVERSION, x: 20, y: 15, w: 120, h: 48, height: 18, doorNodeId: 'door-hardrock' },
+  { id: 'lidotel_sambil', name: 'Lidotel Hotel Centro Sambil', category: 'services', floorId: LEVEL_DIVERSION, x: 550, y: 15, w: 140, h: 48, height: 22, doorNodeId: 'door-lidotel' },
+  { id: 'bowling_sambil', name: 'Bowling Center Sambil', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 15, y: 80, w: 45, h: 70, height: 16, doorNodeId: 'door-bowling' },
+  { id: 'magic_park', name: 'Magic Park & Arcade Diversión', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 15, y: 160, w: 45, h: 75, height: 16, doorNodeId: 'door-magicpark' },
+  { id: 'billiard_club_sambil', name: 'Billiard & Pool Club Sambil', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 15, y: 265, w: 45, h: 70, height: 10, doorNodeId: 'door-billiard' },
+  { id: 'sambil_arena_events', name: 'Sambil Arena / Sala de Eventos', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 600, y: 80, w: 100, h: 140, height: 18, doorNodeId: 'door-sambilarena' },
+  { id: 'valet_vip_diversion', name: 'Valet Parking VIP Terraza', category: 'services', floorId: LEVEL_DIVERSION, x: 600, y: 235, w: 100, h: 90, height: 12, doorNodeId: 'door-valetvip' },
+
+  // --- TERRAZAS GASTRONÓMICAS & RESTAURANTES LOUNGE (Norte) ---
+  { id: 'cinex_vip_diversion', name: 'Cinex VIP Lounge & Mezzanine', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 210, y: 15, w: 70, h: 48, height: 14, doorNodeId: 'door-cinexvip' },
+  { id: 'champions_sportsbar', name: 'Champions Sports Bar & Grill', category: 'food', floorId: LEVEL_DIVERSION, x: 290, y: 15, w: 65, h: 48, height: 12, doorNodeId: 'door-sportsbar' },
+  { id: 'bambu_asian_fusion', name: 'Bambú Asian Fusion Lounge', category: 'food', floorId: LEVEL_DIVERSION, x: 365, y: 15, w: 65, h: 48, height: 12, doorNodeId: 'door-bambu' },
+  { id: 'la_estancia_grill', name: 'La Estancia Terraza Steakhouse', category: 'food', floorId: LEVEL_DIVERSION, x: 440, y: 15, w: 65, h: 48, height: 12, doorNodeId: 'door-laestancia' },
+
+  // --- ISLA CENTRAL Y TERRAZAS (Centro) ---
+  { id: 'terrazas_cafe', name: 'Café & Lounge de la Terraza', category: 'food', floorId: LEVEL_DIVERSION, x: 200, y: 95, w: 70, h: 50, height: 9, doorNodeId: 'door-terrazascafe' },
+  { id: 'sky_bar_rooftop', name: 'Sky Bar & Rooftop Cocktail', category: 'food', floorId: LEVEL_DIVERSION, x: 290, y: 95, w: 75, h: 50, height: 10, doorNodeId: 'door-skybar' },
+  { id: 'terraza_lounge', name: 'Terraza VIP Open Air', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 385, y: 95, w: 85, h: 50, height: 9, doorNodeId: 'door-terrazalounge' },
+
+  // --- LOCALES SUR (y = 265) ---
+  { id: 'restaurante_la_terraza', name: 'Restaurante Mirador La Terraza', category: 'food', floorId: LEVEL_DIVERSION, x: 80, y: 265, w: 65, h: 65, height: 12, doorNodeId: 'door-laterraza' },
+  { id: 'gelato_sky', name: 'Gelato Sky Gourmet', category: 'food', floorId: LEVEL_DIVERSION, x: 160, y: 265, w: 55, h: 65, height: 8, doorNodeId: 'door-gelatosky' },
+  { id: 'sambil_souvenirs', name: 'Sambil Souvenirs & Experience Store', category: 'fashion', floorId: LEVEL_DIVERSION, x: 230, y: 265, w: 60, h: 65, height: 8, doorNodeId: 'door-sambilsouv' },
+  { id: 'crepes_waffles_sky', name: 'Crepes & Waffles Rooftop', category: 'food', floorId: LEVEL_DIVERSION, x: 305, y: 265, w: 60, h: 65, height: 8, doorNodeId: 'door-crepessky' },
+  { id: 'parrilla_vip', name: 'Parrilla Gourmet VIP', category: 'food', floorId: LEVEL_DIVERSION, x: 380, y: 265, w: 65, h: 65, height: 9, doorNodeId: 'door-parrillavip' },
+  { id: 'lounge_bar_5', name: 'Level 5 Music & Drinks', category: 'entertainment', floorId: LEVEL_DIVERSION, x: 460, y: 265, w: 65, h: 65, height: 9, doorNodeId: 'door-loungebar5' },
 ];
 
 export const floorDiversionData: MapFloor = {
   id: LEVEL_DIVERSION,
   name: 'Nivel Diversión / Terrazas',
-  level: 4,
+  level: 5,
   width: 720,
   height: 360,
   areas: [
-    { id: 'corridor-arc-4', kind: 'corridor', rect: { x: 40, y: 60, w: 640, h: 220 } },
-    { id: 'plaza-jardin-4', kind: 'plaza', rect: { x: 50, y: 220, w: 60, h: 60 } },
-    { id: 'plaza-fuente-4', kind: 'plaza', rect: { x: 150, y: 50, w: 60, h: 60 } },
-    { id: 'plaza-central-4', kind: 'plaza', rect: { x: 320, y: 220, w: 60, h: 60 } },
-    { id: 'plaza-arte-4', kind: 'plaza', rect: { x: 500, y: 50, w: 60, h: 60 } },
-    { id: 'plaza-musica-4', kind: 'plaza', rect: { x: 560, y: 220, w: 60, h: 60 } },
+    { id: 'corridor-arc-5', kind: 'corridor', rect: { x: 40, y: 60, w: 640, h: 220 } },
+    { id: 'plaza-jardin-5', kind: 'plaza', rect: { x: 50, y: 220, w: 60, h: 60 } },
+    { id: 'plaza-fuente-5', kind: 'plaza', rect: { x: 150, y: 50, w: 60, h: 60 } },
+    { id: 'plaza-central-5', kind: 'plaza', rect: { x: 320, y: 220, w: 60, h: 60 } },
+    { id: 'plaza-arte-5', kind: 'plaza', rect: { x: 500, y: 50, w: 60, h: 60 } },
+    { id: 'plaza-musica-5', kind: 'plaza', rect: { x: 560, y: 220, w: 60, h: 60 } },
   ],
   obstacles: [],
   props: propsSambilDiversion,
 };
 
 export const nodesDiversion: NavNode[] = [
-  { id: `pj-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 250, kind: 'entrance', connections: [`cw-s-${LEVEL_DIVERSION}`, `cw-far-s-${LEVEL_DIVERSION}`, `cs-1-${LEVEL_DIVERSION}`, 'v-pj-4'] },
-  { id: `plf-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 180, y: 73, kind: 'corridor', connections: [`cw-n-${LEVEL_DIVERSION}`, `cn-1-${LEVEL_DIVERSION}`, `cc-w1-${LEVEL_DIVERSION}`, 'v-plf-4', 'door-mango'] },
-  { id: `pc-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 350, y: 250, kind: 'corridor', connections: [`cs-3-${LEVEL_DIVERSION}`, `cs-4-${LEVEL_DIVERSION}`, `cc-w3-${LEVEL_DIVERSION}`, `cc-e3-${LEVEL_DIVERSION}`, 'v-pc-4', 'door-allegre', 'door-tibon'] },
-  { id: `pea-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 530, y: 73, kind: 'corridor', connections: [`cn-4-${LEVEL_DIVERSION}`, `ce-1-${LEVEL_DIVERSION}`, `cc-e1-${LEVEL_DIVERSION}`, 'v-pea-4', 'door-anfi'] },
-  { id: `plm-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 250, kind: 'corridor', connections: [`ce-3-${LEVEL_DIVERSION}`, `cs-6-${LEVEL_DIVERSION}`, 'v-plm-4'] },
+  // 5 Plazas Principales Nivel 5
+  { id: `pj-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 250, kind: 'entrance', connections: [`cw-s-${LEVEL_DIVERSION}`, `cw-far-s-${LEVEL_DIVERSION}`, `cs-1-${LEVEL_DIVERSION}`, 'v-pj-5', 'door-magicpark'] },
+  { id: `plf-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 175, y: 73, kind: 'corridor', connections: [`cw-n-${LEVEL_DIVERSION}`, `cn-1-${LEVEL_DIVERSION}`, `ca-1-${LEVEL_DIVERSION}`, 'v-plf-5', 'door-hardrock', 'door-cinexvip'] },
+  { id: `pc-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 350, y: 250, kind: 'corridor', connections: [`cs-3-${LEVEL_DIVERSION}`, `cs-4-${LEVEL_DIVERSION}`, `cb-3-${LEVEL_DIVERSION}`, 'v-pc-5', 'door-sambilsouv', 'door-crepessky'] },
+  { id: `pea-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 530, y: 73, kind: 'corridor', connections: [`cn-4-${LEVEL_DIVERSION}`, `ce-1-${LEVEL_DIVERSION}`, 'v-pea-5', 'door-lidotel'] },
+  { id: `plm-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 250, kind: 'corridor', connections: [`ce-3-${LEVEL_DIVERSION}`, `cs-6-${LEVEL_DIVERSION}`, 'v-plm-5', 'door-valetvip', 'door-sambilarena'] },
 
-  { id: `cw-n-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_DIVERSION}`, `cw-mid-${LEVEL_DIVERSION}`] },
-  { id: `cw-mid-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 160, kind: 'corridor', connections: [`cw-n-${LEVEL_DIVERSION}`, `cw-s-${LEVEL_DIVERSION}`] },
-  { id: `cw-s-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 220, kind: 'corridor', connections: [`cw-mid-${LEVEL_DIVERSION}`, `pj-${LEVEL_DIVERSION}`] },
-  { id: `cw-far-s-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 65, y: 290, kind: 'corridor', connections: [`pj-${LEVEL_DIVERSION}`, 'door-bk', 'door-migas'] },
+  // Corredor Oeste (x = 72)
+  { id: `cw-n-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_DIVERSION}`, `cw-mid-${LEVEL_DIVERSION}`, 'door-hardrock'] },
+  { id: `cw-mid-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 115, kind: 'corridor', connections: [`cw-n-${LEVEL_DIVERSION}`, `cw-s-${LEVEL_DIVERSION}`, 'door-bowling'] },
+  { id: `cw-s-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 200, kind: 'corridor', connections: [`cw-mid-${LEVEL_DIVERSION}`, `pj-${LEVEL_DIVERSION}`, 'door-magicpark'] },
+  { id: `cw-far-s-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 72, y: 280, kind: 'corridor', connections: [`pj-${LEVEL_DIVERSION}`, 'door-billiard'] },
 
-  { id: `cn-1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 250, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_DIVERSION}`, `cn-2-${LEVEL_DIVERSION}`] },
-  { id: `cn-2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 330, y: 73, kind: 'corridor', connections: [`cn-1-${LEVEL_DIVERSION}`, `cn-3-${LEVEL_DIVERSION}`] },
-  { id: `cn-3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 400, y: 73, kind: 'corridor', connections: [`cn-2-${LEVEL_DIVERSION}`, `cn-4-${LEVEL_DIVERSION}`] },
-  { id: `cn-4-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 470, y: 73, kind: 'corridor', connections: [`cn-3-${LEVEL_DIVERSION}`, `pea-${LEVEL_DIVERSION}`] },
+  // Corredor Norte (y = 73)
+  { id: `cn-1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 250, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_DIVERSION}`, `cn-2-${LEVEL_DIVERSION}`, 'door-cinexvip'] },
+  { id: `cn-2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 320, y: 73, kind: 'corridor', connections: [`cn-1-${LEVEL_DIVERSION}`, `cn-3-${LEVEL_DIVERSION}`, 'door-sportsbar'] },
+  { id: `cn-3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 395, y: 73, kind: 'corridor', connections: [`cn-2-${LEVEL_DIVERSION}`, `cn-4-${LEVEL_DIVERSION}`, 'door-bambu'] },
+  { id: `cn-4-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 470, y: 73, kind: 'corridor', connections: [`cn-3-${LEVEL_DIVERSION}`, `pea-${LEVEL_DIVERSION}`, 'door-laestancia'] },
 
-  { id: `ce-1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 73, kind: 'corridor', connections: [`pea-${LEVEL_DIVERSION}`, `ce-2-${LEVEL_DIVERSION}`] },
-  { id: `ce-2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 130, kind: 'corridor', connections: [`ce-1-${LEVEL_DIVERSION}`, `ce-3-${LEVEL_DIVERSION}`] },
-  { id: `ce-3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 180, kind: 'corridor', connections: [`ce-2-${LEVEL_DIVERSION}`, `plm-${LEVEL_DIVERSION}`] },
+  // Pasillo Central Mezzanine (y = 150)
+  { id: `ca-1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 175, y: 150, kind: 'corridor', connections: [`plf-${LEVEL_DIVERSION}`, `cb-2-${LEVEL_DIVERSION}`, `cs-1-${LEVEL_DIVERSION}`] },
+  { id: `cb-2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 235, y: 150, kind: 'corridor', connections: [`ca-1-${LEVEL_DIVERSION}`, `cb-3-${LEVEL_DIVERSION}`, 'door-terrazascafe'] },
+  { id: `cb-3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 325, y: 150, kind: 'corridor', connections: [`cb-2-${LEVEL_DIVERSION}`, `cb-4-${LEVEL_DIVERSION}`, `pc-${LEVEL_DIVERSION}`, 'door-skybar'] },
+  { id: `cb-4-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 425, y: 150, kind: 'corridor', connections: [`cb-3-${LEVEL_DIVERSION}`, `ce-2-${LEVEL_DIVERSION}`, 'door-terrazalounge'] },
 
-  { id: `cs-1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 150, y: 250, kind: 'corridor', connections: [`pj-${LEVEL_DIVERSION}`, `cs-2-${LEVEL_DIVERSION}`, 'door-pizzahut'] },
-  { id: `cs-2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 210, y: 250, kind: 'corridor', connections: [`cs-1-${LEVEL_DIVERSION}`, `cs-3-${LEVEL_DIVERSION}`] },
-  { id: `cs-3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 280, y: 250, kind: 'corridor', connections: [`cs-2-${LEVEL_DIVERSION}`, `pc-${LEVEL_DIVERSION}`] },
-  { id: `cs-4-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 420, y: 250, kind: 'corridor', connections: [`pc-${LEVEL_DIVERSION}`, `cs-5-${LEVEL_DIVERSION}`] },
-  { id: `cs-5-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 480, y: 250, kind: 'corridor', connections: [`cs-4-${LEVEL_DIVERSION}`, `cs-6-${LEVEL_DIVERSION}`] },
-  { id: `cs-6-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 550, y: 250, kind: 'corridor', connections: [`cs-5-${LEVEL_DIVERSION}`, `plm-${LEVEL_DIVERSION}`] },
+  // Corredor Este (x = 584)
+  { id: `ce-1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 73, kind: 'corridor', connections: [`pea-${LEVEL_DIVERSION}`, `ce-2-${LEVEL_DIVERSION}`, 'door-lidotel'] },
+  { id: `ce-2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 150, kind: 'corridor', connections: [`ce-1-${LEVEL_DIVERSION}`, `ce-3-${LEVEL_DIVERSION}`, `cb-4-${LEVEL_DIVERSION}`, 'door-sambilarena'] },
+  { id: `ce-3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 584, y: 210, kind: 'corridor', connections: [`ce-2-${LEVEL_DIVERSION}`, `plm-${LEVEL_DIVERSION}`, 'door-sambilarena'] },
 
-  { id: `cc-w1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 175, y: 135, kind: 'corridor', connections: [`plf-${LEVEL_DIVERSION}`, `cc-w2-${LEVEL_DIVERSION}`, 'door-bonsai'] },
-  { id: `cc-w2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 267, y: 135, kind: 'corridor', connections: [`cc-w1-${LEVEL_DIVERSION}`, `cc-w3-${LEVEL_DIVERSION}`] },
-  { id: `cc-w3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 267, y: 200, kind: 'corridor', connections: [`cc-w2-${LEVEL_DIVERSION}`, `pc-${LEVEL_DIVERSION}`] },
-  { id: `cc-e1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 495, y: 115, kind: 'corridor', connections: [`pea-${LEVEL_DIVERSION}`, `cc-e2-${LEVEL_DIVERSION}`] },
-  { id: `cc-e2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 495, y: 160, kind: 'corridor', connections: [`cc-e1-${LEVEL_DIVERSION}`, `cc-e3-${LEVEL_DIVERSION}`] },
-  { id: `cc-e3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 495, y: 215, kind: 'corridor', connections: [`cc-e2-${LEVEL_DIVERSION}`, `pc-${LEVEL_DIVERSION}`] },
+  // Corredor Sur (y = 250)
+  { id: `cs-1-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 110, y: 250, kind: 'corridor', connections: [`pj-${LEVEL_DIVERSION}`, `cs-2-${LEVEL_DIVERSION}`, `ca-1-${LEVEL_DIVERSION}`, 'door-laterraza'] },
+  { id: `cs-2-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 185, y: 250, kind: 'corridor', connections: [`cs-1-${LEVEL_DIVERSION}`, `cs-3-${LEVEL_DIVERSION}`, 'door-gelatosky'] },
+  { id: `cs-3-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 260, y: 250, kind: 'corridor', connections: [`cs-2-${LEVEL_DIVERSION}`, `pc-${LEVEL_DIVERSION}`, 'door-sambilsouv'] },
+  { id: `cs-4-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 335, y: 250, kind: 'corridor', connections: [`pc-${LEVEL_DIVERSION}`, `cs-5-${LEVEL_DIVERSION}`, 'door-crepessky'] },
+  { id: `cs-5-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 410, y: 250, kind: 'corridor', connections: [`cs-4-${LEVEL_DIVERSION}`, `cs-6-${LEVEL_DIVERSION}`, 'door-parrillavip'] },
+  { id: `cs-6-${LEVEL_DIVERSION}`, floorId: LEVEL_DIVERSION, x: 490, y: 250, kind: 'corridor', connections: [`cs-5-${LEVEL_DIVERSION}`, `plm-${LEVEL_DIVERSION}`, 'door-loungebar5'] },
 
-  { id: 'door-mango', floorId: LEVEL_DIVERSION, x: 160, y: 68, kind: 'door', connections: [`plf-${LEVEL_DIVERSION}`] },
-  { id: 'door-anfi', floorId: LEVEL_DIVERSION, x: 530, y: 68, kind: 'door', connections: [`pea-${LEVEL_DIVERSION}`] },
-  { id: 'door-bonsai', floorId: LEVEL_DIVERSION, x: 197, y: 155, kind: 'door', connections: [`cc-w1-${LEVEL_DIVERSION}`] },
-  { id: 'door-bk', floorId: LEVEL_DIVERSION, x: 60, y: 271, kind: 'door', connections: [`cw-far-s-${LEVEL_DIVERSION}`] },
-  { id: 'door-migas', floorId: LEVEL_DIVERSION, x: 60, y: 296, kind: 'door', connections: [`cw-far-s-${LEVEL_DIVERSION}`] },
-  { id: 'door-pizzahut', floorId: LEVEL_DIVERSION, x: 124, y: 265, kind: 'door', connections: [`cs-1-${LEVEL_DIVERSION}`] },
-  { id: 'door-allegre', floorId: LEVEL_DIVERSION, x: 377, y: 265, kind: 'door', connections: [`pc-${LEVEL_DIVERSION}`] },
-  { id: 'door-tibon', floorId: LEVEL_DIVERSION, x: 404, y: 265, kind: 'door', connections: [`pc-${LEVEL_DIVERSION}`] },
+  // Puertas Nivel 5
+  { id: 'door-hardrock', floorId: LEVEL_DIVERSION, x: 140, y: 63, kind: 'door', connections: [`plf-${LEVEL_DIVERSION}`, `cw-n-${LEVEL_DIVERSION}`] },
+  { id: 'door-lidotel', floorId: LEVEL_DIVERSION, x: 550, y: 63, kind: 'door', connections: [`pea-${LEVEL_DIVERSION}`, `ce-1-${LEVEL_DIVERSION}`] },
+  { id: 'door-bowling', floorId: LEVEL_DIVERSION, x: 60, y: 115, kind: 'door', connections: [`cw-mid-${LEVEL_DIVERSION}`] },
+  { id: 'door-magicpark', floorId: LEVEL_DIVERSION, x: 60, y: 200, kind: 'door', connections: [`cw-s-${LEVEL_DIVERSION}`, `pj-${LEVEL_DIVERSION}`] },
+  { id: 'door-billiard', floorId: LEVEL_DIVERSION, x: 60, y: 280, kind: 'door', connections: [`cw-far-s-${LEVEL_DIVERSION}`] },
+  { id: 'door-sambilarena', floorId: LEVEL_DIVERSION, x: 600, y: 150, kind: 'door', connections: [`ce-2-${LEVEL_DIVERSION}`, `ce-3-${LEVEL_DIVERSION}`] },
+  { id: 'door-valetvip', floorId: LEVEL_DIVERSION, x: 600, y: 270, kind: 'door', connections: [`plm-${LEVEL_DIVERSION}`] },
+
+  { id: 'door-cinexvip', floorId: LEVEL_DIVERSION, x: 245, y: 63, kind: 'door', connections: [`cn-1-${LEVEL_DIVERSION}`, `plf-${LEVEL_DIVERSION}`] },
+  { id: 'door-sportsbar', floorId: LEVEL_DIVERSION, x: 320, y: 63, kind: 'door', connections: [`cn-2-${LEVEL_DIVERSION}`] },
+  { id: 'door-bambu', floorId: LEVEL_DIVERSION, x: 395, y: 63, kind: 'door', connections: [`cn-3-${LEVEL_DIVERSION}`] },
+  { id: 'door-laestancia', floorId: LEVEL_DIVERSION, x: 470, y: 63, kind: 'door', connections: [`cn-4-${LEVEL_DIVERSION}`] },
+
+  { id: 'door-terrazascafe', floorId: LEVEL_DIVERSION, x: 235, y: 145, kind: 'door', connections: [`cb-2-${LEVEL_DIVERSION}`] },
+  { id: 'door-skybar', floorId: LEVEL_DIVERSION, x: 325, y: 145, kind: 'door', connections: [`cb-3-${LEVEL_DIVERSION}`] },
+  { id: 'door-terrazalounge', floorId: LEVEL_DIVERSION, x: 425, y: 145, kind: 'door', connections: [`cb-4-${LEVEL_DIVERSION}`] },
+
+  { id: 'door-laterraza', floorId: LEVEL_DIVERSION, x: 110, y: 265, kind: 'door', connections: [`cs-1-${LEVEL_DIVERSION}`] },
+  { id: 'door-gelatosky', floorId: LEVEL_DIVERSION, x: 185, y: 265, kind: 'door', connections: [`cs-2-${LEVEL_DIVERSION}`] },
+  { id: 'door-sambilsouv', floorId: LEVEL_DIVERSION, x: 260, y: 265, kind: 'door', connections: [`cs-3-${LEVEL_DIVERSION}`] },
+  { id: 'door-crepessky', floorId: LEVEL_DIVERSION, x: 335, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_DIVERSION}`] },
+  { id: 'door-parrillavip', floorId: LEVEL_DIVERSION, x: 410, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_DIVERSION}`] },
+  { id: 'door-loungebar5', floorId: LEVEL_DIVERSION, x: 490, y: 265, kind: 'door', connections: [`cs-6-${LEVEL_DIVERSION}`] },
 ];
