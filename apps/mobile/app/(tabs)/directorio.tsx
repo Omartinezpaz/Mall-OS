@@ -105,7 +105,7 @@ export default function ExplorarScreen() {
               Todas
             </Text>
           </TouchableOpacity>
-          {OFFICIAL_CATEGORIES.slice(0, 5).map((cat) => (
+          {OFFICIAL_CATEGORIES.map((cat) => (
             <TouchableOpacity
               key={cat.slug}
               style={[
@@ -173,27 +173,32 @@ export default function ExplorarScreen() {
           </View>
         )}
 
-        {/* Categorías 2x2 Official Grid */}
+        {/* Categorías Oficiales Grid Completo */}
         {!search && (
           <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Categorías</Text>
-              <TouchableOpacity onPress={() => setSelectedCategory(undefined)}>
-                <Text style={styles.sectionLink}>Ver todas</Text>
-              </TouchableOpacity>
+              {selectedCategory && (
+                <TouchableOpacity onPress={() => setSelectedCategory(undefined)}>
+                  <Text style={styles.sectionLink}>Limpiar filtro</Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             <View style={styles.categoriesGrid}>
-              {OFFICIAL_CATEGORIES.slice(0, 4).map((cat) => (
+              {OFFICIAL_CATEGORIES.map((cat) => (
                 <TouchableOpacity
                   key={cat.slug}
-                  style={styles.categoryCard}
+                  style={[
+                    styles.categoryCard,
+                    selectedCategory === cat.slug && styles.categoryCardSelected,
+                  ]}
                   activeOpacity={0.85}
                   onPress={() =>
                     setSelectedCategory(selectedCategory === cat.slug ? undefined : cat.slug)
                   }
                 >
-                  <CategoryIcon slug={cat.slug} size={48} bgColor="#4F46E5" />
+                  <CategoryIcon slug={cat.slug} size={48} bgColor={cat.color || '#4F46E5'} />
                   <View style={styles.catCardTextWrap}>
                     <Text style={styles.categoryCardName}>{cat.name}</Text>
                     <Text style={styles.categoryCardCount}>{cat.countLabel}</Text>
@@ -507,6 +512,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.04,
     shadowRadius: 6,
     elevation: 2,
+  },
+  categoryCardSelected: {
+    borderColor: '#4F46E5',
+    backgroundColor: '#EEF2FF',
   },
   catCardTextWrap: {
     gap: 2,

@@ -11,6 +11,7 @@ import {
 import { useRouter } from 'expo-router';
 import Svg, { Path, Circle, Defs, RadialGradient, Stop, LinearGradient } from 'react-native-svg';
 import { CategoryIcon } from '../../src/components/CategoryIcon';
+import { OFFICIAL_CATEGORIES } from '@mallos/design-tokens';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Explora por Categoría (4 Botones Circulares Índigo Royal) */}
+        {/* Explora por Categoría (Todas las categorías oficiales) */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Explora por categoría</Text>
           <TouchableOpacity onPress={() => router.push('/(tabs)/directorio')}>
@@ -82,43 +83,23 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.categoriesRow}>
-          <TouchableOpacity
-            style={styles.categoryItem}
-            activeOpacity={0.8}
-            onPress={() => router.push('/(tabs)/directorio')}
-          >
-            <CategoryIcon slug="moda" size={56} bgColor="#4F46E5" />
-            <Text style={styles.categoryName}>Moda</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.categoryItem}
-            activeOpacity={0.8}
-            onPress={() => router.push('/(tabs)/directorio')}
-          >
-            <CategoryIcon slug="restaurantes" size={56} bgColor="#4F46E5" />
-            <Text style={styles.categoryName}>Restaurantes</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.categoryItem}
-            activeOpacity={0.8}
-            onPress={() => router.push('/(tabs)/directorio')}
-          >
-            <CategoryIcon slug="entretenimiento" size={56} bgColor="#4F46E5" />
-            <Text style={styles.categoryName}>Entretenimiento</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.categoryItem}
-            activeOpacity={0.8}
-            onPress={() => router.push('/(tabs)/directorio')}
-          >
-            <CategoryIcon slug="belleza" size={56} bgColor="#4F46E5" />
-            <Text style={styles.categoryName}>Belleza</Text>
-          </TouchableOpacity>
-        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesScroll}
+        >
+          {OFFICIAL_CATEGORIES.map((cat) => (
+            <TouchableOpacity
+              key={cat.slug}
+              style={styles.categoryItem}
+              activeOpacity={0.8}
+              onPress={() => router.push('/(tabs)/directorio')}
+            >
+              <CategoryIcon slug={cat.slug} size={56} bgColor={cat.color || '#4F46E5'} />
+              <Text style={styles.categoryName} numberOfLines={1}>{cat.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
         {/* Mall Concierge IA Card */}
         <TouchableOpacity
@@ -356,14 +337,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
-  categoriesRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  categoriesScroll: {
+    gap: 16,
     paddingHorizontal: 4,
+    paddingVertical: 4,
   },
   categoryItem: {
     alignItems: 'center',
     gap: 8,
+    width: 68,
   },
   categoryName: {
     color: '#334155',
