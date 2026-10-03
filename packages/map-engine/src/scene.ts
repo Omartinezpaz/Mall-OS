@@ -4,7 +4,7 @@
  * <Polygon>/<Polyline>/<Circle>/<Text> de react-native-svg con el mismo resultado.
  * Los elementos de un local llevan `storeId` para la selección por toque.
  */
-import { project, DEFAULT_ISO, type IsoOptions } from './isometric';
+import { project, DEFAULT_ISO, extrudePolygon, projectPolygon, type IsoOptions } from './isometric';
 import { samplePolyline, smoothPolyline } from './path';
 import type { MallMapData, MapFloor, MapProp, MapStore, Point, PoiKind, Rect } from './types';
 
@@ -119,7 +119,6 @@ interface Drawable {
 /**
  * Construye la escena de un piso.
  * Orden de pintado: algoritmo del pintor por profundidad (x+y) del centro, mezclando locales y detalles.
- * LIMITACIÓN: correcto para locales rectangulares que no se solapan (lo comprueba validateMapData).
  */
 export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
   const floor: MapFloor | undefined = map.floors.find((f) => f.id === opts.floorId);
@@ -157,18 +156,44 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
 
   const ellipseOn = (c: Point, rx: number, ry: number, opacity: number): SceneItem => ({ kind: 'ellipse', x: c.x, y: c.y, rx, ry, fill: '#0F172A', opacity });
 
-  // ---------- Base y áreas transitables ----------
-  items.push(...box({ x: 0, y: 0, w: floor.width, h: floor.height }, -SLAB_DEPTH, 0, th.slab, th.slabStroke));
-  for (const a of floor.areas) {
-    if (a.kind === 'corridor') items.push(flat(a.rect, 0.2, th.corridor, th.corridorStroke));
-    else if (a.kind === 'plaza') items.push(flat(a.rect, 0.4, th.plaza, th.plazaStroke));
-    else items.push(flat(a.rect, 0.6, th.primary, th.primary));
+  // ---------- Base del piso (Slab) ----------
+  if (floor.footprint && floor.footprint.length >= 3) {
+    const slabExtruded = extrudePolygon(floor.footprint, -SLAB_DEPTH, 0, iso);
+    for (const wall of slabExtruded.walls) {
+      items.push(quad(wall.points, th.slabStroke, th.slabStroke, 1));
+    }
+    items.push(quad(slabExtruded.roof, th.slab, th.slabStroke, 1.5));
+  } else {
+    items.push(...box({ x: 0, y: 0, w: floor.width, h: floor.height }, -SLAB_DEPTH, 0, th.slab, th.slabStroke));
   }
 
-  // Baldosas: líneas finas sobre los pasillos (sensación de piso real)
+  // ---------- Áreas y Plazas transitables ----------
+  for (const a of floor.areas) {
+    if (a.center && a.radius) {
+      // Plaza circular con halo y marca distintiva
+      const centerProj = P(a.center.x, a.center.y, 0.4);
+      const plazaColor = a.color ?? th.plaza;
+      // Halo difuminado exterior
+      items.push({ kind: 'circle', x: centerProj.x, y: centerProj.y, r: a.radius * 1.15, fill: plazaColor, opacity: 0.15 });
+      // Círculo principal
+      items.push({ kind: 'circle', x: centerProj.x, y: centerProj.y, r: a.radius, fill: plazaColor, stroke: '#FFFFFF', strokeWidth: 3 });
+      // Rótulo de la plaza
+      if (a.label) {
+        items.push({ kind: 'text', x: centerProj.x, y: centerProj.y + 4, text: a.label.toUpperCase(), size: 10, weight: 900, fill: '#FFFFFF', halo: plazaColor });
+      }
+    } else if (a.polygon && a.polygon.length >= 3) {
+      items.push(quad(projectPolygon(a.polygon, 0.2, iso), a.color ?? th.corridor, a.color ?? th.corridorStroke, 1));
+    } else if (a.rect) {
+      if (a.kind === 'corridor') items.push(flat(a.rect, 0.2, th.corridor, th.corridorStroke));
+      else if (a.kind === 'plaza') items.push(flat(a.rect, 0.4, a.color ?? th.plaza, a.color ?? th.plazaStroke));
+      else items.push(flat(a.rect, 0.6, th.primary, th.primary));
+    }
+  }
+
+  // Baldosas: líneas finas sobre los pasillos rectangulares
   if (full) {
     for (const a of floor.areas) {
-      if (a.kind !== 'corridor') continue;
+      if (a.kind !== 'corridor' || !a.rect) continue;
       const { x, y, w, h } = a.rect;
       for (let gx = Math.ceil(x / TILE_SIZE) * TILE_SIZE; gx < x + w; gx += TILE_SIZE) {
         items.push({ kind: 'polyline', points: [P(gx, y, 0.3), P(gx, y + h, 0.3)], stroke: th.tile, strokeWidth: 0.6 });
@@ -200,9 +225,14 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
   if (full) {
     for (const s of stores) {
       const d = s.height * 0.5;
-      items.push(
-        quad([P(s.x + d, s.y + d, 0.5), P(s.x + s.w + d, s.y + d, 0.5), P(s.x + s.w + d, s.y + s.h + d, 0.5), P(s.x + d, s.y + s.h + d, 0.5)], '#0F172A', 'none', 0, { opacity: 0.07 }),
-      );
+      if (s.polygon && s.polygon.length >= 3) {
+        const shadowPoly = s.polygon.map((p) => P(p.x + d, p.y + d, 0.5));
+        items.push(quad(shadowPoly, '#0F172A', 'none', 0, { opacity: 0.07 }));
+      } else {
+        items.push(
+          quad([P(s.x + d, s.y + d, 0.5), P(s.x + s.w + d, s.y + d, 0.5), P(s.x + s.w + d, s.y + s.h + d, 0.5), P(s.x + d, s.y + s.h + d, 0.5)], '#0F172A', 'none', 0, { opacity: 0.07 }),
+        );
+      }
     }
   }
 
@@ -219,10 +249,10 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
   };
 
   /**
-   * Fachada: vidrio y hueco de puerta en la cara visible (sur o este) donde está la puerta del local.
-   * Si la puerta mira a una cara oculta (norte u oeste), no se dibuja nada: no se vería.
+   * Fachada: vidrio y hueco de puerta en la cara visible donde está la puerta del local.
    */
   const facade = (s: MapStore, h: number): SceneItem[] => {
+    if (s.polygon) return []; // fachadas complejas ya integradas en polígono
     const door = map.nodes.find((n) => n.id === s.doorNodeId);
     if (!door) return [];
     const south = Math.abs(door.y - (s.y + s.h)) < 1.5 && door.x >= s.x && door.x <= s.x + s.w;
@@ -250,14 +280,52 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
     const selected = s.id === opts.selectedStoreId;
     const colors = getStorePalette(s);
     const h = selected ? s.height + lift : s.height;
-    drawables.push({
-      depth: s.x + s.w / 2 + s.y + s.h / 2,
-      items: [
-        ...(selected ? [quad([P(s.x - 2, s.y - 2, 0.6), P(s.x + s.w + 2, s.y - 2, 0.6), P(s.x + s.w + 2, s.y + s.h + 2, 0.6), P(s.x - 2, s.y + s.h + 2, 0.6)], th.primary, 'none', 0, { opacity: 0.18 })] : []),
-        ...box(s, 0, h, selected ? th.primary : colors.fill, selected ? th.primaryDark : '#FFFFFF', s.id),
-        ...(full ? facade(s, h) : []),
-      ],
-    });
+
+    if (s.polygon && s.polygon.length >= 3) {
+      const extruded = extrudePolygon(s.polygon, 0, h, iso);
+      const storeItems: SceneItem[] = [];
+
+      // Sombra o realce de selección
+      if (selected) {
+        const selGlow = s.polygon.map((p) => P(p.x, p.y, 0.6));
+        storeItems.push(quad(selGlow, th.primary, 'none', 0, { opacity: 0.2 }));
+      }
+
+      // Paredes extruidas visibles
+      for (const wall of extruded.walls) {
+        const wallColor = wall.faceType === 'south' ? darken(colors.fill, 0.16) : darken(colors.fill, 0.26);
+        storeItems.push(
+          quad(wall.points, selected ? th.primaryDark : wallColor, selected ? th.primaryDark : '#CBD5E1', 0.8, {
+            opacity: dimmedSet.has(s.id) ? 0.35 : 1,
+            storeId: s.id,
+          }),
+        );
+      }
+
+      // Techo
+      storeItems.push(
+        quad(extruded.roof, selected ? th.primary : colors.fill, selected ? '#FFFFFF' : '#CBD5E1', selected ? 2 : 0.8, {
+          opacity: dimmedSet.has(s.id) ? 0.4 : 1,
+          storeId: s.id,
+        }),
+      );
+
+      const avgX = s.polygon.reduce((sum, p) => sum + p.x, 0) / s.polygon.length;
+      const avgY = s.polygon.reduce((sum, p) => sum + p.y, 0) / s.polygon.length;
+      drawables.push({
+        depth: avgX + avgY,
+        items: storeItems,
+      });
+    } else {
+      drawables.push({
+        depth: s.x + s.w / 2 + s.y + s.h / 2,
+        items: [
+          ...(selected ? [quad([P(s.x - 2, s.y - 2, 0.6), P(s.x + s.w + 2, s.y - 2, 0.6), P(s.x + s.w + 2, s.y + s.h + 2, 0.6), P(s.x - 2, s.y + s.h + 2, 0.6)], th.primary, 'none', 0, { opacity: 0.18 })] : []),
+          ...box(s, 0, h, selected ? th.primary : colors.fill, selected ? th.primaryDark : '#FFFFFF', s.id),
+          ...(full ? facade(s, h) : []),
+        ],
+      });
+    }
   }
 
   const propDrawable = (p: MapProp): Drawable | null => {
@@ -498,20 +566,30 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
   }
 
   // ---------- Etiquetas, insignias, rótulos de entrada y pin ----------
+  const getStoreCenter = (s: MapStore): Point => {
+    if (s.labelPos) return s.labelPos;
+    if (s.polygon && s.polygon.length >= 3) {
+      const cx = s.polygon.reduce((sum, p) => sum + p.x, 0) / s.polygon.length;
+      const cy = s.polygon.reduce((sum, p) => sum + p.y, 0) / s.polygon.length;
+      return { x: cx, y: cy };
+    }
+    return centerOf(s);
+  };
+
   const labels = opts.labels ?? 'all';
   if (labels !== 'none') {
     for (const s of stores) {
       const selected = s.id === opts.selectedStoreId;
       if (labels === 'selected' && !selected) continue;
       const colors = getStorePalette(s);
-      const c = centerOf(s);
+      const c = getStoreCenter(s);
       const p = P(c.x, c.y, selected ? s.height + lift : s.height);
-      // Halo del color del techo: invisible sobre el techo, protege la lectura si algo (ruta, línea) cruza la etiqueta.
+      // Halo del color del techo: invisible sobre el techo, protege la lectura si algo cruza la etiqueta.
       items.push({ kind: 'text', x: p.x, y: p.y + 4, text: s.name, size: selected ? 11 : 10, weight: 700, fill: selected ? '#FFFFFF' : colors.ink, ...(selected ? {} : { halo: colors.fill }), storeId: s.id });
     }
     for (const a of floor.areas) {
       if (a.kind !== 'entrance') continue;
-      const c = centerOf(a.rect);
+      const c = a.rect ? centerOf(a.rect) : (a.center ?? { x: 0, y: 0 });
       const p = P(c.x, c.y, 9);
       items.push({ kind: 'text', x: p.x, y: p.y, text: 'Entrada', size: 10, weight: 700, fill: th.primary, halo: '#FFFFFF' });
     }
@@ -524,7 +602,7 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
 
   const sel = stores.find((s) => s.id === opts.selectedStoreId);
   if (sel) {
-    const c = centerOf(sel);
+    const c = getStoreCenter(sel);
     const p = P(c.x, c.y, sel.height + lift + 14);
     items.push({ kind: 'pin', x: p.x, y: p.y - 8, fill: th.primary });
   }

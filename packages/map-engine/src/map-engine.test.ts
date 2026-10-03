@@ -23,6 +23,8 @@ import {
   project,
   unproject,
   DEFAULT_ISO,
+  extrudePolygon,
+  projectBounds,
   generateMallQualityReport,
   generateNavigationPlan,
 } from './index';
@@ -765,5 +767,52 @@ test('validador: advierte VERTICAL_CORE_MISALIGNED si un núcleo vertical tiene 
   const issues = validateMapData(m);
   assert.ok(issues.some((i) => i.code === 'VERTICAL_CORE_MISALIGNED'));
 });
+
+test('extrudePolygon genera caras de techo, base, paredes visibles e iluminación 2.5D', () => {
+  const polygon = [
+    { x: 20, y: 20 },
+    { x: 160, y: 20 },
+    { x: 160, y: 48 },
+    { x: 135, y: 68 },
+    { x: 20, y: 68 },
+  ];
+  const extruded = extrudePolygon(polygon, 0, 14);
+  assert.strictEqual(extruded.roof.length, 5);
+  assert.strictEqual(extruded.base.length, 5);
+  assert.ok(extruded.walls.length > 0);
+  assert.ok(extruded.labelPos.x !== 0 && extruded.labelPos.y !== 0);
+});
+
+test('projectBounds calcula límites exactos para auto-fit', () => {
+  const pts = [
+    { x: 0, y: 0 },
+    { x: 100, y: 50 },
+    { x: -50, y: 80 },
+  ];
+  const bounds = projectBounds(pts);
+  assert.strictEqual(bounds.minX, -50);
+  assert.strictEqual(bounds.maxX, 100);
+  assert.strictEqual(bounds.minY, 0);
+  assert.strictEqual(bounds.maxY, 80);
+  assert.strictEqual(bounds.width, 150);
+  assert.strictEqual(bounds.height, 80);
+});
+
+test('buildScene renderiza footprint de piso, plazas circulares de colores y locales con chaflán', () => {
+  const scene = buildScene(sambilMall, {
+    floorId: LEVEL_LIBERTADOR,
+    palette: { fashion: { fill: '#F8FAFC', ink: '#0F172A' }, other: { fill: '#F1F5F9', ink: '#1E293B' } },
+  });
+  assert.ok(scene.items.length > 50);
+
+  // Comprueba que existen círculos para las plazas oficiales
+  const circles = scene.items.filter((it) => it.kind === 'circle');
+  assert.ok(circles.length >= 8); // plazas + props
+
+  // Comprueba que ZARA tiene polígonos dibujados
+  const zaraItems = scene.items.filter((it) => 'storeId' in it && it.storeId === 'zara_lib');
+  assert.ok(zaraItems.length > 0);
+});
+
 
 

@@ -89,7 +89,7 @@ export function validateMapData(map: MallMapData): MapIssue[] {
 
     // Áreas
     for (const area of floor.areas ?? []) {
-      if (area.rect.w <= 0 || area.rect.h <= 0) {
+      if (area.rect && (area.rect.w <= 0 || area.rect.h <= 0)) {
         err('INVALID_AREA_DIMENSIONS', `El área "${area.id}" tiene dimensiones no positivas (w: ${area.rect.w}, h: ${area.rect.h})`, area.id);
       }
     }

@@ -37,6 +37,10 @@ export interface MapStore extends Rect {
   height: number;
   /** Nodo del grafo por donde se entra al local. Debe tocar el borde del local. */
   doorNodeId: string;
+  /** Polígono 2D opcional para locales con forma irregular o chaflanes (en coordenadas del plano). */
+  polygon?: Point[];
+  /** Posición personalizada para el centro de etiqueta. */
+  labelPos?: Point;
 }
 
 export type AreaKind = 'corridor' | 'plaza' | 'entrance';
@@ -44,7 +48,17 @@ export type AreaKind = 'corridor' | 'plaza' | 'entrance';
 export interface MapArea {
   id: string;
   kind: AreaKind;
-  rect: Rect;
+  rect?: Rect;
+  /** Polígono opcional para áreas orgánicas */
+  polygon?: Point[];
+  /** Centro para plazas circulares */
+  center?: Point;
+  /** Radio para plazas circulares */
+  radius?: number;
+  /** Color temático distintivo (ej. plazas de Sambil: rojo, azul, naranja, morado) */
+  color?: string;
+  /** Nombre o etiqueta visible */
+  label?: string;
 }
 
 export type ObstacleKind = 'fountain' | 'column' | 'planter';
@@ -82,6 +96,8 @@ export interface MapFloor {
   level: number;
   width: number;
   height: number;
+  /** Contorno perimetral real del piso (ej. herradura / silueta curva del centro comercial). */
+  footprint?: Point[];
   areas: MapArea[];
   obstacles: MapObstacle[];
   /** Árboles, bancas, jardineras, escaleras mecánicas, vidrios e insignias. Opcional. */
