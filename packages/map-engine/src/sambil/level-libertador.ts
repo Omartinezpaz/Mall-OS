@@ -1,0 +1,253 @@
+import type { MapFloor, MapStore, NavNode, MapProp } from '../types';
+import { LEVEL_LIBERTADOR } from './constants';
+
+export const propsSambilLibertador: MapProp[] = [
+  { id: 'fnt-lib-1', kind: 'fountain', rect: { x: 130, y: 48, w: 12, h: 12 } },
+  { id: 'arb-lib1', kind: 'tree', x: 90, y: 235 },
+  { id: 'arb-lib2', kind: 'tree', x: 310, y: 220 },
+  { id: 'arb-lib3', kind: 'tree', x: 550, y: 235 },
+  { id: 'banca-lib1', kind: 'bench', rect: { x: 130, y: 135, w: 14, h: 4 } },
+  { id: 'banca-lib2', kind: 'bench', rect: { x: 430, y: 135, w: 14, h: 4 } },
+  { id: 'esc-lib1', kind: 'escalator', rect: { x: 135, y: 35, w: 10, h: 16 }, flow: 'max' },
+  { id: 'esc-lib2', kind: 'escalator', rect: { x: 515, y: 35, w: 10, h: 16 }, flow: 'max' },
+  { id: 'esc-lib3', kind: 'escalator', rect: { x: 330, y: 280, w: 16, h: 10 }, flow: 'max' },
+  { id: 'info-lib1', kind: 'poi', poi: 'info', x: 350, y: 245, z: 18 },
+  { id: 'wc-lib1', kind: 'poi', poi: 'wc', x: 72, y: 260, z: 16 },
+  { id: 'wc-lib2', kind: 'poi', poi: 'wc', x: 300, y: 325, z: 16 },
+  { id: 'atm-lib1', kind: 'poi', poi: 'atm', x: 540, y: 55, z: 16 },
+];
+
+export const storesSambilLibertador: MapStore[] = [
+  // --- GRANDES ANCLAS (Fieles al plano arquitectónico oficial de Nivel Libertador) ---
+  { id: 'zara_lib', name: 'ZARA (Nivel Superior)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 20, y: 20, w: 140, h: 48, height: 14, doorNodeId: 'door-zara-lib' },
+  { id: 'balu', name: 'Balú Moda (579 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 550, y: 20, w: 85, h: 48, height: 12, doorNodeId: 'door-balu' },
+  { id: 'adidas_lib', name: 'Adidas Flagship (579 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 600, y: 80, w: 95, h: 55, height: 13, doorNodeId: 'door-adidas-lib' },
+  { id: 'hm_sambil', name: 'H&M (1.672 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 600, y: 198, w: 95, h: 58, height: 16, doorNodeId: 'door-hm' },
+  { id: 'aldo', name: 'Aldo Shoes (265 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 20, y: 80, w: 50, h: 50, height: 11, doorNodeId: 'door-aldo' },
+  { id: 'planeta_sports', name: 'Planeta Sports', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 280, y: 20, w: 50, h: 48, height: 10, doorNodeId: 'door-planetasports-lib' },
+
+  // --- ALA OESTE: EXTERIOR (Plaza Jardín / Fachada Oeste) ---
+  { id: 'al_giorno_lib', name: 'Al Giorno', category: 'food', floorId: LEVEL_LIBERTADOR, x: 80, y: 80, w: 26, h: 30, height: 8, doorNodeId: 'door-algiorno-lib' },
+  { id: 'crocs_lib', name: 'Crocs (73 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 20, y: 135, w: 45, h: 22, height: 8, doorNodeId: 'door-crocs-lib' },
+  { id: 'ax_armani', name: 'A|X Armani Exchange (125 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 20, y: 160, w: 45, h: 22, height: 9, doorNodeId: 'door-ax' },
+  { id: 'yuju_lib', name: 'Yuju (82 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 20, y: 185, w: 45, h: 22, height: 7, doorNodeId: 'door-yuju-lib' },
+  { id: 'bancaribe', name: 'Bancaribe (361 m²)', category: 'finance', floorId: LEVEL_LIBERTADOR, x: 20, y: 260, w: 40, h: 22, height: 9, doorNodeId: 'door-bancaribe' },
+  { id: 'fashion_look_lib', name: 'Fashion Look (145 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 20, y: 285, w: 40, h: 22, height: 8, doorNodeId: 'door-fashionlook-lib' },
+  { id: 'fashion_look_shoes', name: 'Fashion Look Shoes (171 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 20, y: 310, w: 40, h: 22, height: 8, doorNodeId: 'door-fashionlookshoes' },
+  { id: 'oboticario', name: 'O Boticário (105 m²)', category: 'health', floorId: LEVEL_LIBERTADOR, x: 20, y: 335, w: 40, h: 22, height: 8, doorNodeId: 'door-oboticario' },
+
+  // --- GALERÍA NORTE: EXTERIOR (Plaza La Fuente a Plaza El Arte) ---
+  { id: 'granier', name: 'Granier (113 m²)', category: 'food', floorId: LEVEL_LIBERTADOR, x: 195, y: 20, w: 20, h: 48, height: 8, doorNodeId: 'door-granier' },
+  { id: 'solo_chicas', name: 'Solo Chicas (113 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 218, y: 20, w: 20, h: 48, height: 8, doorNodeId: 'door-solochicas' },
+  { id: 'byrichh', name: 'Byrichh', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 240, y: 20, w: 18, h: 48, height: 7, doorNodeId: 'door-byrichh' },
+  { id: 'habitu', name: 'Habitu', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 260, y: 20, w: 18, h: 48, height: 7, doorNodeId: 'door-habitu' },
+  { id: 'motarro', name: 'Motarro (148 m²)', category: 'services', floorId: LEVEL_LIBERTADOR, x: 333, y: 20, w: 22, h: 48, height: 8, doorNodeId: 'door-motarro' },
+  { id: 'sport_way', name: 'Sport Way (148 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 358, y: 20, w: 22, h: 48, height: 8, doorNodeId: 'door-sportway' },
+  { id: 'lucy_lingerie_lib', name: 'Lucy Lingerie (149 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 383, y: 20, w: 22, h: 48, height: 8, doorNodeId: 'door-lucylingerie' },
+  { id: 'calzados_beba', name: 'Calzados Beba (112 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 408, y: 20, w: 22, h: 48, height: 8, doorNodeId: 'door-calzadosbeba' },
+  { id: 'maxi_pets', name: 'Maxi Pets (117 m²)', category: 'services', floorId: LEVEL_LIBERTADOR, x: 433, y: 20, w: 22, h: 48, height: 8, doorNodeId: 'door-maxipets' },
+  { id: 'sunrisa', name: 'Sunrisa (117 m²)', category: 'health', floorId: LEVEL_LIBERTADOR, x: 458, y: 20, w: 22, h: 48, height: 8, doorNodeId: 'door-sunrisa' },
+
+  // --- GALERÍA NORTE: INTERIOR ---
+  { id: 'estivaneli_lib', name: 'Estivaneli', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 195, y: 78, w: 24, h: 28, height: 8, doorNodeId: 'door-estivaneli-lib' },
+  { id: 'rs_moda', name: 'RS Moda (87 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 222, y: 78, w: 24, h: 28, height: 8, doorNodeId: 'door-rsmoda' },
+  { id: 'movistar_lib', name: 'Movistar (134 m²)', category: 'tech', floorId: LEVEL_LIBERTADOR, x: 249, y: 78, w: 26, h: 28, height: 8, doorNodeId: 'door-movistar' },
+  { id: 'contexto', name: 'Contexto (149 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 278, y: 78, w: 26, h: 28, height: 8, doorNodeId: 'door-contexto' },
+  { id: 'emporio_fumador', name: 'Emporio del Fumador (134 m²)', category: 'services', floorId: LEVEL_LIBERTADOR, x: 307, y: 78, w: 24, h: 28, height: 7, doorNodeId: 'door-emporio' },
+  { id: 'unico_lib', name: 'Unico (135 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 334, y: 78, w: 24, h: 28, height: 8, doorNodeId: 'door-unico' },
+  { id: 'bambino', name: 'Bambino (127 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 361, y: 78, w: 24, h: 28, height: 8, doorNodeId: 'door-bambino' },
+  { id: 'kicks', name: 'Kicks (133 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 388, y: 78, w: 24, h: 28, height: 8, doorNodeId: 'door-kicks' },
+  { id: 'camelo_cosmetic', name: 'Camelo Cosmetic', category: 'health', floorId: LEVEL_LIBERTADOR, x: 415, y: 78, w: 22, h: 28, height: 7, doorNodeId: 'door-camelocosmetic' },
+  { id: 'camisisima', name: 'Camisísima', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 440, y: 78, w: 24, h: 28, height: 8, doorNodeId: 'door-camisisima' },
+  { id: 'ceo_lib', name: 'CEO (215 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 467, y: 78, w: 35, h: 28, height: 9, doorNodeId: 'door-ceo' },
+
+  // --- BLOQUE DIAGONAL / OESTE CENTRAL (Fila superior) ---
+  { id: 'box_lib', name: 'Box (142 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 185, y: 115, w: 24, h: 18, height: 7, doorNodeId: 'door-box-lib' },
+  { id: 'fountain_store', name: 'Fountain (102 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 212, y: 115, w: 24, h: 18, height: 7, doorNodeId: 'door-fountainstore' },
+  { id: 'lafayette', name: 'Lafayette Óptica (75 m²)', category: 'health', floorId: LEVEL_LIBERTADOR, x: 239, y: 115, w: 24, h: 18, height: 7, doorNodeId: 'door-lafayette' },
+  { id: 'sensacion_23', name: 'Sensación 23 (86 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 266, y: 115, w: 24, h: 18, height: 7, doorNodeId: 'door-sensacion23' },
+  { id: 'sensacion_footwear', name: 'Sensación Footwear', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 293, y: 115, w: 24, h: 18, height: 7, doorNodeId: 'door-sensacionfootwear' },
+
+  // --- BLOQUE CENTRAL (Fila inferior: L-R15 a L-R35) ---
+  { id: 'joyeria_reims', name: 'Joyería Reims (103 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 185, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-reims' },
+  { id: 'evas_store', name: "Eva's Store (99 m²)", category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 209, y: 150, w: 22, h: 28, height: 7, doorNodeId: 'door-evasstore' },
+  { id: 'hummer_jeans', name: 'Hummer Jeans (99 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 233, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-hummerjeans' },
+  { id: 'new_balance', name: 'New Balance (137 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 257, y: 150, w: 24, h: 28, height: 9, doorNodeId: 'door-newbalance' },
+  { id: 'jump_lib', name: 'Jump (151 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 283, y: 150, w: 24, h: 28, height: 8, doorNodeId: 'door-jump-lib' },
+  { id: 'diesel_lib', name: 'Diesel (101 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 309, y: 150, w: 22, h: 28, height: 9, doorNodeId: 'door-diesel' },
+  { id: 'radical', name: 'Radical (136 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 333, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-radical' },
+  { id: 'twins', name: 'Twins (147 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 357, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-twins' },
+  { id: 'depofit', name: 'Depofit (120 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 381, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-depofit' },
+  { id: 'kenneth_cole', name: 'Kenneth Cole (100 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 405, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-kennethcole' },
+  { id: 'dasher', name: 'Dasher (114 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 429, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-dasher' },
+  { id: 'samsonite', name: 'Samsonite (100 m²)', category: 'services', floorId: LEVEL_LIBERTADOR, x: 453, y: 150, w: 22, h: 28, height: 8, doorNodeId: 'door-samsonite' },
+
+  // --- ALA ESTE / DIAGONAL A PLAZA EL ARTE ---
+  { id: 'adventure_sport', name: 'Adventure Sport (124 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 508, y: 130, w: 26, h: 24, height: 8, doorNodeId: 'door-adventuresport' },
+  { id: 'siete_camicie', name: '7 Camicie (40 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 508, y: 157, w: 26, h: 24, height: 7, doorNodeId: 'door-7camicie' },
+  { id: 'retro_king', name: 'Retro King', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 508, y: 184, w: 26, h: 24, height: 7, doorNodeId: 'door-retroking' },
+
+  // --- PASILLO SUR: EXTERIOR (Plaza Jardín a Plaza Central) ---
+  { id: 'sandro_lib', name: 'Sandro (125 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 105, y: 265, w: 30, h: 45, height: 8, doorNodeId: 'door-sandro-lib' },
+  { id: 'ciudad_alternativa', name: 'Ciudad Alternativa (102 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 138, y: 265, w: 22, h: 45, height: 8, doorNodeId: 'door-ciudadalternativa' },
+  { id: 'womensecret_lib', name: "Women'secret (116 m²)", category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 163, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-womensecret-lib' },
+  { id: 'joan_david', name: 'Joan & David (180 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 190, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-joandavid' },
+  { id: 'calvin_klein', name: 'Calvin Klein (180 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 217, y: 265, w: 26, h: 45, height: 9, doorNodeId: 'door-calvinklein' },
+  { id: 'cole_haan', name: 'Cole Haan (93 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 246, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-colehaan' },
+  { id: 'moixi', name: 'Moixi (238 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 273, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-moixi' },
+
+  // --- PASILLO SUR: EXTERIOR (Plaza Central a Plaza Música) ---
+  { id: 'saks_avenue', name: 'Saks Avenue (101 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 385, y: 265, w: 22, h: 45, height: 8, doorNodeId: 'door-saksavenue' },
+  { id: 'champion', name: 'Champion (90 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 410, y: 265, w: 22, h: 45, height: 8, doorNodeId: 'door-champion' },
+  { id: 'apolo_lib', name: 'Apolo (154 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 435, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-apolo-lib' },
+  { id: 'mercantil', name: 'Banco Mercantil (107 m²)', category: 'finance', floorId: LEVEL_LIBERTADOR, x: 462, y: 265, w: 22, h: 45, height: 8, doorNodeId: 'door-mercantil' },
+  { id: 'shana', name: 'Shana (148 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 487, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-shana' },
+  { id: 'only_for_kids', name: 'Only For Kids (82 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 514, y: 265, w: 22, h: 45, height: 7, doorNodeId: 'door-onlyforkids' },
+];
+
+export const floorLibertadorData: MapFloor = {
+  id: LEVEL_LIBERTADOR,
+  name: 'Nivel Libertador',
+  level: 3,
+  width: 720,
+  height: 360,
+  areas: [
+    { id: 'corridor-arc-3', kind: 'corridor', rect: { x: 40, y: 60, w: 640, h: 220 } },
+    { id: 'plaza-jardin-3', kind: 'plaza', rect: { x: 50, y: 220, w: 60, h: 60 } },
+    { id: 'plaza-fuente-3', kind: 'plaza', rect: { x: 150, y: 50, w: 60, h: 60 } },
+    { id: 'plaza-central-3', kind: 'plaza', rect: { x: 320, y: 220, w: 60, h: 60 } },
+    { id: 'plaza-arte-3', kind: 'plaza', rect: { x: 500, y: 50, w: 60, h: 60 } },
+    { id: 'plaza-musica-3', kind: 'plaza', rect: { x: 560, y: 220, w: 60, h: 60 } },
+  ],
+  obstacles: [],
+  props: propsSambilLibertador,
+};
+
+export const nodesLibertador: NavNode[] = [
+  // 5 Plazas Principales
+  { id: `pj-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 72, y: 250, kind: 'entrance', connections: [`cw-s-${LEVEL_LIBERTADOR}`, `cw-far-s-${LEVEL_LIBERTADOR}`, `cs-1-${LEVEL_LIBERTADOR}`, 'v-pj-3', 'door-yuju-lib', 'door-bancaribe'] },
+  { id: `plf-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 175, y: 73, kind: 'corridor', connections: [`cw-n-${LEVEL_LIBERTADOR}`, `cn-1-${LEVEL_LIBERTADOR}`, `ca-1-${LEVEL_LIBERTADOR}`, 'v-plf-3', 'door-zara-lib', 'door-granier', 'door-estivaneli-lib'] },
+  { id: `pc-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 350, y: 250, kind: 'corridor', connections: [`cs-3-${LEVEL_LIBERTADOR}`, `cs-4-${LEVEL_LIBERTADOR}`, `ce-diag-3-${LEVEL_LIBERTADOR}`, 'v-pc-3'] },
+  { id: `pea-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 530, y: 73, kind: 'corridor', connections: [`cn-4-${LEVEL_LIBERTADOR}`, `ce-1-${LEVEL_LIBERTADOR}`, `ce-diag-1-${LEVEL_LIBERTADOR}`, 'v-pea-3', 'door-balu', 'door-sunrisa'] },
+  { id: `plm-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 584, y: 250, kind: 'corridor', connections: [`ce-3-${LEVEL_LIBERTADOR}`, `cs-6-${LEVEL_LIBERTADOR}`, 'v-plm-3', 'door-hm'] },
+
+  // Corredor Oeste (x = 72)
+  { id: `cw-n-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 72, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_LIBERTADOR}`, `cw-mid-${LEVEL_LIBERTADOR}`, 'door-aldo', 'door-algiorno-lib'] },
+  { id: `cw-mid-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 72, y: 160, kind: 'corridor', connections: [`cw-n-${LEVEL_LIBERTADOR}`, `cw-s-${LEVEL_LIBERTADOR}`, 'door-crocs-lib', 'door-ax'] },
+  { id: `cw-s-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 72, y: 220, kind: 'corridor', connections: [`cw-mid-${LEVEL_LIBERTADOR}`, `pj-${LEVEL_LIBERTADOR}`] },
+  { id: `cw-far-s-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 65, y: 290, kind: 'corridor', connections: [`pj-${LEVEL_LIBERTADOR}`, 'door-fashionlook-lib', 'door-fashionlookshoes', 'door-oboticario'] },
+
+  // Corredor Norte (y = 73)
+  { id: `cn-1-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 250, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_LIBERTADOR}`, `cn-2-${LEVEL_LIBERTADOR}`, 'door-solochicas', 'door-byrichh', 'door-habitu', 'door-rsmoda', 'door-movistar'] },
+  { id: `cn-2-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 330, y: 73, kind: 'corridor', connections: [`cn-1-${LEVEL_LIBERTADOR}`, `cn-3-${LEVEL_LIBERTADOR}`, 'door-planetasports-lib', 'door-motarro', 'door-contexto', 'door-emporio'] },
+  { id: `cn-3-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 400, y: 73, kind: 'corridor', connections: [`cn-2-${LEVEL_LIBERTADOR}`, `cn-4-${LEVEL_LIBERTADOR}`, 'door-sportway', 'door-lucylingerie', 'door-unico', 'door-bambino', 'door-kicks'] },
+  { id: `cn-4-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 470, y: 73, kind: 'corridor', connections: [`cn-3-${LEVEL_LIBERTADOR}`, `pea-${LEVEL_LIBERTADOR}`, 'door-calzadosbeba', 'door-maxipets', 'door-camelocosmetic', 'door-camisisima', 'door-ceo'] },
+
+  // Pasillo Central Superior (Fila L-C8 a L-C16, y = 108)
+  { id: `ca-1-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 175, y: 108, kind: 'corridor', connections: [`plf-${LEVEL_LIBERTADOR}`, `ca-2-${LEVEL_LIBERTADOR}`, `cb-1-${LEVEL_LIBERTADOR}`, 'door-box-lib'] },
+  { id: `ca-2-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 240, y: 108, kind: 'corridor', connections: [`ca-1-${LEVEL_LIBERTADOR}`, `ca-3-${LEVEL_LIBERTADOR}`, 'door-fountainstore', 'door-lafayette'] },
+  { id: `ca-3-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 325, y: 108, kind: 'corridor', connections: [`ca-2-${LEVEL_LIBERTADOR}`, `cb-3-${LEVEL_LIBERTADOR}`, 'door-sensacion23', 'door-sensacionfootwear'] },
+
+  // Pasillo Central Inferior (Fila L-R15 a L-R37, y = 142)
+  { id: `cb-1-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 175, y: 142, kind: 'corridor', connections: [`ca-1-${LEVEL_LIBERTADOR}`, `cb-2-${LEVEL_LIBERTADOR}`, `cs-1-${LEVEL_LIBERTADOR}`, 'door-reims'] },
+  { id: `cb-2-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 240, y: 142, kind: 'corridor', connections: [`cb-1-${LEVEL_LIBERTADOR}`, `cb-3-${LEVEL_LIBERTADOR}`, 'door-evasstore', 'door-hummerjeans', 'door-newbalance'] },
+  { id: `cb-3-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 325, y: 142, kind: 'corridor', connections: [`cb-2-${LEVEL_LIBERTADOR}`, `cb-4-${LEVEL_LIBERTADOR}`, `ca-3-${LEVEL_LIBERTADOR}`, 'door-jump-lib', 'door-diesel', 'door-radical'] },
+  { id: `cb-4-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 400, y: 142, kind: 'corridor', connections: [`cb-3-${LEVEL_LIBERTADOR}`, `cb-5-${LEVEL_LIBERTADOR}`, 'door-twins', 'door-depofit', 'door-kennethcole'] },
+  { id: `cb-5-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 485, y: 142, kind: 'corridor', connections: [`cb-4-${LEVEL_LIBERTADOR}`, `cs-5-${LEVEL_LIBERTADOR}`, 'door-dasher', 'door-samsonite'] },
+
+  // Diagonal Este (Plaza El Arte a Plaza Central, x = 495)
+  { id: `ce-diag-1-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 495, y: 115, kind: 'corridor', connections: [`pea-${LEVEL_LIBERTADOR}`, `ce-diag-2-${LEVEL_LIBERTADOR}`] },
+  { id: `ce-diag-2-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 495, y: 160, kind: 'corridor', connections: [`ce-diag-1-${LEVEL_LIBERTADOR}`, `ce-diag-3-${LEVEL_LIBERTADOR}`, 'door-adventuresport', 'door-7camicie'] },
+  { id: `ce-diag-3-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 495, y: 215, kind: 'corridor', connections: [`ce-diag-2-${LEVEL_LIBERTADOR}`, `pc-${LEVEL_LIBERTADOR}`, 'door-retroking'] },
+
+  // Corredor Este (x = 584)
+  { id: `ce-1-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 584, y: 73, kind: 'corridor', connections: [`pea-${LEVEL_LIBERTADOR}`, `ce-2-${LEVEL_LIBERTADOR}`, 'door-adidas-lib'] },
+  { id: `ce-2-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 584, y: 130, kind: 'corridor', connections: [`ce-1-${LEVEL_LIBERTADOR}`, `ce-3-${LEVEL_LIBERTADOR}`] },
+  { id: `ce-3-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 584, y: 180, kind: 'corridor', connections: [`ce-2-${LEVEL_LIBERTADOR}`, `plm-${LEVEL_LIBERTADOR}`] },
+
+  // Corredor Sur (y = 250)
+  { id: `cs-1-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 150, y: 250, kind: 'corridor', connections: [`pj-${LEVEL_LIBERTADOR}`, `cs-2-${LEVEL_LIBERTADOR}`, `cb-1-${LEVEL_LIBERTADOR}`, 'door-sandro-lib', 'door-ciudadalternativa'] },
+  { id: `cs-2-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 210, y: 250, kind: 'corridor', connections: [`cs-1-${LEVEL_LIBERTADOR}`, `cs-3-${LEVEL_LIBERTADOR}`, 'door-womensecret-lib', 'door-joandavid', 'door-calvinklein'] },
+  { id: `cs-3-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 280, y: 250, kind: 'corridor', connections: [`cs-2-${LEVEL_LIBERTADOR}`, `pc-${LEVEL_LIBERTADOR}`, 'door-colehaan', 'door-moixi'] },
+  { id: `cs-4-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 420, y: 250, kind: 'corridor', connections: [`pc-${LEVEL_LIBERTADOR}`, `cs-5-${LEVEL_LIBERTADOR}`, 'door-saksavenue', 'door-champion', 'door-apolo-lib'] },
+  { id: `cs-5-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 485, y: 250, kind: 'corridor', connections: [`cs-4-${LEVEL_LIBERTADOR}`, `cs-6-${LEVEL_LIBERTADOR}`, `cb-5-${LEVEL_LIBERTADOR}`, 'door-mercantil', 'door-shana', 'door-onlyforkids'] },
+  { id: `cs-6-${LEVEL_LIBERTADOR}`, floorId: LEVEL_LIBERTADOR, x: 560, y: 250, kind: 'corridor', connections: [`cs-5-${LEVEL_LIBERTADOR}`, `plm-${LEVEL_LIBERTADOR}`] },
+
+  // Puertas Nivel Libertador
+  { id: 'door-zara-lib', floorId: LEVEL_LIBERTADOR, x: 160, y: 68, kind: 'door', connections: [`plf-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-balu', floorId: LEVEL_LIBERTADOR, x: 550, y: 50, kind: 'door', connections: [`pea-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-adidas-lib', floorId: LEVEL_LIBERTADOR, x: 600, y: 105, kind: 'door', connections: [`ce-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-hm', floorId: LEVEL_LIBERTADOR, x: 600, y: 227, kind: 'door', connections: [`plm-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-aldo', floorId: LEVEL_LIBERTADOR, x: 70, y: 105, kind: 'door', connections: [`cw-n-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-planetasports-lib', floorId: LEVEL_LIBERTADOR, x: 305, y: 68, kind: 'door', connections: [`cn-2-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-algiorno-lib', floorId: LEVEL_LIBERTADOR, x: 80, y: 95, kind: 'door', connections: [`cw-n-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-crocs-lib', floorId: LEVEL_LIBERTADOR, x: 65, y: 146, kind: 'door', connections: [`cw-mid-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-ax', floorId: LEVEL_LIBERTADOR, x: 65, y: 171, kind: 'door', connections: [`cw-mid-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-yuju-lib', floorId: LEVEL_LIBERTADOR, x: 65, y: 196, kind: 'door', connections: [`pj-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-bancaribe', floorId: LEVEL_LIBERTADOR, x: 60, y: 271, kind: 'door', connections: [`pj-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-fashionlook-lib', floorId: LEVEL_LIBERTADOR, x: 60, y: 296, kind: 'door', connections: [`cw-far-s-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-fashionlookshoes', floorId: LEVEL_LIBERTADOR, x: 60, y: 321, kind: 'door', connections: [`cw-far-s-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-oboticario', floorId: LEVEL_LIBERTADOR, x: 60, y: 346, kind: 'door', connections: [`cw-far-s-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-granier', floorId: LEVEL_LIBERTADOR, x: 205, y: 68, kind: 'door', connections: [`plf-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-solochicas', floorId: LEVEL_LIBERTADOR, x: 228, y: 68, kind: 'door', connections: [`cn-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-byrichh', floorId: LEVEL_LIBERTADOR, x: 249, y: 68, kind: 'door', connections: [`cn-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-habitu', floorId: LEVEL_LIBERTADOR, x: 269, y: 68, kind: 'door', connections: [`cn-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-motarro', floorId: LEVEL_LIBERTADOR, x: 344, y: 68, kind: 'door', connections: [`cn-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-sportway', floorId: LEVEL_LIBERTADOR, x: 369, y: 68, kind: 'door', connections: [`cn-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-lucylingerie', floorId: LEVEL_LIBERTADOR, x: 394, y: 68, kind: 'door', connections: [`cn-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-calzadosbeba', floorId: LEVEL_LIBERTADOR, x: 419, y: 68, kind: 'door', connections: [`cn-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-maxipets', floorId: LEVEL_LIBERTADOR, x: 444, y: 68, kind: 'door', connections: [`cn-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-sunrisa', floorId: LEVEL_LIBERTADOR, x: 469, y: 68, kind: 'door', connections: [`pea-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-estivaneli-lib', floorId: LEVEL_LIBERTADOR, x: 207, y: 78, kind: 'door', connections: [`plf-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-rsmoda', floorId: LEVEL_LIBERTADOR, x: 234, y: 78, kind: 'door', connections: [`cn-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-movistar', floorId: LEVEL_LIBERTADOR, x: 262, y: 78, kind: 'door', connections: [`cn-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-contexto', floorId: LEVEL_LIBERTADOR, x: 291, y: 78, kind: 'door', connections: [`cn-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-emporio', floorId: LEVEL_LIBERTADOR, x: 319, y: 78, kind: 'door', connections: [`cn-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-unico', floorId: LEVEL_LIBERTADOR, x: 346, y: 78, kind: 'door', connections: [`cn-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-bambino', floorId: LEVEL_LIBERTADOR, x: 373, y: 78, kind: 'door', connections: [`cn-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-kicks', floorId: LEVEL_LIBERTADOR, x: 400, y: 78, kind: 'door', connections: [`cn-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-camelocosmetic', floorId: LEVEL_LIBERTADOR, x: 426, y: 78, kind: 'door', connections: [`cn-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-camisisima', floorId: LEVEL_LIBERTADOR, x: 452, y: 78, kind: 'door', connections: [`cn-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-ceo', floorId: LEVEL_LIBERTADOR, x: 484, y: 78, kind: 'door', connections: [`cn-4-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-box-lib', floorId: LEVEL_LIBERTADOR, x: 185, y: 124, kind: 'door', connections: [`ca-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-fountainstore', floorId: LEVEL_LIBERTADOR, x: 224, y: 115, kind: 'door', connections: [`ca-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-lafayette', floorId: LEVEL_LIBERTADOR, x: 251, y: 115, kind: 'door', connections: [`ca-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-sensacion23', floorId: LEVEL_LIBERTADOR, x: 278, y: 115, kind: 'door', connections: [`ca-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-sensacionfootwear', floorId: LEVEL_LIBERTADOR, x: 305, y: 115, kind: 'door', connections: [`ca-3-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-reims', floorId: LEVEL_LIBERTADOR, x: 196, y: 150, kind: 'door', connections: [`cb-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-evasstore', floorId: LEVEL_LIBERTADOR, x: 220, y: 150, kind: 'door', connections: [`cb-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-hummerjeans', floorId: LEVEL_LIBERTADOR, x: 244, y: 150, kind: 'door', connections: [`cb-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-newbalance', floorId: LEVEL_LIBERTADOR, x: 269, y: 150, kind: 'door', connections: [`cb-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-jump-lib', floorId: LEVEL_LIBERTADOR, x: 295, y: 150, kind: 'door', connections: [`cb-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-diesel', floorId: LEVEL_LIBERTADOR, x: 320, y: 150, kind: 'door', connections: [`cb-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-radical', floorId: LEVEL_LIBERTADOR, x: 344, y: 150, kind: 'door', connections: [`cb-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-twins', floorId: LEVEL_LIBERTADOR, x: 368, y: 150, kind: 'door', connections: [`cb-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-depofit', floorId: LEVEL_LIBERTADOR, x: 392, y: 150, kind: 'door', connections: [`cb-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-kennethcole', floorId: LEVEL_LIBERTADOR, x: 416, y: 150, kind: 'door', connections: [`cb-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-dasher', floorId: LEVEL_LIBERTADOR, x: 440, y: 150, kind: 'door', connections: [`cb-5-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-samsonite', floorId: LEVEL_LIBERTADOR, x: 464, y: 150, kind: 'door', connections: [`cb-5-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-adventuresport', floorId: LEVEL_LIBERTADOR, x: 508, y: 142, kind: 'door', connections: [`ce-diag-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-7camicie', floorId: LEVEL_LIBERTADOR, x: 508, y: 169, kind: 'door', connections: [`ce-diag-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-retroking', floorId: LEVEL_LIBERTADOR, x: 508, y: 196, kind: 'door', connections: [`ce-diag-3-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-sandro-lib', floorId: LEVEL_LIBERTADOR, x: 120, y: 265, kind: 'door', connections: [`cs-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-ciudadalternativa', floorId: LEVEL_LIBERTADOR, x: 149, y: 265, kind: 'door', connections: [`cs-1-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-womensecret-lib', floorId: LEVEL_LIBERTADOR, x: 175, y: 265, kind: 'door', connections: [`cs-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-joandavid', floorId: LEVEL_LIBERTADOR, x: 202, y: 265, kind: 'door', connections: [`cs-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-calvinklein', floorId: LEVEL_LIBERTADOR, x: 230, y: 265, kind: 'door', connections: [`cs-2-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-colehaan', floorId: LEVEL_LIBERTADOR, x: 258, y: 265, kind: 'door', connections: [`cs-3-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-moixi', floorId: LEVEL_LIBERTADOR, x: 285, y: 265, kind: 'door', connections: [`cs-3-${LEVEL_LIBERTADOR}`] },
+
+  { id: 'door-saksavenue', floorId: LEVEL_LIBERTADOR, x: 396, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-champion', floorId: LEVEL_LIBERTADOR, x: 421, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-apolo-lib', floorId: LEVEL_LIBERTADOR, x: 447, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-mercantil', floorId: LEVEL_LIBERTADOR, x: 473, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-shana', floorId: LEVEL_LIBERTADOR, x: 499, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_LIBERTADOR}`] },
+  { id: 'door-onlyforkids', floorId: LEVEL_LIBERTADOR, x: 525, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_LIBERTADOR}`] },
+];

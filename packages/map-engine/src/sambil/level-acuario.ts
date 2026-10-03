@@ -1,0 +1,236 @@
+import type { MapFloor, MapStore, NavNode, MapProp } from '../types';
+import { LEVEL_ACUARIO } from './constants';
+
+export const propsSambilAcuario: MapProp[] = [
+  { id: 'fnt-acuario-1', kind: 'fountain', rect: { x: 152, y: 52, w: 14, h: 14 } },
+  { id: 'arb-ac1', kind: 'tree', x: 90, y: 235 },
+  { id: 'arb-ac2', kind: 'tree', x: 310, y: 220 },
+  { id: 'arb-ac3', kind: 'tree', x: 550, y: 235 },
+  { id: 'banca-ac1', kind: 'bench', rect: { x: 130, y: 135, w: 14, h: 4 } },
+  { id: 'banca-ac2', kind: 'bench', rect: { x: 430, y: 135, w: 14, h: 4 } },
+  { id: 'esc-ac1', kind: 'escalator', rect: { x: 135, y: 35, w: 10, h: 16 }, flow: 'max' },
+  { id: 'esc-ac2', kind: 'escalator', rect: { x: 515, y: 35, w: 10, h: 16 }, flow: 'max' },
+  { id: 'esc-ac3', kind: 'escalator', rect: { x: 330, y: 280, w: 16, h: 10 }, flow: 'max' },
+  { id: 'info-ac1', kind: 'poi', poi: 'info', x: 350, y: 245, z: 18 },
+  { id: 'wc-ac1', kind: 'poi', poi: 'wc', x: 72, y: 260, z: 16 },
+  { id: 'wc-ac2', kind: 'poi', poi: 'wc', x: 584, y: 260, z: 16 },
+  { id: 'atm-ac1', kind: 'poi', poi: 'atm', x: 540, y: 55, z: 16 },
+];
+
+export const storesSambilAcuario: MapStore[] = [
+  // --- ANCLAS PRINCIPALES (Fieles al plano arquitectónico oficial) ---
+  { id: 'zara', name: 'ZARA (2.500 m²)', category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 20, w: 140, h: 48, height: 14, doorNodeId: 'door-zara' },
+  { id: 'megan', name: 'Megan (1.401 m²)', category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 80, w: 50, h: 50, height: 13, doorNodeId: 'door-megan' },
+  { id: 'ninja_park', name: 'Ninja Park (1.800 m²)', category: 'entertainment', floorId: LEVEL_ACUARIO, x: 600, y: 198, w: 95, h: 58, height: 16, doorNodeId: 'door-ninjapark' },
+  { id: 'miniso', name: 'Miniso', category: 'home', floorId: LEVEL_ACUARIO, x: 563, y: 265, w: 32, h: 45, height: 10, doorNodeId: 'door-miniso' },
+  { id: 'nike', name: 'Nike Store Sambil', category: 'fashion', floorId: LEVEL_ACUARIO, x: 597, y: 265, w: 50, h: 45, height: 11, doorNodeId: 'door-nike' },
+  { id: 'adidas', name: 'Adidas Originals', category: 'fashion', floorId: LEVEL_ACUARIO, x: 480, y: 20, w: 38, h: 48, height: 9, doorNodeId: 'door-adidas' },
+  { id: 'reebok', name: 'Reebok', category: 'fashion', floorId: LEVEL_ACUARIO, x: 522, y: 20, w: 32, h: 48, height: 8, doorNodeId: 'door-reebok' },
+  { id: 'madio', name: 'Madio', category: 'fashion', floorId: LEVEL_ACUARIO, x: 556, y: 20, w: 26, h: 48, height: 8, doorNodeId: 'door-madio' },
+  { id: 'tecniciencia', name: 'Tecni-Ciencia Libros', category: 'services', floorId: LEVEL_ACUARIO, x: 275, y: 150, w: 45, h: 32, height: 10, doorNodeId: 'door-tecniciencia' },
+
+  // --- ALA OESTE: EXTERIOR (Plaza Jardín a Plaza La Fuente) ---
+  { id: 'parfois', name: 'Parfois', category: 'fashion', floorId: LEVEL_ACUARIO, x: 80, y: 80, w: 26, h: 30, height: 8, doorNodeId: 'door-parfois' },
+  { id: 'timberland', name: 'Timberland', category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 135, w: 45, h: 22, height: 8, doorNodeId: 'door-timberland' },
+  { id: 'piso_uno', name: 'Piso Uno', category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 160, w: 45, h: 22, height: 8, doorNodeId: 'door-pisouno' },
+  { id: 'creso', name: 'Creso', category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 185, w: 45, h: 22, height: 8, doorNodeId: 'door-creso' },
+  { id: 'tizzas', name: "Tizza's", category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 260, w: 40, h: 22, height: 7, doorNodeId: 'door-tizzas' },
+  { id: 'hot_23', name: 'Hot 23', category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 285, w: 40, h: 22, height: 7, doorNodeId: 'door-hot23' },
+  { id: 'puriel', name: 'Puriel', category: 'fashion', floorId: LEVEL_ACUARIO, x: 20, y: 310, w: 40, h: 22, height: 7, doorNodeId: 'door-puriel' },
+  { id: 'componix', name: 'Componix', category: 'tech', floorId: LEVEL_ACUARIO, x: 20, y: 335, w: 40, h: 22, height: 7, doorNodeId: 'door-componix' },
+
+  // --- GALERÍA NORTE: EXTERIOR (Plaza La Fuente a Plaza El Arte) ---
+  { id: 'imagine', name: 'Imagine', category: 'fashion', floorId: LEVEL_ACUARIO, x: 195, y: 20, w: 25, h: 48, height: 8, doorNodeId: 'door-imagine' },
+  { id: 'mr_price', name: 'Mr Price', category: 'fashion', floorId: LEVEL_ACUARIO, x: 225, y: 20, w: 32, h: 48, height: 8, doorNodeId: 'door-mrprice' },
+  { id: 'latin_lover', name: 'Latin Lover', category: 'fashion', floorId: LEVEL_ACUARIO, x: 262, y: 20, w: 25, h: 48, height: 8, doorNodeId: 'door-latinlover' },
+  { id: 'palacio_blumer_ac', name: 'El Palacio del Blumer', category: 'fashion', floorId: LEVEL_ACUARIO, x: 292, y: 20, w: 25, h: 48, height: 8, doorNodeId: 'door-blumer-ac' },
+  { id: 'shopping_center', name: 'Shopping Center', category: 'fashion', floorId: LEVEL_ACUARIO, x: 322, y: 20, w: 30, h: 48, height: 8, doorNodeId: 'door-shoppingcenter' },
+  { id: 'perry_ellis', name: 'Perry Ellis', category: 'fashion', floorId: LEVEL_ACUARIO, x: 357, y: 20, w: 28, h: 48, height: 9, doorNodeId: 'door-perryellis' },
+  { id: 'waterproof', name: 'Waterproof', category: 'fashion', floorId: LEVEL_ACUARIO, x: 390, y: 20, w: 28, h: 48, height: 8, doorNodeId: 'door-waterproof' },
+  { id: 'aeropostale', name: 'Aeropostale', category: 'fashion', floorId: LEVEL_ACUARIO, x: 423, y: 20, w: 32, h: 48, height: 8, doorNodeId: 'door-aeropostale' },
+
+  // --- GALERÍA NORTE: INTERIOR ---
+  { id: 'epk', name: 'EPK', category: 'fashion', floorId: LEVEL_ACUARIO, x: 195, y: 78, w: 25, h: 28, height: 8, doorNodeId: 'door-epk' },
+  { id: 'columbia', name: 'Columbia Sportswear', category: 'fashion', floorId: LEVEL_ACUARIO, x: 225, y: 78, w: 26, h: 28, height: 8, doorNodeId: 'door-columbia' },
+  { id: 'pawer', name: 'Pawer', category: 'fashion', floorId: LEVEL_ACUARIO, x: 256, y: 78, w: 26, h: 28, height: 8, doorNodeId: 'door-pawer' },
+  { id: 'box', name: 'Box', category: 'fashion', floorId: LEVEL_ACUARIO, x: 287, y: 78, w: 38, h: 28, height: 8, doorNodeId: 'door-box' },
+  { id: 'travel_shop', name: 'Travel Shop', category: 'services', floorId: LEVEL_ACUARIO, x: 330, y: 78, w: 30, h: 28, height: 7, doorNodeId: 'door-travelshop' },
+  { id: 'super_juguetes', name: 'Super Juguetes', category: 'home', floorId: LEVEL_ACUARIO, x: 365, y: 78, w: 32, h: 28, height: 8, doorNodeId: 'door-superjuguetes' },
+  { id: 'perfumes_factory', name: 'Perfumes Factory', category: 'health', floorId: LEVEL_ACUARIO, x: 402, y: 78, w: 32, h: 28, height: 7, doorNodeId: 'door-perfumesfactory' },
+  { id: 'galaxy', name: 'Galaxy', category: 'fashion', floorId: LEVEL_ACUARIO, x: 439, y: 78, w: 32, h: 28, height: 7, doorNodeId: 'door-galaxy' },
+
+  // --- ALA ESTE: EXTERIOR ---
+  { id: 'she_ccs', name: 'SHE CCS', category: 'fashion', floorId: LEVEL_ACUARIO, x: 600, y: 20, w: 35, h: 28, height: 7, doorNodeId: 'door-sheccs' },
+  { id: 'filioptic', name: 'Filioptic', category: 'health', floorId: LEVEL_ACUARIO, x: 600, y: 52, w: 35, h: 28, height: 7, doorNodeId: 'door-filioptic' },
+  { id: 'liah', name: 'Liah', category: 'fashion', floorId: LEVEL_ACUARIO, x: 600, y: 84, w: 35, h: 28, height: 8, doorNodeId: 'door-liah' },
+  { id: 'rc2', name: 'RC2', category: 'fashion', floorId: LEVEL_ACUARIO, x: 600, y: 116, w: 35, h: 28, height: 7, doorNodeId: 'door-rc2' },
+
+  // --- ALA ESTE: INTERIOR / DIAGONAL ---
+  { id: 'kickers', name: 'Kickers', category: 'fashion', floorId: LEVEL_ACUARIO, x: 460, y: 130, w: 24, h: 24, height: 7, doorNodeId: 'door-kickers' },
+  { id: 'lili_pink', name: 'Lili Pink', category: 'fashion', floorId: LEVEL_ACUARIO, x: 460, y: 157, w: 24, h: 24, height: 7, doorNodeId: 'door-lilipink' },
+  { id: 'mundo_escolar', name: 'Mundo Escolar', category: 'services', floorId: LEVEL_ACUARIO, x: 505, y: 130, w: 26, h: 24, height: 7, doorNodeId: 'door-mundoescolar' },
+  { id: 'piccadilly', name: 'Piccadilly', category: 'fashion', floorId: LEVEL_ACUARIO, x: 505, y: 157, w: 26, h: 24, height: 7, doorNodeId: 'door-piccadilly' },
+  { id: 'play_hatsoff', name: 'Play / Hats Off', category: 'fashion', floorId: LEVEL_ACUARIO, x: 505, y: 184, w: 26, h: 24, height: 7, doorNodeId: 'door-playhatsoff' },
+  { id: 'capriccio', name: 'Capriccio', category: 'fashion', floorId: LEVEL_ACUARIO, x: 540, y: 142, w: 28, h: 24, height: 7, doorNodeId: 'door-capriccio' },
+
+  // --- PASILLO SUR: EXTERIOR (Plaza Jardín a Plaza Central) ---
+  { id: 'estivaneli_ac', name: 'Estivaneli', category: 'fashion', floorId: LEVEL_ACUARIO, x: 105, y: 265, w: 38, h: 45, height: 9, doorNodeId: 'door-estivaneli-ac' },
+  { id: 'wendys_kids', name: "Wendy's Kids", category: 'fashion', floorId: LEVEL_ACUARIO, x: 147, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-wendys' },
+  { id: 'mulatos', name: 'Mulatos', category: 'fashion', floorId: LEVEL_ACUARIO, x: 174, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-mulatos' },
+  { id: 'guess', name: 'Guess', category: 'fashion', floorId: LEVEL_ACUARIO, x: 201, y: 265, w: 24, h: 45, height: 8, doorNodeId: 'door-guess' },
+  { id: 'modish', name: 'Modish', category: 'fashion', floorId: LEVEL_ACUARIO, x: 228, y: 265, w: 24, h: 45, height: 7, doorNodeId: 'door-modish' },
+  { id: 'muy_mucho', name: 'Muy Mucho', category: 'home', floorId: LEVEL_ACUARIO, x: 255, y: 265, w: 24, h: 45, height: 7, doorNodeId: 'door-muymucho' },
+  { id: 'norton_wilson', name: 'Norton & Wilson', category: 'fashion', floorId: LEVEL_ACUARIO, x: 282, y: 265, w: 26, h: 45, height: 8, doorNodeId: 'door-norton' },
+
+  // --- PASILLO SUR: EXTERIOR (Plaza Central a Plaza La Música) ---
+  { id: 'remington_center', name: 'Remington Center', category: 'services', floorId: LEVEL_ACUARIO, x: 385, y: 265, w: 20, h: 45, height: 7, doorNodeId: 'door-remington' },
+  { id: 'ilahui', name: 'Ilahui', category: 'home', floorId: LEVEL_ACUARIO, x: 407, y: 265, w: 20, h: 45, height: 7, doorNodeId: 'door-ilahui' },
+  { id: 'ovejita', name: 'Ovejita', category: 'fashion', floorId: LEVEL_ACUARIO, x: 429, y: 265, w: 20, h: 45, height: 7, doorNodeId: 'door-ovejita' },
+  { id: 'star_kids', name: 'Star Kids', category: 'fashion', floorId: LEVEL_ACUARIO, x: 451, y: 265, w: 20, h: 45, height: 7, doorNodeId: 'door-starkids' },
+  { id: 'us_polo', name: 'U.S. Polo Assn.', category: 'fashion', floorId: LEVEL_ACUARIO, x: 473, y: 265, w: 22, h: 45, height: 8, doorNodeId: 'door-uspolo' },
+  { id: 'tiendas_rori', name: 'Tiendas Rori', category: 'fashion', floorId: LEVEL_ACUARIO, x: 497, y: 265, w: 22, h: 45, height: 8, doorNodeId: 'door-rori' },
+  { id: 'tech_360', name: 'Tech 360', category: 'tech', floorId: LEVEL_ACUARIO, x: 521, y: 265, w: 20, h: 45, height: 7, doorNodeId: 'door-tech360' },
+  { id: 'movilnet', name: 'Movilnet', category: 'tech', floorId: LEVEL_ACUARIO, x: 543, y: 265, w: 18, h: 45, height: 7, doorNodeId: 'door-movilnet' },
+
+  // --- BLOQUE CENTRAL INTERIOR ---
+  { id: 'alby', name: 'Alby', category: 'fashion', floorId: LEVEL_ACUARIO, x: 185, y: 155, w: 24, h: 25, height: 8, doorNodeId: 'door-alby' },
+  { id: 'clarks', name: 'Clarks', category: 'fashion', floorId: LEVEL_ACUARIO, x: 212, y: 155, w: 24, h: 25, height: 8, doorNodeId: 'door-clarks' },
+  { id: 'wonka_toys', name: 'Wonka Toys', category: 'home', floorId: LEVEL_ACUARIO, x: 239, y: 155, w: 24, h: 25, height: 8, doorNodeId: 'door-wonkatoys' },
+  { id: 'hero', name: 'Hero', category: 'fashion', floorId: LEVEL_ACUARIO, x: 330, y: 150, w: 24, h: 28, height: 8, doorNodeId: 'door-hero' },
+  { id: 'oro_express', name: 'Oro Express', category: 'fashion', floorId: LEVEL_ACUARIO, x: 357, y: 150, w: 24, h: 28, height: 7, doorNodeId: 'door-oroexpress' },
+  { id: 'perfumeria_nevada', name: 'Perfumería Nevada', category: 'health', floorId: LEVEL_ACUARIO, x: 384, y: 150, w: 26, h: 28, height: 7, doorNodeId: 'door-nevada' },
+];
+
+export const floorAcuarioData: MapFloor = {
+  id: LEVEL_ACUARIO,
+  name: 'Nivel Acuario',
+  level: 2,
+  width: 720,
+  height: 360,
+  areas: [
+    { id: 'corridor-arc-2', kind: 'corridor', rect: { x: 40, y: 60, w: 640, h: 220 } },
+    { id: 'plaza-jardin-2', kind: 'plaza', rect: { x: 50, y: 220, w: 60, h: 60 } },
+    { id: 'plaza-fuente-2', kind: 'plaza', rect: { x: 150, y: 50, w: 60, h: 60 } },
+    { id: 'plaza-central-2', kind: 'plaza', rect: { x: 320, y: 220, w: 60, h: 60 } },
+    { id: 'plaza-arte-2', kind: 'plaza', rect: { x: 500, y: 50, w: 60, h: 60 } },
+    { id: 'plaza-musica-2', kind: 'plaza', rect: { x: 560, y: 220, w: 60, h: 60 } },
+  ],
+  obstacles: [],
+  props: propsSambilAcuario,
+};
+
+export const nodesAcuario: NavNode[] = [
+  // 5 Plazas Principales
+  { id: `pj-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 72, y: 250, kind: 'entrance', connections: [`cw-s-${LEVEL_ACUARIO}`, `cw-far-s-${LEVEL_ACUARIO}`, `cs-1-${LEVEL_ACUARIO}`, 'v-pj-2', 'door-creso'] },
+  { id: `plf-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 180, y: 73, kind: 'corridor', connections: [`cw-n-${LEVEL_ACUARIO}`, `cn-1-${LEVEL_ACUARIO}`, `cc-w1-${LEVEL_ACUARIO}`, 'v-plf-2', 'door-zara', 'door-imagine', 'door-epk'] },
+  { id: `pc-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 350, y: 250, kind: 'corridor', connections: [`cs-3-${LEVEL_ACUARIO}`, `cs-4-${LEVEL_ACUARIO}`, `cc-w3-${LEVEL_ACUARIO}`, `cc-e3-${LEVEL_ACUARIO}`, 'v-pc-2', 'door-hero', 'door-oroexpress'] },
+  { id: `pea-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 530, y: 73, kind: 'corridor', connections: [`cn-4-${LEVEL_ACUARIO}`, `ce-1-${LEVEL_ACUARIO}`, `cc-e1-${LEVEL_ACUARIO}`, 'v-pea-2', 'door-reebok'] },
+  { id: `plm-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 584, y: 250, kind: 'corridor', connections: [`ce-3-${LEVEL_ACUARIO}`, `cs-6-${LEVEL_ACUARIO}`, 'v-plm-2', 'door-ninjapark'] },
+
+  // Corredor Oeste (x = 72)
+  { id: `cw-n-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 72, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_ACUARIO}`, `cw-mid-${LEVEL_ACUARIO}`, 'door-megan', 'door-parfois'] },
+  { id: `cw-mid-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 72, y: 160, kind: 'corridor', connections: [`cw-n-${LEVEL_ACUARIO}`, `cw-s-${LEVEL_ACUARIO}`, 'door-timberland', 'door-pisouno'] },
+  { id: `cw-s-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 72, y: 220, kind: 'corridor', connections: [`cw-mid-${LEVEL_ACUARIO}`, `pj-${LEVEL_ACUARIO}`] },
+  { id: `cw-far-s-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 65, y: 290, kind: 'corridor', connections: [`pj-${LEVEL_ACUARIO}`, 'door-tizzas', 'door-hot23', 'door-puriel', 'door-componix'] },
+
+  // Corredor Norte (y = 73)
+  { id: `cn-1-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 250, y: 73, kind: 'corridor', connections: [`plf-${LEVEL_ACUARIO}`, `cn-2-${LEVEL_ACUARIO}`, 'door-mrprice', 'door-latinlover', 'door-blumer-ac', 'door-columbia', 'door-pawer'] },
+  { id: `cn-2-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 330, y: 73, kind: 'corridor', connections: [`cn-1-${LEVEL_ACUARIO}`, `cn-3-${LEVEL_ACUARIO}`, 'door-shoppingcenter', 'door-perryellis', 'door-box', 'door-travelshop'] },
+  { id: `cn-3-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 400, y: 73, kind: 'corridor', connections: [`cn-2-${LEVEL_ACUARIO}`, `cn-4-${LEVEL_ACUARIO}`, 'door-waterproof', 'door-aeropostale', 'door-superjuguetes', 'door-perfumesfactory'] },
+  { id: `cn-4-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 470, y: 73, kind: 'corridor', connections: [`cn-3-${LEVEL_ACUARIO}`, `pea-${LEVEL_ACUARIO}`, 'door-adidas', 'door-galaxy'] },
+
+  // Corredor Este (x = 584)
+  { id: `ce-1-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 584, y: 73, kind: 'corridor', connections: [`pea-${LEVEL_ACUARIO}`, `ce-2-${LEVEL_ACUARIO}`, 'door-madio', 'door-sheccs', 'door-filioptic'] },
+  { id: `ce-2-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 584, y: 130, kind: 'corridor', connections: [`ce-1-${LEVEL_ACUARIO}`, `ce-3-${LEVEL_ACUARIO}`, 'door-liah', 'door-rc2', 'door-capriccio'] },
+  { id: `ce-3-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 584, y: 180, kind: 'corridor', connections: [`ce-2-${LEVEL_ACUARIO}`, `plm-${LEVEL_ACUARIO}`] },
+
+  // Corredor Sur (y = 250)
+  { id: `cs-1-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 150, y: 250, kind: 'corridor', connections: [`pj-${LEVEL_ACUARIO}`, `cs-2-${LEVEL_ACUARIO}`, 'door-estivaneli-ac', 'door-wendys'] },
+  { id: `cs-2-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 210, y: 250, kind: 'corridor', connections: [`cs-1-${LEVEL_ACUARIO}`, `cs-3-${LEVEL_ACUARIO}`, 'door-mulatos', 'door-guess', 'door-modish'] },
+  { id: `cs-3-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 280, y: 250, kind: 'corridor', connections: [`cs-2-${LEVEL_ACUARIO}`, `pc-${LEVEL_ACUARIO}`, 'door-muymucho', 'door-norton'] },
+  { id: `cs-4-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 420, y: 250, kind: 'corridor', connections: [`pc-${LEVEL_ACUARIO}`, `cs-5-${LEVEL_ACUARIO}`, 'door-remington', 'door-ilahui', 'door-ovejita', 'door-starkids', 'door-nevada'] },
+  { id: `cs-5-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 510, y: 250, kind: 'corridor', connections: [`cs-4-${LEVEL_ACUARIO}`, `cs-6-${LEVEL_ACUARIO}`, 'door-uspolo', 'door-rori', 'door-tech360', 'door-movilnet'] },
+  { id: `cs-6-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 580, y: 250, kind: 'corridor', connections: [`cs-5-${LEVEL_ACUARIO}`, `plm-${LEVEL_ACUARIO}`, 'door-miniso', 'door-nike'] },
+
+  // Diagonales Centrales
+  { id: `cc-w1-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 175, y: 135, kind: 'corridor', connections: [`plf-${LEVEL_ACUARIO}`, `cc-w2-${LEVEL_ACUARIO}`, 'door-alby', 'door-clarks', 'door-wonkatoys'] },
+  { id: `cc-w2-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 267, y: 135, kind: 'corridor', connections: [`cc-w1-${LEVEL_ACUARIO}`, `cc-w3-${LEVEL_ACUARIO}`] },
+  { id: `cc-w3-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 267, y: 200, kind: 'corridor', connections: [`cc-w2-${LEVEL_ACUARIO}`, `pc-${LEVEL_ACUARIO}`, 'door-tecniciencia'] },
+  { id: `cc-e1-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 495, y: 115, kind: 'corridor', connections: [`pea-${LEVEL_ACUARIO}`, `cc-e2-${LEVEL_ACUARIO}`] },
+  { id: `cc-e2-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 495, y: 160, kind: 'corridor', connections: [`cc-e1-${LEVEL_ACUARIO}`, `cc-e3-${LEVEL_ACUARIO}`, 'door-kickers', 'door-lilipink', 'door-mundoescolar', 'door-piccadilly'] },
+  { id: `cc-e3-${LEVEL_ACUARIO}`, floorId: LEVEL_ACUARIO, x: 495, y: 215, kind: 'corridor', connections: [`cc-e2-${LEVEL_ACUARIO}`, `pc-${LEVEL_ACUARIO}`, 'door-playhatsoff'] },
+
+  // Puertas Acuario
+  { id: 'door-zara', floorId: LEVEL_ACUARIO, x: 160, y: 68, kind: 'door', connections: [`plf-${LEVEL_ACUARIO}`] },
+  { id: 'door-megan', floorId: LEVEL_ACUARIO, x: 70, y: 105, kind: 'door', connections: [`cw-n-${LEVEL_ACUARIO}`] },
+  { id: 'door-parfois', floorId: LEVEL_ACUARIO, x: 80, y: 95, kind: 'door', connections: [`cw-n-${LEVEL_ACUARIO}`] },
+  { id: 'door-ninjapark', floorId: LEVEL_ACUARIO, x: 600, y: 228, kind: 'door', connections: [`plm-${LEVEL_ACUARIO}`] },
+  { id: 'door-miniso', floorId: LEVEL_ACUARIO, x: 579, y: 265, kind: 'door', connections: [`cs-6-${LEVEL_ACUARIO}`] },
+  { id: 'door-nike', floorId: LEVEL_ACUARIO, x: 622, y: 265, kind: 'door', connections: [`cs-6-${LEVEL_ACUARIO}`] },
+  { id: 'door-adidas', floorId: LEVEL_ACUARIO, x: 499, y: 68, kind: 'door', connections: [`cn-4-${LEVEL_ACUARIO}`] },
+  { id: 'door-reebok', floorId: LEVEL_ACUARIO, x: 541, y: 68, kind: 'door', connections: [`pea-${LEVEL_ACUARIO}`] },
+  { id: 'door-madio', floorId: LEVEL_ACUARIO, x: 569, y: 68, kind: 'door', connections: [`ce-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-tecniciencia', floorId: LEVEL_ACUARIO, x: 275, y: 166, kind: 'door', connections: [`cc-w3-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-timberland', floorId: LEVEL_ACUARIO, x: 65, y: 146, kind: 'door', connections: [`cw-mid-${LEVEL_ACUARIO}`] },
+  { id: 'door-pisouno', floorId: LEVEL_ACUARIO, x: 65, y: 171, kind: 'door', connections: [`cw-mid-${LEVEL_ACUARIO}`] },
+  { id: 'door-creso', floorId: LEVEL_ACUARIO, x: 65, y: 196, kind: 'door', connections: [`pj-${LEVEL_ACUARIO}`] },
+  { id: 'door-tizzas', floorId: LEVEL_ACUARIO, x: 60, y: 271, kind: 'door', connections: [`cw-far-s-${LEVEL_ACUARIO}`] },
+  { id: 'door-hot23', floorId: LEVEL_ACUARIO, x: 60, y: 296, kind: 'door', connections: [`cw-far-s-${LEVEL_ACUARIO}`] },
+  { id: 'door-puriel', floorId: LEVEL_ACUARIO, x: 60, y: 321, kind: 'door', connections: [`cw-far-s-${LEVEL_ACUARIO}`] },
+  { id: 'door-componix', floorId: LEVEL_ACUARIO, x: 60, y: 346, kind: 'door', connections: [`cw-far-s-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-imagine', floorId: LEVEL_ACUARIO, x: 207, y: 68, kind: 'door', connections: [`plf-${LEVEL_ACUARIO}`] },
+  { id: 'door-mrprice', floorId: LEVEL_ACUARIO, x: 241, y: 68, kind: 'door', connections: [`cn-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-latinlover', floorId: LEVEL_ACUARIO, x: 274, y: 68, kind: 'door', connections: [`cn-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-blumer-ac', floorId: LEVEL_ACUARIO, x: 304, y: 68, kind: 'door', connections: [`cn-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-shoppingcenter', floorId: LEVEL_ACUARIO, x: 337, y: 68, kind: 'door', connections: [`cn-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-perryellis', floorId: LEVEL_ACUARIO, x: 371, y: 68, kind: 'door', connections: [`cn-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-waterproof', floorId: LEVEL_ACUARIO, x: 404, y: 68, kind: 'door', connections: [`cn-3-${LEVEL_ACUARIO}`] },
+  { id: 'door-aeropostale', floorId: LEVEL_ACUARIO, x: 439, y: 68, kind: 'door', connections: [`cn-3-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-epk', floorId: LEVEL_ACUARIO, x: 207, y: 78, kind: 'door', connections: [`plf-${LEVEL_ACUARIO}`] },
+  { id: 'door-columbia', floorId: LEVEL_ACUARIO, x: 238, y: 78, kind: 'door', connections: [`cn-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-pawer', floorId: LEVEL_ACUARIO, x: 269, y: 78, kind: 'door', connections: [`cn-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-box', floorId: LEVEL_ACUARIO, x: 306, y: 78, kind: 'door', connections: [`cn-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-travelshop', floorId: LEVEL_ACUARIO, x: 345, y: 78, kind: 'door', connections: [`cn-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-superjuguetes', floorId: LEVEL_ACUARIO, x: 381, y: 78, kind: 'door', connections: [`cn-3-${LEVEL_ACUARIO}`] },
+  { id: 'door-perfumesfactory', floorId: LEVEL_ACUARIO, x: 418, y: 78, kind: 'door', connections: [`cn-3-${LEVEL_ACUARIO}`] },
+  { id: 'door-galaxy', floorId: LEVEL_ACUARIO, x: 455, y: 78, kind: 'door', connections: [`cn-4-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-sheccs', floorId: LEVEL_ACUARIO, x: 600, y: 34, kind: 'door', connections: [`ce-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-filioptic', floorId: LEVEL_ACUARIO, x: 600, y: 66, kind: 'door', connections: [`ce-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-liah', floorId: LEVEL_ACUARIO, x: 600, y: 98, kind: 'door', connections: [`ce-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-rc2', floorId: LEVEL_ACUARIO, x: 600, y: 130, kind: 'door', connections: [`ce-2-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-kickers', floorId: LEVEL_ACUARIO, x: 484, y: 142, kind: 'door', connections: [`cc-e2-${LEVEL_ACUARIO}`] },
+  { id: 'door-lilipink', floorId: LEVEL_ACUARIO, x: 484, y: 169, kind: 'door', connections: [`cc-e2-${LEVEL_ACUARIO}`] },
+  { id: 'door-mundoescolar', floorId: LEVEL_ACUARIO, x: 505, y: 130, kind: 'door', connections: [`cc-e2-${LEVEL_ACUARIO}`] },
+  { id: 'door-piccadilly', floorId: LEVEL_ACUARIO, x: 505, y: 157, kind: 'door', connections: [`cc-e2-${LEVEL_ACUARIO}`] },
+  { id: 'door-playhatsoff', floorId: LEVEL_ACUARIO, x: 505, y: 184, kind: 'door', connections: [`cc-e3-${LEVEL_ACUARIO}`] },
+  { id: 'door-capriccio', floorId: LEVEL_ACUARIO, x: 568, y: 154, kind: 'door', connections: [`ce-2-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-estivaneli-ac', floorId: LEVEL_ACUARIO, x: 124, y: 265, kind: 'door', connections: [`cs-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-wendys', floorId: LEVEL_ACUARIO, x: 159, y: 265, kind: 'door', connections: [`cs-1-${LEVEL_ACUARIO}`] },
+  { id: 'door-mulatos', floorId: LEVEL_ACUARIO, x: 186, y: 265, kind: 'door', connections: [`cs-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-guess', floorId: LEVEL_ACUARIO, x: 213, y: 265, kind: 'door', connections: [`cs-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-modish', floorId: LEVEL_ACUARIO, x: 240, y: 265, kind: 'door', connections: [`cs-2-${LEVEL_ACUARIO}`] },
+  { id: 'door-muymucho', floorId: LEVEL_ACUARIO, x: 267, y: 265, kind: 'door', connections: [`cs-3-${LEVEL_ACUARIO}`] },
+  { id: 'door-norton', floorId: LEVEL_ACUARIO, x: 295, y: 265, kind: 'door', connections: [`cs-3-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-remington', floorId: LEVEL_ACUARIO, x: 395, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_ACUARIO}`] },
+  { id: 'door-ilahui', floorId: LEVEL_ACUARIO, x: 417, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_ACUARIO}`] },
+  { id: 'door-ovejita', floorId: LEVEL_ACUARIO, x: 439, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_ACUARIO}`] },
+  { id: 'door-starkids', floorId: LEVEL_ACUARIO, x: 461, y: 265, kind: 'door', connections: [`cs-4-${LEVEL_ACUARIO}`] },
+  { id: 'door-uspolo', floorId: LEVEL_ACUARIO, x: 484, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_ACUARIO}`] },
+  { id: 'door-rori', floorId: LEVEL_ACUARIO, x: 508, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_ACUARIO}`] },
+  { id: 'door-tech360', floorId: LEVEL_ACUARIO, x: 531, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_ACUARIO}`] },
+  { id: 'door-movilnet', floorId: LEVEL_ACUARIO, x: 552, y: 265, kind: 'door', connections: [`cs-5-${LEVEL_ACUARIO}`] },
+
+  { id: 'door-alby', floorId: LEVEL_ACUARIO, x: 197, y: 155, kind: 'door', connections: [`cc-w1-${LEVEL_ACUARIO}`] },
+  { id: 'door-clarks', floorId: LEVEL_ACUARIO, x: 224, y: 155, kind: 'door', connections: [`cc-w1-${LEVEL_ACUARIO}`] },
+  { id: 'door-wonkatoys', floorId: LEVEL_ACUARIO, x: 251, y: 155, kind: 'door', connections: [`cc-w1-${LEVEL_ACUARIO}`] },
+  { id: 'door-hero', floorId: LEVEL_ACUARIO, x: 342, y: 178, kind: 'door', connections: [`pc-${LEVEL_ACUARIO}`] },
+  { id: 'door-oroexpress', floorId: LEVEL_ACUARIO, x: 369, y: 178, kind: 'door', connections: [`pc-${LEVEL_ACUARIO}`] },
+  { id: 'door-nevada', floorId: LEVEL_ACUARIO, x: 397, y: 178, kind: 'door', connections: [`cs-4-${LEVEL_ACUARIO}`] },
+];

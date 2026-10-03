@@ -22,6 +22,7 @@ import {
   project,
   unproject,
   DEFAULT_ISO,
+  generateMallQualityReport,
 } from './index';
 import type { MallMapData, NavNode } from './index';
 
@@ -443,12 +444,12 @@ test('sambilMall tiene exactamente 4 niveles oficiales configurados', () => {
 test('sambilMall contiene las tiendas ancla principales en sus niveles correctos', () => {
   const tijerazo = sambilMall.stores.find((s) => s.id === 'tijerazo');
   const zara = sambilMall.stores.find((s) => s.id === 'zara');
-  const samsung = sambilMall.stores.find((s) => s.id === 'samsung');
+  const balu = sambilMall.stores.find((s) => s.id === 'balu');
   const mango = sambilMall.stores.find((s) => s.id === 'mango_bajito');
 
   assert.ok(tijerazo && tijerazo.floorId === LEVEL_AUTOPISTA);
   assert.ok(zara && zara.floorId === LEVEL_ACUARIO);
-  assert.ok(samsung && samsung.floorId === LEVEL_LIBERTADOR);
+  assert.ok(balu && balu.floorId === LEVEL_LIBERTADOR);
   assert.ok(mango && mango.floorId === LEVEL_DIVERSION);
 });
 
@@ -481,6 +482,65 @@ test('sambilMall Nivel Autopista incluye todas las tiendas y anclas del plano ar
   }
 });
 
+test('sambilMall Nivel Acuario incluye todas las tiendas y anclas del plano arquitectónico oficial', () => {
+  const acuarioStores = sambilMall.stores.filter((s) => s.floorId === LEVEL_ACUARIO);
+  assert.ok(acuarioStores.length >= 45, `Se esperaban >= 45 locales en Nivel Acuario, encontrados: ${acuarioStores.length}`);
+
+  // Anclas y tiendas del plano
+  const expectedAcuarioKeys = [
+    'zara', 'megan', 'ninja_park', 'nike', 'miniso', 'adidas', 'reebok',
+    'madio', 'tecniciencia', 'parfois', 'timberland', 'piso_uno', 'creso',
+    'mr_price', 'imagine', 'epk', 'columbia', 'pawer', 'box', 'travel_shop',
+    'super_juguetes', 'perfumes_factory', 'she_ccs', 'filioptic', 'liah',
+    'kickers', 'lili_pink', 'mundo_escolar', 'piccadilly', 'guess', 'us_polo',
+    'tiendas_rori', 'ovejita', 'alby', 'clarks', 'wonka_toys', 'hero'
+  ];
+
+  for (const key of expectedAcuarioKeys) {
+    const store = acuarioStores.find((s) => s.id === key);
+    assert.ok(store, `Falta la tienda esperada: ${key} en Nivel Acuario`);
+  }
+});
+
+test('sambilMall Nivel Libertador incluye todas las tiendas y anclas del plano arquitectónico oficial', () => {
+  const libertadorStores = sambilMall.stores.filter((s) => s.floorId === LEVEL_LIBERTADOR);
+  assert.ok(libertadorStores.length >= 45, `Se esperaban >= 45 locales en Nivel Libertador, encontrados: ${libertadorStores.length}`);
+
+  // Anclas y tiendas del plano
+  const expectedLibertadorKeys = [
+    'zara_lib', 'balu', 'adidas_lib', 'hm_sambil', 'aldo', 'planeta_sports',
+    'bancaribe', 'ax_armani', 'crocs_lib', 'yuju_lib', 'fashion_look_lib',
+    'fashion_look_shoes', 'oboticario', 'granier', 'solo_chicas', 'byrichh',
+    'habitu', 'motarro', 'sport_way', 'lucy_lingerie_lib', 'calzados_beba',
+    'maxi_pets', 'sunrisa', 'estivaneli_lib', 'rs_moda', 'movistar_lib',
+    'contexto', 'emporio_fumador', 'unico_lib', 'bambino', 'kicks',
+    'camelo_cosmetic', 'camisisima', 'ceo_lib', 'box_lib', 'fountain_store',
+    'lafayette', 'sensacion_23', 'joyeria_reims', 'evas_store', 'hummer_jeans',
+    'new_balance', 'jump_lib', 'diesel_lib', 'radical', 'twins', 'depofit',
+    'kenneth_cole', 'dasher', 'samsonite', 'adventure_sport', 'siete_camicie',
+    'retro_king', 'sandro_lib', 'ciudad_alternativa', 'womensecret_lib',
+    'joan_david', 'calvin_klein', 'cole_haan', 'moixi', 'saks_avenue',
+    'champion', 'apolo_lib', 'mercantil', 'shana', 'only_for_kids'
+  ];
+
+  for (const key of expectedLibertadorKeys) {
+    const store = libertadorStores.find((s) => s.id === key);
+    assert.ok(store, `Falta la tienda esperada: ${key} en Nivel Libertador`);
+  }
+});
+
+test('generateMallQualityReport genera reporte de calidad 100% aprobado para Sambil Chacao', () => {
+  const report = generateMallQualityReport(sambilMall);
+  assert.equal(report.isValid, true, `Reporte falló con ${report.navigationErrors.unreachableStores} inalcanzables y ${report.rawValidationIssuesCount} issues`);
+  assert.equal(report.floorsCount, 4);
+  assert.ok(report.storesCount >= 100, `Total locales >= 100, encontrados: ${report.storesCount}`);
+  assert.equal(report.geometryErrors.outOfBounds, 0);
+  assert.equal(report.geometryErrors.overlaps, 0);
+  assert.equal(report.navigationErrors.unreachableStores, 0);
+  assert.ok(report.formattedSummary.includes('PASSED'));
+});
+
+
 test('sambilMall calcula rutas exitosas entre plazas y tiendas en todos los sectores de Autopista', () => {
   // Desde Plaza Jardín hacia anclas y extremos
   const rTijerazo = findRouteToStore(sambilMall, `pj-${LEVEL_AUTOPISTA}`, 'tijerazo');
@@ -502,7 +562,7 @@ test('sambilMall calcula rutas exitosas entre plazas y tiendas en todos los sect
   const routeAcuario = findRouteToStore(sambilMall, `pj-${LEVEL_ACUARIO}`, 'zara');
   assert.ok(routeAcuario && routeAcuario.nodeIds.length >= 2);
 
-  const routeLibertador = findRouteToStore(sambilMall, `pj-${LEVEL_LIBERTADOR}`, 'samsung');
+  const routeLibertador = findRouteToStore(sambilMall, `pj-${LEVEL_LIBERTADOR}`, 'balu');
   assert.ok(routeLibertador && routeLibertador.nodeIds.length >= 2);
 
   const routeDiversion = findRouteToStore(sambilMall, `pj-${LEVEL_DIVERSION}`, 'mango_bajito');
