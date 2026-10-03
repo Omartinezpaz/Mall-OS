@@ -24,6 +24,7 @@ import {
   unproject,
   DEFAULT_ISO,
   generateMallQualityReport,
+  generateNavigationPlan,
 } from './index';
 import type { MallMapData, NavNode } from './index';
 
@@ -614,6 +615,19 @@ test('sambilMall calcula rutas exitosas entre plazas y tiendas en todos los sect
   const routeDiversion = findRouteToStore(sambilMall, `pj-${LEVEL_DIVERSION}`, 'cinex');
   assert.ok(routeDiversion && routeDiversion.nodeIds.length >= 2);
 });
+
+test('generateNavigationPlan produce instrucciones paso a paso con hitos y giros semánticos', () => {
+  const rTijerazo = findRouteToStore(sambilMall, `pj-${LEVEL_AUTOPISTA}`, 'tijerazo');
+  assert.ok(rTijerazo);
+
+  const plan = generateNavigationPlan(sambilMall, rTijerazo, 'tijerazo');
+  assert.ok(plan.steps.length > 0, 'Debe generar al menos un paso de navegación');
+  assert.ok(plan.destinationName.includes('Tijerazo'));
+  assert.ok(plan.totalDistanceMeters > 0);
+  assert.equal(plan.steps[plan.steps.length - 1]?.icon, 'arrival');
+  assert.ok(plan.steps.some(s => s.primaryText.includes('Plaza') || s.primaryText.includes('recto') || s.primaryText.includes('Llegada')));
+});
+
 
 test('renderiza correctamente la suite de elementos de ambiente 2.5D (fuentes, luminarias, bancas, ascensores)', () => {
   const testMall: MallMapData = {

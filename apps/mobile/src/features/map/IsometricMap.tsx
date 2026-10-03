@@ -556,6 +556,19 @@ export function IsometricMap({
   };
 
 
+  const headingConePath = useMemo(() => {
+    const angleRad = (userHeadingAngle * Math.PI) / 180;
+    const spreadRad = (32 * Math.PI) / 180;
+    const r = 52;
+    const a1 = angleRad - spreadRad;
+    const a2 = angleRad + spreadRad;
+    const x1 = userIsoPos.x + Math.cos(a1) * r;
+    const y1 = userIsoPos.y + Math.sin(a1) * r;
+    const x2 = userIsoPos.x + Math.cos(a2) * r;
+    const y2 = userIsoPos.y + Math.sin(a2) * r;
+    return `M ${userIsoPos.x} ${userIsoPos.y} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
+  }, [userIsoPos.x, userIsoPos.y, userHeadingAngle]);
+
   return (
     <View
       style={styles.container}
@@ -583,34 +596,52 @@ export function IsometricMap({
           {/* Capas del mapa de @mallos/map-engine */}
           {scene.items.map((it, idx) => renderItem(it, idx))}
 
-          {/* Avatar del usuario con baliza interactiva de alta visibilidad */}
+          {/* Avatar del usuario con cono de visión y baliza de alta inmersión */}
           <G key="user-location-beacon">
-            {/* Halo exterior azul */}
+            {/* Cono de visión / linterna de rumbo */}
+            <Path
+              d={headingConePath}
+              fill="rgba(59, 130, 246, 0.22)"
+              stroke="rgba(96, 165, 250, 0.45)"
+              strokeWidth={1}
+            />
+
+            {/* Radar exterior animado */}
             <Circle
               cx={userIsoPos.x}
               cy={userIsoPos.y}
-              r={14}
+              r={16}
               fill="#3B82F6"
-              opacity={0.22}
+              opacity={0.18}
             />
+
             {/* Núcleo de baliza de navegación */}
             <Circle
               cx={userIsoPos.x}
               cy={userIsoPos.y}
-              r={7}
+              r={7.5}
               fill="#2563EB"
               stroke="#FFFFFF"
               strokeWidth={2.5}
             />
+
+            {/* Puntero de orientación */}
+            <Circle
+              cx={userIsoPos.x + Math.cos((userHeadingAngle * Math.PI) / 180) * 8.5}
+              cy={userIsoPos.y + Math.sin((userHeadingAngle * Math.PI) / 180) * 8.5}
+              r={2.5}
+              fill="#FFFFFF"
+            />
+
             {/* Indicador de avatar 'Tú' */}
-            <G transform={`translate(${userIsoPos.x} ${userIsoPos.y - 14})`}>
+            <G transform={`translate(${userIsoPos.x} ${userIsoPos.y - 15})`}>
               <Rect
                 x={-16}
                 y={-10}
                 width={32}
                 height={16}
                 rx={8}
-                fill="#2563EB"
+                fill="#1E293B"
                 stroke="#FFFFFF"
                 strokeWidth={1.5}
               />
@@ -618,7 +649,7 @@ export function IsometricMap({
                 y={2}
                 textAnchor="middle"
                 fontSize={9}
-                fontWeight="bold"
+                fontWeight="800"
                 fill="#FFFFFF"
               >
                 Tú
