@@ -77,3 +77,58 @@ export function segmentCrossesRectInterior(a: Point, b: Point, r: Rect, eps = EP
 
   return clip(-dx, a.x - xmin) && clip(dx, xmax - a.x) && clip(-dy, a.y - ymin) && clip(dy, ymax - a.y) && t0 <= t1;
 }
+
+/** True si el punto está ESTRICTAMENTE dentro del polígono (el perímetro no cuenta). */
+export function pointInPolygonInterior(p: Point, poly: Point[], eps = EPS): boolean {
+  if (poly.length < 3) return false;
+  // Si está sobre cualquier arista dentro de la tolerancia, es borde, no interior estricto
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i]!.x;
+    const yi = poly[i]!.y;
+    const xj = poly[j]!.x;
+    const yj = poly[j]!.y;
+    const l2 = (xj - xi) ** 2 + (yj - yi) ** 2;
+    if (l2 > 0) {
+      const t = Math.max(0, Math.min(1, ((p.x - xi) * (xj - xi) + (p.y - yi) * (yj - yi)) / l2));
+      const projX = xi + t * (xj - xi);
+      const projY = yi + t * (yj - yi);
+      if (Math.hypot(p.x - projX, p.y - projY) <= eps) {
+        return false;
+      }
+    }
+  }
+
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i]!.x;
+    const yi = poly[i]!.y;
+    const xj = poly[j]!.x;
+    const yj = poly[j]!.y;
+    const intersect = yi > p.y !== yj > p.y && p.x < ((xj - xi) * (p.y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+/** Distancia mínima de un punto al perímetro exterior de un polígono. */
+export function distanceToPolygonPerimeter(p: Point, poly: Point[]): number {
+  if (poly.length === 0) return 0;
+  let minDist = Infinity;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i]!.x;
+    const yi = poly[i]!.y;
+    const xj = poly[j]!.x;
+    const yj = poly[j]!.y;
+    const l2 = (xj - xi) ** 2 + (yj - yi) ** 2;
+    if (l2 === 0) {
+      minDist = Math.min(minDist, Math.hypot(p.x - xi, p.y - yi));
+    } else {
+      const t = Math.max(0, Math.min(1, ((p.x - xi) * (xj - xi) + (p.y - yi) * (yj - yi)) / l2));
+      const projX = xi + t * (xj - xi);
+      const projY = yi + t * (yj - yi);
+      minDist = Math.min(minDist, Math.hypot(p.x - projX, p.y - projY));
+    }
+  }
+  return minDist;
+}
+

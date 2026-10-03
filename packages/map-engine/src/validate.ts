@@ -1,4 +1,12 @@
-import { distance, distanceToRectPerimeter, pointInRectInterior, rectsOverlap, segmentCrossesRectInterior } from './geometry';
+import {
+  distance,
+  distanceToRectPerimeter,
+  distanceToPolygonPerimeter,
+  pointInRectInterior,
+  pointInPolygonInterior,
+  rectsOverlap,
+  segmentCrossesRectInterior,
+} from './geometry';
 import { listEdges } from './routing';
 import type { MallMapData, MapProp, Rect } from './types';
 
@@ -135,10 +143,10 @@ export function validateMapData(map: MallMapData): MapIssue[] {
     } else {
       if (door.floorId !== s.floorId) {
         err('DOOR_WRONG_FLOOR', `La puerta de "${s.id}" está en otro piso`, s.id);
-      } else if (pointInRectInterior(door, s)) {
+      } else if (s.polygon ? pointInPolygonInterior(door, s.polygon) : pointInRectInterior(door, s)) {
         err('DOOR_NODE_BLOCKED', `La puerta "${door.id}" está dentro del local "${s.id}". Debe ubicarse sobre el perímetro exterior.`, s.id);
       } else {
-        const perimeterDistance = distanceToRectPerimeter(door, s);
+        const perimeterDistance = s.polygon ? distanceToPolygonPerimeter(door, s.polygon) : distanceToRectPerimeter(door, s);
         if (perimeterDistance > DOOR_PERIMETER_TOLERANCE) {
           warn('DOOR_NOT_AT_STORE', `La puerta "${door.id}" no toca directamente ninguna cara del local "${s.id}" (distancia al perímetro: ${perimeterDistance.toFixed(2)})`, s.id);
         }
@@ -159,12 +167,12 @@ export function validateMapData(map: MallMapData): MapIssue[] {
   }
 
   // --- Nodos y conexiones ---
-  const obstaclesOf = (floorId: string): Array<{ id: string; rect: Rect }> => [
-    ...map.stores.filter((s) => s.floorId === floorId).map((s) => ({ id: s.id, rect: s as Rect })),
-    ...(floors.get(floorId)?.obstacles ?? []).map((o) => ({ id: o.id, rect: o.rect })),
+  const obstaclesOf = (floorId: string): Array<{ id: string; rect: Rect; polygon?: typeof map.stores[0]['polygon'] }> => [
+    ...map.stores.filter((s) => s.floorId === floorId).map((s) => ({ id: s.id, rect: s as Rect, polygon: s.polygon })),
+    ...(floors.get(floorId)?.obstacles ?? []).map((o) => ({ id: o.id, rect: o.rect, polygon: undefined })),
     ...(floors.get(floorId)?.props ?? []).flatMap((p) => {
       const r = propRect(p);
-      return r ? [{ id: p.id, rect: r }] : [];
+      return r ? [{ id: p.id, rect: r, polygon: undefined }] : [];
     }),
   ];
 
@@ -186,7 +194,9 @@ export function validateMapData(map: MallMapData): MapIssue[] {
       else if (!other.connections.includes(n.id)) warn('ASYMMETRIC_CONNECTION', `Conexión declarada solo en un sentido: ${n.id} → ${c}`, n.id);
     }
     for (const o of obstaclesOf(n.floorId)) {
-      if (pointInRectInterior(n, o.rect)) err('NODE_BLOCKED', `El nodo "${n.id}" está dentro de "${o.id}"`, n.id);
+      if (o.id === n.id) continue;
+      const inside = o.polygon ? pointInPolygonInterior(n, o.polygon) : pointInRectInterior(n, o.rect);
+      if (inside) err('NODE_BLOCKED', `El nodo "${n.id}" está dentro de "${o.id}"`, n.id);
     }
   }
 
@@ -206,6 +216,9 @@ export function validateMapData(map: MallMapData): MapIssue[] {
       continue;
     }
     for (const o of obstaclesOf(a.floorId)) {
+      const isEndpointA = map.stores.some((s) => s.doorNodeId === a.id && s.id === o.id);
+      const isEndpointB = map.stores.some((s) => s.doorNodeId === b.id && s.id === o.id);
+      if (isEndpointA || isEndpointB) continue;
       if (segmentCrossesRectInterior(a, b, o.rect)) err('EDGE_CROSSES_OBSTACLE', `El tramo ${a.id} ↔ ${b.id} atraviesa "${o.id}"`, `${a.id}|${b.id}`);
     }
   }
