@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mall OS · Anotador Geométrico Sambil 2.5D</title>
+  <style>
+    :root {
+      --bg-dark: #090D16;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-panel: #0F172A;
+      --border: rgba(255, 255, 255, 0.1);
+      --border-focus: #10B981;
+      --accent: #10B981;
+      --accent-hover: #059669;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --danger: #EF4444;
+      --plaza-fuente: #DC2626;
+      --plaza-jardin: #2563EB;
+      --plaza-central: #EA580C;
+      --plaza-arte: #7C3AED;
+      --plaza-musica: #1D4ED8;
+      --plaza-musica-green: #059669;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #10B981, #3B82F6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: #FFF;
+    }
+
+    .brand h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand span {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Main workspace */
+    .workspace {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Toolbar Floating */
+    .toolbar-floating {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px;
+      display: flex;
+      gap: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .tool-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+    }
+
+    .tool-btn.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--accent);
+    }
+
+    /* Canvas Area */
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      cursor: crosshair;
+      overflow: hidden;
+      background: #06090F;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* Side Panel */
+    .side-panel {
+      width: 360px;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 15;
+    }
+
+    .panel-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header h2 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .layer-group {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .layer-group-title {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .layer-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .layer-item:last-child {
+      border-bottom: none;
+    }
+
+    .layer-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .layer-item.selected {
+      background: rgba(16, 185, 129, 0.1);
+      border-left: 3px solid var(--accent);
+    }
+
+    .layer-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .layer-badge {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .btn-delete {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    .btn-delete:hover {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Bottom action bar */
+    .panel-footer {
+      padding: 14px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #06110D;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Modal Export */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 680px;
+      max-width: 90vw;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    textarea.code-export {
+      width: 100%;
+      height: 320px;
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #34D399;
+      font-family: "Fira Code", monospace;
+      font-size: 12px;
+      padding: 12px;
+      resize: none;
+    }
+
+    /* Info Badge / Status */
+    .status-bar {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-muted);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .quick-levels {
+      display: flex;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">2.5D</div>
+      <div>
+        <h1>Mall OS · Anotador Geométrico Sambil</h1>
+      </div>
+      <span>Calibración Isométrica HD</span>
+    </div>
+
+    <div class="header-actions">
+      <div class="quick-levels">
+        <button class="btn-secondary" onclick="loadSampleImage('nivel autopista.jpeg')">Autopista</button>
+        <button class="btn-secondary" onclick="loadSampleImage('nivel acuario.jpeg')">Acuario</button>
+        <button class="btn-secondary" onclick="loadSampleImage('nivel libertador.jpeg')">Libertador</button>
+        <button class="btn-secondary" onclick="loadSampleImage('nivel feria.jpeg')">Feria</button>
+        <button class="btn-secondary" onclick="loadSampleImage('nivel diversion.jpeg')">Diversión</button>
+      </div>
+
+      <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFile(event)" />
+      <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 Cargar Plano</button>
+      <button class="btn-primary" onclick="openExportModal()">⚡ Exportar Código TS / JSON</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <!-- Floating Toolbar -->
+    <div class="toolbar-floating">
+      <button class="tool-btn active" id="tool-pan" onclick="setMode('pan')">🖐️ Mover / Zoom</button>
+      <button class="tool-btn" id="tool-footprint" onclick="setMode('footprint')">⬡ Huella Herradura</button>
+      <button class="tool-btn" id="tool-plaza" onclick="setMode('plaza')">🔴 Plaza Circular</button>
+      <button class="tool-btn" id="tool-store" onclick="setMode('store')">🏬 Ancla / Local</button>
+      <button class="tool-btn" id="tool-corridor" onclick="setMode('corridor')">🛣️ Pasillo</button>
+      <button class="tool-btn" id="tool-node" onclick="setMode('node')">📍 Nodo Ruta</button>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+      Coord: (0, 0) | Escala: 720×360 | Modo: Mover / Zoom (Rueda = Zoom, Arrastre = Pan)
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="mainCanvas"></canvas>
+    </div>
+
+    <!-- Side Panel -->
+    <div class="side-panel">
+      <div class="panel-header">
+        <h2>Elementos Trazados (<span id="elemCount">0</span>)</h2>
+        <button class="btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="clearAll()">Limpiar</button>
+      </div>
+
+      <div class="panel-content" id="layerList">
+        <!-- Generado dinámicamente -->
+      </div>
+
+      <div class="panel-footer">
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+          💡 <b>Atajos:</b><br/>
+          • <b>Clic:</b> Agregar vértice.<br/>
+          • <b>Enter / Doble clic:</b> Cerrar polígono.<br/>
+          • <b>Ctrl + Z:</b> Deshacer último punto.<br/>
+          • <b>Esc:</b> Cancelar trazo actual.
+        </div>
+        <button class="btn-primary" onclick="openExportModal()">📋 Ver Código para level-*.ts</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Export -->
+  <div class="modal-backdrop" id="exportModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-size: 16px; font-weight: 700;">Código Generado para `@mallos/map-engine`</h3>
+        <button class="btn-delete" onclick="closeExportModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+          Pega estas definiciones directamente en tu archivo <code>packages/map-engine/src/sambil/level-*.ts</code>:
+        </p>
+        <textarea class="code-export" id="codeExportArea" readonly></textarea>
+      </div>
+      <div class="panel-footer" style="flex-direction: row; justify-content: flex-end;">
+        <button class="btn-secondary" onclick="closeExportModal()">Cerrar</button>
+        <button class="btn-primary" onclick="copyExportCode()">📋 Copiar al Portapapeles</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- ESTADO GLOBAL ---
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('canvasContainer');
+
+    let currentMode = 'pan';
+    let image = new Image();
+    let isImageLoaded = false;
+
+    // Transformaciones
+    let scale = 1.0;
+    let panX = 40;
+    let panY = 40;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    // Escala del mall: unidades objetivo (720 × 360)
+    const TARGET_WIDTH = 720;
+    const TARGET_HEIGHT = 360;
+
+    // Polígono activo siendo dibujado
+    let activePoints = [];
+    let plazaCenter = null;
+    let plazaRadius = 0;
+
+    // Elementos guardados
+    let data = {
+      footprint: [],
+      plazas: [],
+      stores: [],
+      corridors: [],
+      nodes: []
+    };
+
+    let selectedItemId = null;
+
+    // Inicialización del canvas
+    function resizeCanvas() {
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+      redraw();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Cargar imagen por defecto
+    function loadSampleImage(filename) {
+      image.crossOrigin = 'anonymous';
+      image.onload = () => {
+        isImageLoaded = true;
+        // Ajustar zoom inicial
+        const scaleX = (canvas.width - 80) / image.width;
+        const scaleY = (canvas.height - 80) / image.height;
+        scale = Math.min(scaleX, scaleY);
+        panX = (canvas.width - image.width * scale) / 2;
+        panY = (canvas.height - image.height * scale) / 2;
+        redraw();
+      };
+      image.src = filename;
+    }
+
+    function handleFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        image.onload = () => {
+          isImageLoaded = true;
+          scale = Math.min((canvas.width - 80) / image.width, (canvas.height - 80) / image.height);
+          panX = (canvas.width - image.width * scale) / 2;
+          panY = (canvas.height - image.height * scale) / 2;
+          redraw();
+        };
+        image.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Cambiar de modo
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('tool-' + mode);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      activePoints = [];
+      plazaCenter = null;
+      redraw();
+      updateStatus();
+    }
+
+    // Conversión de coordenadas de Pantalla <-> Plano Mall (720x360)
+    function screenToMall(screenX, screenY) {
+      if (!isImageLoaded) return { x: 0, y: 0 };
+      const imgX = (screenX - panX) / scale;
+      const imgY = (screenY - panY) / scale;
+      const mallX = Math.round((imgX / image.width) * TARGET_WIDTH);
+      const mallY = Math.round((imgY / image.height) * TARGET_HEIGHT);
+      return { x: mallX, y: mallY };
+    }
+
+    function mallToScreen(mallX, mallY) {
+      if (!isImageLoaded) return { x: 0, y: 0 };
+      const imgX = (mallX / TARGET_WIDTH) * image.width;
+      const imgY = (mallY / TARGET_HEIGHT) * image.height;
+      const screenX = imgX * scale + panX;
+      const screenY = imgY * scale + panY;
+      return { x: screenX, y: screenY };
+    }
+
+    // Interacciones de ratón
+    container.addEventListener('mousedown', (e) => {
+      const rect = container.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
+
+      if (e.button === 1 || e.shiftKey || currentMode === 'pan') {
+        isDragging = true;
+        startX = sx - panX;
+        startY = sy - panY;
+        return;
+      }
+
+      if (e.button === 0 && isImageLoaded) {
+        const mallPt = screenToMall(sx, sy);
+
+        if (currentMode === 'footprint' || currentMode === 'store' || currentMode === 'corridor') {
+          activePoints.push(mallPt);
+          redraw();
+        } else if (currentMode === 'plaza') {
+          if (!plazaCenter) {
+            plazaCenter = mallPt;
+          } else {
+            plazaRadius = Math.round(Math.hypot(mallPt.x - plazaCenter.x, mallPt.y - plazaCenter.y));
+            finishPlaza();
+          }
+          redraw();
+        } else if (currentMode === 'node') {
+          data.nodes.push({
+            id: 'node-' + (data.nodes.length + 1),
+            x: mallPt.x,
+            y: mallPt.y,
+            kind: 'corridor'
+          });
+          updateLayers();
+          redraw();
+        }
+      }
+    });
+
+    container.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
+
+      if (isDragging) {
+        panX = sx - startX;
+        panY = sy - startY;
+        redraw();
+        return;
+      }
+
+      const mallPt = screenToMall(sx, sy);
+      updateStatus(mallPt);
+
+      if (currentMode === 'plaza' && plazaCenter) {
+        plazaRadius = Math.round(Math.hypot(mallPt.x - plazaCenter.x, mallPt.y - plazaCenter.y));
+        redraw();
+      }
+    });
+
+    container.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = container.getBoundingClientRect();
+      const sx = e.clientX - rect.left;
+      const sy = e.clientY - rect.top;
+
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+      const newScale = Math.max(0.1, Math.min(20, scale * zoomFactor));
+
+      panX = sx - (sx - panX) * (newScale / scale);
+      panY = sy - (sy - panY) * (newScale / scale);
+      scale = newScale;
+
+      redraw();
+    });
+
+    // Teclas rápidas
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        finishPolygon();
+      } else if (e.key === 'Escape') {
+        activePoints = [];
+        plazaCenter = null;
+        redraw();
+      } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
+        if (activePoints.length > 0) {
+          activePoints.pop();
+          redraw();
+        }
+      }
+    });
+
+    function finishPolygon() {
+      if (activePoints.length < 3) return;
+
+      if (currentMode === 'footprint') {
+        data.footprint = [...activePoints];
+      } else if (currentMode === 'store') {
+        const xs = activePoints.map(p => p.x);
+        const ys = activePoints.map(p => p.y);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+        const minY = Math.min(...ys);
+        const maxY = Math.max(...ys);
+
+        const id = prompt('Nombre o ID del local:', 'local_' + (data.stores.length + 1)) || 'local_' + (data.stores.length + 1);
+        data.stores.push({
+          id: id.toLowerCase().replace(/\s+/g, '_'),
+          name: id,
+          category: 'fashion',
+          x: minX,
+          y: minY,
+          w: maxX - minX,
+          h: maxY - minY,
+          height: 12,
+          polygon: [...activePoints],
+          labelPos: {
+            x: Math.round(xs.reduce((a, b) => a + b, 0) / xs.length),
+            y: Math.round(ys.reduce((a, b) => a + b, 0) / ys.length)
+          }
+        });
+      } else if (currentMode === 'corridor') {
+        data.corridors.push({
+          id: 'corridor-' + (data.corridors.length + 1),
+          polygon: [...activePoints]
+        });
+      }
+
+      activePoints = [];
+      updateLayers();
+      redraw();
+    }
+
+    function finishPlaza() {
+      if (!plazaCenter || plazaRadius <= 0) return;
+      const name = prompt('Nombre de la Plaza:', 'Plaza La Fuente') || 'Plaza';
+      let color = '#DC2626';
+      if (name.toLowerCase().includes('jard')) color = '#2563EB';
+      else if (name.toLowerCase().includes('centr')) color = '#EA580C';
+      else if (name.toLowerCase().includes('arte')) color = '#7C3AED';
+      else if (name.toLowerCase().includes('mús') || name.toLowerCase().includes('mus')) color = '#1D4ED8';
+
+      data.plazas.push({
+        id: 'plaza-' + (data.plazas.length + 1),
+        label: name,
+        color: color,
+        center: { ...plazaCenter },
+        radius: plazaRadius
+      });
+
+      plazaCenter = null;
+      plazaRadius = 0;
+      updateLayers();
+      redraw();
+    }
+
+    function updateStatus(mallPt = { x: 0, y: 0 }) {
+      const bar = document.getElementById('statusBar');
+      bar.innerHTML = `Coord Plano: <b>(${mallPt.x}, ${mallPt.y})</b> | Zoom: <b>${Math.round(scale * 100)}%</b> | Modo: <b>${currentMode.toUpperCase()}</b>`;
+    }
+
+    // Renderizado en Canvas
+    function redraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Imagen de fondo del plano
+      if (isImageLoaded) {
+        ctx.save();
+        ctx.translate(panX, panY);
+        ctx.scale(scale, scale);
+        ctx.drawImage(image, 0, 0);
+        ctx.restore();
+      }
+
+      // 2. Dibujar Footprint
+      if (data.footprint.length >= 3) {
+        drawPoly(data.footprint, 'rgba(16, 185, 129, 0.25)', '#10B981', 3);
+      }
+
+      // 3. Dibujar Corredores
+      data.corridors.forEach(c => {
+        drawPoly(c.polygon, 'rgba(100, 116, 139, 0.3)', '#94A3B8', 1.5);
+      });
+
+      // 4. Dibujar Plazas
+      data.plazas.forEach(pl => {
+        const sc = mallToScreen(pl.center.x, pl.center.y);
+        const sr = (pl.radius / TARGET_WIDTH) * image.width * scale;
+        // Halo
+        ctx.beginPath();
+        ctx.arc(sc.x, sc.y, sr * 1.15, 0, Math.PI * 2);
+        ctx.fillStyle = pl.color + '44';
+        ctx.fill();
+        // Main circle
+        ctx.beginPath();
+        ctx.arc(sc.x, sc.y, sr, 0, Math.PI * 2);
+        ctx.fillStyle = pl.color + 'AA';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(pl.label, sc.x, sc.y + 4);
+      });
+
+      // 5. Dibujar Locales
+      data.stores.forEach(st => {
+        if (st.polygon && st.polygon.length >= 3) {
+          drawPoly(st.polygon, 'rgba(59, 130, 246, 0.35)', '#3B82F6', 2);
+          if (st.labelPos) {
+            const lp = mallToScreen(st.labelPos.x, st.labelPos.y);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(st.name, lp.x, lp.y);
+          }
+        }
+      });
+
+      // 6. Dibujar Nodos
+      data.nodes.forEach(nd => {
+        const p = mallToScreen(nd.x, nd.y);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#F59E0B';
+        ctx.fill();
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      });
+
+      // 7. Polígono activo en curso
+      if (activePoints.length > 0) {
+        ctx.beginPath();
+        const first = mallToScreen(activePoints[0].x, activePoints[0].y);
+        ctx.moveTo(first.x, first.y);
+        for (let i = 1; i < activePoints.length; i++) {
+          const pt = mallToScreen(activePoints[i].x, activePoints[i].y);
+          ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.strokeStyle = '#FBBF24';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Vértices
+        activePoints.forEach(p => {
+          const sp = mallToScreen(p.x, p.y);
+          ctx.beginPath();
+          ctx.arc(sp.x, sp.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = '#FBBF24';
+          ctx.fill();
+        });
+      }
+
+      // Plaza activa en curso
+      if (plazaCenter && plazaRadius > 0) {
+        const sc = mallToScreen(plazaCenter.x, plazaCenter.y);
+        const sr = (plazaRadius / TARGET_WIDTH) * image.width * scale;
+        ctx.beginPath();
+        ctx.arc(sc.x, sc.y, sr, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.3)';
+        ctx.fill();
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+
+    function drawPoly(pts, fill, stroke, strokeWidth) {
+      if (pts.length < 3) return;
+      ctx.beginPath();
+      const first = mallToScreen(pts[0].x, pts[0].y);
+      ctx.moveTo(first.x, first.y);
+      for (let i = 1; i < pts.length; i++) {
+        const pt = mallToScreen(pts[i].x, pts[i].y);
+        ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = strokeWidth;
+      ctx.stroke();
+    }
+
+    // Actualizar Panel de Capas
+    function updateLayers() {
+      const container = document.getElementById('layerList');
+      container.innerHTML = '';
+
+      let count = 0;
+
+      // Footprint
+      if (data.footprint.length > 0) {
+        count++;
+        container.innerHTML += `
+          <div class="layer-group">
+            <div class="layer-group-title"><span>Huella Perimetral</span><span>1</span></div>
+            <div class="layer-item">
+              <div class="layer-info">
+                <div class="layer-badge" style="background: var(--accent);"></div>
+                <span>Perímetro Slab (${data.footprint.length} pts)</span>
+              </div>
+              <button class="btn-delete" onclick="data.footprint=[]; updateLayers(); redraw();">🗑️</button>
+            </div>
+          </div>
+        `;
+      }
+
+      // Plazas
+      if (data.plazas.length > 0) {
+        count += data.plazas.length;
+        let html = `<div class="layer-group"><div class="layer-group-title"><span>Plazas Circulares</span><span>${data.plazas.length}</span></div>`;
+        data.plazas.forEach((pl, idx) => {
+          html += `
+            <div class="layer-item">
+              <div class="layer-info">
+                <div class="layer-badge" style="background: ${pl.color};"></div>
+                <span>${pl.label} (r: ${pl.radius})</span>
+              </div>
+              <button class="btn-delete" onclick="data.plazas.splice(${idx},1); updateLayers(); redraw();">🗑️</button>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      // Stores
+      if (data.stores.length > 0) {
+        count += data.stores.length;
+        let html = `<div class="layer-group"><div class="layer-group-title"><span>Locales y Anclas</span><span>${data.stores.length}</span></div>`;
+        data.stores.forEach((st, idx) => {
+          html += `
+            <div class="layer-item">
+              <div class="layer-info">
+                <div class="layer-badge" style="background: #3B82F6;"></div>
+                <span>${st.name}</span>
+              </div>
+              <button class="btn-delete" onclick="data.stores.splice(${idx},1); updateLayers(); redraw();">🗑️</button>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        container.innerHTML += html;
+      }
+
+      document.getElementById('elemCount').innerText = count;
+    }
+
+    function clearAll() {
+      if (confirm('¿Deseas limpiar todos los trazos actuales?')) {
+        data = { footprint: [], plazas: [], stores: [], corridors: [], nodes: [] };
+        updateLayers();
+        redraw();
+      }
+    }
+
+    // Modal Export
+    function openExportModal() {
+      const area = document.getElementById('codeExportArea');
+
+      let tsCode = `// Geometría Exportada desde el Anotador Sambil 2.5D\n\n`;
+
+      if (data.footprint.length > 0) {
+        tsCode += `export const footprintSambil = ${JSON.stringify(data.footprint, null, 2)};\n\n`;
+      }
+
+      if (data.plazas.length > 0) {
+        tsCode += `export const plazasSambil = ${JSON.stringify(data.plazas, null, 2)};\n\n`;
+      }
+
+      if (data.stores.length > 0) {
+        tsCode += `export const storesSambil = ${JSON.stringify(data.stores, null, 2)};\n\n`;
+      }
+
+      area.value = tsCode;
+      document.getElementById('exportModal').classList.add('open');
+    }
+
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.remove('open');
+    }
+
+    function copyExportCode() {
+      const area = document.getElementById('codeExportArea');
+      area.select();
+      navigator.clipboard.writeText(area.value);
+      alert('¡Código copiado al portapapeles!');
+    }
+
+    // Inicializar al cargar
+    window.onload = () => {
+      resizeCanvas();
+      loadSampleImage('nivel libertador.jpeg');
+    };
+  </script>
+</body>
+</html>
