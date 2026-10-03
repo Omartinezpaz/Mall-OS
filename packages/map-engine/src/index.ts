@@ -6,6 +6,7 @@ export * from './isometric';
 export * from './path';
 export * from './scene';
 export * from './svg';
+export * from './interaction';
 export {
   demoMall,
   sambilMall,
