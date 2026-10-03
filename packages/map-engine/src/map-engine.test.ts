@@ -452,22 +452,61 @@ test('sambilMall contiene las tiendas ancla principales en sus niveles correctos
   assert.ok(mango && mango.floorId === LEVEL_DIVERSION);
 });
 
-test('sambilMall calcula rutas exitosas entre plazas y tiendas en cada nivel', () => {
-  const routeAutopista = findRouteToStore(sambilMall, `pj-${LEVEL_AUTOPISTA}`, 'tijerazo');
-  assert.ok(routeAutopista);
-  assert.ok(routeAutopista.nodeIds.length >= 2);
+test('sambilMall supera la validación estructural sin errores bloqueantes', () => {
+  const issues = validateMapData(sambilMall);
+  const errors = issues.filter((i) => i.severity === 'error');
+  if (errors.length > 0) {
+    console.log('=== ALL VALIDATION ERRORS ===');
+    errors.forEach(e => console.log(`${e.code}: ${e.message} (ref: ${e.ref})`));
+  }
+  const summary = errors.slice(0, 5).map(e => `${e.code}: ${e.message}`).join(' | ');
+  assert.equal(errors.length, 0, `(${errors.length} errores) Primeros: ${summary}`);
+});
 
+test('sambilMall Nivel Autopista incluye todas las tiendas y anclas del plano arquitectónico', () => {
+  const autopistaStores = sambilMall.stores.filter((s) => s.floorId === LEVEL_AUTOPISTA);
+  assert.ok(autopistaStores.length >= 50, `Se esperaban >= 50 locales en Nivel Autopista, encontrados: ${autopistaStores.length}`);
+
+  // Anclas y tiendas emblemáticas
+  const expectedKeys = [
+    'tijerazo', 'macuto', 'lc_waikiki', 'cines_unidos', 'pull_bear', 'bershka',
+    'stradivarius', 'farmatodo', 'tommy', 'bath_body', 'victoria_secret',
+    'springfield', 'las_villas', 'estivaneli', 'mng', 'skechers', 'bellagio',
+    'jump', 'sportland', 'crocs', 'mario_hernandez'
+  ];
+
+  for (const key of expectedKeys) {
+    const store = autopistaStores.find((s) => s.id === key);
+    assert.ok(store, `Falta la tienda esperada: ${key} en Nivel Autopista`);
+  }
+});
+
+test('sambilMall calcula rutas exitosas entre plazas y tiendas en todos los sectores de Autopista', () => {
+  // Desde Plaza Jardín hacia anclas y extremos
+  const rTijerazo = findRouteToStore(sambilMall, `pj-${LEVEL_AUTOPISTA}`, 'tijerazo');
+  assert.ok(rTijerazo && rTijerazo.nodeIds.length >= 2);
+
+  const rCines = findRouteToStore(sambilMall, `pj-${LEVEL_AUTOPISTA}`, 'cines_unidos');
+  assert.ok(rCines && rCines.nodeIds.length >= 2);
+
+  const rTommy = findRouteToStore(sambilMall, `pj-${LEVEL_AUTOPISTA}`, 'tommy');
+  assert.ok(rTommy && rTommy.nodeIds.length >= 2);
+
+  const rBershka = findRouteToStore(sambilMall, `plf-${LEVEL_AUTOPISTA}`, 'bershka');
+  assert.ok(rBershka && rBershka.nodeIds.length >= 2);
+
+  const rFarmatodo = findRouteToStore(sambilMall, `pea-${LEVEL_AUTOPISTA}`, 'farmatodo');
+  assert.ok(rFarmatodo && rFarmatodo.nodeIds.length >= 2);
+
+  // Rutas en otros niveles
   const routeAcuario = findRouteToStore(sambilMall, `pj-${LEVEL_ACUARIO}`, 'zara');
-  assert.ok(routeAcuario);
-  assert.ok(routeAcuario.nodeIds.length >= 2);
+  assert.ok(routeAcuario && routeAcuario.nodeIds.length >= 2);
 
   const routeLibertador = findRouteToStore(sambilMall, `pj-${LEVEL_LIBERTADOR}`, 'samsung');
-  assert.ok(routeLibertador);
-  assert.ok(routeLibertador.nodeIds.length >= 2);
+  assert.ok(routeLibertador && routeLibertador.nodeIds.length >= 2);
 
   const routeDiversion = findRouteToStore(sambilMall, `pj-${LEVEL_DIVERSION}`, 'mango_bajito');
-  assert.ok(routeDiversion);
-  assert.ok(routeDiversion.nodeIds.length >= 2);
+  assert.ok(routeDiversion && routeDiversion.nodeIds.length >= 2);
 });
 
 test('renderiza correctamente la suite de elementos de ambiente 2.5D (fuentes, luminarias, bancas, ascensores)', () => {
