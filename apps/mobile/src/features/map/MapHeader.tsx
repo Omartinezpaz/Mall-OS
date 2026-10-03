@@ -39,6 +39,13 @@ export function MapHeader({
 }: MapHeaderProps) {
   return (
     <View style={styles.container}>
+      {/* Non-Official Illustrative Disclaimer Banner */}
+      <View style={styles.disclaimerBanner}>
+        <Text style={styles.disclaimerText}>
+          📐 Plano esquemático ilustrativo · No oficial (Sambil Chacao Prototipo Demo)
+        </Text>
+      </View>
+
       <View style={styles.headerBar}>
         {/* Selector de Nivel (L1, L2, L3) */}
         <View style={styles.levelSelector}>
@@ -124,13 +131,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     zIndex: 20,
   },
+  disclaimerBanner: {
+    backgroundColor: '#0F172A',
+    paddingHorizontal: 12,
+    paddingTop: 44,
+    paddingBottom: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  disclaimerText: {
+    color: '#94A3B8',
+    fontSize: 10,
+    fontWeight: '700',
+    textAlign: 'center',
+    letterSpacing: 0.2,
+  },
   headerBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 52,
-    paddingBottom: 12,
+    paddingTop: 8,
+    paddingBottom: 10,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',

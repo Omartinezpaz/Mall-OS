@@ -7,20 +7,19 @@
 Plataforma digital multi-mall que conecta **shoppers**, **tenants (locales)** y **administración del mall**.
 Una sola app móvil para todos los malls. Cada mall es una instancia: "Mall OS Los Nuevos Teques", "Mall OS El Recreo", etc.
 
-## 2. Piloto
-- **Mall:** Centro Comercial Los Nuevos Teques (Los Teques, Miranda, Venezuela)
-- **Locales:** ~30 (panadería, supermercado, gym, McDonald's, charcutería, mueblería, bancos, farmacias, otros)
-- **Decisor:** junta de propietarios (el contacto pertenece a la junta)
-- **Duración objetivo:** 90 días
-- **Precio del piloto:** gratis o simbólico (a negociar). NO usar los precios de $999–1,499/mes del documento original.
+## 2. Prototipo Insignia y Piloto Comercial
+- **Prototipo Activo:** Sambil Chacao (Caracas, Venezuela) — Plano esquemático ilustrativo 2.5D (4 niveles, plazas icónicas, tiendas ancla) como prototipo avanzado de venta y demostración comercial de alta fidelidad.
+- **Mall Piloto Original (Congelado):** Centro Comercial Los Nuevos Teques — En pausa ante falta de planos e insumos de la junta.
+- **Pipeline / Oportunidad Abierta:** Grupo La Cascada (Hotel, Maturín) — Oportunidad abierta; sin desarrollo específico hasta recibir requisitos formales y planos arquitectónicos.
+- **Precio / Modelo Comercial:** Prototipo demostrativo orientado a venta B2B para juntas directivas y administraciones de centros comerciales.
 
-### Métricas de éxito (HIPÓTESIS, validar con la junta)
+### Métricas de Éxito del Prototipo Comercial
 | Métrica | Meta inicial |
 |---|---|
-| Locales activos publicando | 8–10 de 30 |
-| Usuarios registrados | 300 |
-| Cupones activados | 100 |
-| Cupones canjeados | 40 |
+| Demostración fluida en Android | 60 FPS en pan/zoom y simulación de ruta |
+| Vitrina Offline | 100% operable sin conexión a internet |
+| Fidelidad de Marca | Cumplimiento 80/15/5 y 0 precios en USD |
+| Validación de Canje | Flujo atómico demostrable (`activate_coupon` / `redeem_coupon`) |
 Funnel a medir: visita → registro → cupón activado → cupón canjeado. No prometer atribución de ventas (sin integración POS no se puede medir).
 
 ## 3. Alcance del piloto (CONGELADO)

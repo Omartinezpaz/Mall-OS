@@ -39,9 +39,14 @@
 | D-024 | 2026-09-29 | GitHub repo: `https://github.com/osmallss202-ops/mall-os.git` | Control de versiones del monorepo | Vigente |
 | D-025 | 2026-10-01 | Integración de manual de identidad visual y brand assets oficiales | Logos 3D ribbon, 10 categorías vectoriales, elementos isométricos 2.5D para mapas, carrusel de onboarding splash y app.json assets | Vigente |
 | D-026 | 2026-10-02 | Alineación con Documento Maestro v2.0.0 y Motor Isométrico 2.5D de Tiempo y Espacio | Motor isométrico con pan/pinch, cálculo Dijkstra de rutas animadas, fijación de posición manual ("Estoy aquí") y atenuación de locales por hora; armonización del dataset de locales piloto | Vigente |
-| D-027 | 2026-10-02 | Etiquetado estricto de Demostración (`isDemo`), exclusión de precios absolutos en USD (solo porcentajes/beneficios) y vitrina 100% offline | Cumplimiento estricto de RULES.md y DESIGN.md: evitar falsas expectativas de PDR/GPS hardware en presentaciones, proteger licenciamiento de marcas y asegurar funcionamiento en modo avión | Vigente |
-| D-028 | 2026-10-02 | Adopción de Sambil Chacao (4 niveles oficiales) como mall insignia y expansión multi-venue para Hotel La Cascada (Maturín) | Planos oficiales de Sambil Chacao incorporados al motor (Autopista, Acuario, Libertador, Diversión/Terrazas con sus 5 plazas icónicas); validación de la arquitectura multi-tenant para hotelería y centros comerciales | Vigente |
+| D-028 | 2026-10-02 | Adopción de Sambil Chacao como prototipo insignia de demostración comercial | Planos esquemáticos del Sambil Chacao incorporados al motor; vitrina de alta visibilidad para venta de producto | Vigente |
 | D-029 | 2026-10-02 | Map Engine v0.4.1 Authoring Foundation e Icon System v2 | Estandarización de 41 iconos oficiales en kebab-case con soporte Base/Badge/Sprite SVG, integración de expo-clipboard en Icon Lab, versionado de mapa (`schemaVersion: 1`), y validación exhaustiva de geometrías, caras perimetrales de puertas y enlaces verticales | Vigente |
+| D-030 | 2026-10-02 | Los Nuevos Teques no entregó planos: deja de ser el piloto | Se congela como piloto activo por falta de planos e insumos; el código no asume compromisos operativos con ese mall | Vigente |
+| D-031 | 2026-10-02 | Sambil Chacao: solo demostración y piloto comercial; geometría esquemática | No oficial, nivel "Libertador" extrapolado; rotulado obligatorio "Plano esquemático ilustrativo — No oficial" en interfaz | Vigente |
+| D-032 | 2026-10-02 | Grupo La Cascada (hotel, Maturín): oportunidad comercial abierta | Sin alcance ni requisitos definidos; no se desarrolla nada específico para hotel hasta tener especificación y planos | Abierta |
+| D-033 | 2026-10-02 | Cupones del demo se generan en el cliente y llevan rotulado "DEMO" | El canje real solo por RPC del servidor (`redeem_coupon`); los cupones locales llevan advertencia visible de simulación | Vigente |
+| D-034 | 2026-10-02 | Precios en pantalla: decisión pendiente | Por ahora solo porcentajes y beneficios promocionales; cero precios absolutos en USD | Pendiente |
+
 
 ## Riesgos abiertos
 - R-01 Aprobación de la junta puede ser lenta (decisión colegiada).

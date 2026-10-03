@@ -21,6 +21,26 @@ type DisplayMode = 'auto' | 'base' | 'badge';
 
 export default function IconLabScreen() {
   const router = useRouter();
+
+  if (!__DEV__) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 24 }]}>
+        <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700', textAlign: 'center' }}>
+          Icon Lab (Modo Desarrollo)
+        </Text>
+        <Text style={{ color: '#94A3B8', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
+          Esta herramienta solo está habilitada en modo desarrollo (`__DEV__`).
+        </Text>
+        <TouchableOpacity
+          onPress={() => router.replace('/(tabs)')}
+          style={{ marginTop: 20, backgroundColor: '#2563EB', paddingHorizontal: 18, paddingVertical: 10, borderRadius: 8 }}
+        >
+          <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Volver a la App</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   const [search, setSearch] = useState('');
   const [selectedSize, setSelectedSize] = useState<number>(48);
   const [globalMode, setGlobalMode] = useState<DisplayMode>('auto');

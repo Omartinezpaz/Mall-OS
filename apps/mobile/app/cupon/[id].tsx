@@ -202,6 +202,11 @@ export default function CuponViewScreen() {
           <Text style={styles.codeText}>{coupon.code}</Text>
         </View>
 
+        {/* Demo Mode Notice */}
+        <View style={styles.demoNoticeBadge}>
+          <Text style={styles.demoNoticeText}>⚠️ MODO DEMOSTRACIÓN · Código generado en cliente</Text>
+        </View>
+
         {/* Action Buttons */}
         <View style={styles.actionsContainer}>
           <TouchableOpacity
@@ -369,7 +374,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 8,
-    marginBottom: 28,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#334155',
   },
@@ -378,6 +383,20 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 2,
+  },
+  demoNoticeBadge: {
+    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(245, 158, 11, 0.3)',
+    marginBottom: 24,
+  },
+  demoNoticeText: {
+    color: '#FBBF24',
+    fontSize: 11,
+    fontWeight: '700',
   },
   actionsContainer: {
     width: '100%',
