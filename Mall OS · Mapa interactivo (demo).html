@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Mall OS · Mapa interactivo (demo)</title>
+    <style>
+        :root {
+            --bg: #F8FAFC;
+            --card: #fff;
+            --text: #0F172A;
+            --muted: #475569;
+            --line: #E2E8F0;
+            --pri: #4F46E5;
+            --ok: #166534;
+            --no: #991B1B;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        @media (prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #0F172A;
+                --card: #1E293B;
+                --text: #F1F5F9;
+                --muted: #CBD5E1;
+                --line: #334155;
+                --pri: #818CF8;
+                --ok: #86EFAC;
+                --no: #FCA5A5
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #0F172A;
+            --card: #1E293B;
+            --text: #F1F5F9;
+            --muted: #CBD5E1;
+            --line: #334155;
+            --pri: #818CF8;
+            --ok: #86EFAC;
+            --no: #FCA5A5
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px)
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font: 15px/1.4 system-ui, sans-serif;
+            display: flex;
+            flex-direction: column
+        }
+
+        header,
+        .sheet {
+            background: var(--card);
+            padding: 10px 14px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        header {
+            border-bottom: 1px solid var(--line)
+        }
+
+        .sheet {
+            border-top: 1px solid var(--line);
+            flex-direction: column;
+            align-items: stretch
+        }
+
+        #card {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-height: 62px
+        }
+
+        #card span {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        #card .ok {
+            color: var(--ok)
+        }
+
+        #card .no {
+            color: var(--no)
+        }
+
+        main {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+            background: #F8FAFC;
+            touch-action: none
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;
+            user-select: none
+        }
+
+        button {
+            font: inherit;
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 10px;
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0 12px
+        }
+
+        button:focus-visible,
+        input:focus-visible {
+            outline: 3px solid var(--pri);
+            outline-offset: 2px
+        }
+
+        button.on {
+            background: var(--pri);
+            color: #fff;
+            border-color: var(--pri)
+        }
+
+        .tools {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        input[type=range] {
+            flex: 1;
+            min-width: 140px;
+            accent-color: var(--pri)
+        }
+
+        .note {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        b#clock {
+            min-width: 68px
+        }
+    </style>
+</head>
+
+<body>
+    <header><b id="clock"></b><input id="time" type="range" min="5" max="23" step="0.25"
+            aria-label="Hora del día"><button id="now">Ahora</button><span id="count" class="note"></span></header>
+    <main><svg id="map" role="img" aria-label="Mapa interactivo del centro comercial">
+            <g id="view">
+                <g id="base"></g>
+                <g id="route"></g>
+                <g id="you"></g>
+            </g>
+        </svg>
+        <div class="tools"><button id="zin" aria-label="Acercar">+</button><button id="zout"
+                aria-label="Alejar">−</button><button id="reset" aria-label="Restablecer vista">⟲</button></div>
+    </main>
+    <div class="sheet">
+        <div id="card"></div><button id="place">📍 Estoy aquí: tocar el mapa para marcar mi posición</button>
+        <span class="note">Demo con plano y horarios ficticios. La posición se marca a mano; en la app real se fijará
+            escaneando un QR o eligiendo un local.</span>
+    </div>
+    <script>"use strict"; (() => { function X(e) { let o = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.exec(e.trim()); if (!o || !o[1]) return null; let n = o[1]; n.length === 3 && (n = n.split("").map(i => i + i).join("")); let a = parseInt(n, 16); return [a >> 16 & 255, a >> 8 & 255, a & 255] } function re(e) { return X(e) !== null } function j(e) { let o = X(e); if (!o) throw new Error(`Color inv\xE1lido: "${e}"`); return Ae(o[0], o[1], o[2]) } function Ae(e, o, n) { let a = i => Math.max(0, Math.min(255, Math.round(i))).toString(16).padStart(2, "0"); return `#${a(e)}${a(o)}${a(n)}`.toUpperCase() } function ye(e) { let o = X(e); if (!o) throw new Error(`Color inv\xE1lido: "${e}"`); let [n, a, i] = o.map(d => { let s = d / 255; return s <= .03928 ? s / 12.92 : Math.pow((s + .055) / 1.055, 2.4) }); return .2126 * n + .7152 * a + .0722 * i } function L(e, o) { let n = ye(e), a = ye(o), [i, d] = n >= a ? [n, a] : [a, n]; return (i + .05) / (d + .05) } function ie(e, o, n) { let a = X(e), i = X(o); if (!a || !i) throw new Error(`Color inv\xE1lido: "${a ? o : e}"`); let d = Math.max(0, Math.min(1, n)); return Ae(a[0] + (i[0] - a[0]) * d, a[1] + (i[1] - a[1]) * d, a[2] + (i[2] - a[2]) * d) } function Te(e, o = "#FFFFFF", n = "#0F172A") { return j(L(e, o) >= L(e, n) ? o : n) } function _(e, o, n) { let a = j(e); if (L(a, o) >= n) return a; let i = ye(o) > .5 ? "#000000" : "#FFFFFF"; for (let d = 1; d <= 100; d++) { let s = ie(a, i, d / 100); if (L(s, o) >= n) return s } return j(i) } var me = { 50: "#EEF2FF", 100: "#E0E7FF", 200: "#C7D2FE", 500: "#6366F1", 600: "#4F46E5", 700: "#4338CA", 800: "#3730A3", 900: "#312E81" }, Be = { 600: "#7C3AED", 700: "#6D28D9" }, A = { 50: "#F8FAFC", 100: "#F1F5F9", 200: "#E2E8F0", 300: "#CBD5E1", 400: "#94A3B8", 500: "#64748B", 600: "#475569", 800: "#1E293B", 900: "#0F172A" }, G = "#FFFFFF", N = { success: { strong: "#16A34A", text: "#166534", soft: "#DCFCE7" }, warning: { strong: "#D97706", text: "#92400E", soft: "#FEF3C7" }, danger: { strong: "#DC2626", text: "#991B1B", soft: "#FEE2E2" } }; var Le = { food: { fill: "#FEF3C7", stroke: "#D97706", ink: "#92400E" }, fresh: { fill: "#DCFCE7", stroke: "#16A34A", ink: "#166534" }, health: { fill: "#CCFBF1", stroke: "#0D9488", ink: "#115E59" }, fitness: { fill: "#FFEDD5", stroke: "#EA580C", ink: "#9A3412" }, home: { fill: "#FFE4E6", stroke: "#E11D48", ink: "#9F1239" }, finance: { fill: "#DBEAFE", stroke: "#2563EB", ink: "#1E40AF" }, fashion: { fill: "#FCE7F3", stroke: "#DB2777", ink: "#9D174D" }, entertainment: { fill: "#EDE9FE", stroke: "#7C3AED", ink: "#5B21B6" }, services: { fill: "#F1F5F9", stroke: "#475569", ink: "#1E293B" }, other: { fill: "#F1F5F9", stroke: "#475569", ink: "#1E293B" } }; var U = { text: 4.5, ui: 3, strongText: 7 }, it = A[50]; function st(e) { let o = [], n = it; e.background !== void 0 && (re(e.background) ? L(A[900], e.background) < 12 ? o.push("Fondo demasiado oscuro para el modo claro: se us\xF3 el fondo por defecto.") : n = j(e.background) : o.push("Fondo inv\xE1lido: se us\xF3 el fondo por defecto.")); let a = me[600]; re(e.primary) ? a = j(e.primary) : o.push("Color primario inv\xE1lido: se us\xF3 el \xEDndigo de Mall OS."); let i = _(a, G, U.text), d = _(a, n, U.ui), s = L(i, n) >= L(d, n) ? i : d, l = _(s, G, U.text); l !== a && (o.push(`El color primario ${a} se oscureci\xF3 a ${l} para garantizar legibilidad.`), a = l); let x = Be[600]; e.secondary !== void 0 && (re(e.secondary) ? x = j(e.secondary) : o.push("Color secundario inv\xE1lido: se us\xF3 el violeta por defecto.")); let w = _(x, n, U.ui); w !== x && (o.push(`El color secundario ${x} se oscureci\xF3 a ${w} para destacar sobre el fondo.`), x = w); let y = ie(a, G, .9); return { colors: { primary: a, primaryPressed: ie(a, "#000000", .15), onPrimary: Te(a), primarySoft: y, onPrimarySoft: _(a, y, U.text), secondary: x, background: n, surface: G, surfaceMuted: A[100], border: A[200], textPrimary: A[900], textSecondary: _(A[600], n, U.text), focusRing: _(a, n, U.ui), success: N.success.strong, onSuccessSoft: N.success.text, successSoft: N.success.soft, warning: N.warning.strong, onWarningSoft: N.warning.text, warningSoft: N.warning.soft, danger: N.danger.strong, onDangerSoft: N.danger.text, dangerSoft: N.danger.soft, inverseBackground: A[900], inverseSurface: A[800], inverseText: G }, warnings: o } } var Pt = st({ primary: me[600] }).colors; function ge(e, o) { return Math.hypot(e.x - o.x, e.y - o.y) } var at = 1.2, ct = 15; function _e(e) { let o = new Map(e.nodes.map(i => [i.id, i])), n = new Set, a = []; for (let i of e.nodes) for (let d of i.connections) { let s = o.get(d); if (!s || s.id === i.id) continue; let l = i.id < s.id ? `${i.id}|${s.id}` : `${s.id}|${i.id}`; n.has(l) || (n.add(l), a.push([i, s])) } return a } function dt(e, o, n) { return o.floorId !== n.floorId ? ct / e.metersPerUnit : ge(o, n) } function lt(e) { let o = new Map(e.nodes.map(n => [n.id, []])); for (let [n, a] of _e(e)) { let i = dt(e, n, a); o.get(n.id)?.push({ to: a.id, cost: i }), o.get(a.id)?.push({ to: n.id, cost: i }) } return o } function ft(e, o, n) { let a = lt(e); if (!a.has(o) || !a.has(n)) return null; let i = new Map([[o, 0]]), d = new Map, s = new Set; for (; ;) { let b = null, k = 1 / 0; for (let [H, P] of i) !s.has(H) && P < k && (k = P, b = H); if (b === null) return null; if (b === n) break; s.add(b); for (let H of a.get(b) ?? []) { let P = k + H.cost; P < (i.get(H.to) ?? 1 / 0) && (i.set(H.to, P), d.set(H.to, b)) } } let l = [n], x = n; for (; x !== o;) { let b = d.get(x); if (b === void 0) return null; l.unshift(b), x = b } let w = i.get(n) ?? 0, y = w * e.metersPerUnit; return { nodeIds: l, distanceUnits: w, distanceMeters: y, walkingMinutes: Math.max(1, Math.ceil(y / (at * 60))) } } function Fe(e, o, n) { let a = e.stores.find(i => i.id === n); return a ? ft(e, o, a.doorNodeId) : null } function ze(e, o, n, a) { let i = null, d = 1 / 0; for (let s of e.nodes) { if (s.floorId !== o || a && !a.includes(s.kind)) continue; let l = ge(s, n); l < d && (d = l, i = s) } return i } var se = { scale: 1.7, heightScale: 1.7 }, We = Math.cos(Math.PI / 6), ut = .5; function ae(e, o, n = 0, a = se) { return { x: (e - o) * We * a.scale, y: (e + o) * ut * a.scale - n * a.heightScale } } function je(e, o, n = 0, a = se) { let i = e / (We * a.scale), d = (o + n * a.heightScale) * 2 / a.scale; return { x: (d + i) / 2, y: (d - i) / 2 } } function Ue(e, o = 2) { let n = e; for (let a = 0; a < o; a++) { if (n.length < 3) return n; let i = [n[0]]; for (let d = 0; d < n.length - 1; d++) { let s = n[d], l = n[d + 1]; i.push({ x: .75 * s.x + .25 * l.x, y: .75 * s.y + .25 * l.y }), i.push({ x: .25 * s.x + .75 * l.x, y: .25 * s.y + .75 * l.y }) } i.push(n[n.length - 1]), n = i } return n } function Ke(e, o, n = 0) { let a = []; if (e.length < 2 || o <= 0) return a; let d = (n % 1 + 1) % 1 * o, s = 0; for (let l = 1; l < e.length; l++) { let x = e[l - 1], w = e[l], y = Math.hypot(w.x - x.x, w.y - x.y); if (y === 0) continue; let b = Math.atan2(w.y - x.y, w.x - x.x); for (; d <= s + y;) { let k = (d - s) / y; a.push({ x: x.x + (w.x - x.x) * k, y: x.y + (w.y - x.y) * k, angle: b }), d += o } s += y } return a } var pt = { primary: "#4F46E5", primaryDark: "#4338CA", slab: "#F1F5F9", slabStroke: "#CBD5E1", corridor: "#FFFFFF", corridorStroke: "#E2E8F0", tile: "#E8EDF4", plaza: "#EEF2FF", plazaStroke: "#C7D2FE", water: "#C7D2FE", waterStroke: "#818CF8", leaf: "#22C55E", leafDark: "#16A34A", leafLight: "#4ADE80", trunk: "#8B6B4A", wood: "#B7916B", badge: "#312E81" }, q = 9, V = 16, xt = 26; function Ge(e, o) { let n = /^#([0-9a-fA-F]{6})$/.exec(e); if (!n || !n[1]) return e; let a = parseInt(n[1], 16), i = d => Math.round(d * (1 - o)).toString(16).padStart(2, "0"); return `#${i(a >> 16 & 255)}${i(a >> 8 & 255)}${i(a & 255)}`.toUpperCase() } var Z = e => ({ x: e.x + e.w / 2, y: e.y + e.h / 2 }); function ce(e, o) { let n = e.floors.find(t => t.id === o.floorId); if (!n) throw new Error(`Piso inexistente: ${o.floorId}`); let a = o.iso ?? se, i = { ...pt, ...o.theme }, d = (o.detail ?? "full") === "full", s = (t, r, c = 0) => ae(t, r, c, a), l = [], x = [], w = 0, y = (t, r, c, f = .8, p = {}) => ({ kind: "polygon", points: t, fill: r, stroke: c, strokeWidth: f, ...p.opacity !== void 0 ? { opacity: p.opacity } : {}, ...p.storeId ? { storeId: p.storeId } : {} }), b = (t, r, c, f, p) => y([s(t.x, t.y, r), s(t.x + t.w, t.y, r), s(t.x + t.w, t.y + t.h, r), s(t.x, t.y + t.h, r)], c, f, .8, p ? { storeId: p } : {}), k = (t, r, c, f, p, u) => { let { x: m, y: h, w: E, h: S } = t, O = u ? { storeId: u } : {}; return [y([s(m, h + S, r), s(m + E, h + S, r), s(m + E, h + S, c), s(m, h + S, c)], Ge(f, .14), p, .8, O), y([s(m + E, h, r), s(m + E, h + S, r), s(m + E, h + S, c), s(m + E, h, c)], Ge(f, .26), p, .8, O), b(t, c, f, p, u)] }, H = (t, r, c, f) => ({ kind: "ellipse", x: t.x, y: t.y, rx: r, ry: c, fill: "#0F172A", opacity: f }); l.push(...k({ x: 0, y: 0, w: n.width, h: n.height }, -q, 0, i.slab, i.slabStroke)); for (let t of n.areas) t.kind === "corridor" ? l.push(b(t.rect, .2, i.corridor, i.corridorStroke)) : t.kind === "plaza" ? l.push(b(t.rect, .4, i.plaza, i.plazaStroke)) : l.push(b(t.rect, .6, i.primary, i.primary)); if (d) for (let t of n.areas) { if (t.kind !== "corridor") continue; let { x: r, y: c, w: f, h: p } = t.rect; for (let u = Math.ceil(r / V) * V; u < r + f; u += V)l.push({ kind: "polyline", points: [s(u, c, .3), s(u, c + p, .3)], stroke: i.tile, strokeWidth: .6 }); for (let u = Math.ceil(c / V) * V; u < c + p; u += V)l.push({ kind: "polyline", points: [s(r, u, .3), s(r + f, u, .3)], stroke: i.tile, strokeWidth: .6 }) } for (let t of n.obstacles) if (t.kind === "fountain") { let r = Z(t.rect), c = (f, p) => Array.from({ length: 32 }, (u, m) => { let h = m / 32 * Math.PI * 2; return s(r.x + f * Math.cos(h), r.y + f * Math.sin(h) * .9, p) }); l.push(y(c(t.rect.w / 2, .6), i.water, i.waterStroke, 1)), l.push(y(c(t.rect.w / 4, 4), "#E0E7FF", i.waterStroke, 1)) } else l.push(...k(t.rect, 0, 5, "#E2E8F0", "#FFFFFF")); let P = e.stores.filter(t => t.floorId === o.floorId); if (d) for (let t of P) { let r = t.height * .5; l.push(y([s(t.x + r, t.y + r, .5), s(t.x + t.w + r, t.y + r, .5), s(t.x + t.w + r, t.y + t.h + r, .5), s(t.x + r, t.y + t.h + r, .5)], "#0F172A", "none", 0, { opacity: .07 })) } let ee = [], pe = o.selectedLift ?? 3, et = new Set(o.dimmedStoreIds ?? []), ve = t => et.has(t.id) ? { fill: "#E2E8F0", ink: "#475569" } : o.palette[t.category] ?? o.palette.other ?? { fill: "#F1F5F9", ink: "#1E293B" }, tt = (t, r) => { let c = e.nodes.find(M => M.id === t.doorNodeId); if (!c) return []; let f = Math.abs(c.y - (t.y + t.h)) < 1.5 && c.x >= t.x && c.x <= t.x + t.w, p = Math.abs(c.x - (t.x + t.w)) < 1.5 && c.y >= t.y && c.y <= t.y + t.h; if (!f && !p) return []; let u = f ? t.x : t.y, m = f ? t.x + t.w : t.y + t.h, h = f ? c.x : c.y, E = (M, D, z, W) => f ? [s(M, t.y + t.h, z), s(D, t.y + t.h, z), s(D, t.y + t.h, W), s(M, t.y + t.h, W)] : [s(t.x + t.w, M, z), s(t.x + t.w, D, z), s(t.x + t.w, D, W), s(t.x + t.w, M, W)], S = [], O = 4, B = 3.5, ne = [[u + O, h - B], [h + B, m - O]]; for (let [M, D] of ne) D - M >= 6 && S.push(y(E(M, D, r * .3, r * .78), "#DBEAFE", "#FFFFFF", .5, { opacity: .75, storeId: t.id })); return S.push(y(E(h - B, h + B, 0, r * .7), "#1E293B", "none", 0, { opacity: .55, storeId: t.id })), S }; for (let t of P) { let r = t.id === o.selectedStoreId, c = ve(t), f = r ? t.height + pe : t.height; ee.push({ depth: t.x + t.w / 2 + t.y + t.h / 2, items: [...r ? [y([s(t.x - 2, t.y - 2, .6), s(t.x + t.w + 2, t.y - 2, .6), s(t.x + t.w + 2, t.y + t.h + 2, .6), s(t.x - 2, t.y + t.h + 2, .6)], i.primary, "none", 0, { opacity: .18 })] : [], ...k(t, 0, f, r ? i.primary : c.fill, r ? i.primaryDark : "#FFFFFF", t.id), ...d ? tt(t, f) : []] }) } let ot = t => { switch (t.kind) { case "tree": { let r = s(t.x, t.y, 0), c = s(t.x, t.y, 11); return { depth: t.x + t.y, items: [H(s(t.x + 2, t.y + 2, 0), 7, 3.4, .14), { kind: "polyline", points: [r, s(t.x, t.y, 7)], stroke: i.trunk, strokeWidth: 2.4 }, { kind: "circle", x: c.x, y: c.y, r: 8, fill: i.leafDark }, { kind: "circle", x: c.x - 4.5, y: c.y + 2, r: 6, fill: i.leaf }, { kind: "circle", x: c.x + 4.5, y: c.y + 1, r: 6.5, fill: i.leaf }, { kind: "circle", x: c.x - 1, y: c.y - 3, r: 5, fill: i.leafLight }] } } case "bench": return { depth: t.rect.x + t.rect.w / 2 + t.rect.y + t.rect.h / 2, items: k(t.rect, 0, 2.4, i.wood, "#FFFFFF") }; case "planter": { let r = Z(t.rect), c = s(r.x, r.y, 6); return { depth: r.x + r.y, items: [...k(t.rect, 0, 3, "#E2E8F0", "#FFFFFF"), { kind: "circle", x: c.x, y: c.y, r: 5.5, fill: i.leaf }, { kind: "circle", x: c.x + 3, y: c.y - 2.5, r: 3.5, fill: i.leafLight }] } } case "escalator": { let r = t.rect, c = r.h >= r.w, f = [...k(r, 0, 2, "#94A3B8", "#FFFFFF")], p = 3; if (c) { for (let u = r.y + p; u < r.y + r.h; u += p)f.push({ kind: "polyline", points: [s(r.x, u, 2.1), s(r.x + r.w, u, 2.1)], stroke: "#475569", strokeWidth: .8 }); f.push(...k({ x: r.x, y: r.y, w: 1.2, h: r.h }, 2, 5, "#1E293B", "#FFFFFF")), f.push(...k({ x: r.x + r.w - 1.2, y: r.y, w: 1.2, h: r.h }, 2, 5, "#1E293B", "#FFFFFF")) } else { for (let u = r.x + p; u < r.x + r.w; u += p)f.push({ kind: "polyline", points: [s(u, r.y, 2.1), s(u, r.y + r.h, 2.1)], stroke: "#475569", strokeWidth: .8 }); f.push(...k({ x: r.x, y: r.y, w: r.w, h: 1.2 }, 2, 5, "#1E293B", "#FFFFFF")), f.push(...k({ x: r.x, y: r.y + r.h - 1.2, w: r.w, h: 1.2 }, 2, 5, "#1E293B", "#FFFFFF")) } if (t.flow) { let u = c ? r.h : r.w, m = t.flow === "min" ? -1 : 1, h = r.x + r.w / 2, E = r.y + r.h / 2; for (let S of [.35, .65]) { let O = c ? h : r.x + u * S, B = c ? r.y + u * S : E, ne = s(O - (c ? 0 : m), B - (c ? m : 0), 2.2), M = s(O + (c ? 0 : m), B + (c ? m : 0), 2.2), D = Math.atan2(M.y - ne.y, M.x - ne.x), z = s(O, B, 2.2), W = Math.cos(D), Re = Math.sin(D), he = (He, Oe) => ({ x: z.x + He * W - Oe * Re, y: z.y + He * Re + Oe * W }); f.push({ kind: "polyline", points: [he(-1.6, -2), he(1.2, 0), he(-1.6, 2)], stroke: "#FFFFFF", strokeWidth: 1.2 }) } } return { depth: r.x + r.w / 2 + r.y + r.h / 2, items: f } } case "glass": return { depth: (t.from.x + t.to.x) / 2 + (t.from.y + t.to.y) / 2, items: [y([s(t.from.x, t.from.y, 0), s(t.to.x, t.to.y, 0), s(t.to.x, t.to.y, 8), s(t.from.x, t.from.y, 8)], "#BAE6FD", "#7DD3FC", .8, { opacity: .4 })] }; case "poi": return null } }; if (d) for (let t of n.props ?? []) { let r = ot(t); r && ee.push(r) } ee.sort((t, r) => t.depth - r.depth); for (let t of ee) l.push(...t.items); if (w = l.length, o.routeNodeIds && o.routeNodeIds.length > 1) { let t = new Map(e.nodes.map(c => [c.id, c])), r = o.routeNodeIds.map(c => t.get(c)).filter(c => c !== void 0 && c.floorId === o.floorId).map(c => s(c.x, c.y, 1.5)); if (r.length > 1) { let c = Ue(r, 3); x.push({ kind: "polyline", points: c, stroke: i.primary, strokeWidth: 20, opacity: .16 }), x.push({ kind: "polyline", points: c, stroke: "#FFFFFF", strokeWidth: 12 }), x.push({ kind: "polyline", points: c, stroke: i.primary, strokeWidth: 8 }); for (let p of Ke(c, xt, o.routePhase ?? 0)) { let u = Math.cos(p.angle), m = Math.sin(p.angle), h = (E, S) => ({ x: p.x + E * u - S * m, y: p.y + E * m + S * u }); x.push({ kind: "polyline", points: [h(-3.2, -3.4), h(1.8, 0), h(-3.2, 3.4)], stroke: "#FFFFFF", strokeWidth: 2.2 }) } let f = r[0]; x.push({ kind: "circle", x: f.x, y: f.y, r: 14, fill: i.primary, opacity: .2 }), x.push({ kind: "circle", x: f.x, y: f.y, r: 6.5, fill: i.primary, stroke: "#FFFFFF", strokeWidth: 2.5 }) } } let Pe = o.labels ?? "all"; if (Pe !== "none") { for (let t of P) { let r = t.id === o.selectedStoreId; if (Pe === "selected" && !r) continue; let c = ve(t), f = Z(t), p = s(f.x, f.y, r ? t.height + pe : t.height); l.push({ kind: "text", x: p.x, y: p.y + 4, text: t.name, size: r ? 11 : 10, weight: 700, fill: r ? "#FFFFFF" : c.ink, ...r ? {} : { halo: c.fill }, storeId: t.id }) } for (let t of n.areas) { if (t.kind !== "entrance") continue; let r = Z(t.rect), c = s(r.x, r.y, 9); l.push({ kind: "text", x: c.x, y: c.y, text: "Entrada", size: 10, weight: 700, fill: i.primary, halo: "#FFFFFF" }) } } for (let t of n.props ?? []) { if (t.kind !== "poi") continue; let r = s(t.x, t.y, t.z ?? 14); l.push({ kind: "badge", x: r.x, y: r.y, size: 20, fill: i.badge, glyph: t.poi }) } let xe = P.find(t => t.id === o.selectedStoreId); if (xe) { let t = Z(xe), r = s(t.x, t.y, xe.height + pe + 14); l.push({ kind: "pin", x: r.x, y: r.y - 8, fill: i.primary }) } let te = Math.max(0, ...P.map(t => t.height)) + 34, oe = [s(0, 0, -q), s(0, 0, te), s(n.width, 0, -q), s(n.width, 0, te), s(n.width, n.height, -q), s(n.width, n.height, te), s(0, n.height, -q), s(0, n.height, te)], Ce = Math.min(...oe.map(t => t.x)) - 30, nt = Math.max(...oe.map(t => t.x)) + 30, De = Math.min(...oe.map(t => t.y)) - 30, rt = Math.max(...oe.map(t => t.y)) + 40, Ne = o.layer ?? "all"; return { items: Ne === "route" ? x : Ne === "base" ? l : [...l.slice(0, w), ...x, ...l.slice(w)], viewBox: { x: Ce, y: De, w: nt - Ce, h: rt - De } } } function be(e) { return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;") } var Ve = e => e.map(o => `${o.x.toFixed(1)},${o.y.toFixed(1)}`).join(" "), de = e => e !== void 0 ? ` opacity="${e}"` : ""; function ht(e, o, n) { let a = "#FFFFFF"; switch (e) { case "info": return `<text y="${(o * .22).toFixed(1)}" text-anchor="middle" font-family="${n}" font-size="${(o * .66).toFixed(1)}" font-weight="800" fill="${a}">i</text>`; case "wc": return `<text y="${(o * .14).toFixed(1)}" text-anchor="middle" font-family="${n}" font-size="${(o * .4).toFixed(1)}" font-weight="800" fill="${a}">WC</text>`; case "atm": return `<text y="${(o * .22).toFixed(1)}" text-anchor="middle" font-family="${n}" font-size="${(o * .62).toFixed(1)}" font-weight="800" fill="${a}">$</text>`; case "stairs": return `<polyline points="${[[-.3, .28], [-.1, .28], [-.1, .08], [.1, .08], [.1, -.12], [.3, -.12]].map(([d, s]) => `${((d ?? 0) * o).toFixed(1)},${((s ?? 0) * o).toFixed(1)}`).join(" ")}" fill="none" stroke="${a}" stroke-width="${(o * .11).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/>`; default: { let i = o * .14, d = o * .3, s = o * .08; return `<polygon points="0,${-d} ${-i},${-s} ${i},${-s}" fill="${a}"/><polygon points="0,${d} ${-i},${s} ${i},${s}" fill="${a}"/>` } } } function yt(e, o) { switch (e.kind) { case "polygon": { let n = e.storeId ? ` data-store-id="${be(e.storeId)}"` : ""; return `<polygon points="${Ve(e.points)}" fill="${e.fill}" stroke="${e.stroke}" stroke-width="${e.strokeWidth}" stroke-linejoin="round"${de(e.opacity)}${n}/>` } case "polyline": { let n = e.dash ? ` stroke-dasharray="${e.dash}"` : ""; return `<polyline points="${Ve(e.points)}" fill="none" stroke="${e.stroke}" stroke-width="${e.strokeWidth}"${n} stroke-linecap="round" stroke-linejoin="round"${de(e.opacity)}/>` } case "circle": { let n = e.stroke ? ` stroke="${e.stroke}" stroke-width="${e.strokeWidth ?? 1}"` : ""; return `<circle cx="${e.x.toFixed(1)}" cy="${e.y.toFixed(1)}" r="${e.r}" fill="${e.fill}"${n}${de(e.opacity)}/>` } case "ellipse": return `<ellipse cx="${e.x.toFixed(1)}" cy="${e.y.toFixed(1)}" rx="${e.rx}" ry="${e.ry}" fill="${e.fill}"${de(e.opacity)}/>`; case "text": { let n = e.storeId ? ` data-store-id="${be(e.storeId)}"` : "", a = e.halo ? ` stroke="${e.halo}" stroke-width="3" stroke-linejoin="round" paint-order="stroke"` : ""; return `<text x="${e.x.toFixed(1)}" y="${e.y.toFixed(1)}" text-anchor="middle" font-family="${o}" font-size="${e.size}" font-weight="${e.weight}" fill="${e.fill}"${a}${n}>${be(e.text)}</text>` } case "badge": { let n = e.size / 2; return `<g transform="translate(${e.x.toFixed(1)} ${e.y.toFixed(1)})"><rect x="${-n}" y="${-n}" width="${e.size}" height="${e.size}" rx="${(e.size * .28).toFixed(1)}" fill="${e.fill}" stroke="#FFFFFF" stroke-width="1.5"/>${ht(e.glyph, e.size, o)}</g>` } case "pin": return `<g transform="translate(${e.x.toFixed(1)} ${e.y.toFixed(1)})"><path d="M0 22C-14 6-12-12 0-12C12-12 14 6 0 22Z" fill="${e.fill}" stroke="#FFFFFF" stroke-width="2"/><circle cx="0" cy="-1" r="4.5" fill="#FFFFFF"/></g>` } } function we(e, o = "system-ui, sans-serif") { return e.map(n => yt(n, o)).join("") } var v = "floor-1", K = (e, o, n) => ({ id: e, kind: "tree", x: o, y: n }), mt = [K("arbol-1", 140, 108), K("arbol-2", 178, 108), K("arbol-3", 240, 104), K("arbol-4", 322, 108), K("arbol-5", 150, 158), K("arbol-6", 215, 158), K("arbol-7", 300, 158), { id: "banca-1", kind: "bench", rect: { x: 204, y: 110, w: 14, h: 4 } }, { id: "banca-2", kind: "bench", rect: { x: 241, y: 110, w: 14, h: 4 } }, { id: "jardinera-1", kind: "planter", rect: { x: 340, y: 102, w: 12, h: 6 } }, { id: "escalera-1", kind: "escalator", rect: { x: 122, y: 100, w: 13, h: 34 }, flow: "max" }, { id: "vidrio-1", kind: "glass", from: { x: 165, y: 99 }, to: { x: 195, y: 99 } }, { id: "info-1", kind: "poi", poi: "info", x: 225, y: 130, z: 20 }, { id: "wc-1", kind: "poi", poi: "wc", x: 322.5, y: 210, z: 16 }, { id: "atm-1", kind: "poi", poi: "atm", x: 357.5, y: 50, z: 22 }], g = (e, o, n, a, i) => ({ id: e, floorId: v, x: o, y: n, kind: a, connections: i }), I = { mallSlug: "demo", metersPerUnit: .2, floors: [{ id: v, name: "Nivel 1", level: 1, width: 400, height: 260, areas: [{ id: "pasillo", kind: "corridor", rect: { x: 112, y: 98, w: 288, h: 64 } }, { id: "plaza", kind: "plaza", rect: { x: 190, y: 108, w: 70, h: 44 } }, { id: "entrada", kind: "entrance", rect: { x: 390, y: 136, w: 10, h: 24 } }], obstacles: [{ id: "fuente", kind: "fountain", rect: { x: 211, y: 116, w: 28, h: 28 } }], props: mt }], stores: [{ id: "super", name: "Supermercado", category: "fresh", floorId: v, x: 10, y: 10, w: 100, h: 100, height: 14, doorNodeId: "door-super" }, { id: "gym", name: "Gimnasio", category: "fitness", floorId: v, x: 10, y: 150, w: 100, h: 100, height: 14, doorNodeId: "door-gym" }, { id: "panaderia", name: "Panader\xEDa", category: "food", floorId: v, x: 130, y: 10, w: 60, h: 80, height: 9, doorNodeId: "door-panaderia" }, { id: "charcuteria", name: "Charcuter\xEDa", category: "food", floorId: v, x: 195, y: 10, w: 60, h: 80, height: 9, doorNodeId: "door-charcuteria" }, { id: "farmacia", name: "Farmacia", category: "health", floorId: v, x: 260, y: 10, w: 60, h: 80, height: 9, doorNodeId: "door-farmacia" }, { id: "banco", name: "Banco", category: "finance", floorId: v, x: 325, y: 10, w: 65, h: 80, height: 9, doorNodeId: "door-banco" }, { id: "muebleria", name: "Muebler\xEDa", category: "home", floorId: v, x: 130, y: 170, w: 100, h: 80, height: 9, doorNodeId: "door-muebleria" }, { id: "comida", name: "Comida r\xE1pida", category: "food", floorId: v, x: 235, y: 170, w: 60, h: 80, height: 9, doorNodeId: "door-comida" }, { id: "banos", name: "Ba\xF1os", category: "services", floorId: v, x: 300, y: 170, w: 45, h: 80, height: 7, doorNodeId: "door-banos" }, { id: "servicios", name: "Servicios", category: "services", floorId: v, x: 350, y: 170, w: 40, h: 80, height: 7, doorNodeId: "door-servicios" }], nodes: [g("entrance", 395, 148, "entrance", ["sp-370"]), g("sp-370", 370, 148, "corridor", ["entrance", "sp-357", "door-servicios"]), g("sp-357", 357.5, 148, "corridor", ["sp-370", "sp-322", "door-banco"]), g("sp-322", 322.5, 148, "corridor", ["sp-357", "sp-290", "door-banos"]), g("sp-290", 290, 148, "corridor", ["sp-322", "sp-265", "door-farmacia"]), g("sp-265", 265, 148, "corridor", ["sp-290", "sp-200", "door-comida"]), g("sp-200", 200, 148, "corridor", ["sp-265", "sp-180", "door-charcuteria"]), g("sp-180", 180, 148, "corridor", ["sp-200", "sp-160", "door-muebleria"]), g("sp-160", 160, 148, "corridor", ["sp-180", "sp-115", "door-panaderia"]), g("sp-115", 115, 148, "corridor", ["sp-160", "door-super", "door-gym"]), g("door-servicios", 370, 170, "door", ["sp-370"]), g("door-banco", 357.5, 90, "door", ["sp-357"]), g("door-banos", 322.5, 170, "door", ["sp-322"]), g("door-farmacia", 290, 90, "door", ["sp-290"]), g("door-comida", 265, 170, "door", ["sp-265"]), g("door-charcuteria", 200, 90, "door", ["sp-200"]), g("door-muebleria", 180, 170, "door", ["sp-180"]), g("door-panaderia", 160, 90, "door", ["sp-160"]), g("door-super", 110, 105, "door", ["sp-115"]), g("door-gym", 110, 155, "door", ["sp-115"])] }; var Xe = "floor-1", qe = { super: [7, 21], gym: [5, 22], panaderia: [6, 19], charcuteria: [8, 18], farmacia: [8, 20], banco: [8, 15.5], muebleria: [9, 18], comida: [10, 22], banos: [0, 24], servicios: [8, 20] }, $ = e => document.getElementById(e), C = $("map"), ke = e => `${Math.floor(e) % 12 || 12}:${String(Math.round(e % 1 * 60)).padStart(2, "0")} ${e % 24 < 12 ? "am" : "pm"}`, $e = e => { let o = qe[e]; return !!o && Y >= o[0] && Y < o[1] }, Ye = new Date, Y = Ye.getHours() + Ye.getMinutes() / 60, T, Q = "entrance", J = !1, Se = 0, F = { k: 1, x: 0, y: 0 }, gt = matchMedia("(prefers-reduced-motion: reduce)").matches, Ee = { floorId: Xe, palette: Le }; C.setAttribute("viewBox", Object.values(ce(I, Ee).viewBox).join(" ")); function Ft() { let e = I.stores.filter(o => !$e(o.id)).map(o => o.id); $("base").innerHTML = we(ce(I, { ...Ee, selectedStoreId: T, dimmedStoreIds: e, layer: "base" }).items), $("count").textContent = `${I.stores.length - e.length} de ${I.stores.length} abiertos` } function Ze() { let e = T ? Fe(I, Q, T) : null; return $("route").innerHTML = e ? we(ce(I, { ...Ee, selectedStoreId: T, routeNodeIds: e.nodeIds, routePhase: Se, layer: "route" }).items) : "", e } function bt() { let e = I.nodes.find(n => n.id === Q), o = ae(e.x, e.y, 1.5); $("you").innerHTML = `<circle cx="${o.x}" cy="${o.y}" r="8" fill="#2563EB"><animate attributeName="r" values="7;18;7" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;0;.35" dur="2s" repeatCount="indefinite"/></circle><circle cx="${o.x}" cy="${o.y}" r="6" fill="#2563EB" stroke="#fff" stroke-width="2.5"/>` } function wt() { let e = $("card"); if (!T) { e.innerHTML = "<b>Toca un local</b><span>Ver\xE1s si est\xE1 abierto ahora y c\xF3mo llegar desde donde est\xE1s.</span>"; return } let o = I.stores.find(i => i.id === T), n = qe[o.id], a = Fe(I, Q, o.id); e.innerHTML = `<b>${o.name}</b><span class="${$e(o.id) ? "ok" : "no"}">${$e(o.id) ? `Abierto \xB7 cierra ${ke(n[1])}` : `Cerrado ahora \xB7 abre ${ke(n[0])}`}</span><span>${a ? `~${Math.round(a.distanceMeters)} m \xB7 ~${a.walkingMinutes} min a pie (escala de demostraci\xF3n)` : "Sin ruta desde tu posici\xF3n"}</span>` } var fe = () => { Ft(), Ze(), bt(), wt(), $("clock").textContent = ke(Y), $("time").value = String(Y) }, Ie = () => $("view").setAttribute("transform", `translate(${F.x} ${F.y}) scale(${F.k})`), Me = (e, o) => { let n = C.createSVGPoint(); return n.x = e, n.y = o, n.matrixTransform(C.getScreenCTM().inverse()) }; function ue(e, o, n) { let a = Math.min(4, Math.max(.8, F.k * n)), i = a / F.k; F.x = e - (e - F.x) * i, F.y = o - (o - F.y) * i, F.k = a, Ie() } var R = new Map, le = 0, Je = null; C.addEventListener("pointerdown", e => { C.setPointerCapture(e.pointerId), R.set(e.pointerId, { x: e.clientX, y: e.clientY }), R.size === 1 && (le = 0, Je = e.target) }); C.addEventListener("pointermove", e => { let o = R.get(e.pointerId); if (!o) return; let n = { x: e.clientX, y: e.clientY }, a = C.getScreenCTM().a; if (R.size === 1) F.x += (n.x - o.x) / a, F.y += (n.y - o.y) / a, le += Math.abs(n.x - o.x) + Math.abs(n.y - o.y), Ie(); else if (R.size === 2) { let i = [...R.entries()].find(([l]) => l !== e.pointerId)[1], d = Math.hypot(n.x - i.x, n.y - i.y) / Math.max(1, Math.hypot(o.x - i.x, o.y - i.y)), s = Me((n.x + i.x) / 2, (n.y + i.y) / 2); le = 99, ue(s.x, s.y, d) } R.set(e.pointerId, n) }); C.addEventListener("pointerup", e => { let o = R.size; if (R.delete(e.pointerId), !(o !== 1 || le > 6)) { if (J) { let n = Me(e.clientX, e.clientY), a = je((n.x - F.x) / F.k, (n.y - F.y) / F.k); Q = ze(I, Xe, a, ["corridor", "entrance"])?.id ?? Q, J = !1, $("place").classList.remove("on") } else { let n = Je?.closest?.("[data-store-id]")?.getAttribute("data-store-id"); T = n && n !== T ? n : void 0 } fe() } }); C.addEventListener("pointercancel", e => R.delete(e.pointerId)); C.addEventListener("wheel", e => { e.preventDefault(); let o = Me(e.clientX, e.clientY); ue(o.x, o.y, e.deltaY < 0 ? 1.15 : 1 / 1.15) }, { passive: !1 }); var Qe = () => { let e = C.viewBox.baseVal; return { x: e.x + e.width / 2, y: e.y + e.height / 2 } }; $("zin").onclick = () => { let e = Qe(); ue(e.x, e.y, 1.3) }; $("zout").onclick = () => { let e = Qe(); ue(e.x, e.y, 1 / 1.3) }; $("reset").onclick = () => { F.k = 1, F.x = 0, F.y = 0, Ie() }; $("place").onclick = () => { J = !J, $("place").classList.toggle("on", J) }; $("time").oninput = e => { Y = Number(e.target.value), fe() }; $("now").onclick = () => { let e = new Date; Y = e.getHours() + e.getMinutes() / 60, fe() }; fe(); gt || setInterval(() => { !document.hidden && T && (Se = (Se + .06) % 1, Ze()) }, 80); })();
+    </script>
+</body>
+
+</html>

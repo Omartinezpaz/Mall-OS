@@ -2,5 +2,3 @@
 > @mallos/types@0.1.0 typecheck D:\OS-A MALL\packages\types
 > tsc --noEmit
 
-src/index.ts(1,15): error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
- ELIFECYCLE  Command failed with exit code 2.

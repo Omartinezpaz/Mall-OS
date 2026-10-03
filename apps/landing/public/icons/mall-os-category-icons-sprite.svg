@@ -1,0 +1,453 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="mallos-moda" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 20L24 14L32 20L32 22L16 22Z M24 14C24 10 21 10 21 12" />
+    </g>
+  </symbol>
+  <symbol id="mallos-moda-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#3B5AF1" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 20L24 14L32 20L32 22L16 22Z M24 14C24 10 21 10 21 12" />
+    </g>
+  </symbol>
+  <symbol id="mallos-restaurantes" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 14V22M16 14V22M22 14V22M16 22C16 25 22 25 22 22M19 25V34M28 14V34M28 14C31 14 31 18 28 18" />
+    </g>
+  </symbol>
+  <symbol id="mallos-restaurantes-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#F97316" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 14V22M16 14V22M22 14V22M16 22C16 25 22 25 22 22M19 25V34M28 14V34M28 14C31 14 31 18 28 18" />
+    </g>
+  </symbol>
+  <symbol id="mallos-entretenimiento" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 18H34V30H14Z M14 21C16 21 16 27 14 27 M34 21C32 21 32 27 34 27 M22 24H26" />
+    </g>
+  </symbol>
+  <symbol id="mallos-entretenimiento-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#EC4899" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 18H34V30H14Z M14 21C16 21 16 27 14 27 M34 21C32 21 32 27 34 27 M22 24H26" />
+    </g>
+  </symbol>
+  <symbol id="mallos-belleza" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 30C24 30 16 28 16 22C16 18 20 16 24 22C28 16 32 18 32 22C32 28 24 30 24 30Z M19 24C19 24 14 26 14 20C14 17 17 18 19 21 M29 24C29 24 34 26 34 20C34 17 31 18 29 21" />
+    </g>
+  </symbol>
+  <symbol id="mallos-belleza-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#A855F7" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 30C24 30 16 28 16 22C16 18 20 16 24 22C28 16 32 18 32 22C32 28 24 30 24 30Z M19 24C19 24 14 26 14 20C14 17 17 18 19 21 M29 24C29 24 34 26 34 20C34 17 31 18 29 21" />
+    </g>
+  </symbol>
+  <symbol id="mallos-tecnologia" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="18" y="14" width="12" height="20" rx="2" /><path d="M24 30V30.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-tecnologia-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#06B6D4" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="18" y="14" width="12" height="20" rx="2" /><path d="M24 30V30.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-deportes" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 20V28M17 22V26M34 20V28M31 22V26M14 24H34" />
+    </g>
+  </symbol>
+  <symbol id="mallos-deportes-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#22C55E" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 20V28M17 22V26M34 20V28M31 22V26M14 24H34" />
+    </g>
+  </symbol>
+  <symbol id="mallos-hogar" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 22L24 14L34 22 M18 20V32H30V20 M22 32V26H26V32" />
+    </g>
+  </symbol>
+  <symbol id="mallos-hogar-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#14B8A6" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 22L24 14L34 22 M18 20V32H30V20 M22 32V26H26V32" />
+    </g>
+  </symbol>
+  <symbol id="mallos-salud" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16V32 M16 24H32" />
+    </g>
+  </symbol>
+  <symbol id="mallos-salud-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#EF4444" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16V32 M16 24H32" />
+    </g>
+  </symbol>
+  <symbol id="mallos-servicios" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="4" /><path d="M24 16V14 M24 34V32 M16 24H14 M34 24H32 M18.5 18.5L17 17 M29.5 29.5L31 31 M18.5 29.5L17 31 M29.5 18.5L31 17" />
+    </g>
+  </symbol>
+  <symbol id="mallos-servicios-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#64748B" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="4" /><path d="M24 16V14 M24 34V32 M16 24H14 M34 24H32 M18.5 18.5L17 17 M29.5 29.5L31 31 M18.5 29.5L17 31 M29.5 18.5L31 17" />
+    </g>
+  </symbol>
+  <symbol id="mallos-finanzas" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="14" y="16" width="20" height="16" rx="2" /><path d="M14 22H34 M18 26H22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-finanzas-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#F59E0B" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="14" y="16" width="20" height="16" rx="2" /><path d="M14 22H34 M18 26H22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-supermercado" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 16H18L20 26H30L32 16H18 M21 30A1 1 0 1021 32 1 1 0 1021 30 M29 30A1 1 0 1029 32 1 1 0 1029 30" />
+    </g>
+  </symbol>
+  <symbol id="mallos-supermercado-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#3B82F6" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 16H18L20 26H30L32 16H18 M21 30A1 1 0 1021 32 1 1 0 1021 30 M29 30A1 1 0 1029 32 1 1 0 1029 30" />
+    </g>
+  </symbol>
+  <symbol id="mallos-comida-rapida" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 26H34 M24 16C19 16 16 20 16 26 M32 26C32 20 29 16 24 16 M24 16V14" />
+    </g>
+  </symbol>
+  <symbol id="mallos-comida-rapida-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#F43F5E" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 26H34 M24 16C19 16 16 20 16 26 M32 26C32 20 29 16 24 16 M24 16V14" />
+    </g>
+  </symbol>
+  <symbol id="mallos-libreria" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16V30 M24 16C20 16 16 18 16 18V32C16 32 20 30 24 30 M24 16C28 16 32 18 32 18V32C32 32 28 30 24 30" />
+    </g>
+  </symbol>
+  <symbol id="mallos-libreria-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#4F46E5" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16V30 M24 16C20 16 16 18 16 18V32C16 32 20 30 24 30 M24 16C28 16 32 18 32 18V32C32 32 28 30 24 30" />
+    </g>
+  </symbol>
+  <symbol id="mallos-mascotas" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 28C21 28 18 25 18 22C18 19 21 18 24 18C27 18 30 19 30 22C30 25 27 28 24 28Z M19 16C18 16 16 17 16 19 M23 15C22 15 21 16 21 17 M25 15C26 15 27 16 27 17 M29 16C30 16 32 17 32 19" />
+    </g>
+  </symbol>
+  <symbol id="mallos-mascotas-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#10B981" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 28C21 28 18 25 18 22C18 19 21 18 24 18C27 18 30 19 30 22C30 25 27 28 24 28Z M19 16C18 16 16 17 16 19 M23 15C22 15 21 16 21 17 M25 15C26 15 27 16 27 17 M29 16C30 16 32 17 32 19" />
+    </g>
+  </symbol>
+  <symbol id="mallos-automotriz" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 22L18 18H30L32 22 M14 22H34V26H14Z M18 26V28H20V26 M28 26V28H30V26" />
+    </g>
+  </symbol>
+  <symbol id="mallos-automotriz-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#0EA5E9" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 22L18 18H30L32 22 M14 22H34V26H14Z M18 26V28H20V26 M28 26V28H30V26" />
+    </g>
+  </symbol>
+  <symbol id="mallos-viajes" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 16L24 20L16 20L20 24L18 28L24 26L30 28L28 24L32 20L24 20Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-viajes-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#8B5CF6" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 16L24 20L16 20L20 24L18 28L24 26L30 28L28 24L32 20L24 20Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-regalos" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="20" width="16" height="12" /><path d="M14 20H34V24H14Z M24 20V32 M24 20C24 16 18 16 18 20C18 22 24 20 24 20Z M24 20C24 16 30 16 30 20C30 22 24 20 24 20Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-regalos-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#E879F9" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="20" width="16" height="12" /><path d="M14 20H34V24H14Z M24 20V32 M24 20C24 16 18 16 18 20C18 22 24 20 24 20Z M24 20C24 16 30 16 30 20C30 22 24 20 24 20Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-fotografia" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 18H20L22 16H26L28 18H32V30H16Z M24 28C21.79 28 20 26.21 20 24C20 21.79 21.79 20 24 20C26.21 20 28 21.79 28 24C28 26.21 26.21 28 24 28Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-fotografia-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#00BED0" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 18H20L22 16H26L28 18H32V30H16Z M24 28C21.79 28 20 26.21 20 24C20 21.79 21.79 20 24 20C26.21 20 28 21.79 28 24C28 26.21 26.21 28 24 28Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-arte-cultura" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16C19.58 16 16 19.58 16 24C16 28.42 19.58 32 24 32C28.42 32 32 29 32 26C32 24.5 30 24.5 30 23C30 21.5 32 21.5 32 20C32 17.79 28.42 16 24 16Z M19 22V22.01 M21 19V19.01 M25 19V19.01 M28 22V22.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-arte-cultura-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#F97316" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16C19.58 16 16 19.58 16 24C16 28.42 19.58 32 24 32C28.42 32 32 29 32 26C32 24.5 30 24.5 30 23C30 21.5 32 21.5 32 20C32 17.79 28.42 16 24 16Z M19 22V22.01 M21 19V19.01 M25 19V19.01 M28 22V22.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-bebes" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="7" /><path d="M24 17C24 14 24 14 24 14 M21 23V23.01 M27 23V23.01 M23 27H25" />
+    </g>
+  </symbol>
+  <symbol id="mallos-bebes-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#6366F1" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="7" /><path d="M24 17C24 14 24 14 24 14 M21 23V23.01 M27 23V23.01 M23 27H25" />
+    </g>
+  </symbol>
+  <symbol id="mallos-otros" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="24" r="1.5" fill="white" stroke="none"/><circle cx="24" cy="24" r="1.5" fill="white" stroke="none"/><circle cx="30" cy="24" r="1.5" fill="white" stroke="none"/>
+    </g>
+  </symbol>
+  <symbol id="mallos-otros-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#10B981" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="24" r="1.5" fill="white" stroke="none"/><circle cx="24" cy="24" r="1.5" fill="white" stroke="none"/><circle cx="30" cy="24" r="1.5" fill="white" stroke="none"/>
+    </g>
+  </symbol>
+  <symbol id="mallos-escaleras" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 30H20L26 22H30 M24 18V18.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-escaleras-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#1E293B" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 30H20L26 22H30 M24 18V18.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-escalera-mecanica" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 30H18L26 18H30 M20 22L24 18 M16 26L20 22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-escalera-mecanica-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#0284C7" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 30H18L26 18H30 M20 22L24 18 M16 26L20 22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-ascensor" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="14" width="16" height="20" rx="2" /><path d="M24 14V34 M20 24L20 20L18 22 M20 20L22 22 M28 24L28 20L26 22 M28 20L30 22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-ascensor-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#2563EB" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="14" width="16" height="20" rx="2" /><path d="M24 14V34 M20 24L20 20L18 22 M20 20L22 22 M28 24L28 20L26 22 M28 20L30 22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-banos" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 16V16.01 M26 16V16.01 M16 20H20V32H18V26H16Z M24 20L28 20L29 26H27V32H25V26H23L24 20Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-banos-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#4ADE80" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 16V16.01 M26 16V16.01 M16 20H20V32H18V26H16Z M24 20L28 20L29 26H27V32H25V26H23L24 20Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-cajero" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="16" width="16" height="16" rx="2" /><path d="M16 20H32 M20 26H24 M20 28H28" />
+    </g>
+  </symbol>
+  <symbol id="mallos-cajero-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#64748B" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="16" width="16" height="16" rx="2" /><path d="M16 20H32 M20 26H24 M20 28H28" />
+    </g>
+  </symbol>
+  <symbol id="mallos-seguridad" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16L18 18V24C18 28 20 31 24 32C28 31 30 28 30 24V18L24 16Z M21 24L23 26L27 22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-seguridad-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#475569" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16L18 18V24C18 28 20 31 24 32C28 31 30 28 30 24V18L24 16Z M21 24L23 26L27 22" />
+    </g>
+  </symbol>
+  <symbol id="mallos-informacion" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="8" /><path d="M24 20V20.01 M24 22V28" />
+    </g>
+  </symbol>
+  <symbol id="mallos-informacion-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#F43F5E" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="8" /><path d="M24 20V20.01 M24 22V28" />
+    </g>
+  </symbol>
+  <symbol id="mallos-entrada" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 16V32H24V24H28V32H32V16L24 12Z M20 24H20.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-entrada-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#10B981" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 16V32H24V24H28V32H32V16L24 12Z M20 24H20.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-salida" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 16H28V32H18 M24 24L32 24M28 20L32 24L28 28" />
+    </g>
+  </symbol>
+  <symbol id="mallos-salida-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#DC2626" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 16H28V32H18 M24 24L32 24M28 20L32 24L28 28" />
+    </g>
+  </symbol>
+  <symbol id="mallos-parking" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="14" width="16" height="20" rx="3" /><path d="M22 18H26C27.5 18 28.5 19 28.5 20.5C28.5 22 27.5 23 26 23H22V29" />
+    </g>
+  </symbol>
+  <symbol id="mallos-parking-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#3B82F6" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="16" y="14" width="16" height="20" rx="3" /><path d="M22 18H26C27.5 18 28.5 19 28.5 20.5C28.5 22 27.5 23 26 23H22V29" />
+    </g>
+  </symbol>
+  <symbol id="mallos-ubicacion" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16C20.69 16 18 18.69 18 22C18 27 24 32 24 32C24 32 30 27 30 22C30 18.69 27.31 16 24 16Z M24 24C22.9 24 22 23.1 22 22C22 20.9 22.9 20 24 20C25.1 20 26 20.9 26 22C26 23.1 25.1 24 24 24Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-ubicacion-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#3B82F6" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16C20.69 16 18 18.69 18 22C18 27 24 32 24 32C24 32 30 27 30 22C30 18.69 27.31 16 24 16Z M24 24C22.9 24 22 23.1 22 22C22 20.9 22.9 20 24 20C25.1 20 26 20.9 26 22C26 23.1 25.1 24 24 24Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-user-location" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="5" /><circle cx="24" cy="24" r="9" stroke-dasharray="2 2" />
+    </g>
+  </symbol>
+  <symbol id="mallos-user-location-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#6366F1" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="24" r="5" /><circle cx="24" cy="24" r="9" stroke-dasharray="2 2" />
+    </g>
+  </symbol>
+  <symbol id="mallos-tu-cuenta" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="20" r="4" /><path d="M16 32C16 28 20 26 24 26C28 26 32 28 32 32" />
+    </g>
+  </symbol>
+  <symbol id="mallos-tu-cuenta-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#A5B4FC" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="20" r="4" /><path d="M16 32C16 28 20 26 24 26C28 26 32 28 32 32" />
+    </g>
+  </symbol>
+  <symbol id="mallos-promociones" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16L26.47 21.02L32 21.82L28 25.72L28.94 31.22L24 28.62L19.06 31.22L20 25.72L16 21.82L21.53 21.02L24 16Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-promociones-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#EF4444" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 16L26.47 21.02L32 21.82L28 25.72L28.94 31.22L24 28.62L19.06 31.22L20 25.72L16 21.82L21.53 21.02L24 16Z" />
+    </g>
+  </symbol>
+  <symbol id="mallos-descuentos" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 20L20 16H28L32 20V28L28 32H20L16 28V20Z M20 22L28 26 M21 26V26.01 M27 22V22.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-descuentos-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#8B5CF6" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 20L20 16H28L32 20V28L28 32H20L16 28V20Z M20 22L28 26 M21 26V26.01 M27 22V22.01" />
+    </g>
+  </symbol>
+  <symbol id="mallos-sostenibilidad" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 24C16 18 20 16 26 16C32 16 32 22 32 28C32 34 26 34 26 34C20 34 16 30 16 24Z M16 34L26 24" />
+    </g>
+  </symbol>
+  <symbol id="mallos-sostenibilidad-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#10B981" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 24C16 18 20 16 26 16C32 16 32 22 32 28C32 34 26 34 26 34C20 34 16 30 16 24Z M16 34L26 24" />
+    </g>
+  </symbol>
+  <symbol id="mallos-arbol" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="20" r="6" /><path d="M24 26V32M21 29L24 26L27 29" />
+    </g>
+  </symbol>
+  <symbol id="mallos-arbol-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#10B981" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="24" cy="20" r="6" /><path d="M24 26V32M21 29L24 26L27 29" />
+    </g>
+  </symbol>
+  <symbol id="mallos-banco-asiento" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 24H32 M16 20H32 M18 24V29 M30 24V29 M16 20V29 M32 20V29" />
+    </g>
+  </symbol>
+  <symbol id="mallos-banco-asiento-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#78716C" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 24H32 M16 20H32 M18 24V29 M30 24V29 M16 20V29 M32 20V29" />
+    </g>
+  </symbol>
+  <symbol id="mallos-fuente" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="24" cy="28" rx="10" ry="4" /><path d="M24 28V16 M20 20C20 16 24 16 24 16C24 16 28 16 28 20" />
+    </g>
+  </symbol>
+  <symbol id="mallos-fuente-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#0284C7" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="24" cy="28" rx="10" ry="4" /><path d="M24 28V16 M20 20C20 16 24 16 24 16C24 16 28 16 28 20" />
+    </g>
+  </symbol>
+  <symbol id="mallos-papelera" viewBox="0 0 48 48">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 18H30L28 30H20L18 18Z M16 18H32 M22 15H26" />
+    </g>
+  </symbol>
+  <symbol id="mallos-papelera-badge" viewBox="0 0 48 48">
+    <circle cx="24" cy="24" r="22" fill="#64748B" />
+    <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 18H30L28 30H20L18 18Z M16 18H32 M22 15H26" />
+    </g>
+  </symbol>
+</svg>

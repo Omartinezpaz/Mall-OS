@@ -4,18 +4,23 @@
     "slug": "osmall",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "scheme": "mallos",
     "splash": {
-      "backgroundColor": "#0F172A"
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0F1D"
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.mallos.app"
+      "bundleIdentifier": "com.mallos.app",
+      "icon": "./assets/icon.png"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0F172A"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0F1D"
       },
       "package": "com.mallos.app"
     },

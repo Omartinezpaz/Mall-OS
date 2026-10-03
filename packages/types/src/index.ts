@@ -1,4 +1,4 @@
-export * from './database.types.ts';
+export * from './database.types';
 
 export type Mall = Database['public']['Tables']['malls']['Row'];
 export type Store = Database['public']['Tables']['stores']['Row'];
@@ -26,4 +26,4 @@ export interface RedeemedCouponResult {
   redeemed_at: string;
 }
 
-import type { Database } from './database.types.ts';
+import type { Database } from './database.types';

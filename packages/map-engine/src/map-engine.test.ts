@@ -1,0 +1,610 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  buildScene,
+  demoMall,
+  sambilMall,
+  LEVEL_AUTOPISTA,
+  LEVEL_ACUARIO,
+  LEVEL_LIBERTADOR,
+  LEVEL_DIVERSION,
+  findRoute,
+  findRouteToStore,
+  findNearestNode,
+  hasErrors,
+  polylineLength,
+  samplePolyline,
+  sceneToSvg,
+  segmentCrossesRectInterior,
+  smoothPolyline,
+  validateMapData,
+  distanceToRectPerimeter,
+  project,
+  unproject,
+  DEFAULT_ISO,
+} from './index';
+import type { MallMapData, NavNode } from './index';
+
+const clone = (m: MallMapData): MallMapData => structuredClone(m);
+const palette = { food: { fill: '#FEF3C7', ink: '#92400E' }, other: { fill: '#F1F5F9', ink: '#1E293B' } };
+const codes = (m: MallMapData) => validateMapData(m).filter((i) => i.severity === 'error').map((i) => i.code);
+
+// ---------- Validación ----------
+test('el mapa demo no tiene errores ni avisos', () => {
+  assert.deepEqual(validateMapData(demoMall), []);
+});
+
+test('detecta ids duplicados', () => {
+  const m = clone(demoMall);
+  m.stores.push({ ...m.stores[0]! });
+  assert.ok(codes(m).includes('DUPLICATE_ID'));
+});
+
+test('detecta local con puerta inexistente', () => {
+  const m = clone(demoMall);
+  m.stores[0]!.doorNodeId = 'no-existe';
+  assert.ok(codes(m).includes('MISSING_DOOR_NODE'));
+});
+
+test('detecta conexión a nodo inexistente', () => {
+  const m = clone(demoMall);
+  m.nodes[0]!.connections.push('fantasma');
+  assert.ok(codes(m).includes('MISSING_NODE_REF'));
+});
+
+test('avisa de conexiones declaradas en un solo sentido', () => {
+  const m = clone(demoMall);
+  const door = m.nodes.find((x) => x.id === 'door-banco')!;
+  door.connections = [];
+  const w = validateMapData(m).filter((i) => i.code === 'ASYMMETRIC_CONNECTION');
+  assert.ok(w.length >= 1);
+});
+
+test('detecta locales solapados', () => {
+  const m = clone(demoMall);
+  m.stores.find((s) => s.id === 'charcuteria')!.x = 150;
+  assert.ok(codes(m).includes('STORES_OVERLAP'));
+});
+
+test('detecta local fuera del plano', () => {
+  const m = clone(demoMall);
+  m.stores.find((s) => s.id === 'banco')!.x = 380;
+  assert.ok(codes(m).includes('OUT_OF_BOUNDS'));
+});
+
+test('detecta tramo que atraviesa un local (la ruta no puede cruzar paredes)', () => {
+  const m = clone(demoMall);
+  // Una puerta del Banco unida directo a la Farmacia atravesaría el local.
+  m.nodes.find((x) => x.id === 'door-banco')!.connections.push('door-farmacia');
+  m.nodes.find((x) => x.id === 'door-farmacia')!.connections.push('door-banco');
+  m.nodes.find((x) => x.id === 'door-banco')!.y = 40; // ahora está dentro del Banco
+  assert.ok(codes(m).includes('NODE_BLOCKED') || codes(m).includes('EDGE_CROSSES_OBSTACLE'));
+});
+
+test('detecta tramo que atraviesa la fuente', () => {
+  const m = clone(demoMall);
+  m.nodes.find((x) => x.id === 'sp-200')!.y = 130;
+  m.nodes.find((x) => x.id === 'sp-265')!.y = 130;
+  assert.ok(codes(m).includes('EDGE_CROSSES_OBSTACLE'));
+});
+
+test('detecta local inalcanzable desde las entradas', () => {
+  const m = clone(demoMall);
+  m.nodes.find((x) => x.id === 'sp-115')!.connections = ['door-super', 'door-gym'];
+  m.nodes.find((x) => x.id === 'sp-160')!.connections = ['sp-180', 'door-panaderia'];
+  assert.ok(codes(m).includes('STORE_UNREACHABLE'));
+});
+
+test('exige al menos una entrada', () => {
+  const m = clone(demoMall);
+  m.nodes.find((x) => x.id === 'entrance')!.kind = 'corridor';
+  assert.ok(codes(m).includes('NO_ENTRANCE'));
+});
+
+test('solo escaleras/ascensores pueden unir pisos', () => {
+  const m = clone(demoMall);
+  m.floors.push({ ...m.floors[0]!, id: 'floor-2', level: 2, areas: [], obstacles: [] });
+  const up: NavNode = { id: 'p2', floorId: 'floor-2', x: 100, y: 148, kind: 'corridor', connections: ['sp-115'] };
+  m.nodes.push(up);
+  m.nodes.find((x) => x.id === 'sp-115')!.connections.push('p2');
+  assert.ok(codes(m).includes('BAD_VERTICAL_LINK'));
+});
+
+// ---------- Geometría ----------
+test('segmento que solo toca el borde no cuenta como cruce', () => {
+  const r = { x: 0, y: 0, w: 10, h: 10 };
+  assert.equal(segmentCrossesRectInterior({ x: 10, y: -5 }, { x: 10, y: 15 }, r), false);
+  assert.equal(segmentCrossesRectInterior({ x: -5, y: 5 }, { x: 15, y: 5 }, r), true);
+});
+
+// ---------- Rutas ----------
+test('ruta entrada → farmacia: camino y distancia esperados', () => {
+  const r = findRouteToStore(demoMall, 'entrance', 'farmacia')!;
+  assert.deepEqual(r.nodeIds, ['entrance', 'sp-370', 'sp-357', 'sp-322', 'sp-290', 'door-farmacia']);
+  assert.ok(Math.abs(r.distanceUnits - 163) < 0.001, `unidades: ${r.distanceUnits}`);
+  assert.ok(Math.abs(r.distanceMeters - 32.6) < 0.01);
+  assert.equal(r.walkingMinutes, 1);
+});
+
+test('desde la entrada se llega a TODOS los locales', () => {
+  for (const s of demoMall.stores) {
+    assert.ok(findRouteToStore(demoMall, 'entrance', s.id), `sin ruta a ${s.id}`);
+  }
+});
+
+test('la ruta es simétrica en distancia', () => {
+  const a = findRoute(demoMall, 'door-gym', 'door-banco')!;
+  const b = findRoute(demoMall, 'door-banco', 'door-gym')!;
+  assert.ok(Math.abs(a.distanceUnits - b.distanceUnits) < 1e-9);
+});
+
+test('Dijkstra elige menor DISTANCIA aunque tenga más saltos', () => {
+  const m: MallMapData = {
+    mallSlug: 't',
+    metersPerUnit: 1,
+    floors: [{ id: 'f', name: 'f', level: 1, width: 500, height: 500, areas: [], obstacles: [] }],
+    stores: [],
+    nodes: [
+      { id: 'A', floorId: 'f', x: 0, y: 0, kind: 'entrance', connections: ['C', 'D'] },
+      { id: 'C', floorId: 'f', x: 400, y: 0, kind: 'corridor', connections: ['A', 'B'] }, // directo pero largo: 400 + 100
+      { id: 'D', floorId: 'f', x: 0, y: 30, kind: 'corridor', connections: ['A', 'E'] },
+      { id: 'E', floorId: 'f', x: 0, y: 60, kind: 'corridor', connections: ['D', 'F'] },
+      { id: 'F', floorId: 'f', x: 0, y: 90, kind: 'corridor', connections: ['E', 'B'] }, // 4 saltos, 120 en total
+      { id: 'B', floorId: 'f', x: 30, y: 90, kind: 'corridor', connections: ['C', 'F'] },
+    ],
+  };
+  const r = findRoute(m, 'A', 'B')!;
+  assert.deepEqual(r.nodeIds, ['A', 'D', 'E', 'F', 'B']);
+  assert.ok(Math.abs(r.distanceUnits - 120) < 1e-9);
+});
+
+test('ruta inexistente o a nodo desconocido devuelve null', () => {
+  assert.equal(findRoute(demoMall, 'entrance', 'no-existe'), null);
+  const m = clone(demoMall);
+  m.nodes.find((x) => x.id === 'sp-115')!.connections = ['door-super', 'door-gym'];
+  m.nodes.find((x) => x.id === 'sp-160')!.connections = ['sp-180', 'door-panaderia'];
+  assert.equal(findRoute(m, 'entrance', 'door-gym'), null);
+});
+
+test('multi-piso: cambiar de piso cuesta (escalera) y se enruta', () => {
+  const m = clone(demoMall);
+  m.floors.push({ ...m.floors[0]!, id: 'floor-2', level: 2, areas: [], obstacles: [] });
+  m.nodes.find((x) => x.id === 'sp-115')!.connections.push('stairs-1');
+  m.nodes.push({ id: 'stairs-1', floorId: 'floor-1', x: 115, y: 140, kind: 'stairs', connections: ['sp-115', 'stairs-2'] });
+  m.nodes.push({ id: 'stairs-2', floorId: 'floor-2', x: 115, y: 140, kind: 'stairs', connections: ['stairs-1'] });
+  const r = findRoute(m, 'entrance', 'stairs-2')!;
+  assert.equal(r.nodeIds.at(-1), 'stairs-2');
+  assert.ok(r.distanceMeters > 15, 'incluye el coste vertical');
+});
+
+// ---------- Escena y SVG ----------
+test('la escena marca el local seleccionado y la ruta', () => {
+  const route = findRouteToStore(demoMall, 'entrance', 'farmacia')!;
+  const scene = buildScene(demoMall, { floorId: 'floor-1', palette, selectedStoreId: 'farmacia', routeNodeIds: route.nodeIds });
+  assert.ok(scene.items.some((i) => i.kind === 'pin'));
+  const thick = scene.items.filter((i) => i.kind === 'polyline' && i.strokeWidth >= 8);
+  assert.equal(thick.length, 3, 'resplandor + borde + cinta');
+  const farm = scene.items.filter((i) => 'storeId' in i && i.storeId === 'farmacia');
+  assert.ok(farm.length >= 4, 'caras + etiqueta (+ fachada)');
+  assert.ok(farm.some((i) => i.kind === 'text'));
+});
+
+test('la escena es determinista', () => {
+  const a = sceneToSvg(buildScene(demoMall, { floorId: 'floor-1', palette }));
+  const b = sceneToSvg(buildScene(demoMall, { floorId: 'floor-1', palette }));
+  assert.equal(a, b);
+});
+
+test('el SVG escapa nombres con caracteres especiales', () => {
+  const m = clone(demoMall);
+  m.stores[0]!.name = 'Pan & Café <"X">';
+  const svg = sceneToSvg(buildScene(m, { floorId: 'floor-1', palette }));
+  assert.ok(svg.includes('Pan &amp; Café &lt;&quot;X&quot;&gt;'));
+  assert.ok(!svg.includes('<"X">'));
+});
+
+test('piso inexistente lanza error claro', () => {
+  assert.throws(() => buildScene(demoMall, { floorId: 'nada', palette }), /Piso inexistente/);
+});
+
+test('labels="none" no emite textos', () => {
+  const scene = buildScene(demoMall, { floorId: 'floor-1', palette, labels: 'none' });
+  assert.equal(scene.items.filter((i) => i.kind === 'text').length, 0);
+});
+
+test('hasErrors distingue avisos de errores', () => {
+  assert.equal(hasErrors([{ severity: 'warning', code: 'X', message: 'm' }]), false);
+  assert.equal(hasErrors([{ severity: 'error', code: 'X', message: 'm' }]), true);
+});
+
+// ---------- Detalles (props) y cinta de ruta ----------
+test('un tramo de ruta no puede atravesar un árbol', () => {
+  const m = clone(demoMall);
+  m.floors[0]!.props = [...(m.floors[0]!.props ?? []), { id: 'arbol-malo', kind: 'tree', x: 225, y: 148 }];
+  assert.ok(codes(m).includes('EDGE_CROSSES_OBSTACLE') || codes(m).includes('NODE_BLOCKED'));
+});
+
+test('las insignias (poi) no bloquean rutas', () => {
+  const m = clone(demoMall);
+  m.floors[0]!.props = [...(m.floors[0]!.props ?? []), { id: 'poi-x', kind: 'poi', poi: 'info', x: 225, y: 148 }];
+  assert.deepEqual(validateMapData(m), []);
+});
+
+test('detail="full" añade sombras, baldosas y detalles; "lite" no; "medium" es equilibrado', () => {
+  const full = buildScene(demoMall, { floorId: 'floor-1', palette, detail: 'full' });
+  const med = buildScene(demoMall, { floorId: 'floor-1', palette, detail: 'medium' });
+  const lite = buildScene(demoMall, { floorId: 'floor-1', palette, detail: 'lite' });
+
+  assert.ok(full.items.length > med.items.length);
+  assert.ok(med.items.length > lite.items.length);
+  assert.equal(lite.items.filter((i) => i.kind === 'circle').length, 0);
+  assert.equal(lite.items.filter((i) => i.kind === 'ellipse').length, 0);
+  assert.ok(full.items.filter((i) => i.kind === 'circle').length > 20, 'copas de árboles y macetas');
+});
+
+test('validador: detecta NODE_OUT_OF_BOUNDS si un nodo está fuera del piso', () => {
+  const m = clone(demoMall);
+  m.nodes.push({ id: 'node-afuera', floorId: 'floor-1', kind: 'corridor', x: 999, y: 999, connections: [] });
+  assert.ok(codes(m).includes('NODE_OUT_OF_BOUNDS'));
+});
+
+test('validador: detecta PROP_OUT_OF_BOUNDS si un prop se sale de los límites del plano', () => {
+  const m = clone(demoMall);
+  m.floors[0]!.props = [...(m.floors[0]!.props ?? []), { id: 'tree-afuera', kind: 'tree', x: -1, y: 50 }];
+  assert.ok(codes(m).includes('PROP_OUT_OF_BOUNDS'));
+});
+
+test('validador: detecta DOOR_NODE_BLOCKED si la puerta está en el interior del local', () => {
+  const m = clone(demoMall);
+  const store = m.stores[0]!;
+  const door = m.nodes.find((n) => n.id === store.doorNodeId)!;
+  door.x = store.x + store.w / 2;
+  door.y = store.y + store.h / 2;
+  assert.ok(codes(m).includes('DOOR_NODE_BLOCKED'));
+});
+
+test('validador: detecta DISCONNECTED_NODE si un nodo no tiene conexiones', () => {
+  const m = clone(demoMall);
+  m.nodes.push({ id: 'node-solitario', floorId: 'floor-1', kind: 'corridor', x: 100, y: 100, connections: [] });
+  const allCodes = validateMapData(m).map((i) => i.code);
+  assert.ok(allCodes.includes('DISCONNECTED_NODE'));
+});
+
+test('validador: detecta INVALID_VERTICAL_LINK si se conecta un ascensor con una escalera', () => {
+  const m = clone(demoMall);
+  m.floors.push({ id: 'floor-2', name: 'Nivel 2', level: 2, width: 400, height: 260, areas: [], obstacles: [] });
+  m.nodes.push(
+    { id: 'stairs-f1', floorId: 'floor-1', kind: 'stairs', x: 200, y: 150, connections: ['elevator-f2'] },
+    { id: 'elevator-f2', floorId: 'floor-2', kind: 'elevator', x: 200, y: 150, connections: ['stairs-f1'] }
+  );
+  assert.ok(codes(m).includes('INVALID_VERTICAL_LINK'));
+});
+
+test('las insignias se dibujan también en modo lite', () => {
+  const lite = buildScene(demoMall, { floorId: 'floor-1', palette, detail: 'lite' });
+  assert.equal(lite.items.filter((i) => i.kind === 'badge').length, 3);
+});
+
+test('smoothPolyline conserva extremos y redondea esquinas', () => {
+  const a = { x: 0, y: 0 };
+  const c = { x: 100, y: 100 };
+  const out = smoothPolyline([a, { x: 100, y: 0 }, c], 2);
+  assert.deepEqual(out[0], a);
+  assert.deepEqual(out.at(-1), c);
+  assert.ok(out.length > 3);
+  assert.ok(polylineLength(out) < 200, 'cortar esquinas acorta el trazo');
+});
+
+test('samplePolyline: separación regular y fase desplaza las muestras', () => {
+  const line = [{ x: 0, y: 0 }, { x: 100, y: 0 }];
+  const s0 = samplePolyline(line, 25, 0);
+  assert.deepEqual(s0.map((s) => Math.round(s.x)), [0, 25, 50, 75, 100]);
+  const s1 = samplePolyline(line, 25, 0.4);
+  assert.deepEqual(s1.map((s) => Math.round(s.x)), [10, 35, 60, 85]);
+  assert.ok(s1.every((s) => s.angle === 0));
+});
+
+test('la ruta dibuja flechas y animar la fase las desplaza', () => {
+  const route = findRouteToStore(demoMall, 'entrance', 'farmacia')!;
+  const chevrons = (phase: number) =>
+    buildScene(demoMall, { floorId: 'floor-1', palette, routeNodeIds: route.nodeIds, routePhase: phase }).items.filter((i) => i.kind === 'polyline' && i.strokeWidth === 2.2);
+  assert.ok(chevrons(0).length >= 5);
+  assert.notDeepEqual(chevrons(0)[0], chevrons(0.5)[0]);
+});
+
+test('el SVG incluye insignias y círculos', () => {
+  const svg = sceneToSvg(buildScene(demoMall, { floorId: 'floor-1', palette }));
+  assert.ok(svg.includes('<circle'));
+  assert.ok(svg.includes('>WC</text>'));
+});
+
+// ---------- Paquete de acabado (fachadas, elevación, halo, escaleras) ----------
+const withId = (scene: ReturnType<typeof buildScene>, id: string) => scene.items.filter((i) => 'storeId' in i && i.storeId === id);
+
+test('fachada: solo los locales con puerta en cara visible (sur/este) llevan vidrio y puerta', () => {
+  const scene = buildScene(demoMall, { floorId: 'floor-1', palette });
+  assert.equal(withId(scene, 'comida').length, 4, 'puerta al norte (oculta): 3 caras + etiqueta, sin fachada');
+  assert.ok(withId(scene, 'banco').length > 4, 'puerta al sur (visible): con fachada');
+  assert.ok(withId(scene, 'gym').length > 4, 'puerta al este (visible): con fachada');
+});
+
+test('fachada: el modo lite no la dibuja', () => {
+  const scene = buildScene(demoMall, { floorId: 'floor-1', palette, detail: 'lite' });
+  assert.equal(withId(scene, 'banco').length, 4);
+});
+
+test('el local seleccionado se eleva (selectedLift) y el resplandor no captura toques', () => {
+  const top = (lift: number) => {
+    const sc = buildScene(demoMall, { floorId: 'floor-1', palette, selectedStoreId: 'banco', selectedLift: lift });
+    const polys = withId(sc, 'banco').filter((i) => i.kind === 'polygon');
+    return Math.min(...polys.flatMap((i) => (i.kind === 'polygon' ? i.points.map((p) => p.y) : [])));
+  };
+  assert.ok(top(3) < top(0), 'más arriba en pantalla = y menor');
+  const sc = buildScene(demoMall, { floorId: 'floor-1', palette, selectedStoreId: 'banco' });
+  const glow = sc.items.filter((i) => i.kind === 'polygon' && i.opacity === 0.18);
+  assert.equal(glow.length, 1);
+  assert.ok(glow.every((g) => !('storeId' in g && g.storeId)));
+});
+
+test('etiquetas de locales llevan halo del color del techo; la seleccionada no', () => {
+  const sc = buildScene(demoMall, { floorId: 'floor-1', palette: { ...palette, fresh: { fill: '#DCFCE7', ink: '#166534' } }, selectedStoreId: 'banco' });
+  const texts = sc.items.filter((i) => i.kind === 'text' && i.storeId);
+  assert.ok(texts.length === 10);
+  assert.ok(texts.filter((t) => t.kind === 'text' && t.halo).length === 9);
+  const svg = sceneToSvg(sc);
+  assert.ok(svg.includes('paint-order="stroke"'));
+});
+
+test('escalera con flow dibuja flechas; sin flow no', () => {
+  const arrows = (m: MallMapData) => buildScene(m, { floorId: 'floor-1', palette }).items.filter((i) => i.kind === 'polyline' && i.strokeWidth === 1.2).length;
+  assert.equal(arrows(demoMall), 2);
+  const m = clone(demoMall);
+  const esc = m.floors[0]!.props!.find((p) => p.kind === 'escalator')!;
+  if (esc.kind === 'escalator') delete esc.flow;
+  assert.equal(arrows(m), 0);
+});
+
+test('presupuesto de primitivas del demo (guarda contra el crecimiento descontrolado)', () => {
+  const full = buildScene(demoMall, { floorId: 'floor-1', palette, selectedStoreId: 'farmacia', routeNodeIds: findRouteToStore(demoMall, 'entrance', 'farmacia')!.nodeIds });
+  const lite = buildScene(demoMall, { floorId: 'floor-1', palette, detail: 'lite' });
+  assert.ok(full.items.length <= 260, `full: ${full.items.length}`);
+  assert.ok(lite.items.length <= 90, `lite: ${lite.items.length}`);
+});
+
+// ---------- Capas interactivas (Touch, Horarios, Proyección) ----------
+test('unproject y project son operaciones inversas en el plano base z=0', () => {
+  const origX = 250;
+  const origY = 160;
+  const iso = project(origX, origY, 0, DEFAULT_ISO);
+  const unproj = unproject(iso.x, iso.y, 0, DEFAULT_ISO);
+  assert.ok(Math.abs(unproj.x - origX) < 0.001);
+  assert.ok(Math.abs(unproj.y - origY) < 0.001);
+});
+
+test('findNearestNode localiza el nodo de pasillo o entrada más cercano al toque', () => {
+  const touchNearEntrance = { x: 390, y: 145 };
+  const nearest = findNearestNode(demoMall, 'floor-1', touchNearEntrance, ['corridor', 'entrance']);
+  assert.ok(nearest);
+  assert.equal(nearest.id, 'entrance');
+});
+
+test('dimmedStoreIds atenúa locales cerrados con paleta desaturada', () => {
+  const sc = buildScene(demoMall, {
+    floorId: 'floor-1',
+    palette,
+    dimmedStoreIds: ['banco', 'muebleria'],
+  });
+  const bancoItems = withId(sc, 'banco').filter((i) => i.kind === 'polygon');
+  assert.ok(bancoItems.length > 0);
+  assert.ok(bancoItems.some((i) => i.kind === 'polygon' && i.fill === '#E2E8F0'));
+});
+
+test('routePhase anima la fase de las flechas desplazando las muestras de posición', () => {
+  const route = findRouteToStore(demoMall, 'entrance', 'super')!;
+  const sc1 = buildScene(demoMall, { floorId: 'floor-1', palette, routeNodeIds: route.nodeIds, routePhase: 0 });
+  const sc2 = buildScene(demoMall, { floorId: 'floor-1', palette, routeNodeIds: route.nodeIds, routePhase: 0.5 });
+  const arrows1 = sc1.items.filter((i) => i.kind === 'polyline' && i.strokeWidth === 2.2);
+  const arrows2 = sc2.items.filter((i) => i.kind === 'polyline' && i.strokeWidth === 2.2);
+  assert.ok(arrows1.length > 0);
+  assert.ok(arrows2.length > 0);
+  const firstPt1 = (arrows1[0] as { points: { x: number }[] }).points[0]!.x;
+  const firstPt2 = (arrows2[0] as { points: { x: number }[] }).points[0]!.x;
+  assert.notEqual(firstPt1, firstPt2);
+});
+
+test('routeMode distingue estado preview (punteado sin flechas) de active (cinta con flechas)', () => {
+  const route = findRouteToStore(demoMall, 'entrance', 'super')!;
+  const scPreview = buildScene(demoMall, { floorId: 'floor-1', palette, routeNodeIds: route.nodeIds, routeMode: 'preview' });
+  const scActive = buildScene(demoMall, { floorId: 'floor-1', palette, routeNodeIds: route.nodeIds, routeMode: 'active' });
+
+  const dashedPolyline = scPreview.items.filter((i) => i.kind === 'polyline' && i.dash === '6,6');
+  const previewArrows = scPreview.items.filter((i) => i.kind === 'polyline' && i.strokeWidth === 2.2);
+  assert.equal(dashedPolyline.length, 1);
+  assert.equal(previewArrows.length, 0);
+
+  const solidRibbon = scActive.items.filter((i) => i.kind === 'polyline' && i.strokeWidth === 8);
+  const activeArrows = scActive.items.filter((i) => i.kind === 'polyline' && i.strokeWidth === 2.2);
+  assert.equal(solidRibbon.length, 1);
+  assert.ok(activeArrows.length > 0);
+});
+
+// ---------- Sambil Chacao (4 Niveles) ----------
+test('sambilMall tiene exactamente 4 niveles oficiales configurados', () => {
+  assert.equal(sambilMall.floors.length, 4);
+  const floorIds = sambilMall.floors.map((f) => f.id);
+  assert.deepEqual(floorIds, [
+    LEVEL_AUTOPISTA,
+    LEVEL_ACUARIO,
+    LEVEL_LIBERTADOR,
+    LEVEL_DIVERSION,
+  ]);
+});
+
+test('sambilMall contiene las tiendas ancla principales en sus niveles correctos', () => {
+  const tijerazo = sambilMall.stores.find((s) => s.id === 'tijerazo');
+  const zara = sambilMall.stores.find((s) => s.id === 'zara');
+  const samsung = sambilMall.stores.find((s) => s.id === 'samsung');
+  const mango = sambilMall.stores.find((s) => s.id === 'mango_bajito');
+
+  assert.ok(tijerazo && tijerazo.floorId === LEVEL_AUTOPISTA);
+  assert.ok(zara && zara.floorId === LEVEL_ACUARIO);
+  assert.ok(samsung && samsung.floorId === LEVEL_LIBERTADOR);
+  assert.ok(mango && mango.floorId === LEVEL_DIVERSION);
+});
+
+test('sambilMall calcula rutas exitosas entre plazas y tiendas en cada nivel', () => {
+  const routeAutopista = findRouteToStore(sambilMall, `pj-${LEVEL_AUTOPISTA}`, 'tijerazo');
+  assert.ok(routeAutopista);
+  assert.ok(routeAutopista.nodeIds.length >= 2);
+
+  const routeAcuario = findRouteToStore(sambilMall, `pj-${LEVEL_ACUARIO}`, 'zara');
+  assert.ok(routeAcuario);
+  assert.ok(routeAcuario.nodeIds.length >= 2);
+
+  const routeLibertador = findRouteToStore(sambilMall, `pj-${LEVEL_LIBERTADOR}`, 'samsung');
+  assert.ok(routeLibertador);
+  assert.ok(routeLibertador.nodeIds.length >= 2);
+
+  const routeDiversion = findRouteToStore(sambilMall, `pj-${LEVEL_DIVERSION}`, 'mango_bajito');
+  assert.ok(routeDiversion);
+  assert.ok(routeDiversion.nodeIds.length >= 2);
+});
+
+test('renderiza correctamente la suite de elementos de ambiente 2.5D (fuentes, luminarias, bancas, ascensores)', () => {
+  const testMall: MallMapData = {
+    mallSlug: 'test-props-mall',
+    metersPerUnit: 1,
+    floors: [
+      {
+        id: 'floor-test',
+        name: 'Nivel Props',
+        level: 1,
+        width: 100,
+        height: 100,
+        areas: [{ id: 'corr-1', kind: 'corridor', rect: { x: 10, y: 10, w: 80, h: 80 } }],
+        obstacles: [],
+        props: [
+          { id: 'tree-1', kind: 'tree', x: 20, y: 20 },
+          { id: 'bench-1', kind: 'bench', rect: { x: 30, y: 20, w: 6, h: 2 } },
+          { id: 'planter-1', kind: 'planter', rect: { x: 40, y: 20, w: 4, h: 4 } },
+          { id: 'lounge-1', kind: 'lounge', rect: { x: 50, y: 20, w: 8, h: 6 } },
+          { id: 'trash-1', kind: 'trash', x: 25, y: 25 },
+          { id: 'lamp-1', kind: 'lamp', x: 35, y: 25 },
+          { id: 'railing-1', kind: 'railing', from: { x: 10, y: 40 }, to: { x: 30, y: 40 } },
+          { id: 'elevator-1', kind: 'elevator', rect: { x: 60, y: 20, w: 6, h: 6 } },
+          { id: 'fountain-1', kind: 'fountain', rect: { x: 40, y: 40, w: 10, h: 10 } },
+          { id: 'sign-1', kind: 'sign', x: 50, y: 50, text: 'N1' },
+        ],
+      },
+    ],
+    stores: [
+      {
+        id: 'tienda-test',
+        name: 'Tienda Test',
+        category: 'fashion',
+        floorId: 'floor-test',
+        height: 12,
+        x: 70,
+        y: 70,
+        w: 15,
+        h: 15,
+        doorNodeId: 'node-test',
+      },
+    ],
+    nodes: [
+      { id: 'node-test', floorId: 'floor-test', kind: 'door', x: 70, y: 70, connections: [] },
+    ],
+  };
+
+  const scene = buildScene(testMall, { floorId: 'floor-test', palette, detail: 'full' });
+  assert.ok(scene.items.length > 30);
+  assert.ok(scene.items.some((i) => i.kind === 'text' && i.text === '🛗'));
+  assert.ok(scene.items.some((i) => i.kind === 'text' && i.text === 'N1'));
+});
+
+// ---------- v0.4.1 Authoring Foundation Tests ----------
+test('geometría: distanceToRectPerimeter mide con precisión la distancia a las 4 caras del local', () => {
+  const rect = { x: 10, y: 10, w: 20, h: 20 }; // x in [10, 30], y in [10, 30]
+
+  // Directamente sobre las 4 caras
+  assert.equal(distanceToRectPerimeter({ x: 20, y: 10 }, rect), 0, 'cara norte');
+  assert.equal(distanceToRectPerimeter({ x: 20, y: 30 }, rect), 0, 'cara sur');
+  assert.equal(distanceToRectPerimeter({ x: 10, y: 20 }, rect), 0, 'cara oeste');
+  assert.equal(distanceToRectPerimeter({ x: 30, y: 20 }, rect), 0, 'cara este');
+
+  // En las 4 esquinas
+  assert.equal(distanceToRectPerimeter({ x: 10, y: 10 }, rect), 0);
+  assert.equal(distanceToRectPerimeter({ x: 30, y: 30 }, rect), 0);
+
+  // Fuera del local
+  assert.ok(Math.abs(distanceToRectPerimeter({ x: 20, y: 5 }, rect) - 5) < 0.001);
+  assert.ok(Math.abs(distanceToRectPerimeter({ x: 35, y: 20 }, rect) - 5) < 0.001);
+});
+
+test('validador: valida schemaVersion (debe ser entero positivo >= 1)', () => {
+  const m = clone(demoMall);
+  m.schemaVersion = -1;
+  assert.ok(codes(m).includes('INVALID_SCHEMA_VERSION'));
+
+  const m2 = clone(demoMall);
+  m2.schemaVersion = 1.5;
+  assert.ok(codes(m2).includes('INVALID_SCHEMA_VERSION'));
+
+  const m3 = clone(demoMall);
+  m3.schemaVersion = 1;
+  assert.equal(codes(m3).includes('INVALID_SCHEMA_VERSION'), false);
+});
+
+test('validador: valida metersPerUnit positivo', () => {
+  const m = clone(demoMall);
+  m.metersPerUnit = 0;
+  assert.ok(codes(m).includes('INVALID_METERS_PER_UNIT'));
+
+  const mNegative = clone(demoMall);
+  mNegative.metersPerUnit = -0.5;
+  assert.ok(codes(mNegative).includes('INVALID_METERS_PER_UNIT'));
+});
+
+test('validador: valida dimensiones positivas de piso (width > 0, height > 0)', () => {
+  const m = clone(demoMall);
+  m.floors[0]!.width = 0;
+  assert.ok(codes(m).includes('INVALID_FLOOR_DIMENSIONS'));
+});
+
+test('validador: valida dimensiones positivas de locales (w > 0, h > 0)', () => {
+  const m = clone(demoMall);
+  m.stores[0]!.w = -10;
+  assert.ok(codes(m).includes('INVALID_STORE_DIMENSIONS'));
+});
+
+test('validador: valida dimensiones y límites de obstáculos', () => {
+  const m = clone(demoMall);
+  m.floors[0]!.obstacles = [{ id: 'obs-invalido', kind: 'fountain', rect: { x: 10, y: 10, w: 0, h: 20 } }];
+  assert.ok(codes(m).includes('INVALID_OBSTACLE_DIMENSIONS'));
+
+  const m2 = clone(demoMall);
+  m2.floors[0]!.obstacles = [{ id: 'obs-fuera', kind: 'fountain', rect: { x: 390, y: 250, w: 50, h: 50 } }];
+  assert.ok(codes(m2).includes('OBSTACLE_OUT_OF_BOUNDS'));
+});
+
+test('validador: advierte con DOOR_NOT_AT_STORE si la puerta no toca la cara del local', () => {
+  const m = clone(demoMall);
+  const store = m.stores.find((s) => s.id === 'farmacia')!;
+  const door = m.nodes.find((n) => n.id === store.doorNodeId)!;
+  door.y = 120; // local termina en y=90, puerta en y=120 (30 unidades de distancia)
+  const issues = validateMapData(m);
+  assert.ok(issues.some((i) => i.code === 'DOOR_NOT_AT_STORE'));
+});
+
+test('validador: advierte VERTICAL_CORE_MISALIGNED si un núcleo vertical tiene desalineación horizontal severa', () => {
+  const m = clone(demoMall);
+  m.floors.push({ id: 'floor-2', name: 'Nivel 2', level: 2, width: 400, height: 260, areas: [], obstacles: [] });
+  m.nodes.push(
+    { id: 'stairs-f1', floorId: 'floor-1', kind: 'stairs', x: 20, y: 20, connections: ['stairs-f2'] },
+    { id: 'stairs-f2', floorId: 'floor-2', kind: 'stairs', x: 350, y: 200, connections: ['stairs-f1'] }
+  );
+  const issues = validateMapData(m);
+  assert.ok(issues.some((i) => i.code === 'VERTICAL_CORE_MISALIGNED'));
+});
+
+

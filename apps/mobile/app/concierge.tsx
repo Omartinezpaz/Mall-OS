@@ -10,26 +10,29 @@ import {
   Platform,
   ActivityIndicator,
   ScrollView,
+  StatusBar,
 } from 'react-native';
-import { PILOT_STORES } from '../src/features/directory';
-import { PILOT_OFFERS } from '../src/features/offers';
+import { useRouter } from 'expo-router';
+import Svg, { Circle, Defs, RadialGradient, LinearGradient, Stop, Path } from 'react-native-svg';
 
 interface Message {
   id: string;
   sender: 'user' | 'assistant';
   text: string;
   timestamp: string;
+  quickActions?: { label: string; route?: string }[];
 }
 
 const QUICK_PROMPTS = [
-  '☕ ¿Dónde tomar un café?',
-  '🏷️ ¿Qué ofertas hay hoy?',
-  '💊 ¿Dónde está la farmacia?',
-  '🏋️ ¿Horario del gimnasio?',
-  '🧀 ¿Dónde comprar charcutería?',
+  '¿Dónde puedo comer?',
+  '¿Qué hay de nuevo hoy?',
+  'Tengo 2 horas, ¿qué me recomiendas?',
+  '¿Dónde está Nike?',
+  '¿Hay ofertas activas hoy?',
 ];
 
 export default function ConciergeScreen() {
+  const router = useRouter();
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
@@ -38,40 +41,61 @@ export default function ConciergeScreen() {
     {
       id: '1',
       sender: 'assistant',
-      text: '¡Hola! Soy tu Asistente Concierge en CC Los Nuevos Teques. 🛍️\n\nPuedo orientarte sobre la ubicación de tiendas, horarios de atención, promociones del día y servicios disponibles. ¿Qué estás buscando hoy?',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      text: '¡Hola Daniela 👋!\n\n¿En qué puedo ayudarte hoy en el mall?',
+      timestamp: 'Ahora',
     },
   ]);
 
-  // Motor de respuesta local basado en el catálogo offline para respuesta instantánea
-  const generateOfflineResponse = (query: string): string => {
+  // Offline AI recommendation engine
+  const generateOfflineResponse = (query: string): { text: string; actions?: { label: string; route?: string }[] } => {
     const q = query.toLowerCase();
 
-    if (q.includes('café') || q.includes('cafe') || q.includes('panadería') || q.includes('desayuno')) {
-      return '☕ En Planta Baja (PB-02) encuentras la **Panadería y Pastelería Los Cedros**, abierta de 6:30 AM a 8:00 PM. ¡Hoy tienen activo un cupón de Café con Leche + Pastel de cortesía!';
+    if (q.includes('comer') || q.includes('restaurante') || q.includes('café') || q.includes('panadería') || q.includes('comida') || q.includes('almorzar')) {
+      return {
+        text: '🍽️ Opciones gastronómicas recomendadas:\n\n• Panadería Los Cedros (PB-02): Café de especialidad, desayunos y pastelería.\n• Food Court (Nivel 1): Diversidad culinaria, almuerzos y comida rápida.\n\n¿Deseas activar un cupón o que te marque la ruta en el mapa?',
+        actions: [
+          { label: 'Ver en Mapa 🧭', route: '/(tabs)/mapa' },
+          { label: 'Ver cupones de comida 🏷️', route: '/(tabs)/ofertas' },
+        ],
+      };
     }
 
-    if (q.includes('oferta') || q.includes('cupón') || q.includes('cupon') || q.includes('promoción') || q.includes('descuento')) {
-      return `🏷️ Tenemos varias promociones activas hoy en el mall:\n\n• **Panadería Los Cedros (PB-02):** Café + Pastel gratis.\n• **Fitness Club (P1-01):** Pase de cortesía 1 día.\n• **Charcutería La Estancia (PB-03):** 20% en combos.\n\nPuedes activarlas directamente en la pestaña "Ofertas".`;
+    if (q.includes('nike') || q.includes('zapato') || q.includes('deporte') || q.includes('calzado') || q.includes('ropa deportiva')) {
+      return {
+        text: '👟 Nike Store está ubicada en el Nivel 1 (Local 102).\n\n⏱ Aprox. 2 minutos a pie desde la entrada principal.\n🏷️ Oferta activa hoy: 20% OFF en calzado y ropa deportiva seleccionada.',
+        actions: [
+          { label: 'Cómo llegar a Nike 🧭', route: '/(tabs)/mapa' },
+          { label: 'Activar 20% OFF 🏷️', route: '/(tabs)/ofertas' },
+        ],
+      };
     }
 
-    if (q.includes('farmacia') || q.includes('salud') || q.includes('medicina')) {
-      return '💊 La **Farmacia SAAS** está ubicada en Planta Baja (PB-04). Su horario de atención es de 8:00 AM a 9:00 PM de Lunes a Sábado, y Domingos de 9:00 AM a 7:00 PM.';
+    if (q.includes('oferta') || q.includes('descuento') || q.includes('cupón') || q.includes('cupon') || q.includes('promo')) {
+      return {
+        text: `🏷️ Promociones exclusivas disponibles hoy en el mall:\n\n• Nike (N1-102): 20% OFF en calzado y ropa.\n• Panadería Los Cedros (PB-02): Café + Pastel de cortesía.\n• Fitness Club (N1-01): Pase de cortesía de 1 día.`,
+        actions: [
+          { label: 'Explorar cupones ✨', route: '/(tabs)/ofertas' },
+        ],
+      };
     }
 
-    if (q.includes('gym') || q.includes('gimnasio') || q.includes('entrenar') || q.includes('pesas')) {
-      return '🏋️ El **Fitness Club Los Teques** está en el Piso 1 (P1-01). Abren de Lunes a Viernes de 6:00 AM a 9:00 PM y Sábados de 8:00 AM a 4:00 PM. Tienen activo un pase de prueba de 1 día.';
+    if (q.includes('2 horas') || q.includes('recomiendas') || q.includes('tiempo') || q.includes('plan') || q.includes('tarde')) {
+      return {
+        text: `💡 Itinerario recomendado para hoy (2 horas):\n\n1. ☕ Café & Desayuno (30 min): Los Cedros en Planta Baja.\n2. 🛍️ Compras & Moda (50 min): Explora Nivel 1 (Nike, Zara) con 20% OFF.\n3. 🛒 Servicios & Hogar (40 min): Supermercado San Diego en PB.`,
+        actions: [
+          { label: 'Abrir Plano del Mall 🗺️', route: '/(tabs)/mapa' },
+          { label: 'Ver Cupones Activos 🏷️', route: '/(tabs)/ofertas' },
+        ],
+      };
     }
 
-    if (q.includes('queso') || q.includes('charcutería') || q.includes('víveres') || q.includes('supermercado')) {
-      return '🧀 Para víveres y charcutería tienes:\n• **Supermercado San Diego (PB-01):** 8:00 AM a 8:00 PM.\n• **Charcutería La Estancia (PB-03):** Delicateses y quesos nacionales e importados hasta las 7:00 PM.';
-    }
-
-    if (q.includes('banco') || q.includes('cajero') || q.includes('dinero')) {
-      return '🏦 El **Banco Mercantil** se encuentra en Planta Baja (PB-06), con atención en taquilla de 8:30 AM a 3:30 PM y cajeros automáticos 24h.';
-    }
-
-    return `🏢 En CC Los Nuevos Teques contamos con 30 comercios distribuidos en Planta Baja y Piso 1. Puedes consultar el Directorio completo o el Mapa interactivo en cualquier momento. ¿Deseas información sobre algún comercio en específico?`;
+    return {
+      text: `🏢 En Mall del Sol contamos con las mejores tiendas y gastronomía organizadas en Planta Baja y Nivel 1. Puedes preguntarme por tiendas, promociones del día, cómo llegar a un local o sugerencias de itinerario.`,
+      actions: [
+        { label: 'Ver Directorio Completo 📋', route: '/(tabs)/directorio' },
+        { label: 'Ver Ofertas del Día ✨', route: '/(tabs)/ofertas' },
+      ],
+    };
   };
 
   const handleSendMessage = (textToSend?: string) => {
@@ -90,16 +114,28 @@ export default function ConciergeScreen() {
     setLoading(true);
 
     setTimeout(() => {
-      const replyText = generateOfflineResponse(text);
+      const response = generateOfflineResponse(text);
       const botMessage: Message = {
         id: `b_${Date.now()}`,
         sender: 'assistant',
-        text: replyText,
+        text: response.text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        quickActions: response.actions,
       };
       setMessages((prev) => [...prev, botMessage]);
       setLoading(false);
     }, 600);
+  };
+
+  const handleReset = () => {
+    setMessages([
+      {
+        id: '1',
+        sender: 'assistant',
+        text: '¡Hola Daniela 👋!\n\n¿En qué puedo ayudarte hoy en el mall?',
+        timestamp: 'Ahora',
+      },
+    ]);
   };
 
   return (
@@ -108,22 +144,66 @@ export default function ConciergeScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      {/* Header Info */}
-      <View style={styles.headerInfo}>
-        <Text style={styles.headerTitle}>✨ Concierge Inteligente</Text>
-        <Text style={styles.headerSubtitle}>
-          Respuestas verificadas con el directorio oficial del centro comercial
-        </Text>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      {/* Top Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()} activeOpacity={0.8}>
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>Mall Concierge</Text>
+          <Text style={styles.headerSubtitle}>Tu asistente personal en el mall</Text>
+        </View>
+        <TouchableOpacity style={styles.resetButton} onPress={handleReset} activeOpacity={0.8}>
+          <Text style={styles.resetButtonText}>🔄</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Lista de Mensajes */}
+      {/* 3D Glowing Crystal Orb Visual (Screen 8 Mockup) */}
+      <View style={styles.orbContainer}>
+        <Svg width={96} height={96} viewBox="0 0 120 120">
+          <Defs>
+            <RadialGradient id="outerGlowLight" cx="50%" cy="50%" r="50%">
+              <Stop offset="0%" stopColor="#818CF8" stopOpacity="0.3" />
+              <Stop offset="70%" stopColor="#C7D2FE" stopOpacity="0.1" />
+              <Stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+            </RadialGradient>
+            <RadialGradient id="sphereGradLight" cx="35%" cy="30%" r="65%">
+              <Stop offset="0%" stopColor="#EEF2FF" stopOpacity="1" />
+              <Stop offset="30%" stopColor="#6366F1" stopOpacity="1" />
+              <Stop offset="70%" stopColor="#4338CA" stopOpacity="1" />
+              <Stop offset="100%" stopColor="#312E81" stopOpacity="1" />
+            </RadialGradient>
+            <LinearGradient id="ringGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+              <Stop offset="0%" stopColor="#38BDF8" stopOpacity="0.8" />
+              <Stop offset="50%" stopColor="#818CF8" stopOpacity="0.4" />
+              <Stop offset="100%" stopColor="#A855F7" stopOpacity="0.8" />
+            </LinearGradient>
+          </Defs>
+
+          <Circle cx="60" cy="60" r="56" fill="url(#outerGlowLight)" />
+          <Path
+            d="M 18,62 A 44 14 0 1,0 102,62 A 44 14 0 1,0 18,62"
+            fill="none"
+            stroke="url(#ringGradLight)"
+            strokeWidth="3"
+            transform="rotate(-15 60 60)"
+            opacity="0.8"
+          />
+          <Circle cx="60" cy="60" r="32" fill="url(#sphereGradLight)" />
+          <Circle cx="50" cy="48" r="8" fill="#FFFFFF" opacity="0.6" />
+          <Circle cx="47" cy="45" r="3" fill="#FFFFFF" opacity="0.9" />
+        </Svg>
+      </View>
+
+      {/* Message Stream */}
       <FlatList
         ref={flatListRef}
         data={messages}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.messagesList}
         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-        renderItem={({ item }) => {
+        renderItem={({ item }: { item: Message }) => {
           const isUser = item.sender === 'user';
           return (
             <View
@@ -135,6 +215,22 @@ export default function ConciergeScreen() {
               <View style={[styles.bubble, isUser ? styles.userBubble : styles.botBubble]}>
                 <Text style={isUser ? styles.userText : styles.botText}>{item.text}</Text>
               </View>
+
+              {/* Action Buttons if generated by assistant */}
+              {item.quickActions && item.quickActions.length > 0 && (
+                <View style={styles.actionsRow}>
+                  {item.quickActions.map((action: { label: string; route?: string }, idx: number) => (
+                    <TouchableOpacity
+                      key={idx}
+                      style={styles.actionChip}
+                      onPress={() => action.route && router.push(action.route as any)}
+                    >
+                      <Text style={styles.actionChipText}>{action.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+
               <Text style={styles.timestamp}>{item.timestamp}</Text>
             </View>
           );
@@ -142,21 +238,26 @@ export default function ConciergeScreen() {
         ListFooterComponent={
           loading ? (
             <View style={styles.loadingBubble}>
-              <ActivityIndicator size="small" color="#10B981" />
-              <Text style={styles.loadingText}>Consultando directorio del mall...</Text>
+              <ActivityIndicator size="small" color="#4F46E5" />
+              <Text style={styles.loadingText}>Concierge está pensando...</Text>
             </View>
           ) : null
         }
       />
 
-      {/* Sugerencias Rápidas */}
+      {/* Suggested Prompts Carousel (Screen 8 Chips) */}
       <View style={styles.promptsContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.promptsScroll}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.promptsScroll}
+        >
           {QUICK_PROMPTS.map((prompt, idx) => (
             <TouchableOpacity
               key={idx}
               style={styles.promptChip}
-              onPress={() => handleSendMessage(prompt.replace(/^[^\s]+\s/, ''))}
+              onPress={() => handleSendMessage(prompt)}
+              activeOpacity={0.7}
             >
               <Text style={styles.promptChipText}>{prompt}</Text>
             </TouchableOpacity>
@@ -164,11 +265,11 @@ export default function ConciergeScreen() {
         </ScrollView>
       </View>
 
-      {/* Input de Texto */}
+      {/* Bottom Text Input Bar */}
       <View style={styles.inputBar}>
         <TextInput
-          placeholder="Escribe tu consulta sobre el centro comercial..."
-          placeholderTextColor="#64748B"
+          placeholder="Escribe tu consulta..."
+          placeholderTextColor="#94A3B8"
           value={input}
           onChangeText={setInput}
           onSubmitEditing={() => handleSendMessage()}
@@ -179,8 +280,9 @@ export default function ConciergeScreen() {
           style={[styles.sendButton, !input.trim() && styles.sendButtonDisabled]}
           onPress={() => handleSendMessage()}
           disabled={!input.trim()}
+          activeOpacity={0.85}
         >
-          <Text style={styles.sendButtonText}>↑</Text>
+          <Text style={styles.sendButtonText}>➔</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -190,29 +292,66 @@ export default function ConciergeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
-  headerInfo: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: '#1E293B',
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 18,
+    paddingTop: 52,
+    paddingBottom: 14,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    borderBottomColor: '#E2E8F0',
   },
-  headerTitle: {
-    color: '#F8FAFC',
-    fontSize: 14,
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButtonText: {
+    color: '#0F172A',
+    fontSize: 20,
     fontWeight: '700',
   },
+  headerCenter: {
+    alignItems: 'center',
+  },
+  headerTitle: {
+    color: '#0F172A',
+    fontSize: 17,
+    fontWeight: '800',
+  },
   headerSubtitle: {
-    color: '#94A3B8',
-    fontSize: 11,
+    color: '#64748B',
+    fontSize: 12,
     marginTop: 2,
   },
+  resetButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  resetButtonText: {
+    fontSize: 16,
+  },
+  orbContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+  },
   messagesList: {
-    padding: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     gap: 12,
-    paddingBottom: 20,
   },
   bubbleWrapper: {
     maxWidth: '85%',
@@ -227,33 +366,57 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   bubble: {
-    borderRadius: 16,
+    borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   userBubble: {
-    backgroundColor: '#10B981',
+    backgroundColor: '#4F46E5',
     borderBottomRightRadius: 4,
   },
   botBubble: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   userText: {
-    color: '#0F172A',
+    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
     lineHeight: 20,
   },
   botText: {
-    color: '#F8FAFC',
+    color: '#0F172A',
     fontSize: 14,
     lineHeight: 21,
   },
+  actionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 6,
+  },
+  actionChip: {
+    backgroundColor: '#EEF2FF',
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
+  },
+  actionChipText: {
+    color: '#4F46E5',
+    fontSize: 12,
+    fontWeight: '700',
+  },
   timestamp: {
-    color: '#64748B',
+    color: '#94A3B8',
     fontSize: 10,
     marginHorizontal: 4,
   },
@@ -261,76 +424,83 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 14,
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#E2E8F0',
   },
   loadingText: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 12,
   },
   promptsContainer: {
-    paddingVertical: 8,
+    paddingVertical: 10,
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#1E293B',
+    borderTopColor: '#F1F5F9',
   },
   promptsScroll: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     gap: 8,
   },
   promptChip: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#F8FAFC',
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#E2E8F0',
   },
   promptChipText: {
-    color: '#CBD5E1',
+    color: '#334155',
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   inputBar: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: '#1E293B',
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#334155',
+    borderTopColor: '#E2E8F0',
     gap: 10,
   },
   input: {
     flex: 1,
-    backgroundColor: '#0F172A',
-    color: '#F8FAFC',
+    backgroundColor: '#F8FAFC',
+    color: '#0F172A',
     fontSize: 14,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#E2E8F0',
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#10B981',
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    backgroundColor: '#4F46E5',
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 4,
   },
   sendButtonDisabled: {
-    backgroundColor: '#334155',
+    backgroundColor: '#E2E8F0',
+    shadowOpacity: 0,
   },
   sendButtonText: {
-    color: '#0F172A',
-    fontSize: 20,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: '900',
-    marginTop: -2,
   },
 });
+

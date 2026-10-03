@@ -66,5 +66,27 @@
 | T-403 | Dashboard Funnel Mall Admin (`apps/admin/app/(mall)/metricas/page.tsx`) | DONE | Embudo completo de conversión, KPIs y desglose por tienda |
 | T-404 | Landing Page Oficial + Legal (`apps/landing/app/page.tsx`) | DONE | Presentación del mall, descarga APK, términos y privacidad |
 
+## Sprint 5 — Experiencia Integral Light Luxury y Motor Isométrico 2.5D (Tiempo y Espacio)
+
+| ID | Tarea | Estado | Aceptación |
+|---|---|---|---|
+| T-501 | Rediseño de las 8 pantallas shopper con tema Light Luxury oficial | DONE | `#F8FAFC`, `#0F172A`, `#4F46E5`, logos 3D ribbon y micro-interacciones fluidas |
+| T-502 | Motor Isométrico 2.5D interactivo (`IsometricMap.tsx`) | DONE | Gestos pan/pinch, cálculo Dijkstra de rutas animadas, fijación de posición manual ("Estoy aquí") |
+| T-503 | Filtro dinámico de Tiempo y Espacio | DONE | Atenuación en gris de locales cerrados por hora real/simulada y snapping a pasillos |
+| T-504 | Armonización del dataset de locales piloto | DONE | Locales del mapa y del directorio sincronizados sin discrepancias de IDs |
+| T-505 | Vitrina Virtual Digital HUD (`StorefrontHUD.tsx` y `storefront-data.ts`) | DONE | Catálogo de vitrina de 10 locales, beneficios, WhatsApp directo, métodos de pago y cupones flash |
+| T-506 | Simulación de Caminata y Seguimiento de Cámara en Tiempo Real | DONE | Recorrido suave a 1.2 m/s interpolando waypoints, heading de avatar, followUser y trigger de llegada |
+
+## Sprint 6 — Centro Comercial Sambil Chacao (4 Niveles) y Expansión Multi-Venue
+
+| ID | Tarea | Estado | Aceptación |
+|---|---|---|---|
+| T-601 | Modelado arquitectónico de los 4 niveles de Sambil Chacao en `@mallos/map-engine` | DONE | `floor-autopista`, `floor-acuario`, `floor-libertador`, `floor-diversion` con geometría exacta, 5 plazas icónicas y tiendas ancla |
+| T-602 | Grafo de navegación multimodal y puertas para Sambil Chacao | DONE | Nodos de pasillo, entradas por Plaza Jardín y Plaza La Fuente, puertas de anclas y cálculo de ruta |
+| T-603 | Catálogo de Vitrinas Digitales HUD de Sambil Chacao | DONE | Vitrinas para ZARA (2.500 m²), Tijerazo, Mango Bajito (2.136 m²), Nike, Miniso, Samsung, Bonsai Sushi, Anfiteatro VIP |
+| T-604 | Selector de 4 niveles en App Móvil (`apps/mobile/app/(tabs)/mapa.tsx`) | DONE | Switcher interactivo de pisos (L1 Autopista, L2 Acuario, L3 Libertador, L4 Diversión) con recálculo dinámico |
+| T-605 | Suite de pruebas unitarias automatizadas del motor para 4 niveles | DONE | 46 pruebas en `packages/map-engine` pasando al 100% |
+| T-606 | Preparación de arquitectura multi-venue para Hotel La Cascada (Maturín) | TODO | Modelado de mapa de hotel/resort (Habitaciones, Restaurantes, Piscinas, Salones) vía `venue_id` |
+
 ## Bloqueos y notas
 <!-- Anotar aquí lo que frene una tarea: fecha | tarea | motivo | quién desbloquea -->

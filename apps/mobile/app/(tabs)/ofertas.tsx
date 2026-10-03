@@ -3,9 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
+  Image,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getOffers, activateLocalCoupon } from '../../src/features/offers';
@@ -14,10 +16,22 @@ export default function OfertasScreen() {
   const router = useRouter();
   const [offers, setOffers] = useState(() => getOffers());
 
-  const handleActivate = (offerId: string, offerTitle: string) => {
+  const heroOffer = offers[0] || {
+    id: 'off_nike_20',
+    storeName: 'Nike',
+    storeFloor: 1,
+    storeUnit: 'Local 102',
+    title: '20% OFF',
+    benefitLabel: '20% OFF',
+    description: 'En productos seleccionados. 20% de descuento en toda la colección de calzado y ropa deportiva.',
+    validUntil: 'Válida hoy · 15 sep 2026',
+    remainingCoupons: 14,
+    totalCoupons: 50,
+  };
+
+  const handleActivate = (offerId: string) => {
     try {
       const coupon = activateLocalCoupon(offerId);
-      // Actualiza lista de ofertas para reflejar el stock reducido
       setOffers([...getOffers()]);
       router.push(`/cupon/${coupon.id}`);
     } catch (err: any) {
@@ -27,69 +41,118 @@ export default function OfertasScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Banner Superior */}
-      <View style={styles.headerSection}>
-        <View style={styles.headerBadge}>
-          <Text style={styles.headerBadgeText}>EXCLUSIVO VISITANTES</Text>
-        </View>
-        <Text style={styles.headerTitle}>Cupones y Beneficios</Text>
-        <Text style={styles.headerSubtitle}>
-          Activa tu cupón gratis y preséntalo en caja para disfrutar del beneficio.
-        </Text>
+      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
+      {/* Top Bar */}
+      <View style={styles.headerBar}>
+        <Text style={styles.headerTitle}>Ofertas del Mall</Text>
+        <Text style={styles.headerSubtitle}>Promociones exclusivas y cupones canjeables</Text>
       </View>
 
-      {/* Lista de Ofertas */}
-      <FlatList
-        data={offers}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyEmoji}>🏷️</Text>
-            <Text style={styles.emptyTitle}>No hay ofertas disponibles hoy</Text>
-            <Text style={styles.emptySubtitle}>
-              Los comercios están preparando nuevas promociones para ti. ¡Vuelve pronto!
+      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Hero Featured Offer Card (Prototype Screen 6 Style) */}
+        <View style={styles.heroCard}>
+          <Image
+            source={{
+              uri: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&auto=format&fit=crop&q=80',
+            }}
+            style={styles.heroImage}
+          />
+          <View style={styles.heroOverlay} />
+
+          {/* Top Floating Badge */}
+          <View style={styles.brandPill}>
+            <Text style={styles.brandIcon}>👟</Text>
+            <Text style={styles.brandPillText}>{heroOffer.storeName}</Text>
+          </View>
+
+          {/* Hero Content */}
+          <View style={styles.heroInfo}>
+            <Text style={styles.heroDiscountTitle}>{heroOffer.title}</Text>
+            <Text style={styles.heroTargetSubtitle}>En productos seleccionados</Text>
+            <Text style={styles.heroStoreLabel}>
+              {heroOffer.storeName} · Nivel {heroOffer.storeFloor === 0 ? 'PB' : heroOffer.storeFloor}
             </Text>
           </View>
-        }
-        renderItem={({ item }) => (
-          <View style={styles.offerCard}>
-            {/* Header del Card */}
-            <View style={styles.cardHeader}>
-              <View style={styles.storeBadge}>
-                <Text style={styles.storeNameText}>{item.storeName}</Text>
-                <Text style={styles.storeUnitText}>
-                  · Piso {item.storeFloor === 0 ? 'PB' : `P${item.storeFloor}`} ({item.storeUnit})
-                </Text>
-              </View>
-              <View style={styles.benefitBadge}>
-                <Text style={styles.benefitBadgeText}>{item.benefitLabel}</Text>
-              </View>
+        </View>
+
+        {/* Offer Specs Chips */}
+        <View style={styles.chipsRow}>
+          <View style={styles.specChip}>
+            <Text style={styles.specChipIcon}>⏱</Text>
+            <View>
+              <Text style={styles.specChipLabel}>Válida hoy</Text>
+              <Text style={styles.specChipValue}>15 sep 2026</Text>
             </View>
-
-            {/* Título y Descripción */}
-            <Text style={styles.offerTitle}>{item.title}</Text>
-            <Text style={styles.offerDescription}>{item.description}</Text>
-
-            {/* Términos y Stock */}
-            <View style={styles.metaRow}>
-              <Text style={styles.stockText}>
-                🔥 Quedan <Text style={styles.stockHighlight}>{item.remainingCoupons}</Text> de {item.totalCoupons} cupones
-              </Text>
-              <Text style={styles.termsText}>1 por persona</Text>
-            </View>
-
-            {/* Botón de Activación */}
-            <TouchableOpacity
-              style={styles.activateButton}
-              activeOpacity={0.8}
-              onPress={() => handleActivate(item.id, item.title)}
-            >
-              <Text style={styles.activateButtonText}>✨ Obtener Cupón Gratis</Text>
-            </TouchableOpacity>
           </View>
-        )}
-      />
+
+          <View style={styles.specChip}>
+            <Text style={styles.specChipIcon}>🏢</Text>
+            <View>
+              <Text style={styles.specChipLabel}>Ubicación</Text>
+              <Text style={styles.specChipValue}>
+                Nivel {heroOffer.storeFloor === 0 ? 'PB' : heroOffer.storeFloor} · Tienda
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Offer Description Details */}
+        <View style={styles.detailsBlock}>
+          <Text style={styles.detailsTitle}>Detalles de la oferta</Text>
+          <Text style={styles.detailsText}>{heroOffer.description}</Text>
+        </View>
+
+        {/* CTA Action Buttons (Screen 6 Mockup) */}
+        <View style={styles.actionButtons}>
+          <TouchableOpacity
+            style={styles.primaryActivateBtn}
+            activeOpacity={0.88}
+            onPress={() => handleActivate(heroOffer.id)}
+          >
+            <Text style={styles.primaryActivateBtnText}>Activar oferta</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.secondaryMapBtn}
+            activeOpacity={0.85}
+            onPress={() => router.push(`/(tabs)/mapa`)}
+          >
+            <Text style={styles.secondaryMapBtnText}>Ver tienda en el mapa</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* More Offers Section */}
+        <View style={styles.moreOffersSection}>
+          <Text style={styles.moreOffersTitle}>Más promociones activas</Text>
+
+          {offers.slice(1).map((item) => (
+            <View key={item.id} style={styles.offerMiniCard}>
+              <View style={styles.miniCardHeader}>
+                <View style={styles.miniStoreInfo}>
+                  <Text style={styles.miniStoreName}>{item.storeName}</Text>
+                  <Text style={styles.miniStoreUnit}>
+                    Piso {item.storeFloor === 0 ? 'PB' : `P${item.storeFloor}`} · {item.storeUnit}
+                  </Text>
+                </View>
+                <View style={styles.miniBenefitBadge}>
+                  <Text style={styles.miniBenefitText}>{item.benefitLabel}</Text>
+                </View>
+              </View>
+
+              <Text style={styles.miniOfferTitle}>{item.title}</Text>
+              <Text style={styles.miniOfferDesc}>{item.description}</Text>
+
+              <TouchableOpacity
+                style={styles.miniActivateBtn}
+                activeOpacity={0.8}
+                onPress={() => handleActivate(item.id)}
+              >
+                <Text style={styles.miniActivateBtnText}>Obtener Cupón →</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -97,149 +160,266 @@ export default function OfertasScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
-  headerSection: {
-    padding: 16,
-    paddingBottom: 12,
-    backgroundColor: '#0F172A',
+  headerBar: {
+    paddingHorizontal: 18,
+    paddingTop: 52,
+    paddingBottom: 14,
+    backgroundColor: '#F8FAFC',
     borderBottomWidth: 1,
-    borderBottomColor: '#1E293B',
-    gap: 6,
-  },
-  headerBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#10B981',
-  },
-  headerBadgeText: {
-    color: '#34D399',
-    fontSize: 10,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+    borderBottomColor: '#E2E8F0',
   },
   headerTitle: {
-    color: '#F8FAFC',
-    fontSize: 20,
+    color: '#0F172A',
+    fontSize: 22,
     fontWeight: '800',
+    letterSpacing: -0.4,
   },
   headerSubtitle: {
-    color: '#94A3B8',
-    fontSize: 13,
-    lineHeight: 18,
+    color: '#64748B',
+    fontSize: 12,
+    marginTop: 2,
   },
-  listContainer: {
-    padding: 16,
-    gap: 16,
-    paddingBottom: 32,
+  scrollContent: {
+    flex: 1,
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 40,
   },
-  offerCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 16,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: '#334155',
-    gap: 12,
+  heroCard: {
+    height: 220,
+    borderRadius: 24,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#0F172A',
+    marginBottom: 16,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
   },
-  cardHeader: {
+  heroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  heroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+  },
+  brandPill: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: 8,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 6,
   },
-  storeBadge: {
+  brandIcon: {
+    fontSize: 14,
+  },
+  brandPillText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  heroInfo: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+  },
+  heroDiscountTitle: {
+    color: '#FFFFFF',
+    fontSize: 32,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+  },
+  heroTargetSubtitle: {
+    color: '#E2E8F0',
+    fontSize: 15,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  heroStoreLabel: {
+    color: '#94A3B8',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  chipsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  specChip: {
     flex: 1,
     flexDirection: 'row',
-    flexWrap: 'wrap',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 12,
+    borderRadius: 16,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
-  storeNameText: {
-    color: '#F8FAFC',
+  specChipIcon: {
+    fontSize: 18,
+  },
+  specChipLabel: {
+    color: '#64748B',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  specChipValue: {
+    color: '#0F172A',
     fontSize: 13,
     fontWeight: '700',
   },
-  storeUnitText: {
-    color: '#94A3B8',
-    fontSize: 12,
+  detailsBlock: {
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 6,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1,
   },
-  benefitBadge: {
-    backgroundColor: '#047857',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  benefitBadgeText: {
-    color: '#F8FAFC',
-    fontSize: 11,
+  detailsTitle: {
+    color: '#0F172A',
+    fontSize: 15,
     fontWeight: '800',
   },
-  offerTitle: {
-    color: '#F8FAFC',
-    fontSize: 17,
-    fontWeight: '800',
-    lineHeight: 22,
-  },
-  offerDescription: {
-    color: '#94A3B8',
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 6,
-    borderTopWidth: 1,
-    borderTopColor: '#0F172A',
-  },
-  stockText: {
-    color: '#CBD5E1',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  stockHighlight: {
-    color: '#34D399',
-    fontWeight: '800',
-  },
-  termsText: {
+  detailsText: {
     color: '#64748B',
-    fontSize: 11,
+    fontSize: 13,
+    lineHeight: 20,
   },
-  activateButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 12,
+  actionButtons: {
+    gap: 10,
+    marginBottom: 28,
+  },
+  primaryActivateBtn: {
+    backgroundColor: '#4F46E5',
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  primaryActivateBtnText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  secondaryMapBtn: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  activateButtonText: {
+  secondaryMapBtnText: {
     color: '#0F172A',
     fontSize: 14,
-    fontWeight: '800',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-    paddingHorizontal: 20,
-    gap: 8,
-  },
-  emptyEmoji: {
-    fontSize: 44,
-    marginBottom: 8,
-  },
-  emptyTitle: {
-    color: '#F8FAFC',
-    fontSize: 17,
     fontWeight: '700',
   },
-  emptySubtitle: {
+  moreOffersSection: {
+    gap: 12,
+    paddingBottom: 20,
+  },
+  moreOffersTitle: {
+    color: '#0F172A',
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  offerMiniCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  miniCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  miniStoreInfo: {
+    gap: 2,
+  },
+  miniStoreName: {
+    color: '#0F172A',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  miniStoreUnit: {
     color: '#64748B',
+    fontSize: 12,
+  },
+  miniBenefitBadge: {
+    backgroundColor: '#FFF7ED',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FED7AA',
+  },
+  miniBenefitText: {
+    color: '#EA580C',
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  miniOfferTitle: {
+    color: '#0F172A',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  miniOfferDesc: {
+    color: '#64748B',
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  miniActivateBtn: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+  },
+  miniActivateBtnText: {
+    color: '#4F46E5',
     fontSize: 13,
-    textAlign: 'center',
+    fontWeight: '700',
   },
 });
+

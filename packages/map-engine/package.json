@@ -1,0 +1,18 @@
+{
+  "name": "@mallos/map-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Motor de mapas de Mall OS: datos del plano, grafo de navegación, rutas, validación y escena isométrica. Núcleo puro en TypeScript, sin dependencias.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts",
+    "demo": "tsx demo/gen.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}

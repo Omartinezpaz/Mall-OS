@@ -1,3 +1,3 @@
-export * from './offer.schema.ts';
-export * from './redemption.schema.ts';
-export * from './directory.schema.ts';
+export * from './offer.schema';
+export * from './redemption.schema';
+export * from './directory.schema';

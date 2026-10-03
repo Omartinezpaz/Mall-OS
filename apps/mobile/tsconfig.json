@@ -4,8 +4,23 @@
     "strict": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@app/*": ["./app/*"]
+      "@app/*": ["./app/*"],
+      "@mallos/design-tokens": ["../../packages/design-tokens/src/index.ts"],
+      "@mallos/design-tokens/*": ["../../packages/design-tokens/src/*"],
+      "@mallos/map-engine": ["../../packages/map-engine/src/index.ts"],
+      "@mallos/map-engine/*": ["../../packages/map-engine/src/*"],
+      "@mallos/types": ["../../packages/types/src/index.ts"],
+      "@mallos/types/*": ["../../packages/types/src/*"],
+      "@mallos/validators": ["../../packages/validators/src/index.ts"],
+      "@mallos/validators/*": ["../../packages/validators/src/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "../../packages/*/src/**/*.ts",
+    "../../packages/*/src/**/*.tsx"
+  ]
 }

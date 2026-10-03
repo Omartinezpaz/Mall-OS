@@ -55,7 +55,7 @@ export default function MisOfertasPage() {
       totalCoupons: Number(formData.totalCoupons),
       remainingCoupons: Number(formData.totalCoupons),
       status: 'pending', // Regla D-017: todo lo creado por el tenant queda en 'pending' para revisión del mall_admin
-      createdAt: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString().slice(0, 10),
     };
 
     setOffers([newOffer, ...offers]);
