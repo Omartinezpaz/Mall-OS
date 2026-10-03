@@ -91,7 +91,7 @@ export default function MapaScreen() {
     };
   }, [selectedStoreId]);
 
-  // Hook de Simulación de Caminata Waypoint a 1.2 m/s
+  // Hook de Simulación de Caminata Waypoint
   const {
     isWalking,
     walkSpeed,
@@ -122,54 +122,8 @@ export default function MapaScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Top Header Modular con selector de pisos, horas y modo de cámara */}
-      <MapHeader
-        levels={LEVELS}
-        selectedLevel={selectedLevel}
-        onSelectLevel={(lvl) => setSelectedLevel(lvl)}
-        currentHour={currentHour}
-        openCount={openCount}
-        totalStores={totalStores}
-        isSimulatingTime={isSimulatingTime}
-        onToggleTimeSimulation={() => setIsSimulatingTime(!isSimulatingTime)}
-        onSelectHour={(h) => setCurrentHour(h)}
-        onResetRealTime={resetToRealTime}
-        followUser={followUser}
-        onToggleFollowUser={() => {
-          const nextFollow = !followUser;
-          setFollowUser(nextFollow);
-          if (nextFollow) {
-            mapRef.current?.recenterOnUser();
-          }
-        }}
-      />
-
-      {/* Banner de Ayuda si está en Modo "Estoy Aquí" */}
-      {isPlacingUser && (
-        <View style={styles.placementBanner}>
-          <Text style={styles.placementIcon}>📍</Text>
-          <Text style={styles.placementText}>
-            Toca cualquier punto del pasillo en el mapa para marcar tu posición inicial.
-          </Text>
-          <TouchableOpacity
-            style={styles.cancelPlacementBtn}
-            onPress={() => setIsPlacingUser(false)}
-          >
-            <Text style={styles.cancelPlacementText}>Cancelar</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* Toast flotante de Notificación de Llegada */}
-      {arrivalMessage && (
-        <View style={styles.arrivalToast}>
-          <Text style={styles.arrivalToastIcon}>🎉</Text>
-          <Text style={styles.arrivalToastText}>{arrivalMessage}</Text>
-        </View>
-      )}
-
-      {/* Viewport del Mapa Isométrico 2.5D */}
-      <View style={styles.mapViewport}>
+      {/* Viewport del Mapa Isométrico 2.5D Fullscreen */}
+      <View style={StyleSheet.absoluteFillObject}>
         <IsometricMap
           mapRef={mapRef}
           selectedStoreId={selectedStoreId}
@@ -197,8 +151,32 @@ export default function MapaScreen() {
           onRouteChange={(route) => setActiveRoute(route)}
           followUser={followUser}
         />
+      </View>
 
-        {/* Tarjeta Flotante Superior: Control de Simulación de Recorrido */}
+      {/* Top Header Flotante con selector de pisos, horas y modo de cámara */}
+      <MapHeader
+        levels={LEVELS}
+        selectedLevel={selectedLevel}
+        onSelectLevel={(lvl) => setSelectedLevel(lvl)}
+        currentHour={currentHour}
+        openCount={openCount}
+        totalStores={totalStores}
+        isSimulatingTime={isSimulatingTime}
+        onToggleTimeSimulation={() => setIsSimulatingTime(!isSimulatingTime)}
+        onSelectHour={(h) => setCurrentHour(h)}
+        onResetRealTime={resetToRealTime}
+        followUser={followUser}
+        onToggleFollowUser={() => {
+          const nextFollow = !followUser;
+          setFollowUser(nextFollow);
+          if (nextFollow) {
+            mapRef.current?.recenterOnUser();
+          }
+        }}
+      />
+
+      {/* Tarjeta Flotante: Control de Simulación de Recorrido */}
+      {isNavigating && (
         <WalkControlCard
           isWalking={isWalking}
           walkSpeed={walkSpeed}
@@ -210,41 +188,65 @@ export default function MapaScreen() {
           onToggleSpeed={() => setWalkSpeed((s) => (s === 1 ? 2 : 1))}
           onSimulateStep={simulateStep}
         />
+      )}
 
-        {/* Controles flotantes de Zoom, Reset y Ubicación */}
-        <View style={styles.mapControls}>
+      {/* Banner de Modo "Estoy Aquí" */}
+      {isPlacingUser && (
+        <View style={styles.placementBanner}>
+          <Text style={styles.placementIcon}>📍</Text>
+          <Text style={styles.placementText}>
+            Toca el pasillo en el mapa para marcar tu posición.
+          </Text>
           <TouchableOpacity
-            style={styles.controlBtn}
-            onPress={() => mapRef.current?.zoomIn()}
-            activeOpacity={0.7}
+            style={styles.cancelPlacementBtn}
+            onPress={() => setIsPlacingUser(false)}
           >
-            <Text style={styles.controlText}>+</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.controlBtn}
-            onPress={() => mapRef.current?.zoomOut()}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.controlText}>−</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.controlBtn}
-            onPress={() => mapRef.current?.resetView()}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.controlIcon}>⟲</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.controlBtn, isPlacingUser && styles.controlBtnActive]}
-            onPress={() => setIsPlacingUser(!isPlacingUser)}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.controlIcon}>📍</Text>
+            <Text style={styles.cancelPlacementText}>Listo</Text>
           </TouchableOpacity>
         </View>
+      )}
+
+      {/* Toast flotante de Notificación de Llegada */}
+      {arrivalMessage && (
+        <View style={styles.arrivalToast}>
+          <Text style={styles.arrivalToastIcon}>🎉</Text>
+          <Text style={styles.arrivalToastText}>{arrivalMessage}</Text>
+        </View>
+      )}
+
+      {/* Controles flotantes laterales de Zoom y Ubicación */}
+      <View style={styles.mapControls}>
+        <TouchableOpacity
+          style={styles.controlBtn}
+          onPress={() => mapRef.current?.zoomIn()}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.controlText}>+</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.controlBtn}
+          onPress={() => mapRef.current?.zoomOut()}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.controlText}>−</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.controlBtn}
+          onPress={() => mapRef.current?.resetView()}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.controlIcon}>⟲</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.controlBtn, isPlacingUser && styles.controlBtnActive]}
+          onPress={() => setIsPlacingUser(!isPlacingUser)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.controlIcon}>📍</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Floating Bottom Sheet: Vitrina Digital HUD o Resumen Plegado */}
+      {/* Floating Bottom Sheet: Vitrina Digital HUD o Quick Pill Plegado */}
       {showStorefrontHUD ? (
         <StorefrontHUD
           storeId={selectedStoreId}
@@ -257,18 +259,17 @@ export default function MapaScreen() {
           isNavigating={isNavigating}
         />
       ) : (
-        <View style={styles.collapsedSheet}>
+        <View style={styles.collapsedPillWrapper}>
           <TouchableOpacity
-            style={styles.openHudBtn}
+            style={styles.collapsedPill}
             onPress={() => setShowStorefrontHUD(true)}
             activeOpacity={0.85}
           >
-            <Text style={styles.openHudIcon}>🛍️</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.openHudTitle}>Vitrina de {selectedStore.name}</Text>
-              <Text style={styles.openHudSubtitle}>Toca para ver productos destacados y ofertas</Text>
-            </View>
-            <Text style={styles.openHudArrow}>▲</Text>
+            <Text style={styles.collapsedPillIcon}>🛍️</Text>
+            <Text style={styles.collapsedPillText}>
+              Ver vitrina de <Text style={{ fontWeight: '800' }}>{selectedStore.name}</Text>
+            </Text>
+            <Text style={styles.collapsedPillArrow}>▲</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -280,26 +281,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8FAFC',
+    position: 'relative',
   },
   placementBanner: {
+    position: 'absolute',
+    top: 156,
+    left: 14,
+    right: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#4F46E5',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 10,
+    backgroundColor: 'rgba(79, 70, 229, 0.95)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 14,
+    gap: 8,
+    zIndex: 35,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   placementIcon: {
-    fontSize: 16,
+    fontSize: 14,
   },
   placementText: {
     flex: 1,
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
   },
   cancelPlacementBtn: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
@@ -307,20 +320,20 @@ const styles = StyleSheet.create({
   cancelPlacementText: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   arrivalToast: {
     position: 'absolute',
-    top: 120,
+    top: 160,
     alignSelf: 'center',
     backgroundColor: '#0F172A',
-    borderRadius: 24,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    zIndex: 30,
+    gap: 6,
+    zIndex: 45,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
@@ -328,37 +341,32 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   arrivalToastIcon: {
-    fontSize: 16,
+    fontSize: 14,
   },
   arrivalToastText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
-  },
-  mapViewport: {
-    flex: 1,
-    position: 'relative',
-    backgroundColor: '#F8FAFC',
   },
   mapControls: {
     position: 'absolute',
-    right: 16,
-    bottom: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    right: 12,
+    top: 200,
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     overflow: 'hidden',
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 3,
-    zIndex: 15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    zIndex: 20,
   },
   controlBtn: {
-    width: 42,
-    height: 42,
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
@@ -370,44 +378,46 @@ const styles = StyleSheet.create({
   },
   controlText: {
     color: '#0F172A',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
   },
   controlIcon: {
-    fontSize: 16,
+    fontSize: 14,
   },
-  collapsedSheet: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 14,
-    borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 6,
+  collapsedPillWrapper: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    zIndex: 40,
   },
-  openHudBtn: {
+  collapsedPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+    gap: 10,
   },
-  openHudIcon: {
-    fontSize: 22,
+  collapsedPillIcon: {
+    fontSize: 16,
   },
-  openHudTitle: {
+  collapsedPillText: {
+    flex: 1,
     color: '#0F172A',
-    fontSize: 14,
+    fontSize: 12,
+  },
+  collapsedPillArrow: {
+    color: '#6366F1',
+    fontSize: 12,
     fontWeight: '800',
-  },
-  openHudSubtitle: {
-    color: '#64748B',
-    fontSize: 11,
-  },
-  openHudArrow: {
-    color: '#94A3B8',
-    fontSize: 14,
   },
 });

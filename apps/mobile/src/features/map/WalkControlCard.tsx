@@ -26,47 +26,51 @@ export function WalkControlCard({
   onSimulateStep,
 }: WalkControlCardProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.infoRow}>
-        <View style={styles.badgeSimulacion}>
-          <Text style={styles.badgeSimulacionText}>SIMULACIÓN</Text>
+    <View style={styles.floatingContainer}>
+      <View style={styles.card}>
+        <View style={styles.infoCol}>
+          <View style={styles.badgeRow}>
+            <View style={styles.badgeSimulacion}>
+              <Text style={styles.badgeSimulacionText}>SIMULACIÓN</Text>
+            </View>
+            <Text style={styles.titleText}>
+              {isWalking ? `Guiando (${walkSpeed}x)` : 'Ruta'}
+            </Text>
+          </View>
+          {activeRoute && (
+            <Text style={styles.metricsText}>
+              {Math.round(activeRoute.distanceMeters)}m · {activeRoute.walkingMinutes} min
+            </Text>
+          )}
         </View>
-        <Text style={styles.statusText}>
-          {isWalking ? `Recorrido (${walkSpeed}x · ~1.2 m/s)` : 'Ruta Asistida'}
-        </Text>
-        {activeRoute && (
-          <Text style={styles.metaText}>
-            {Math.round(activeRoute.distanceMeters)}m · {activeRoute.walkingMinutes} min
-          </Text>
-        )}
+
+        <View style={styles.actionsRow}>
+          {isWalking ? (
+            <TouchableOpacity style={styles.pauseBtn} onPress={onStopWalk} activeOpacity={0.8}>
+              <Text style={styles.pauseBtnText}>⏸ Pausar</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[styles.startBtn, !hasWaypoints && styles.disabledBtn]}
+              onPress={onStartWalk}
+              activeOpacity={0.8}
+              disabled={!hasWaypoints}
+            >
+              <Text style={styles.startBtnText}>🚶 Simular</Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity style={styles.speedBtn} onPress={onToggleSpeed} activeOpacity={0.8}>
+            <Text style={styles.speedText}>{walkSpeed}x</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.stepBtn} onPress={onSimulateStep} activeOpacity={0.8}>
+            <Text style={styles.stepText}>+1</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <View style={styles.buttonsRow}>
-        {isWalking ? (
-          <TouchableOpacity style={styles.stopBtn} onPress={onStopWalk} activeOpacity={0.8}>
-            <Text style={styles.btnText}>⏸ Pausar Simulación</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.startBtn}
-            onPress={onStartWalk}
-            activeOpacity={0.8}
-            disabled={!hasWaypoints}
-          >
-            <Text style={styles.btnText}>🚶 Simular Recorrido</Text>
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity style={styles.speedBtn} onPress={onToggleSpeed} activeOpacity={0.8}>
-          <Text style={styles.speedText}>{walkSpeed}x</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.stepBtn} onPress={onSimulateStep} activeOpacity={0.8}>
-          <Text style={styles.stepText}>+1 Paso</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Barra de progreso visual */}
+      {/* Barra de progreso de simulación ultra delgada */}
       {isWalking && (
         <View style={styles.progressBarBg}>
           <View style={[styles.progressBarFill, { width: `${walkProgress * 100}%` }]} />
@@ -77,83 +81,98 @@ export function WalkControlCard({
 }
 
 const styles = StyleSheet.create({
-  container: {
+  floatingContainer: {
     position: 'absolute',
-    top: 12,
-    left: 14,
-    right: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.96)',
-    borderRadius: 16,
-    padding: 10,
+    top: 104,
+    left: 12,
+    right: 12,
+    zIndex: 25,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    borderRadius: 18,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
     elevation: 4,
     gap: 8,
-    zIndex: 15,
   },
-  infoRow: {
+  infoCol: {
+    gap: 2,
+  },
+  badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   badgeSimulacion: {
     backgroundColor: '#FEF3C7',
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderWidth: 1,
-    borderColor: '#FDE68A',
+    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
   },
   badgeSimulacionText: {
     color: '#92400E',
-    fontSize: 9,
+    fontSize: 8,
     fontWeight: '800',
-    letterSpacing: 0.4,
   },
-  statusText: {
+  titleText: {
     color: '#0F172A',
     fontSize: 12,
-    fontWeight: '700',
-    flex: 1,
+    fontWeight: '800',
   },
-  metaText: {
+  metricsText: {
     color: '#4F46E5',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  startBtn: {
+    backgroundColor: '#4F46E5',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  disabledBtn: {
+    opacity: 0.5,
+  },
+  startBtnText: {
+    color: '#FFFFFF',
     fontSize: 11,
     fontWeight: '800',
   },
-  buttonsRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  startBtn: {
-    flex: 1,
-    backgroundColor: '#4F46E5',
-    borderRadius: 12,
-    paddingVertical: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stopBtn: {
-    flex: 1,
+  pauseBtn: {
     backgroundColor: '#DC2626',
     borderRadius: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  btnText: {
+  pauseBtnText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
   },
   speedBtn: {
     backgroundColor: '#F1F5F9',
-    borderRadius: 12,
-    paddingHorizontal: 12,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -161,13 +180,14 @@ const styles = StyleSheet.create({
   },
   speedText: {
     color: '#0F172A',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '800',
   },
   stepBtn: {
     backgroundColor: '#EEF2FF',
-    borderRadius: 12,
-    paddingHorizontal: 10,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -175,18 +195,20 @@ const styles = StyleSheet.create({
   },
   stepText: {
     color: '#4F46E5',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '800',
   },
   progressBarBg: {
-    height: 4,
-    backgroundColor: '#F1F5F9',
-    borderRadius: 2,
+    height: 3,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 1.5,
     overflow: 'hidden',
+    marginTop: 4,
+    marginHorizontal: 8,
   },
   progressBarFill: {
     height: '100%',
     backgroundColor: '#4F46E5',
-    borderRadius: 2,
+    borderRadius: 1.5,
   },
 });

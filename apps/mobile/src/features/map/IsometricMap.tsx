@@ -160,9 +160,7 @@ export function IsometricMap({
   mapRef,
   followUser = false,
 }: IsometricMapProps) {
-  const [routePhase, setRoutePhase] = useState(0);
   const [transform, setTransform] = useState({ scale: 1, translateX: 0, translateY: 0 });
-  const [pulseAnim, setPulseAnim] = useState(0);
   const containerSizeRef = useRef({ width: 360, height: 400 });
 
   // Hora actual del centro comercial (por defecto hora real del dispositivo)
@@ -193,24 +191,7 @@ export function IsometricMap({
     }
   }, [route, onRouteChange]);
 
-  // Animación continua de flechas de ruta (80ms tick)
-  useEffect(() => {
-    if (!route) return;
-    const interval = setInterval(() => {
-      setRoutePhase((prev) => (prev + 0.06) % 1);
-    }, 80);
-    return () => clearInterval(interval);
-  }, [route]);
-
-  // Animación de pulso para la baliza del usuario
-  useEffect(() => {
-    const pulseInterval = setInterval(() => {
-      setPulseAnim((p) => (p + 1) % 40);
-    }, 50);
-    return () => clearInterval(pulseInterval);
-  }, []);
-
-  // Construye la escena isométrica con el motor @mallos/map-engine
+  // Construye la escena isométrica estática de forma eficiente
   const scene: Scene = useMemo(() => {
     return buildScene(mallData, {
       floorId,
@@ -218,12 +199,12 @@ export function IsometricMap({
       selectedStoreId: targetStoreId,
       dimmedStoreIds,
       routeNodeIds: route?.nodeIds,
-      routePhase,
-      detail: 'full',
+      routePhase: 0,
+      detail: 'medium',
       labels: 'all',
-      selectedLift: 4,
+      selectedLift: 3,
     });
-  }, [mallData, floorId, targetStoreId, dimmedStoreIds, route, routePhase]);
+  }, [mallData, floorId, targetStoreId, dimmedStoreIds, route]);
 
   const { x: vx, y: vy, w: vw, h: vh } = scene.viewBox;
 
@@ -508,8 +489,6 @@ export function IsometricMap({
     }
   };
 
-  const pulseRadius = 8 + (pulseAnim / 40) * 14;
-  const pulseOpacity = Math.max(0, 0.45 * (1 - pulseAnim / 40));
 
   return (
     <View
@@ -538,23 +517,15 @@ export function IsometricMap({
           {/* Capas del mapa de @mallos/map-engine */}
           {scene.items.map((it, idx) => renderItem(it, idx))}
 
-          {/* Avatar del usuario con baliza interactiva y dirección */}
+          {/* Avatar del usuario con baliza interactiva de alta visibilidad */}
           <G key="user-location-beacon">
-            {/* Onda de radar expansiva */}
+            {/* Halo exterior azul */}
             <Circle
               cx={userIsoPos.x}
               cy={userIsoPos.y}
-              r={pulseRadius}
-              fill="#2563EB"
-              opacity={pulseOpacity}
-            />
-            {/* Halo azul brillante */}
-            <Circle
-              cx={userIsoPos.x}
-              cy={userIsoPos.y}
-              r={12}
-              fill="#2563EB"
-              opacity={0.25}
+              r={14}
+              fill="#3B82F6"
+              opacity={0.22}
             />
             {/* Núcleo de baliza de navegación */}
             <Circle
@@ -566,7 +537,7 @@ export function IsometricMap({
               strokeWidth={2.5}
             />
             {/* Indicador de avatar 'Tú' */}
-            <G transform={`translate(${userIsoPos.x} ${userIsoPos.y - 12})`}>
+            <G transform={`translate(${userIsoPos.x} ${userIsoPos.y - 14})`}>
               <Rect
                 x={-16}
                 y={-10}

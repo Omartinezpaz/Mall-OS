@@ -38,16 +38,16 @@ export function MapHeader({
   onToggleFollowUser,
 }: MapHeaderProps) {
   return (
-    <View style={styles.container}>
+    <View style={styles.floatingContainer}>
       {/* Non-Official Illustrative Disclaimer Banner */}
-      <View style={styles.disclaimerBanner}>
+      <View style={styles.disclaimerPill}>
         <Text style={styles.disclaimerText}>
-          📐 Plano esquemático ilustrativo · No oficial (Sambil Chacao Prototipo Demo)
+          📐 Sambil Chacao · Plano esquemático ilustrativo demo
         </Text>
       </View>
 
       <View style={styles.headerBar}>
-        {/* Selector de Nivel (L1, L2, L3) */}
+        {/* Selector de Nivel (L1, L2, L3, L4) */}
         <View style={styles.levelSelector}>
           {levels.map((lvl) => {
             const isActive = selectedLevel === lvl.id;
@@ -59,7 +59,7 @@ export function MapHeader({
                 activeOpacity={0.8}
               >
                 <Text style={[styles.levelBtnText, isActive && styles.levelBtnTextActive]}>
-                  {lvl.label}
+                  {lvl.label.split(' · ')[0]}
                 </Text>
               </TouchableOpacity>
             );
@@ -79,23 +79,20 @@ export function MapHeader({
           </View>
         </TouchableOpacity>
 
-        {/* Modo Cámara: Libre vs Seguimiento */}
+        {/* Modo Cámara: Libre vs Seguir */}
         <TouchableOpacity
           style={[styles.cameraModeBtn, followUser && styles.cameraModeBtnActive]}
           activeOpacity={0.8}
           onPress={onToggleFollowUser}
         >
           <Text style={styles.cameraModeIcon}>{followUser ? '🎥' : '🧭'}</Text>
-          <Text style={[styles.cameraModeText, followUser && styles.cameraModeTextActive]}>
-            {followUser ? 'Seguir' : 'Libre'}
-          </Text>
         </TouchableOpacity>
       </View>
 
       {/* Selector Deslizable de Horas Simuladas */}
       {isSimulatingTime && (
         <View style={styles.timeBarContainer}>
-          <Text style={styles.timeBarLabel}>Horario simulado:</Text>
+          <Text style={styles.timeBarLabel}>Horario:</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.timeSlotsRow}>
             {[8, 10, 12, 14, 16, 18, 20, 22].map((hour) => (
               <TouchableOpacity
@@ -117,7 +114,7 @@ export function MapHeader({
               </TouchableOpacity>
             ))}
             <TouchableOpacity style={styles.timeSlotNowBtn} onPress={onResetRealTime}>
-              <Text style={styles.timeSlotNowText}>Hora Real</Text>
+              <Text style={styles.timeSlotNowText}>Real</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -127,61 +124,68 @@ export function MapHeader({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#FFFFFF',
-    zIndex: 20,
+  floatingContainer: {
+    position: 'absolute',
+    top: 42,
+    left: 12,
+    right: 12,
+    zIndex: 30,
+    gap: 6,
   },
-  disclaimerBanner: {
-    backgroundColor: '#0F172A',
-    paddingHorizontal: 12,
-    paddingTop: 44,
-    paddingBottom: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+  disclaimerPill: {
+    backgroundColor: 'rgba(15, 23, 42, 0.82)',
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 12,
   },
   disclaimerText: {
-    color: '#94A3B8',
-    fontSize: 10,
+    color: '#CBD5E1',
+    fontSize: 9,
     fontWeight: '700',
     textAlign: 'center',
-    letterSpacing: 0.2,
   },
   headerBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 10,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-    gap: 8,
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 4,
+    gap: 6,
   },
   levelSelector: {
     flexDirection: 'row',
     backgroundColor: '#F1F5F9',
-    borderRadius: 24,
-    padding: 3,
+    borderRadius: 14,
+    padding: 2,
     gap: 2,
   },
   levelBtn: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
   },
   levelBtnActive: {
     backgroundColor: '#4F46E5',
     shadowColor: '#4F46E5',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 2,
   },
   levelBtnText: {
     color: '#64748B',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
   },
   levelBtnTextActive: {
     color: '#FFFFFF',
@@ -190,92 +194,89 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F8FAFC',
-    borderRadius: 20,
-    paddingHorizontal: 10,
+    borderRadius: 14,
+    paddingHorizontal: 8,
     paddingVertical: 5,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    gap: 6,
+    gap: 4,
   },
   timeChipActive: {
     borderColor: '#4F46E5',
     backgroundColor: '#EEF2FF',
   },
   timeChipIcon: {
-    fontSize: 13,
+    fontSize: 11,
   },
   timeChipText: {
     color: '#0F172A',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
   },
   openPill: {
     backgroundColor: '#DCFCE7',
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    borderRadius: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
   },
   openPillText: {
     color: '#166534',
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
   },
   cameraModeBtn: {
-    flexDirection: 'row',
+    width: 32,
+    height: 32,
+    borderRadius: 12,
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#F8FAFC',
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    gap: 4,
   },
   cameraModeBtnActive: {
     backgroundColor: '#EEF2FF',
     borderColor: '#4F46E5',
   },
   cameraModeIcon: {
-    fontSize: 13,
-  },
-  cameraModeText: {
-    color: '#64748B',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  cameraModeTextActive: {
-    color: '#4F46E5',
+    fontSize: 14,
   },
   timeBarContainer: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
   },
   timeBarLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#64748B',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   timeSlotsRow: {
     flexDirection: 'row',
-    gap: 6,
+    gap: 4,
   },
   timeSlotBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
     backgroundColor: '#F1F5F9',
   },
   timeSlotBtnActive: {
     backgroundColor: '#4F46E5',
   },
   timeSlotText: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#475569',
     fontWeight: '600',
   },
@@ -284,16 +285,16 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   timeSlotNowBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
     backgroundColor: '#EEF2FF',
     borderWidth: 1,
     borderColor: '#C7D2FE',
   },
   timeSlotNowText: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#4F46E5',
-    fontWeight: '700',
+    fontWeight: '800',
   },
 });
