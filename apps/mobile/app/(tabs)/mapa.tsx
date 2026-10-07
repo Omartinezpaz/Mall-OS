@@ -31,7 +31,9 @@ import {
   findRouteToStore,
   generateNavigationPlan,
   buildFlatScene,
+  DEMO_SAMBIL_OFFERS,
   type RouteResult,
+  type MapStore,
 } from '@mallos/map-engine';
 import { categoryPalette } from '@mallos/design-tokens';
 
@@ -176,6 +178,7 @@ export default function MapaScreen() {
       userHeading: walk.heading,
       zoom: 1,
       labels: 'auto',
+      offers: DEMO_SAMBIL_OFFERS,
     });
   }, [selectedLevel, isNavigating, selectedStoreId, activeRoute, walk.position, walk.heading]);
 
@@ -413,15 +416,15 @@ export default function MapaScreen() {
       {/* Bottom Sheet Vitrina Digital completa */}
       {showStorefrontHUD && (
         <StorefrontHUD
-          storeId={selectedStoreId}
-          currentHour={currentHour}
+          store={sambilMall.stores.find((s) => s.id === selectedStoreId) ?? null}
+          offers={DEMO_SAMBIL_OFFERS}
+          floorName={selectedStore.floorName}
           onClose={() => setShowStorefrontHUD(false)}
-          onStartNavigation={() => {
+          onNavigateToStore={(id) => {
             setShowStorefrontHUD(false);
-            setIsNavigating(true);
+            handleSelectStore(id);
             walk.startWalk();
           }}
-          isNavigating={isNavigating}
         />
       )}
 

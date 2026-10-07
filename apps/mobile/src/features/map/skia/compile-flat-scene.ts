@@ -9,6 +9,7 @@ import type {
   FlatUserPin,
   FlatDestinationPin,
   FlatLabel,
+  FlatOfferBadge,
   Point,
   Rect,
 } from '@mallos/map-engine';
@@ -51,6 +52,7 @@ export interface CompiledFlatScene {
   userPins: FlatUserPin[];
   destinationPins: FlatDestinationPin[];
   labels: FlatLabel[];
+  offerBadges: FlatOfferBadge[];
   viewBox: Rect;
   meta: FlatScene['meta'];
 }
@@ -81,6 +83,7 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
   const userPins: FlatUserPin[] = [];
   const destinationPins: FlatDestinationPin[] = [];
   const labels: FlatLabel[] = [];
+  const offerBadges: FlatOfferBadge[] = [];
 
   for (const item of scene.items) {
     switch (item.kind) {
@@ -144,6 +147,10 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
         labels.push(item);
         break;
       }
+      case 'offerBadge': {
+        offerBadges.push(item);
+        break;
+      }
     }
   }
 
@@ -156,6 +163,7 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
     userPins,
     destinationPins,
     labels,
+    offerBadges,
     viewBox: scene.viewBox,
     meta: scene.meta,
   };

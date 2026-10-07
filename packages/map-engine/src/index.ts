@@ -19,3 +19,4 @@ export {
 export * from './sambil';
 export * from './navigation';
 export * from './scene-flat';
+export * from './offers';

@@ -11,6 +11,7 @@
  */
 import type { MallMapData, MapStore, Point, Rect } from './types';
 import type { Palette, PaletteEntry } from './scene';
+import type { StoreOffer, OfferType } from './offers';
 
 // ============================================================================
 // Tipos de la escena plana
@@ -41,6 +42,8 @@ export interface FlatSceneOptions {
   zoom: number;
   /** Modo de etiquetas: 'auto' aplica las reglas de zoom, 'all'/'none' fuerzan. */
   labels?: 'auto' | 'all' | 'none';
+  /** Ofertas y promociones activas para renderizar en los locales (Modo 2). */
+  offers?: StoreOffer[];
 }
 
 // ============================================================================
@@ -126,6 +129,16 @@ export interface FlatZone {
   cardinal?: 'north' | 'south' | 'east' | 'west' | 'center';
 }
 
+export interface FlatOfferBadge {
+  kind: 'offerBadge';
+  storeId: string;
+  x: number;
+  y: number;
+  text: string;
+  type: OfferType;
+  discountPercentage?: number;
+}
+
 export type FlatSceneItem =
   | FlatCorridor
   | FlatStore
@@ -134,7 +147,8 @@ export type FlatSceneItem =
   | FlatRoute
   | FlatUserPin
   | FlatDestinationPin
-  | FlatLabel;
+  | FlatLabel
+  | FlatOfferBadge;
 
 export interface FlatScene {
   items: FlatSceneItem[];
@@ -549,6 +563,26 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
         ...(cand.storeId ? { storeId: cand.storeId } : {}),
         ...(cand.plazaId ? { plazaId: cand.plazaId } : {}),
       });
+    }
+  }
+
+  // --- 9. Badges de ofertas comerciales (Modo 2: Gamificación & Promociones) ---
+  if (opts.offers && opts.offers.length > 0) {
+    const storeMap = new Map(stores.map((s) => [s.id, s]));
+    for (const offer of opts.offers) {
+      const targetStore = storeMap.get(offer.storeId);
+      if (targetStore) {
+        const c = storeCenter(targetStore);
+        items.push({
+          kind: 'offerBadge',
+          storeId: offer.storeId,
+          x: c.x,
+          y: c.y - 6, // Ligeramente elevado sobre el centro del local
+          text: offer.badge,
+          type: offer.type,
+          discountPercentage: offer.discountPercentage,
+        });
+      }
     }
   }
 

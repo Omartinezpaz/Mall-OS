@@ -290,6 +290,27 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
             </React.Fragment>
           ))}
 
+          {/* Capa 5.5: Badges de Ofertas Comerciales (Modo 2) */}
+          {compiled.offerBadges.map((ob, i) => (
+            <React.Fragment key={`offer-${ob.storeId}-${i}`}>
+              <Circle
+                cx={ob.x}
+                cy={ob.y}
+                r={10 / (baseScale * zoom.value)}
+                color="#EA580C"
+                style="fill"
+              />
+              <Circle
+                cx={ob.x}
+                cy={ob.y}
+                r={10 / (baseScale * zoom.value)}
+                color="#FFFFFF"
+                style="stroke"
+                strokeWidth={2 / (baseScale * zoom.value)}
+              />
+            </React.Fragment>
+          ))}
+
           {/* Capa 6: Pin de Destino */}
           {compiled.destinationPins.map((dp, i) => (
             <React.Fragment key={`dest-${dp.storeId}-${i}`}>
