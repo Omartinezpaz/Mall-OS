@@ -48,6 +48,7 @@ export default function MapaScreen() {
   const [selectedLevel, setSelectedLevel] = useState<string>(LEVEL_AUTOPISTA);
   const [selectedStoreId, setSelectedStoreId] = useState<string>('local_4');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [guideOrientationMode, setGuideOrientationMode] = useState<'north-up' | 'heading-up'>('north-up');
   const [cameraMode, setCameraMode] = useState<'ground' | 'isometric' | 'aerial'>('ground');
   const [followUser, setFollowUser] = useState<boolean>(true);
   const [isNavigating, setIsNavigating] = useState<boolean>(true);
@@ -162,6 +163,13 @@ export default function MapaScreen() {
     },
   });
 
+  // Al comenzar a caminar, orientar automáticamente hacia la marcha del avatar (Google Maps style)
+  useEffect(() => {
+    if (walk.isWalking) {
+      setGuideOrientationMode('heading-up');
+    }
+  }, [walk.isWalking]);
+
   // Generación de plan de navegación paso a paso
   const navigationPlan = useMemo(() => {
     if (!activeRoute) return null;
@@ -236,6 +244,10 @@ export default function MapaScreen() {
             userTrail={walk.trail}
             selectedStoreId={selectedStoreId}
             onStorePress={handleSelectStore}
+            cameraMode={guideOrientationMode}
+            onToggleCameraMode={() =>
+              setGuideOrientationMode((prev) => (prev === 'north-up' ? 'heading-up' : 'north-up'))
+            }
             showCompass={true}
             followUser={followUser}
           />
@@ -356,61 +368,63 @@ export default function MapaScreen() {
       </View>
 
       {/* Controles de Vista de Mapa (Modo Switcher / Zoom / Perspectiva) */}
-      <View style={styles.mapControls}>
-        <TouchableOpacity
-          style={[styles.controlBtn, mapMode === 'guide' && styles.controlBtnActive]}
-          onPress={() => setMapMode((m) => (m === 'guide' ? 'explore' : 'guide'))}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.controlIcon}>{mapMode === 'guide' ? '🗺️' : '📐'}</Text>
-        </TouchableOpacity>
+      {!isNavigating && !showStorefrontHUD && (
+        <View style={styles.mapControls}>
+          <TouchableOpacity
+            style={[styles.controlBtn, mapMode === 'guide' && styles.controlBtnActive]}
+            onPress={() => setMapMode((m) => (m === 'guide' ? 'explore' : 'guide'))}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.controlIcon}>{mapMode === 'guide' ? '🗺️' : '📐'}</Text>
+          </TouchableOpacity>
 
-        {mapMode === 'explore' && (
-          <>
-            <TouchableOpacity
-              style={styles.controlBtn}
-              onPress={() => mapRef.current?.zoomIn()}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.controlText}>+</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.controlBtn}
-              onPress={() => mapRef.current?.zoomOut()}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.controlText}>−</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.controlBtn}
-              onPress={() => {
-                setCameraMode((prev) =>
-                  prev === 'ground' ? 'isometric' : prev === 'isometric' ? 'aerial' : 'ground'
-                );
-              }}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.controlIcon}>
-                {cameraMode === 'ground' ? '👁️' : cameraMode === 'isometric' ? '📐' : '🗺️'}
-              </Text>
-            </TouchableOpacity>
-          </>
-        )}
+          {mapMode === 'explore' && (
+            <>
+              <TouchableOpacity
+                style={styles.controlBtn}
+                onPress={() => mapRef.current?.zoomIn()}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.controlText}>+</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.controlBtn}
+                onPress={() => mapRef.current?.zoomOut()}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.controlText}>−</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.controlBtn}
+                onPress={() => {
+                  setCameraMode((prev) =>
+                    prev === 'ground' ? 'isometric' : prev === 'isometric' ? 'aerial' : 'ground'
+                  );
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.controlIcon}>
+                  {cameraMode === 'ground' ? '👁️' : cameraMode === 'isometric' ? '📐' : '🗺️'}
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
 
-        <TouchableOpacity
-          style={[styles.controlBtn, followUser && styles.controlBtnActive]}
-          onPress={() => {
-            const next = !followUser;
-            setFollowUser(next);
-            if (next && mapMode === 'explore') {
-              mapRef.current?.recenterOnUser();
-            }
-          }}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.controlIcon, followUser && styles.controlIconActive]}>🎯</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={[styles.controlBtn, followUser && styles.controlBtnActive]}
+            onPress={() => {
+              const next = !followUser;
+              setFollowUser(next);
+              if (next && mapMode === 'explore') {
+                mapRef.current?.recenterOnUser();
+              }
+            }}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.controlIcon, followUser && styles.controlIconActive]}>🎯</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Toast flotante de Notificación de Llegada */}
       {walk.arrivalMessage && (

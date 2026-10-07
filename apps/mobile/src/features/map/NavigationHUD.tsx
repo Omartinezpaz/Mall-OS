@@ -110,43 +110,57 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
   const handleExit = onCancel ?? onExitNavigation;
 
   return (
-    <>
-      {/* Card superior: destino + distancia + tiempo */}
+    <View style={styles.container}>
       <View style={styles.topCard}>
+        {/* Icono de Giro / Hito */}
+        <View
+          style={[
+            styles.iconCircle,
+            isArrival && styles.iconCircleArrival,
+          ]}
+        >
+          <Text style={styles.iconText}>{ICON_MAP[currentStep.icon] ?? '⬆️'}</Text>
+        </View>
+
+        {/* Instrucción de Navegación */}
+        <View style={styles.instructionContainer}>
+          <Text style={styles.primaryInstruction} numberOfLines={1}>
+            {currentStep.primaryText}
+          </Text>
+          <Text style={styles.secondaryInstruction} numberOfLines={1}>
+            {Math.round(remainingMeters)} m · ~{remainingMinutes} min · {destName}
+          </Text>
+        </View>
+
+        {/* Botón de Voz */}
+        {onVoiceToggle && (
+          <TouchableOpacity
+            style={styles.actionBtn}
+            onPress={onVoiceToggle}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.actionIcon}>{voiceEnabled ? '🔊' : '🔇'}</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Botón de Cancelar / Salir */}
         {handleExit && (
           <TouchableOpacity
-            style={styles.closeButton}
+            style={[styles.actionBtn, styles.exitBtn]}
             onPress={() => {
               Speech.stop();
               handleExit();
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            activeOpacity={0.7}
           >
-            <Text style={styles.closeText}>✕</Text>
-          </TouchableOpacity>
-        )}
-
-        <View style={styles.topCardContent}>
-          <Text style={styles.destinationName} numberOfLines={1}>
-            {destName}
-          </Text>
-          <Text style={styles.destinationMeta}>
-            {Math.round(remainingMeters)} m · ~{remainingMinutes} min · {destFloor}
-          </Text>
-        </View>
-
-        {onVoiceToggle && (
-          <TouchableOpacity
-            style={styles.voiceButton}
-            onPress={onVoiceToggle}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Text style={styles.voiceText}>{voiceEnabled ? '🔊' : '🔇'}</Text>
+            <Text style={styles.exitIcon}>✕</Text>
           </TouchableOpacity>
         )}
       </View>
 
-      {/* Barra de progreso */}
+      {/* Barra de progreso integrada */}
       <View style={styles.progressTrack}>
         <Animated.View
           style={[
@@ -160,193 +174,96 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           ]}
         />
       </View>
-
-      {/* Card inferior: instrucción actual + próxima */}
-      <View style={styles.bottomCard}>
-        <View style={styles.instructionRow}>
-          <View
-            style={[
-              styles.iconCircle,
-              isArrival && styles.iconCircleArrival,
-            ]}
-          >
-            <Text style={styles.iconText}>{ICON_MAP[currentStep.icon] ?? '⬆️'}</Text>
-          </View>
-
-          <View style={styles.instructionTextContainer}>
-            <Text style={styles.primaryText} numberOfLines={2}>
-              {currentStep.primaryText}
-            </Text>
-            {currentStep.secondaryText && (
-              <Text style={styles.secondaryText} numberOfLines={1}>
-                {currentStep.secondaryText}
-              </Text>
-            )}
-          </View>
-
-          <Text style={styles.distancePill}>
-            {currentStep.distanceMeters > 0
-              ? `${currentStep.distanceMeters} m`
-              : '✓'}
-          </Text>
-        </View>
-
-        {nextStep && !isArrival && (
-          <View style={styles.nextRow}>
-            <Text style={styles.nextIcon}>{ICON_MAP[nextStep.icon] ?? '⬆️'}</Text>
-            <Text style={styles.nextText} numberOfLines={1}>
-              Luego: {nextStep.primaryText}
-            </Text>
-          </View>
-        )}
-      </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
   topCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.95)',
-    borderRadius: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    backgroundColor: '#0F172A',
+    borderRadius: 18,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
+    borderWidth: 1.5,
+    borderColor: '#334155',
   },
-  closeButton: {
+  iconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#1E293B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#475569',
+  },
+  iconCircleArrival: {
+    backgroundColor: '#065F46',
+    borderColor: '#10B981',
+  },
+  iconText: {
+    fontSize: 18,
+  },
+  instructionContainer: {
+    flex: 1,
+  },
+  primaryInstruction: {
+    color: '#F8FAFC',
+    fontSize: 14,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  secondaryInstruction: {
+    color: '#94A3B8',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  actionBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#1E293B',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginLeft: 6,
+    borderWidth: 1,
+    borderColor: '#334155',
   },
-  closeText: {
-    color: '#FFFFFF',
+  actionIcon: {
     fontSize: 14,
-    fontWeight: '600',
   },
-  topCardContent: {
-    flex: 1,
+  exitBtn: {
+    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    borderColor: 'rgba(239, 68, 68, 0.3)',
   },
-  destinationName: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: -0.2,
-  },
-  destinationMeta: {
-    color: '#94A3B8',
-    fontSize: 12,
-    fontWeight: '500',
-    marginTop: 2,
-  },
-  voiceButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 8,
-  },
-  voiceText: {
-    fontSize: 16,
+  exitIcon: {
+    color: '#EF4444',
+    fontSize: 13,
+    fontWeight: '800',
   },
   progressTrack: {
-    height: 4,
-    backgroundColor: 'rgba(15, 23, 42, 0.2)',
-    borderRadius: 2,
+    height: 3,
+    backgroundColor: 'rgba(51, 65, 85, 0.5)',
+    borderRadius: 1.5,
     overflow: 'hidden',
-    marginTop: 6,
-    marginHorizontal: 4,
+    marginTop: 4,
+    marginHorizontal: 8,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#3B82F6',
-    borderRadius: 2,
-  },
-  bottomCard: {
-    position: 'absolute',
-    bottom: 24,
-    left: 16,
-    right: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-    zIndex: 100,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  instructionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#EFF6FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  iconCircleArrival: {
-    backgroundColor: '#DCFCE7',
-  },
-  iconText: {
-    fontSize: 22,
-  },
-  instructionTextContainer: {
-    flex: 1,
-  },
-  primaryText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0F172A',
-    lineHeight: 20,
-  },
-  secondaryText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#64748B',
-    marginTop: 2,
-  },
-  distancePill: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#3B82F6',
-    marginLeft: 8,
-  },
-  nextRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-  },
-  nextIcon: {
-    fontSize: 14,
-    marginRight: 8,
-  },
-  nextText: {
-    flex: 1,
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#64748B',
+    backgroundColor: '#38BDF8',
+    borderRadius: 1.5,
   },
 });

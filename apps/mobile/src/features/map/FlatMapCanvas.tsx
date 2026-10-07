@@ -37,6 +37,8 @@ export interface FlatMapCanvasProps {
   selectedStoreId?: string;
   onStorePress?: (storeId: string) => void;
   onResetNorth?: () => void;
+  cameraMode?: 'north-up' | 'heading-up';
+  onToggleCameraMode?: () => void;
   showCompass?: boolean;
   followUser?: boolean;
 }
@@ -84,6 +86,8 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   selectedStoreId,
   onStorePress,
   onResetNorth,
+  cameraMode = 'north-up',
+  onToggleCameraMode,
   showCompass = true,
   followUser = true,
 }) => {
@@ -216,8 +220,21 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     [cameraX, cameraY, zoom, baseScale, scene.items, onStorePress, isFollowingUser]
   );
 
-  // 7. Matriz de transformación 2D combinada
+  // 7. Ángulo de rotación del mapa (heading-up vs north-up)
+  const rotationAngle = useDerivedValue(() => {
+    if (cameraMode === 'heading-up' && userHeading !== undefined) {
+      return -userHeading - Math.PI / 2;
+    }
+    return 0;
+  });
+
+  // Matriz de transformación 2D combinada (con rotación alrededor del centro de pantalla)
   const transform = useDerivedValue(() => [
+    { translateX: screenWidth / 2 },
+    { translateY: screenHeight / 2 },
+    { rotate: rotationAngle.value },
+    { translateX: -screenWidth / 2 },
+    { translateY: -screenHeight / 2 },
     { translateX: cameraX.value },
     { translateY: cameraY.value },
     { scale: baseScale * zoom.value },
@@ -242,6 +259,11 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   const northAngleDeg = scene.meta.northAngle
     ? (scene.meta.northAngle * 180) / Math.PI
     : 0;
+
+  const currentRotation = cameraMode === 'heading-up' && userHeading !== undefined
+    ? (-userHeading - Math.PI / 2)
+    : 0;
+  const compassNeedleDeg = (currentRotation * 180) / Math.PI - northAngleDeg;
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
@@ -412,34 +434,57 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
             </React.Fragment>
           ))}
 
-          {/* Capa 7: Pin de Usuario (Beacon con Halo) */}
-          {compiled.userPins.map((up, i) => (
-            <React.Fragment key={`user-${i}`}>
-              <Circle
-                cx={up.x}
-                cy={up.y}
-                r={18 / (baseScale * zoom.value)}
-                color="#BFDBFE"
-                style="fill"
-                opacity={0.45}
-              />
-              <Circle
-                cx={up.x}
-                cy={up.y}
-                r={7.5 / (baseScale * zoom.value)}
-                color="#2563EB"
-                style="fill"
-              />
-              <Circle
-                cx={up.x}
-                cy={up.y}
-                r={7.5 / (baseScale * zoom.value)}
-                color="#FFFFFF"
-                style="stroke"
-                strokeWidth={2 / (baseScale * zoom.value)}
-              />
-            </React.Fragment>
-          ))}
+          {/* Capa 7: Pin de Usuario (Beacon con Halo + Flecha Direccional) */}
+          {compiled.userPins.map((up, i) => {
+            const currentScale = baseScale * zoom.value;
+            let arrowPath: string | null = null;
+            if (userHeading !== undefined) {
+              const tipLen = 14 / currentScale;
+              const wingLen = 7 / currentScale;
+              const tipX = up.x + Math.cos(userHeading) * tipLen;
+              const tipY = up.y + Math.sin(userHeading) * tipLen;
+              const leftX = up.x + Math.cos(userHeading + 2.5) * wingLen;
+              const leftY = up.y + Math.sin(userHeading + 2.5) * wingLen;
+              const rightX = up.x + Math.cos(userHeading - 2.5) * wingLen;
+              const rightY = up.y + Math.sin(userHeading - 2.5) * wingLen;
+              arrowPath = `M ${tipX} ${tipY} L ${leftX} ${leftY} L ${up.x} ${up.y} L ${rightX} ${rightY} Z`;
+            }
+
+            return (
+              <React.Fragment key={`user-${i}`}>
+                <Circle
+                  cx={up.x}
+                  cy={up.y}
+                  r={18 / currentScale}
+                  color="#BFDBFE"
+                  style="fill"
+                  opacity={0.45}
+                />
+                <Circle
+                  cx={up.x}
+                  cy={up.y}
+                  r={7.5 / currentScale}
+                  color="#2563EB"
+                  style="fill"
+                />
+                <Circle
+                  cx={up.x}
+                  cy={up.y}
+                  r={7.5 / currentScale}
+                  color="#FFFFFF"
+                  style="stroke"
+                  strokeWidth={2 / currentScale}
+                />
+                {arrowPath && (
+                  <Path
+                    path={arrowPath}
+                    color="#FFFFFF"
+                    style="fill"
+                  />
+                )}
+              </React.Fragment>
+            );
+          })}
 
           {/* Capa 8: Etiquetas de Locales y Plazas (GPU Skia Text & Pills) */}
           {compiled.labels.map((lbl, idx) => {
@@ -490,13 +535,13 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
       {showCompass && (
         <TouchableOpacity
           style={[styles.compassButton, { top: Math.max(insets.top, 24) + 8 }]}
-          onPress={onResetNorth ?? handleRecenter}
+          onPress={onToggleCameraMode ?? onResetNorth ?? handleRecenter}
           activeOpacity={0.8}
         >
           <View
             style={[
               styles.compassArrowContainer,
-              { transform: [{ rotate: `${-northAngleDeg}deg` }] },
+              { transform: [{ rotate: `${compassNeedleDeg}deg` }] },
             ]}
           >
             <Text style={styles.compassText}>N</Text>
