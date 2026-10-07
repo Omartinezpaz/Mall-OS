@@ -25,6 +25,7 @@ import {
   useFrameCallback,
   withSpring,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { FlatScene, Point } from '@mallos/map-engine';
 import { compileFlatScene } from './skia/compile-flat-scene';
 
@@ -87,6 +88,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   followUser = true,
 }) => {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const [isFollowingUser, setIsFollowingUser] = useState<boolean>(followUser);
 
   // Sincronizar si cambia followUser externo
@@ -487,7 +489,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
       {/* Brújula / Indicador de Norte */}
       {showCompass && (
         <TouchableOpacity
-          style={styles.compassButton}
+          style={[styles.compassButton, { top: Math.max(insets.top, 24) + 8 }]}
           onPress={onResetNorth ?? handleRecenter}
           activeOpacity={0.8}
         >
@@ -507,6 +509,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
       <TouchableOpacity
         style={[
           styles.recenterButton,
+          { top: Math.max(insets.top, 24) + 60 },
           isFollowingUser && styles.recenterButtonActive,
         ]}
         onPress={handleRecenter}

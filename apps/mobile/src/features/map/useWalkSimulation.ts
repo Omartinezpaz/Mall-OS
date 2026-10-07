@@ -34,6 +34,23 @@ export interface WalkSimulationState {
   arrivalMessage: string | null;
 }
 
+function getEffectiveSpeedMps(multiplier: number): number {
+  switch (multiplier) {
+    case 1:
+      return 2.5; // ~2.5 m/s (caminata ágil)
+    case 2:
+      return 6.0; // ~6.0 m/s
+    case 4:
+      return 15.0; // ~15.0 m/s (recorre 100m en ~6s)
+    case 8:
+      return 35.0; // ~35.0 m/s (recorre 200m en ~5s)
+    case 16:
+      return 80.0; // ~80.0 m/s (instantáneo)
+    default:
+      return multiplier * 3.0;
+  }
+}
+
 export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulationState {
   const {
     mallData,
@@ -112,8 +129,9 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
       const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
       lastFrameTime = now;
 
-      // Avanzar a lo largo de la ruta
-      const speedUnits = (speedMps * speedMultiplier) / metersPerUnit; // unidades/segundo
+      // Avanzar a lo largo de la ruta con tabla calibrada de velocidad
+      const effectiveSpeedMps = getEffectiveSpeedMps(speedMultiplier);
+      const speedUnits = effectiveSpeedMps / metersPerUnit; // unidades/segundo
       const progressDelta = (speedUnits * dt) / routeLengthRef.current;
       const newProgress = Math.min(1, lastProgressRef.current + progressDelta);
 

@@ -5,8 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   StatusBar,
-  SafeAreaView,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   IsometricMap,
   type IsometricMapHandle,
@@ -40,6 +40,8 @@ import { categoryPalette } from '@mallos/design-tokens';
 
 export default function MapaScreen() {
   const mapRef = useRef<IsometricMapHandle | null>(null);
+  const insets = useSafeAreaInsets();
+  const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 24);
 
   // Estados interactivos
   const [mapMode, setMapMode] = useState<'guide' | 'explore'>('guide');
@@ -262,7 +264,13 @@ export default function MapaScreen() {
       </View>
 
       {/* Top Floating Area */}
-      <SafeAreaView style={styles.topSafeArea} pointerEvents="box-none">
+      <View
+        style={[
+          styles.topSafeArea,
+          { paddingTop: topSafe + 4 },
+        ]}
+        pointerEvents="box-none"
+      >
         {isNavigating && navigationPlan ? (
           <View style={styles.topHUDContainer}>
             <NavigationHUD
@@ -333,10 +341,10 @@ export default function MapaScreen() {
             />
           </View>
         )}
-      </SafeAreaView>
+      </View>
 
       {/* Selector vertical de pisos (Derecha) */}
-      <View style={styles.verticalFloorWrapper}>
+      <View style={[styles.verticalFloorWrapper, { top: topSafe + 120 }]}>
         <VerticalFloorSelector
           selectedFloorId={selectedLevel}
           onSelectFloor={(lvl) => {
@@ -444,6 +452,8 @@ export default function MapaScreen() {
                   ? 4
                   : walk.speedMultiplier === 4
                   ? 8
+                  : walk.speedMultiplier === 8
+                  ? 16
                   : 1
               );
             }}
