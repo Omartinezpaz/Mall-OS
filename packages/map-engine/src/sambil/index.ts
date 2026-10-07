@@ -14,6 +14,7 @@ export * from './level-feria';
 export * from './level-diversion';
 export * from './quality-report';
 export * from './cad-to-mall';
+export * from './cad-dataset';
 
 /** Nodos verticales (escaleras y ascensores) que interconectan los 5 niveles a través de las 5 plazas icónicas */
 export const verticalCoreNodes: NavNode[] = [
