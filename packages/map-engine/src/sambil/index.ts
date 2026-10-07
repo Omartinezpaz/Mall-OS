@@ -13,15 +13,16 @@ export * from './level-libertador';
 export * from './level-feria';
 export * from './level-diversion';
 export * from './quality-report';
+export * from './cad-to-mall';
 
 /** Nodos verticales (escaleras y ascensores) que interconectan los 5 niveles a través de las 5 plazas icónicas */
 export const verticalCoreNodes: NavNode[] = [
   // Nivel Autopista (Piso 1)
-  { id: 'v-pj-1', floorId: LEVEL_AUTOPISTA, x: 72, y: 250, kind: 'stairs', connections: [`pj-${LEVEL_AUTOPISTA}`, 'v-pj-2'] },
-  { id: 'v-plf-1', floorId: LEVEL_AUTOPISTA, x: 180, y: 73, kind: 'stairs', connections: [`plf-${LEVEL_AUTOPISTA}`, 'v-plf-2'] },
-  { id: 'v-pc-1', floorId: LEVEL_AUTOPISTA, x: 350, y: 250, kind: 'stairs', connections: [`pc-${LEVEL_AUTOPISTA}`, 'v-pc-2'] },
-  { id: 'v-pea-1', floorId: LEVEL_AUTOPISTA, x: 530, y: 73, kind: 'stairs', connections: [`pea-${LEVEL_AUTOPISTA}`, 'v-pea-2'] },
-  { id: 'v-plm-1', floorId: LEVEL_AUTOPISTA, x: 584, y: 250, kind: 'stairs', connections: [`plm-${LEVEL_AUTOPISTA}`, 'v-plm-2'] },
+  { id: 'v-pj-1', floorId: LEVEL_AUTOPISTA, x: 72, y: 250, kind: 'stairs', connections: ['node-plaza Jardin', 'v-pj-2'] },
+  { id: 'v-plf-1', floorId: LEVEL_AUTOPISTA, x: 180, y: 73, kind: 'stairs', connections: ['node-plaza la Fuente', 'v-plf-2'] },
+  { id: 'v-pc-1', floorId: LEVEL_AUTOPISTA, x: 350, y: 250, kind: 'stairs', connections: ['node-plaza Central', 'v-pc-2'] },
+  { id: 'v-pea-1', floorId: LEVEL_AUTOPISTA, x: 530, y: 73, kind: 'stairs', connections: ['node-plaza  el Arte', 'v-pea-2'] },
+  { id: 'v-plm-1', floorId: LEVEL_AUTOPISTA, x: 584, y: 250, kind: 'stairs', connections: ['node-plaza musica', 'v-plm-2'] },
 
   // Nivel Acuario (Piso 2)
   { id: 'v-pj-2', floorId: LEVEL_ACUARIO, x: 72, y: 250, kind: 'stairs', connections: ['v-pj-1', `pj-${LEVEL_ACUARIO}`, 'v-pj-3'] },
@@ -55,7 +56,7 @@ export const verticalCoreNodes: NavNode[] = [
 export const sambilMall: MallMapData = {
   schemaVersion: 1,
   mallSlug: 'sambil-chacao',
-  metersPerUnit: 0.35,
+  metersPerUnit: 0.52,
   floors: [
     floorAutopistaData,
     floorAcuarioData,

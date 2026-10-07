@@ -15,8 +15,10 @@ import {
   svgToScreen,
   walkDurationMs,
   zoomAround,
+  cameraFollowSmooth,
+  cameraSpringTo,
 } from './index';
-import type { Scene } from './index';
+import type { Scene, Camera, SpringCameraState } from './index';
 
 const near = (a: number, b: number, eps = 1e-9) => assert.ok(Math.abs(a - b) < eps, `${a} ≉ ${b}`);
 const vb = { x: -100, y: 0, w: 400, h: 200 };
@@ -105,4 +107,49 @@ test('pointAtProgress: extremos y punto intermedio', () => {
 test('walkDurationMs: 33 m a 1.2 m/s ≈ 27.5 s; el doble de velocidad, la mitad', () => {
   near(walkDurationMs(33), 27500, 1e-6);
   near(walkDurationMs(33, 2), 13750, 1e-6);
+});
+
+test('cameraFollowSmooth: converge al target con dt constante', () => {
+  const fit = computeFit(vb, 360, 640);
+  let cam = { zoom: 1, tx: 0, ty: 0 };
+  const target = { x: 123, y: 45 };
+  const dt = 1 / 60;
+
+  for (let i = 0; i < 180; i++) {
+    cam = cameraFollowSmooth({ current: cam, target, fit, zoom: 1.5, dt, stiffness: 8 });
+  }
+
+  const desired = cameraCentering(target, fit, 1.5);
+  near(cam.tx, desired.tx, 0.01);
+  near(cam.ty, desired.ty, 0.01);
+  near(cam.zoom, desired.zoom, 0.01);
+});
+
+test('cameraFollowSmooth: estabilidad a dt variable (60fps vs 30fps)', () => {
+  const fit = computeFit(vb, 360, 640);
+  const target = { x: 100, y: 50 };
+
+  let cam60 = { zoom: 1, tx: 0, ty: 0 };
+  for (let i = 0; i < 60; i++) cam60 = cameraFollowSmooth({ current: cam60, target, fit, zoom: 1.5, dt: 1 / 60 });
+
+  let cam30 = { zoom: 1, tx: 0, ty: 0 };
+  for (let i = 0; i < 30; i++) cam30 = cameraFollowSmooth({ current: cam30, target, fit, zoom: 1.5, dt: 1 / 30 });
+
+  near(cam60.tx, cam30.tx, 0.5);
+  near(cam60.ty, cam30.ty, 0.5);
+});
+
+test('cameraSpringTo: no explota con stiffness alto y amortigua la velocidad', () => {
+  const fit = computeFit(vb, 360, 640);
+  let state = {
+    camera: { zoom: 1, tx: 0, ty: 0 },
+    velocity: { tx: 0, ty: 0, zoom: 0 },
+  };
+  for (let i = 0; i < 300; i++) {
+    state = cameraSpringTo(state, { x: 200, y: 100 }, fit, 1.5, 1 / 60, 15, 90);
+  }
+  const desired = cameraCentering({ x: 200, y: 100 }, fit, 1.5);
+  near(state.camera.tx, desired.tx, 1);
+  near(state.camera.ty, desired.ty, 1);
+  assert.ok(Math.abs(state.velocity.tx) < 1, 'debe amortiguarse');
 });

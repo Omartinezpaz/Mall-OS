@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,15 @@ import {
 import {
   IsometricMap,
   type IsometricMapHandle,
+  isStoreOpenAt,
 } from '../../src/features/map/IsometricMap';
+import { FlatMapCanvas } from '../../src/features/map/FlatMapCanvas';
 import { StorefrontHUD } from '../../src/features/map/StorefrontHUD';
 import { VerticalFloorSelector } from '../../src/features/map/VerticalFloorSelector';
 import { NavigationHUD } from '../../src/features/map/NavigationHUD';
 import { DestinationBar } from '../../src/features/map/DestinationBar';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
+import { useStepProgress } from '../../src/features/map/useStepProgress';
 import { useMallTime } from '../../src/features/map/useMallTime';
 import { PILOT_STORES } from '../../src/features/directory';
 import {
@@ -25,21 +28,27 @@ import {
   LEVEL_LIBERTADOR,
   LEVEL_FERIA,
   LEVEL_DIVERSION,
+  findRouteToStore,
   generateNavigationPlan,
+  buildFlatScene,
   type RouteResult,
 } from '@mallos/map-engine';
+import { categoryPalette } from '@mallos/design-tokens';
 
 export default function MapaScreen() {
   const mapRef = useRef<IsometricMapHandle | null>(null);
 
   // Estados interactivos
+  const [mapMode, setMapMode] = useState<'guide' | 'explore'>('guide');
   const [selectedLevel, setSelectedLevel] = useState<string>(LEVEL_AUTOPISTA);
-  const [selectedStoreId, setSelectedStoreId] = useState<string>('tijerazo');
+  const [selectedStoreId, setSelectedStoreId] = useState<string>('local_4');
+  const [cameraMode, setCameraMode] = useState<'ground' | 'isometric' | 'aerial'>('ground');
   const [followUser, setFollowUser] = useState<boolean>(true);
-  const [isPlacingUser, setIsPlacingUser] = useState<boolean>(false);
   const [isNavigating, setIsNavigating] = useState<boolean>(true);
+  const [voiceEnabled, setVoiceEnabled] = useState<boolean>(true);
   const [showStorefrontHUD, setShowStorefrontHUD] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<RouteResult | null>(null);
+  const [userStartNodeId, setUserStartNodeId] = useState<string>('node-plaza Jardin');
 
   // Hook de tiempo simulado/real
   const {
@@ -47,6 +56,11 @@ export default function MapaScreen() {
     openCount,
     totalStores,
   } = useMallTime(sambilMall);
+
+  // Nodos del piso actual
+  const currentFloorNodes = useMemo(() => {
+    return sambilMall.nodes.filter((n) => n.floorId === selectedLevel);
+  }, [selectedLevel]);
 
   // Tienda seleccionada y metadatos
   const selectedStore = useMemo(() => {
@@ -57,7 +71,17 @@ export default function MapaScreen() {
 
     let floorNum = 1;
     let floorName = 'Nivel Autopista';
-    const floorId = storeFromMall?.floorId ?? (pilotStore?.floor === 2 ? LEVEL_ACUARIO : pilotStore?.floor === 3 ? LEVEL_LIBERTADOR : pilotStore?.floor === 4 ? LEVEL_FERIA : pilotStore?.floor === 5 ? LEVEL_DIVERSION : LEVEL_AUTOPISTA);
+    const floorId =
+      storeFromMall?.floorId ??
+      (pilotStore?.floor === 2
+        ? LEVEL_ACUARIO
+        : pilotStore?.floor === 3
+        ? LEVEL_LIBERTADOR
+        : pilotStore?.floor === 4
+        ? LEVEL_FERIA
+        : pilotStore?.floor === 5
+        ? LEVEL_DIVERSION
+        : LEVEL_AUTOPISTA);
 
     if (floorId === LEVEL_ACUARIO) {
       floorNum = 2;
@@ -98,7 +122,7 @@ export default function MapaScreen() {
     }
 
     return {
-      id: 'tijerazo',
+      id: 'local_4',
       name: 'Tiendas Tijerazo',
       category: 'fashion',
       unit: 'Local AC-01',
@@ -108,29 +132,27 @@ export default function MapaScreen() {
     };
   }, [selectedStoreId]);
 
-  // Hook de Simulación de Caminata Waypoint con rumbo visual
-  const {
-    isWalking,
-    walkSpeed,
-    setWalkSpeed,
-    walkProgress,
-    arrivalMessage,
-    userPlaneCoords,
-    setUserPlaneCoords,
-    userHeadingAngle,
-    userNodeId,
-    setUserNodeId,
-    startWalk,
-    stopWalk,
-    simulateStep,
-  } = useWalkSimulation({
+  // Cálculo de ruta Dijkstra hacia la tienda seleccionada
+  useEffect(() => {
+    if (isNavigating && selectedStoreId) {
+      const calculatedRoute = findRouteToStore(sambilMall, userStartNodeId, selectedStoreId);
+      setActiveRoute(calculatedRoute);
+    } else {
+      setActiveRoute(null);
+    }
+  }, [isNavigating, selectedStoreId, userStartNodeId]);
+
+  // Hook de simulación de caminata con trail, heading y controles
+  const walk = useWalkSimulation({
+    mallData: sambilMall,
     activeRoute,
-    targetStoreName: selectedStore.name,
+    targetStoreName: selectedStore?.name,
+    speedMps: 1.2,
+    speedMultiplier: 1,
+    trailMeters: 15,
+    trailSampleMeters: 0.5,
     onArrival: () => {
       setShowStorefrontHUD(true);
-    },
-    onFollowUserChange: (follow) => {
-      setFollowUser(follow);
     },
   });
 
@@ -140,23 +162,22 @@ export default function MapaScreen() {
     return generateNavigationPlan(sambilMall, activeRoute, selectedStoreId);
   }, [activeRoute, selectedStoreId]);
 
-  // Cálculo del paso actual según progreso y posición de nodo
-  const currentStepIndex = useMemo(() => {
-    if (!navigationPlan || !navigationPlan.steps.length) return 0;
-    const foundIndex = navigationPlan.steps.findIndex((s) => s.targetNodeId === userNodeId);
-    if (foundIndex >= 0) return foundIndex;
-    const idx = Math.min(
-      Math.floor((walkProgress / 100) * navigationPlan.steps.length),
-      navigationPlan.steps.length - 1
-    );
-    return Math.max(0, idx);
-  }, [navigationPlan, userNodeId, walkProgress]);
+  // Seguimiento de paso actual y porcentaje con useStepProgress
+  const stepProgress = useStepProgress(navigationPlan, walk.position, currentFloorNodes);
 
-  const currentStep = navigationPlan?.steps[currentStepIndex];
-  const userFloorId = useMemo(() => {
-    const node = sambilMall.nodes.find((n) => n.id === userNodeId);
-    return node?.floorId ?? selectedLevel;
-  }, [userNodeId, selectedLevel]);
+  // Escena plana 2D optimizada (Modo Guía)
+  const flatScene = useMemo(() => {
+    return buildFlatScene(sambilMall, {
+      floorId: selectedLevel,
+      palette: categoryPalette,
+      selectedStoreId: isNavigating ? selectedStoreId : undefined,
+      routeNodeIds: activeRoute ? activeRoute.nodeIds : undefined,
+      userPosition: walk.position,
+      userHeading: walk.heading,
+      zoom: 1,
+      labels: 'auto',
+    });
+  }, [selectedLevel, isNavigating, selectedStoreId, activeRoute, walk.position, walk.heading]);
 
   // Manejar selección de tienda desde mapa o búsqueda
   const handleSelectStore = useCallback((storeId: string) => {
@@ -166,56 +187,64 @@ export default function MapaScreen() {
     mapRef.current?.focusOnStore(storeId);
   }, []);
 
-  // Salir del modo navegación a modo exploración libre
+  // Salir del modo navegación
   const handleExitNavigation = useCallback(() => {
-    stopWalk();
+    walk.stopWalk();
     setIsNavigating(false);
     setShowStorefrontHUD(false);
     setActiveRoute(null);
-  }, [stopWalk]);
+  }, [walk]);
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0F172A" />
+      <StatusBar barStyle="light-content" backgroundColor="#090D16" />
 
-      {/* Viewport del Mapa Isométrico 2.5D Fullscreen Edge-to-Edge */}
+      {/* Renderizado de Mapa según el modo activo */}
       <View style={StyleSheet.absoluteFillObject}>
-        <IsometricMap
-          mapRef={mapRef}
-          selectedStoreId={selectedStoreId}
-          destinationStoreId={isNavigating ? selectedStoreId : undefined}
-          onSelectStore={handleSelectStore}
-          floorId={selectedLevel}
-          userNodeId={userNodeId}
-          userPlaneCoords={userPlaneCoords}
-          userHeadingAngle={userHeadingAngle}
-          onUserNodeChange={(nodeId) => {
-            setUserNodeId(nodeId);
-            const n = sambilMall.nodes.find((node) => node.id === nodeId);
-            if (n) {
-              setUserPlaneCoords({ x: n.x, y: n.y });
+        {mapMode === 'guide' ? (
+          <FlatMapCanvas
+            scene={flatScene}
+            userPosition={walk.position}
+            userHeading={walk.heading}
+            selectedStoreId={selectedStoreId}
+            onStorePress={handleSelectStore}
+            showCompass={true}
+          />
+        ) : (
+          <IsometricMap
+            mapRef={mapRef}
+            selectedStoreId={selectedStoreId}
+            destinationStoreId={isNavigating ? selectedStoreId : undefined}
+            onSelectStore={handleSelectStore}
+            floorId={selectedLevel}
+            userNodeId={userStartNodeId}
+            userPlaneCoords={walk.position}
+            userHeadingAngle={
+              walk.heading !== undefined ? (walk.heading * 180) / Math.PI : undefined
             }
-          }}
-          isPlacingUser={isPlacingUser}
-          onFinishPlacingUser={() => setIsPlacingUser(false)}
-          currentHour={currentHour}
-          onRouteChange={(route) => setActiveRoute(route)}
-          followUser={followUser}
-        />
+            userTrail={walk.trail}
+            onUserNodeChange={(nodeId) => {
+              setUserStartNodeId(nodeId);
+            }}
+            currentHour={currentHour}
+            cameraMode={cameraMode}
+            onRouteChange={(route) => setActiveRoute(route)}
+            followUser={followUser}
+          />
+        )}
       </View>
 
       {/* Top Floating Area */}
       <SafeAreaView style={styles.topSafeArea} pointerEvents="box-none">
-        {isNavigating ? (
+        {isNavigating && navigationPlan ? (
           <View style={styles.topHUDContainer}>
             <NavigationHUD
-              currentStep={currentStep}
-              totalDistanceMeters={navigationPlan?.totalDistanceMeters ?? Math.round(activeRoute?.distanceMeters ?? 0)}
-              walkingMinutes={navigationPlan?.walkingMinutes ?? activeRoute?.walkingMinutes ?? 1}
-              destinationName={selectedStore.name}
-              stepIndex={currentStepIndex + 1}
-              totalSteps={navigationPlan?.steps.length ?? 1}
-              onExitNavigation={handleExitNavigation}
+              plan={navigationPlan}
+              currentStepIndex={stepProgress.currentStepIndex}
+              progress={stepProgress.progress}
+              voiceEnabled={voiceEnabled}
+              onVoiceToggle={() => setVoiceEnabled((v) => !v)}
+              onCancel={handleExitNavigation}
             />
           </View>
         ) : (
@@ -225,6 +254,44 @@ export default function MapaScreen() {
               <Text style={styles.brandSubtitle}>
                 {openCount}/{totalStores} tiendas abiertas · {currentHour}:00
               </Text>
+            </View>
+
+            {/* Selector de Modo Guía 2D vs Explorar 2.5D */}
+            <View style={styles.modeSwitchContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.modeSwitchBtn,
+                  mapMode === 'guide' && styles.modeSwitchBtnActive,
+                ]}
+                onPress={() => setMapMode('guide')}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.modeSwitchText,
+                    mapMode === 'guide' && styles.modeSwitchTextActive,
+                  ]}
+                >
+                  🧭 Guía 2D
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.modeSwitchBtn,
+                  mapMode === 'explore' && styles.modeSwitchBtnActive,
+                ]}
+                onPress={() => setMapMode('explore')}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.modeSwitchText,
+                    mapMode === 'explore' && styles.modeSwitchTextActive,
+                  ]}
+                >
+                  📐 2.5D
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -238,32 +305,58 @@ export default function MapaScreen() {
             setSelectedLevel(lvl);
           }}
           destinationFloorId={isNavigating ? selectedStore.floorId : undefined}
-          userFloorId={userFloorId}
+          userFloorId={selectedLevel}
         />
       </View>
 
-      {/* Controles de Vista de Mapa (Zoom + Seguir + Marcar Posición) */}
+      {/* Controles de Vista de Mapa (Modo Switcher / Zoom / Perspectiva) */}
       <View style={styles.mapControls}>
         <TouchableOpacity
-          style={styles.controlBtn}
-          onPress={() => mapRef.current?.zoomIn()}
+          style={[styles.controlBtn, mapMode === 'guide' && styles.controlBtnActive]}
+          onPress={() => setMapMode((m) => (m === 'guide' ? 'explore' : 'guide'))}
           activeOpacity={0.7}
         >
-          <Text style={styles.controlText}>+</Text>
+          <Text style={styles.controlIcon}>{mapMode === 'guide' ? '🗺️' : '📐'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.controlBtn}
-          onPress={() => mapRef.current?.zoomOut()}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.controlText}>−</Text>
-        </TouchableOpacity>
+
+        {mapMode === 'explore' && (
+          <>
+            <TouchableOpacity
+              style={styles.controlBtn}
+              onPress={() => mapRef.current?.zoomIn()}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.controlText}>+</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.controlBtn}
+              onPress={() => mapRef.current?.zoomOut()}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.controlText}>−</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.controlBtn}
+              onPress={() => {
+                setCameraMode((prev) =>
+                  prev === 'ground' ? 'isometric' : prev === 'isometric' ? 'aerial' : 'ground'
+                );
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.controlIcon}>
+                {cameraMode === 'ground' ? '👁️' : cameraMode === 'isometric' ? '📐' : '🗺️'}
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
+
         <TouchableOpacity
           style={[styles.controlBtn, followUser && styles.controlBtnActive]}
           onPress={() => {
             const next = !followUser;
             setFollowUser(next);
-            if (next) {
+            if (next && mapMode === 'explore') {
               mapRef.current?.recenterOnUser();
             }
           }}
@@ -271,58 +364,46 @@ export default function MapaScreen() {
         >
           <Text style={[styles.controlIcon, followUser && styles.controlIconActive]}>🎯</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.controlBtn, isPlacingUser && styles.controlBtnActive]}
-          onPress={() => setIsPlacingUser(!isPlacingUser)}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.controlIcon}>📍</Text>
-        </TouchableOpacity>
       </View>
 
-      {/* Banner flotante de Modo "Estoy Aquí" */}
-      {isPlacingUser && (
-        <View style={styles.placementBanner}>
-          <Text style={styles.placementIcon}>📍</Text>
-          <Text style={styles.placementText}>
-            Toca cualquier punto del pasillo para fijar tu ubicación.
-          </Text>
-          <TouchableOpacity
-            style={styles.cancelPlacementBtn}
-            onPress={() => setIsPlacingUser(false)}
-          >
-            <Text style={styles.cancelPlacementText}>Listo</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
       {/* Toast flotante de Notificación de Llegada */}
-      {arrivalMessage && (
+      {walk.arrivalMessage && (
         <View style={styles.arrivalToast}>
           <Text style={styles.arrivalToastIcon}>🎉</Text>
-          <Text style={styles.arrivalToastText}>{arrivalMessage}</Text>
+          <Text style={styles.arrivalToastText}>{walk.arrivalMessage}</Text>
         </View>
       )}
 
-      {/* Bottom Floating Bar / Vitrina */}
+      {/* Bottom Floating Bar / Barra de Navegación y Simulación */}
       {isNavigating && !showStorefrontHUD && (
         <View style={styles.bottomBarContainer}>
           <DestinationBar
             storeName={selectedStore.name}
             floorLabel={`${selectedStore.floorName} · ${selectedStore.unit}`}
-            distanceMeters={navigationPlan?.totalDistanceMeters ?? Math.round(activeRoute?.distanceMeters ?? 0)}
-            walkingMinutes={navigationPlan?.walkingMinutes ?? activeRoute?.walkingMinutes ?? 1}
-            isWalking={isWalking}
-            walkSpeed={walkSpeed}
+            distanceMeters={
+              navigationPlan?.totalDistanceMeters ??
+              Math.round(activeRoute?.distanceMeters ?? 0)
+            }
+            walkingMinutes={
+              navigationPlan?.walkingMinutes ??
+              activeRoute?.walkingMinutes ??
+              1
+            }
+            isWalking={walk.isWalking}
+            walkSpeed={walk.speedMultiplier}
             onToggleWalk={() => {
-              if (isWalking) {
-                stopWalk();
+              if (walk.isWalking) {
+                walk.stopWalk();
               } else {
-                startWalk();
+                walk.startWalk();
               }
             }}
-            onToggleSpeed={() => setWalkSpeed((s) => (s === 1 ? 2 : 1))}
-            onSimulateStep={simulateStep}
+            onToggleSpeed={() => {
+              walk.setSpeedMultiplier(
+                walk.speedMultiplier === 1 ? 2 : walk.speedMultiplier === 2 ? 4 : 1
+              );
+            }}
+            onResetWalk={() => walk.resetWalk()}
             onOpenStorefront={() => setShowStorefrontHUD(true)}
             onExitRoute={handleExitNavigation}
           />
@@ -338,7 +419,7 @@ export default function MapaScreen() {
           onStartNavigation={() => {
             setShowStorefrontHUD(false);
             setIsNavigating(true);
-            startWalk();
+            walk.startWalk();
           }}
           isNavigating={isNavigating}
         />
@@ -387,20 +468,22 @@ const styles = StyleSheet.create({
   },
   topHUDContainer: {
     paddingHorizontal: 12,
-    paddingTop: 10,
+    paddingTop: 8,
   },
   exploreHeader: {
     paddingHorizontal: 16,
     paddingTop: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   brandBadge: {
-    backgroundColor: 'rgba(15, 23, 42, 0.88)',
+    backgroundColor: 'rgba(15, 23, 42, 0.92)',
     borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderWidth: 1,
     borderColor: 'rgba(51, 65, 85, 0.7)',
-    alignSelf: 'flex-start',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -409,15 +492,39 @@ const styles = StyleSheet.create({
   },
   brandTitle: {
     color: '#38BDF8',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '900',
     letterSpacing: 1,
   },
   brandSubtitle: {
     color: '#94A3B8',
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
     marginTop: 2,
+  },
+  modeSwitchContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+    borderRadius: 14,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(51, 65, 85, 0.7)',
+  },
+  modeSwitchBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+  modeSwitchBtnActive: {
+    backgroundColor: '#2563EB',
+  },
+  modeSwitchText: {
+    color: '#94A3B8',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  modeSwitchTextActive: {
+    color: '#FFFFFF',
   },
   verticalFloorWrapper: {
     position: 'absolute',
@@ -442,15 +549,15 @@ const styles = StyleSheet.create({
     zIndex: 30,
   },
   controlBtn: {
-    width: 40,
-    height: 40,
+    width: 42,
+    height: 42,
     alignItems: 'center',
     justifyContent: 'center',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(51, 65, 85, 0.5)',
   },
   controlBtnActive: {
-    backgroundColor: 'rgba(99, 102, 241, 0.3)',
+    backgroundColor: 'rgba(99, 102, 241, 0.35)',
   },
   controlText: {
     color: '#F8FAFC',
@@ -462,45 +569,6 @@ const styles = StyleSheet.create({
   },
   controlIconActive: {
     fontSize: 18,
-  },
-  placementBanner: {
-    position: 'absolute',
-    top: 130,
-    left: 16,
-    right: 60,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#6366F1',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 14,
-    gap: 8,
-    zIndex: 45,
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  placementIcon: {
-    fontSize: 15,
-  },
-  placementText: {
-    flex: 1,
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  cancelPlacementBtn: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-  },
-  cancelPlacementText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '800',
   },
   arrivalToast: {
     position: 'absolute',

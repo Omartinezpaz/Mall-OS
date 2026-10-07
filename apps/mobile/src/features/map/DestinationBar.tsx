@@ -10,7 +10,8 @@ interface DestinationBarProps {
   walkSpeed: number;
   onToggleWalk: () => void;
   onToggleSpeed: () => void;
-  onSimulateStep: () => void;
+  onResetWalk?: () => void;
+  onSimulateStep?: () => void;
   onOpenStorefront: () => void;
   onExitRoute: () => void;
 }
@@ -24,6 +25,7 @@ export function DestinationBar({
   walkSpeed,
   onToggleWalk,
   onToggleSpeed,
+  onResetWalk,
   onSimulateStep,
   onOpenStorefront,
   onExitRoute,
@@ -60,23 +62,21 @@ export function DestinationBar({
           </Text>
         </TouchableOpacity>
 
-        {isWalking && (
-          <TouchableOpacity
-            style={styles.speedBtn}
-            onPress={onToggleSpeed}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.speedBtnText}>{walkSpeed}x</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.speedBtn}
+          onPress={onToggleSpeed}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.speedBtnText}>{walkSpeed}x</Text>
+        </TouchableOpacity>
 
-        {!isWalking && (
+        {onResetWalk && (
           <TouchableOpacity
             style={styles.stepBtn}
-            onPress={onSimulateStep}
+            onPress={onResetWalk}
             activeOpacity={0.7}
           >
-            <Text style={styles.stepBtnText}>+1 Paso</Text>
+            <Text style={styles.stepBtnText}>↺</Text>
           </TouchableOpacity>
         )}
 

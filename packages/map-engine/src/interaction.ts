@@ -126,3 +126,73 @@ export function pointAtProgress(t: WalkTrack, v: number): Point {
 export function walkDurationMs(meters: number, speedMultiplier = 1, speedMps = 1.2): number {
   return (meters / (speedMps * speedMultiplier)) * 1000;
 }
+
+// ============================================================================
+// Cámara fluida para renderizado en tiempo real (Nivel 2 - Mapa Vivo)
+// ============================================================================
+
+export interface SmoothCameraOptions {
+  current: Camera;
+  target: Point;
+  fit: Fit;
+  zoom: number;
+  /** Delta time en segundos. El caller DEBE clampearlo a [1/240, 1/20]. */
+  dt: number;
+  /** Rigidez del resorte (mayor = más rápido). Default 8. */
+  stiffness?: number;
+}
+
+/**
+ * Interpolación exponencial estable a dt variable.
+ * Convergencia independiente del frame rate.
+ */
+export function cameraFollowSmooth(opts: SmoothCameraOptions): Camera {
+  const desired = cameraCentering(opts.target, opts.fit, opts.zoom);
+  const stiffness = opts.stiffness ?? 8;
+  const alpha = 1 - Math.exp(-stiffness * opts.dt);
+
+  return {
+    zoom: opts.current.zoom + (desired.zoom - opts.current.zoom) * alpha,
+    tx: opts.current.tx + (desired.tx - opts.current.tx) * alpha,
+    ty: opts.current.ty + (desired.ty - opts.current.ty) * alpha,
+  };
+}
+
+export interface SpringCameraState {
+  camera: Camera;
+  velocity: { tx: number; ty: number; zoom: number };
+}
+
+/**
+ * Resorte crítico amortiguado con integrador semi-implícito.
+ * Reservado para Fase 2 (overshoot físico al cambiar destino).
+ */
+export function cameraSpringTo(
+  state: SpringCameraState,
+  target: Point,
+  fit: Fit,
+  zoom: number,
+  dt: number,
+  damping = 15,
+  stiffness = 90
+): SpringCameraState {
+  const desired = cameraCentering(target, fit, zoom);
+  const { camera, velocity } = state;
+
+  const accelTx = -stiffness * (camera.tx - desired.tx) - damping * velocity.tx;
+  const accelTy = -stiffness * (camera.ty - desired.ty) - damping * velocity.ty;
+  const accelZoom = -stiffness * (camera.zoom - desired.zoom) - damping * velocity.zoom;
+
+  const newVelTx = velocity.tx + accelTx * dt;
+  const newVelTy = velocity.ty + accelTy * dt;
+  const newVelZoom = velocity.zoom + accelZoom * dt;
+
+  return {
+    camera: {
+      tx: camera.tx + newVelTx * dt,
+      ty: camera.ty + newVelTy * dt,
+      zoom: camera.zoom + newVelZoom * dt,
+    },
+    velocity: { tx: newVelTx, ty: newVelTy, zoom: newVelZoom },
+  };
+}

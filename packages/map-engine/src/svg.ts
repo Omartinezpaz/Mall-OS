@@ -64,6 +64,19 @@ function item(it: SceneItem, font: string): string {
     }
     case 'pin':
       return `<g transform="translate(${it.x.toFixed(1)} ${it.y.toFixed(1)})"><path d="M0 22C-14 6-12-12 0-12C12-12 14 6 0 22Z" fill="${it.fill}" stroke="#FFFFFF" stroke-width="2"/><circle cx="0" cy="-1" r="4.5" fill="#FFFFFF"/></g>`;
+    case 'userPin':
+      return `<g transform="translate(${it.x.toFixed(1)} ${it.y.toFixed(1)})"><circle cx="0" cy="0" r="${(it.radius * 2.2).toFixed(1)}" fill="#4F46E5" opacity="0.18"/><circle cx="0" cy="0" r="${it.radius.toFixed(1)}" fill="#4F46E5"/><circle cx="0" cy="0" r="2.8" fill="#FFFFFF"/></g>`;
+    case 'visionCone': {
+      const pStr = `M ${it.apex.x.toFixed(1)},${it.apex.y.toFixed(1)} L ${it.arc.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ')} Z`;
+      return `<path d="${pStr}" fill="#4F46E5" opacity="${it.opacity}"/>`;
+    }
+    case 'userTrail':
+      return it.segments
+        .map(
+          (seg) =>
+            `<polyline points="${pts(seg.points)}" fill="none" stroke="#4F46E5" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="${seg.opacity}"/>`
+        )
+        .join('');
   }
 }
 

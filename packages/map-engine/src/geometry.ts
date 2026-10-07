@@ -132,3 +132,146 @@ export function distanceToPolygonPerimeter(p: Point, poly: Point[]): number {
   return minDist;
 }
 
+/** True si dos segmentos se cruzan en forma de X estricta (no colineales ni solo tocando extremos o esquinas). */
+export function segmentsCrossStrict(a: Point, b: Point, c: Point, d: Point): boolean {
+  const ccw = (p1: Point, p2: Point, p3: Point) => (p3.y - p1.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p1.x);
+  const d1 = ccw(c, d, a);
+  const d2 = ccw(c, d, b);
+  const d3 = ccw(a, b, c);
+  const d4 = ccw(a, b, d);
+  return (
+    ((d1 > 3.0 && d2 < -3.0) || (d1 < -3.0 && d2 > 3.0)) &&
+    ((d3 > 3.0 && d4 < -3.0) || (d3 < -3.0 && d4 > 3.0))
+  );
+}
+
+/** True si el segmento a-b atraviesa el interior del polígono. */
+export function segmentCrossesPolygonInterior(a: Point, b: Point, poly: Point[], eps = 0.5): boolean {
+  if (poly.length < 3) return false;
+
+  const minSegX = Math.min(a.x, b.x) - eps;
+  const maxSegX = Math.max(a.x, b.x) + eps;
+  const minSegY = Math.min(a.y, b.y) - eps;
+  const maxSegY = Math.max(a.y, b.y) + eps;
+
+  let minPolyX = Infinity, maxPolyX = -Infinity, minPolyY = Infinity, maxPolyY = -Infinity;
+  for (const p of poly) {
+    if (p.x < minPolyX) minPolyX = p.x;
+    if (p.x > maxPolyX) maxPolyX = p.x;
+    if (p.y < minPolyY) minPolyY = p.y;
+    if (p.y > maxPolyY) maxPolyY = p.y;
+  }
+
+  if (maxSegX < minPolyX || minSegX > maxPolyX || maxSegY < minPolyY || minSegY > maxPolyY) {
+    return false;
+  }
+
+  const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  if (pointInPolygonInterior(mid, poly, eps)) return true;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    if (segmentsCrossStrict(a, b, poly[i]!, poly[j]!)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** True si dos polígonos se solapan en sus áreas interiores. */
+export function polygonsOverlap(polyA: Point[], polyB: Point[]): boolean {
+  if (polyA.length < 3 || polyB.length < 3) return false;
+
+  // Bounding-box early exit
+  let minAx = Infinity, maxAx = -Infinity, minAy = Infinity, maxAy = -Infinity;
+  for (const p of polyA) {
+    if (p.x < minAx) minAx = p.x;
+    if (p.x > maxAx) maxAx = p.x;
+    if (p.y < minAy) minAy = p.y;
+    if (p.y > maxAy) maxAy = p.y;
+  }
+  let minBx = Infinity, maxBx = -Infinity, minBy = Infinity, maxBy = -Infinity;
+  for (const p of polyB) {
+    if (p.x < minBx) minBx = p.x;
+    if (p.x > maxBx) maxBx = p.x;
+    if (p.y < minBy) minBy = p.y;
+    if (p.y > maxBy) maxBy = p.y;
+  }
+
+  if (maxAx <= minBx + 1.0 || maxBx <= minAx + 1.0 || maxAy <= minBy + 1.0 || maxBy <= minAy + 1.0) {
+    return false;
+  }
+
+  const centroidA = {
+    x: polyA.reduce((sum, p) => sum + p.x, 0) / polyA.length,
+    y: polyA.reduce((sum, p) => sum + p.y, 0) / polyA.length,
+  };
+  if (pointInPolygonInterior(centroidA, polyB, 3.0)) return true;
+
+  const centroidB = {
+    x: polyB.reduce((sum, p) => sum + p.x, 0) / polyB.length,
+    y: polyB.reduce((sum, p) => sum + p.y, 0) / polyB.length,
+  };
+  if (pointInPolygonInterior(centroidB, polyA, 3.0)) return true;
+
+  for (let i = 0, j = polyA.length - 1; i < polyA.length; j = i++) {
+    for (let k = 0, l = polyB.length - 1; k < polyB.length; l = k++) {
+      if (segmentsCrossStrict(polyA[i]!, polyA[j]!, polyB[k]!, polyB[l]!)) {
+        const edgeMidA = { x: (polyA[i]!.x + polyA[j]!.x) / 2, y: (polyA[i]!.y + polyA[j]!.y) / 2 };
+        const edgeMidB = { x: (polyB[k]!.x + polyB[l]!.x) / 2, y: (polyB[k]!.y + polyB[l]!.y) / 2 };
+        if (distance(edgeMidA, edgeMidB) > 3.0) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Rota un punto 2D respecto a un centro pivote.
+ */
+export function rotatePoint(p: Point, angleRad: number, pivot: Point = { x: 0, y: 0 }): Point {
+  if (angleRad === 0) return p;
+  const cos = Math.cos(angleRad);
+  const sin = Math.sin(angleRad);
+  const dx = p.x - pivot.x;
+  const dy = p.y - pivot.y;
+  return {
+    x: pivot.x + dx * cos - dy * sin,
+    y: pivot.y + dx * sin + dy * cos,
+  };
+}
+
+/**
+ * Calcula el centroide de un polígono 2D para ubicar etiquetas o puntos clave.
+ */
+export function polygonCentroid(points: Point[]): Point {
+  if (points.length === 0) return { x: 0, y: 0 };
+  if (points.length === 1) return points[0]!;
+  if (points.length === 2) return { x: (points[0]!.x + points[1]!.x) / 2, y: (points[0]!.y + points[1]!.y) / 2 };
+
+  let signedArea = 0;
+  let cx = 0;
+  let cy = 0;
+
+  for (let i = 0; i < points.length; i++) {
+    const p0 = points[i]!;
+    const p1 = points[(i + 1) % points.length]!;
+    const a = p0.x * p1.y - p1.x * p0.y;
+    signedArea += a;
+    cx += (p0.x + p1.x) * a;
+    cy += (p0.y + p1.y) * a;
+  }
+
+  signedArea *= 0.5;
+  if (Math.abs(signedArea) < 1e-6) {
+    // Fallback al promedio simple si es colineal o degenerado
+    const sum = points.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
+    return { x: sum.x / points.length, y: sum.y / points.length };
+  }
+
+  return {
+    x: cx / (6 * signedArea),
+    y: cy / (6 * signedArea),
+  };
+}
+

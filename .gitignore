@@ -39,6 +39,7 @@ pnpm-debug.log*
 android/
 ios/
 config_output.txt
-
-
-
+*.jpeg
+*.jpg
+!apps/mobile/assets/**
+!apps/landing/public/**

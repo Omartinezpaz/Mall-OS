@@ -32,6 +32,9 @@ import {
   type SceneItem,
   type RouteResult,
   type MallMapData,
+  ISO_GROUND,
+  ISO_STANDARD,
+  ISO_AERIAL,
   DEFAULT_ISO,
 } from '@mallos/map-engine';
 import { categoryPalette } from '@mallos/design-tokens';
@@ -204,9 +207,11 @@ interface IsometricMapProps {
   isPlacingUser?: boolean;
   onFinishPlacingUser?: () => void;
   currentHour?: number;
+  cameraMode?: 'ground' | 'isometric' | 'aerial';
   onRouteChange?: (route: RouteResult | null) => void;
   mapRef?: React.RefObject<IsometricMapHandle | null>;
   followUser?: boolean;
+  userTrail?: Array<{ x: number; y: number }>;
 }
 
 export function IsometricMap({
@@ -215,19 +220,27 @@ export function IsometricMap({
   destinationStoreId,
   onSelectStore,
   floorId = LEVEL_AUTOPISTA,
-  userNodeId = 'pj-floor-autopista',
+  userNodeId = 'node-plaza Jardin',
   userPlaneCoords,
-  userHeadingAngle = 0,
+  userHeadingAngle,
   onUserNodeChange,
   isPlacingUser = false,
   onFinishPlacingUser,
   currentHour,
+  cameraMode = 'ground',
   onRouteChange,
   mapRef,
   followUser = false,
+  userTrail,
 }: IsometricMapProps) {
   const [transform, setTransform] = useState({ scale: 1, translateX: 0, translateY: 0 });
   const containerSizeRef = useRef({ width: 360, height: 400 });
+
+  const selectedIso = useMemo(() => {
+    if (cameraMode === 'aerial') return ISO_AERIAL;
+    if (cameraMode === 'isometric') return ISO_STANDARD;
+    return ISO_GROUND;
+  }, [cameraMode]);
 
   // Hora actual del centro comercial (por defecto hora real del dispositivo)
   const effectiveHour = useMemo(() => {
@@ -257,7 +270,7 @@ export function IsometricMap({
     }
   }, [route, onRouteChange]);
 
-  // Construye la escena isométrica estática de forma eficiente
+  // Construye la escena isométrica con capas de usuario
   const scene: Scene = useMemo(() => {
     return buildScene(mallData, {
       floorId,
@@ -269,8 +282,13 @@ export function IsometricMap({
       detail: 'medium',
       labels: 'all',
       selectedLift: 3,
+      iso: selectedIso,
+      userPosition: userPlaneCoords,
+      userHeading: userHeadingAngle !== undefined ? (userHeadingAngle * Math.PI) / 180 : undefined,
+      userTrail: userTrail,
+      visionConeLength: 50,
     });
-  }, [mallData, floorId, targetStoreId, dimmedStoreIds, route]);
+  }, [mallData, floorId, targetStoreId, dimmedStoreIds, route, selectedIso, userPlaneCoords, userHeadingAngle, userTrail]);
 
   const { x: vx, y: vy, w: vw, h: vh } = scene.viewBox;
 
@@ -288,8 +306,8 @@ export function IsometricMap({
     (userNode ? { x: userNode.x, y: userNode.y } : { x: 80, y: 220 });
 
   const userIsoPos = useMemo(() => {
-    return project(rawUserCoords.x, rawUserCoords.y, 1.5, DEFAULT_ISO);
-  }, [rawUserCoords]);
+    return project(rawUserCoords.x, rawUserCoords.y, 1.5, selectedIso);
+  }, [rawUserCoords, selectedIso]);
 
   // Si followUser está activo, mantiene la cámara suavemente centrada en el avatar
   useEffect(() => {
@@ -337,7 +355,7 @@ export function IsometricMap({
             store.x + store.w / 2,
             store.y + store.h / 2,
             0,
-            DEFAULT_ISO
+            selectedIso
           );
           setTransform({
             scale: 1.4,
@@ -347,7 +365,7 @@ export function IsometricMap({
         }
       },
     };
-  }, [mapRef, userIsoPos, mallData]);
+  }, [mapRef, userIsoPos, mallData, selectedIso]);
 
   // Gestos táctiles: Arrastre (Pan) y Pellizco (Pinch to Zoom)
   const initialTouchDistRef = useRef<number | null>(null);
@@ -550,6 +568,44 @@ export function IsometricMap({
           </G>
         );
       }
+      case 'userTrail': {
+        return (
+          <G key={`utrail-${index}`}>
+            {it.segments.map((seg, sIdx) => (
+              <Polyline
+                key={`seg-${sIdx}`}
+                points={seg.points.map((p) => `${p.x},${p.y}`).join(' ')}
+                fill="none"
+                stroke="#4F46E5"
+                strokeWidth={3.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={seg.opacity}
+              />
+            ))}
+          </G>
+        );
+      }
+      case 'visionCone': {
+        const d = `M ${it.apex.x} ${it.apex.y} L ${it.arc.map((p) => `${p.x} ${p.y}`).join(' L ')} Z`;
+        return (
+          <Path
+            key={`cone-${index}`}
+            d={d}
+            fill="#4F46E5"
+            opacity={it.opacity}
+          />
+        );
+      }
+      case 'userPin': {
+        return (
+          <G key={`upin-${index}`}>
+            <Circle cx={it.x} cy={it.y} r={it.radius * 2} fill="#4F46E5" opacity={0.2} />
+            <Circle cx={it.x} cy={it.y} r={it.radius} fill="#4F46E5" />
+            <Circle cx={it.x} cy={it.y} r={3} fill="#FFFFFF" />
+          </G>
+        );
+      }
       default:
         return null;
     }
@@ -557,6 +613,7 @@ export function IsometricMap({
 
 
   const headingConePath = useMemo(() => {
+    if (userHeadingAngle === undefined) return '';
     const angleRad = (userHeadingAngle * Math.PI) / 180;
     const spreadRad = (32 * Math.PI) / 180;
     const r = 52;
@@ -568,6 +625,8 @@ export function IsometricMap({
     const y2 = userIsoPos.y + Math.sin(a2) * r;
     return `M ${userIsoPos.x} ${userIsoPos.y} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
   }, [userIsoPos.x, userIsoPos.y, userHeadingAngle]);
+
+  const effectiveHeadingAngle = userHeadingAngle ?? 0;
 
   return (
     <View
@@ -627,8 +686,8 @@ export function IsometricMap({
 
             {/* Puntero de orientación */}
             <Circle
-              cx={userIsoPos.x + Math.cos((userHeadingAngle * Math.PI) / 180) * 8.5}
-              cy={userIsoPos.y + Math.sin((userHeadingAngle * Math.PI) / 180) * 8.5}
+              cx={userIsoPos.x + Math.cos((effectiveHeadingAngle * Math.PI) / 180) * 8.5}
+              cy={userIsoPos.y + Math.sin((effectiveHeadingAngle * Math.PI) / 180) * 8.5}
               r={2.5}
               fill="#FFFFFF"
             />

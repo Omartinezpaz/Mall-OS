@@ -13,7 +13,9 @@ export {
   LEVEL_AUTOPISTA,
   LEVEL_ACUARIO,
   LEVEL_LIBERTADOR,
+  LEVEL_FERIA,
   LEVEL_DIVERSION,
 } from './demo-mall';
 export * from './sambil';
 export * from './navigation';
+export * from './scene-flat';

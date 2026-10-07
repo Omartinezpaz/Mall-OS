@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mall OS · Detector Automático de Locales (OpenCV + OCR)</title>
+  <!-- Tailwind CDN for fast utility styling -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- OpenCV.js CDN -->
+  <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady()"></script>
+  <!-- Tesseract.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #070B14;
+      --bg-card: rgba(15, 23, 42, 0.95);
+      --border: rgba(255, 255, 255, 0.12);
+      --accent: #10B981;
+      --accent-hover: #059669;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: #F8FAFC;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden select-none">
+
+  <!-- Top Bar -->
+  <header class="bg-slate-900/90 border-b border-white/10 px-4 py-2.5 flex items-center justify-between z-30 shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center font-black text-white text-xs shadow-lg shadow-emerald-500/20">
+        AI
+      </div>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-white flex items-center gap-2">
+          Mall OS · Detector de Locales
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">CV + OCR Pipeline</span>
+        </h1>
+        <p class="text-[10.5px] text-slate-400">Extracción geométrica automática desde planos arquitectónicos (Sambil Chacao)</p>
+      </div>
+    </div>
+
+    <!-- Status & Actions -->
+    <div class="flex items-center gap-3">
+      <div id="cvStatusBadge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span>Cargando OpenCV.js...</span>
+      </div>
+
+      <div class="h-4 w-px bg-white/10"></div>
+
+      <select id="levelSelector" class="bg-slate-800 border border-white/15 text-xs text-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500">
+        <option value="autopista" selected>Nivel Autopista (P1)</option>
+        <option value="acuario">Nivel Acuario (P2)</option>
+        <option value="libertador">Nivel Libertador (P3)</option>
+        <option value="feria">Nivel Feria (P4)</option>
+        <option value="diversion">Nivel Diversión (P5)</option>
+      </select>
+
+      <button id="btnCopyJSON" onclick="copyDetectedJSON()" disabled class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 transition-all">
+        <span>📋 Copiar JSON</span>
+      </button>
+
+      <button id="btnExportJSON" onclick="exportDetectedJSON()" disabled class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md shadow-emerald-600/30 flex items-center gap-1.5 transition-all">
+        <span>💾 Descargar .JSON</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- Controls Sidebar -->
+    <aside class="w-80 bg-slate-900/80 border-r border-white/10 p-4 flex flex-col gap-4 overflow-y-auto custom-scrollbar shrink-0">
+      
+      <!-- Upload Box -->
+      <div class="border-2 border-dashed border-white/15 hover:border-emerald-500/50 rounded-xl p-4 text-center cursor-pointer transition-colors bg-slate-950/40 relative group" onclick="document.getElementById('imgUpload').click()">
+        <input type="file" id="imgUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event)" />
+        <div class="text-2xl mb-1">🖼️</div>
+        <div class="text-xs font-bold text-slate-200 group-hover:text-emerald-400">Cargar Foto del Plano</div>
+        <div class="text-[10px] text-slate-400 mt-0.5">Arrastra una imagen o haz clic aquí</div>
+        <div id="fileInfoText" class="text-[9.5px] text-emerald-400 font-mono mt-1 truncate"></div>
+      </div>
+
+      <!-- CV Processing Pipeline Parameters -->
+      <div class="flex flex-col gap-3">
+        <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center justify-between">
+          <span>⚙️ Parámetros de Detección</span>
+          <button onclick="resetParams()" class="text-[10px] text-slate-400 hover:text-white">↺ Reset</button>
+        </div>
+
+        <!-- Pre-filter: Grayscale & Blur -->
+        <div class="bg-slate-950/50 p-3 rounded-lg border border-white/5 flex flex-col gap-2">
+          <label class="text-xs font-semibold text-slate-300 flex justify-between">
+            <span>Desenfoque Gaussiano (Blur)</span>
+            <span id="blurVal" class="text-emerald-400 font-mono text-[11px]">3px</span>
+          </label>
+          <input type="range" id="paramBlur" min="1" max="9" step="2" value="3" oninput="updateParam('blur', this.value)" class="accent-emerald-500 cursor-pointer" />
+        </div>
+
+        <!-- Binarization: Adaptive / Canny -->
+        <div class="bg-slate-950/50 p-3 rounded-lg border border-white/5 flex flex-col gap-2">
+          <label class="text-xs font-semibold text-slate-300 flex justify-between">
+            <span>Umbral Canny Min</span>
+            <span id="cannyMinVal" class="text-emerald-400 font-mono text-[11px]">50</span>
+          </label>
+          <input type="range" id="paramCannyMin" min="10" max="150" step="5" value="50" oninput="updateParam('cannyMin', this.value)" class="accent-emerald-500 cursor-pointer" />
+
+          <label class="text-xs font-semibold text-slate-300 flex justify-between mt-1">
+            <span>Umbral Canny Max</span>
+            <span id="cannyMaxVal" class="text-emerald-400 font-mono text-[11px]">150</span>
+          </label>
+          <input type="range" id="paramCannyMax" min="50" max="300" step="5" value="150" oninput="updateParam('cannyMax', this.value)" class="accent-emerald-500 cursor-pointer" />
+        </div>
+
+        <!-- Polygon Approximation -->
+        <div class="bg-slate-950/50 p-3 rounded-lg border border-white/5 flex flex-col gap-2">
+          <label class="text-xs font-semibold text-slate-300 flex justify-between">
+            <span>Simplificación Poligonal (Epsilon)</span>
+            <span id="epsVal" class="text-emerald-400 font-mono text-[11px]">2.2%</span>
+          </label>
+          <input type="range" id="paramEps" min="0.5" max="5.0" step="0.1" value="2.2" oninput="updateParam('eps', this.value)" class="accent-emerald-500 cursor-pointer" />
+          <p class="text-[9.5px] text-slate-500">Valores entre 1.5% y 3% generan rectángulos arquitectónicos limpios de 4 a 6 vértices.</p>
+        </div>
+
+        <!-- Area Filtering -->
+        <div class="bg-slate-950/50 p-3 rounded-lg border border-white/5 flex flex-col gap-2">
+          <label class="text-xs font-semibold text-slate-300 flex justify-between">
+            <span>Área Mínima de Local</span>
+            <span id="minAreaVal" class="text-emerald-400 font-mono text-[11px]">250 px²</span>
+          </label>
+          <input type="range" id="paramMinArea" min="50" max="2000" step="50" value="250" oninput="updateParam('minArea', this.value)" class="accent-emerald-500 cursor-pointer" />
+
+          <label class="text-xs font-semibold text-slate-300 flex justify-between mt-1">
+            <span>Área Máxima de Local</span>
+            <span id="maxAreaVal" class="text-emerald-400 font-mono text-[11px]">45000 px²</span>
+          </label>
+          <input type="range" id="paramMaxArea" min="5000" max="150000" step="2000" value="45000" oninput="updateParam('maxArea', this.value)" class="accent-emerald-500 cursor-pointer" />
+        </div>
+
+        <!-- OCR Settings -->
+        <div class="bg-slate-950/50 p-3 rounded-lg border border-white/5 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-300">Reconocimiento OCR (Tesseract)</span>
+            <input type="checkbox" id="paramEnableOcr" checked class="accent-emerald-500 rounded cursor-pointer" />
+          </div>
+          <p class="text-[9.5px] text-slate-500">Lee los nombres y códigos de cada local automáticamente dentro de su contorno.</p>
+        </div>
+
+        <button onclick="runFullPipeline()" id="btnProcess" disabled class="w-full py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all">
+          <span>⚡ Ejecutar Detección Automática</span>
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Canvas Preview Center -->
+    <main class="flex-1 bg-slate-950 relative overflow-hidden flex items-center justify-center p-4">
+      <div id="emptyState" class="text-center text-slate-500 flex flex-col items-center gap-2">
+        <div class="text-4xl">📐</div>
+        <div class="text-sm font-semibold">Sube una foto del plano arquitectónico para comenzar</div>
+        <p class="text-xs max-w-sm text-slate-600">OpenCV procesará los bordes, detectará los locales automáticamente y Tesseract extraerá los nombres de las tiendas.</p>
+      </div>
+
+      <div id="canvasWrapper" class="relative max-w-full max-h-full overflow-auto hidden shadow-2xl rounded-lg border border-white/10">
+        <canvas id="outputCanvas"></canvas>
+      </div>
+
+      <!-- Processing Progress Overlay -->
+      <div id="progressOverlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm hidden flex-col items-center justify-center z-50 gap-3">
+        <div class="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+        <div id="progressStatusText" class="text-xs font-bold text-white tracking-wide">Procesando imagen con OpenCV...</div>
+        <div class="w-64 bg-slate-800 rounded-full h-1.5 overflow-hidden border border-white/10">
+          <div id="progressBar" class="bg-emerald-500 h-full w-0 transition-all duration-200"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Results Inspector Panel -->
+    <aside class="w-96 bg-slate-900/80 border-l border-white/10 flex flex-col shrink-0">
+      <div class="p-3.5 border-b border-white/10 flex items-center justify-between">
+        <h2 class="text-xs font-bold text-white flex items-center gap-2">
+          <span>🏬 Locales Detectados</span>
+          <span id="detectedCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">0</span>
+        </h2>
+        <div class="text-[10.5px] text-slate-400 font-mono">Escala: 0.52 m/u</div>
+      </div>
+
+      <!-- List of Stores -->
+      <div id="storesList" class="flex-1 overflow-y-auto p-3 flex flex-col gap-2 custom-scrollbar">
+        <div class="text-center text-slate-500 text-xs py-8">No hay locales detectados aún.</div>
+      </div>
+
+      <!-- Footer Quick Summary -->
+      <div class="p-3 border-t border-white/10 bg-slate-950/60 text-[10px] text-slate-400 flex items-center justify-between">
+        <span id="summaryArea">Área total: 0 m²</span>
+        <span id="summaryValid">Válidos: 0</span>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Internal Processing Logic -->
+  <script>
+    let cvReady = false;
+    let sourceImage = null;
+    let detectedStores = [];
+    let isProcessing = false;
+
+    // Configuración por defecto
+    let params = {
+      blur: 3,
+      cannyMin: 50,
+      cannyMax: 150,
+      eps: 2.2,
+      minArea: 250,
+      maxArea: 45000
+    };
+
+    function onOpenCvReady() {
+      cvReady = true;
+      const badge = document.getElementById('cvStatusBadge');
+      badge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+      badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>OpenCV.js Listo</span>';
+      checkReadyToProcess();
+    }
+
+    function checkReadyToProcess() {
+      if (cvReady && sourceImage) {
+        document.getElementById('btnProcess').disabled = false;
+      }
+    }
+
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      document.getElementById('fileInfoText').innerText = `${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          sourceImage = img;
+          document.getElementById('emptyState').classList.add('hidden');
+          document.getElementById('canvasWrapper').classList.remove('hidden');
+
+          const canvas = document.getElementById('outputCanvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          checkReadyToProcess();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateParam(name, val) {
+      params[name] = parseFloat(val);
+      if (name === 'blur') document.getElementById('blurVal').innerText = `${val}px`;
+      if (name === 'cannyMin') document.getElementById('cannyMinVal').innerText = val;
+      if (name === 'cannyMax') document.getElementById('cannyMaxVal').innerText = val;
+      if (name === 'eps') document.getElementById('epsVal').innerText = `${val}%`;
+      if (name === 'minArea') document.getElementById('minAreaVal').innerText = `${val} px²`;
+      if (name === 'maxArea') document.getElementById('maxAreaVal').innerText = `${val} px²`;
+
+      if (sourceImage && cvReady && !isProcessing) {
+        runContoursOnly();
+      }
+    }
+
+    function resetParams() {
+      params = { blur: 3, cannyMin: 50, cannyMax: 150, eps: 2.2, minArea: 250, maxArea: 45000 };
+      document.getElementById('paramBlur').value = 3;
+      document.getElementById('paramCannyMin').value = 50;
+      document.getElementById('paramCannyMax').value = 150;
+      document.getElementById('paramEps').value = 2.2;
+      document.getElementById('paramMinArea').value = 250;
+      document.getElementById('paramMaxArea').value = 45000;
+      updateParam('blur', 3);
+      updateParam('cannyMin', 50);
+      updateParam('cannyMax', 150);
+      updateParam('eps', 2.2);
+      updateParam('minArea', 250);
+      updateParam('maxArea', 45000);
+    }
+
+    // Pipeline rápido de visión computacional
+    function runContoursOnly() {
+      if (!cvReady || !sourceImage) return;
+
+      const src = cv.imread(sourceImage);
+      const gray = new cv.Mat();
+      const blurred = new cv.Mat();
+      const edges = new cv.Mat();
+      const contours = new cv.MatVector();
+      const hierarchy = new cv.Mat();
+
+      // 1. Grayscale
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+
+      // 2. Gaussian Blur
+      const ksize = new cv.Size(params.blur, params.blur);
+      cv.GaussianBlur(gray, blurred, ksize, 0, 0, cv.BORDER_DEFAULT);
+
+      // 3. Canny Edge Detection
+      cv.Canny(blurred, edges, params.cannyMin, params.cannyMax, 3, false);
+
+      // 4. Find Contours
+      cv.findContours(edges, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+
+      const canvas = document.getElementById('outputCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(sourceImage, 0, 0);
+
+      const newStores = [];
+      const targetW = 720;
+      const targetH = 360;
+      const scaleX = targetW / sourceImage.width;
+      const scaleY = targetH / sourceImage.height;
+
+      for (let i = 0; i < contours.size(); ++i) {
+        const cnt = contours.get(i);
+        const area = cv.contourArea(cnt);
+
+        if (area >= params.minArea && area <= params.maxArea) {
+          const peri = cv.arcLength(cnt, true);
+          const approx = new cv.Mat();
+          cv.approxPolyDP(cnt, approx, (params.eps / 100) * peri, true);
+
+          // Filtrar contornos convexos de 4 a 8 vértices
+          if (approx.rows >= 4 && approx.rows <= 8 && cv.isContourConvex(approx)) {
+            const pts = [];
+            for (let j = 0; j < approx.rows; j++) {
+              pts.push({
+                x: Math.round(approx.data32S[j * 2] * scaleX),
+                y: Math.round(approx.data32S[j * 2 + 1] * scaleY)
+              });
+            }
+
+            const rawPts = [];
+            for (let j = 0; j < approx.rows; j++) {
+              rawPts.push({
+                x: approx.data32S[j * 2],
+                y: approx.data32S[j * 2 + 1]
+              });
+            }
+
+            const xs = pts.map(p => p.x);
+            const ys = pts.map(p => p.y);
+            const minX = Math.min(...xs);
+            const maxX = Math.max(...xs);
+            const minY = Math.min(...ys);
+            const maxY = Math.max(...ys);
+
+            const storeId = `loc_${newStores.length + 1}`;
+            newStores.push({
+              id: storeId,
+              name: `Local ${newStores.length + 1}`,
+              category: 'fashion',
+              floorId: `floor-${document.getElementById('levelSelector').value}`,
+              x: minX,
+              y: minY,
+              w: maxX - minX,
+              h: maxY - minY,
+              doorNodeId: `door-${storeId}`,
+              polygon: pts,
+              rawPolygon: rawPts,
+              labelPos: {
+                x: Math.round(xs.reduce((a, b) => a + b, 0) / xs.length),
+                y: Math.round(ys.reduce((a, b) => a + b, 0) / ys.length)
+              },
+              areaM2: Math.round((maxX - minX) * (maxY - minY) * 0.52 * 0.52)
+            });
+
+            // Dibujar contorno en el canvas
+            ctx.beginPath();
+            ctx.moveTo(rawPts[0].x, rawPts[0].y);
+            for (let k = 1; k < rawPts.length; k++) {
+              ctx.lineTo(rawPts[k].x, rawPts[k].y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+            ctx.fill();
+            ctx.strokeStyle = '#10B981';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Etiqueta del local
+            const centerX = rawPts.reduce((a, b) => a + b.x, 0) / rawPts.length;
+            const centerY = rawPts.reduce((a, b) => a + b.y, 0) / rawPts.length;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`#${newStores.length}`, centerX, centerY);
+          }
+          approx.delete();
+        }
+      }
+
+      detectedStores = newStores;
+      renderStoresList();
+
+      src.delete(); gray.delete(); blurred.delete(); edges.delete(); contours.delete(); hierarchy.delete();
+      document.getElementById('btnExportJSON').disabled = detectedStores.length === 0;
+      document.getElementById('btnCopyJSON').disabled = detectedStores.length === 0;
+    }
+
+    // Pipeline completo con OCR
+    async function runFullPipeline() {
+      if (!cvReady || !sourceImage || isProcessing) return;
+
+      isProcessing = true;
+      const overlay = document.getElementById('progressOverlay');
+      const pStatus = document.getElementById('progressStatusText');
+      const pBar = document.getElementById('progressBar');
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+
+      pStatus.innerText = 'Detectando geometrías poligonales...';
+      pBar.style.width = '30%';
+
+      runContoursOnly();
+
+      const enableOcr = document.getElementById('paramEnableOcr').checked;
+      if (enableOcr && detectedStores.length > 0 && typeof Tesseract !== 'undefined') {
+        pStatus.innerText = `Extrayendo texto OCR (0/${detectedStores.length})...`;
+        pBar.style.width = '45%';
+
+        const worker = await Tesseract.createWorker('spa+eng');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        for (let i = 0; i < detectedStores.length; i++) {
+          const st = detectedStores[i];
+          const raw = st.rawPolygon;
+          const xs = raw.map(p => p.x);
+          const ys = raw.map(p => p.y);
+          const minX = Math.max(0, Math.min(...xs));
+          const maxX = Math.min(sourceImage.width, Math.max(...xs));
+          const minY = Math.max(0, Math.min(...ys));
+          const maxY = Math.min(sourceImage.height, Math.max(...ys));
+          const w = maxX - minX;
+          const h = maxY - minY;
+
+          if (w > 20 && h > 15) {
+            canvas.width = w;
+            canvas.height = h;
+            ctx.drawImage(sourceImage, minX, minY, w, h, 0, 0, w, h);
+
+            try {
+              const res = await worker.recognize(canvas);
+              const text = res.data.text.trim().replace(/\n+/g, ' ').replace(/[^a-zA-Z0-9\sÁÉÍÓÚáéíóúÑñ&]/g, '');
+              if (text.length >= 3 && !text.toLowerCase().includes('m2') && !text.toLowerCase().includes('local')) {
+                st.name = text;
+                st.id = text.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+                st.doorNodeId = `door-${st.id}`;
+              }
+            } catch (ocrErr) {
+              console.warn('OCR error on item:', i, ocrErr);
+            }
+          }
+
+          const pct = Math.round(45 + ((i + 1) / detectedStores.length) * 50);
+          pBar.style.width = `${pct}%`;
+          pStatus.innerText = `Extrayendo texto OCR (${i + 1}/${detectedStores.length})...`;
+        }
+
+        await worker.terminate();
+      }
+
+      pBar.style.width = '100%';
+      pStatus.innerText = '¡Procesamiento completado!';
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+        overlay.classList.remove('flex');
+        isProcessing = false;
+        renderStoresList();
+      }, 500);
+    }
+
+    function renderStoresList() {
+      const list = document.getElementById('storesList');
+      const badge = document.getElementById('detectedCountBadge');
+      badge.innerText = detectedStores.length;
+
+      if (detectedStores.length === 0) {
+        list.innerHTML = '<div class="text-center text-slate-500 text-xs py-8">No se encontraron contornos con los parámetros actuales. Ajusta los umbrales.</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      let totalArea = 0;
+
+      detectedStores.forEach((st, idx) => {
+        totalArea += st.areaM2 || 0;
+        const card = document.createElement('div');
+        card.className = 'bg-slate-950/60 p-2.5 rounded-lg border border-white/10 hover:border-emerald-500/40 flex flex-col gap-1.5 transition-all text-xs';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-emerald-400 font-mono text-[11px]">#${idx + 1} · ${st.id}</span>
+            <span class="text-[10px] text-slate-400 font-mono">${st.w}×${st.h}u (${st.areaM2} m²)</span>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" value="${st.name}" onchange="updateStoreName(${idx}, this.value)" class="flex-1 bg-slate-900 border border-white/15 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-emerald-500" />
+            <select onchange="updateStoreCat(${idx}, this.value)" class="bg-slate-900 border border-white/15 rounded px-2 py-1 text-[11px] text-slate-300 focus:outline-none">
+              <option value="fashion" ${st.category === 'fashion' ? 'selected' : ''}>Moda</option>
+              <option value="food" ${st.category === 'food' ? 'selected' : ''}>Comida</option>
+              <option value="tech" ${st.category === 'tech' ? 'selected' : ''}>Tecno</option>
+              <option value="beauty" ${st.category === 'beauty' ? 'selected' : ''}>Belleza</option>
+              <option value="services" ${st.category === 'services' ? 'selected' : ''}>Servicios</option>
+            </select>
+            <button onclick="removeStore(${idx})" class="text-red-400 hover:text-red-300 px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/20">✕</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      document.getElementById('summaryArea').innerText = `Área total: ${totalArea.toLocaleString()} m²`;
+      document.getElementById('summaryValid').innerText = `Válidos: ${detectedStores.length}`;
+    }
+
+    function updateStoreName(idx, val) {
+      if (detectedStores[idx]) {
+        detectedStores[idx].name = val;
+        detectedStores[idx].id = val.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+        detectedStores[idx].doorNodeId = `door-${detectedStores[idx].id}`;
+      }
+    }
+
+    function updateStoreCat(idx, val) {
+      if (detectedStores[idx]) detectedStores[idx].category = val;
+    }
+
+    function removeStore(idx) {
+      detectedStores.splice(idx, 1);
+      renderStoresList();
+    }
+
+    function getExportPayload() {
+      if (!detectedStores || detectedStores.length === 0) return null;
+      const lvl = document.getElementById('levelSelector').value;
+      const cleanStores = detectedStores.map(s => ({
+        id: s.id,
+        name: s.name,
+        category: s.category || 'fashion',
+        floorId: `floor-${lvl}`,
+        height: 13,
+        x: s.x,
+        y: s.y,
+        w: s.w,
+        h: s.h,
+        doorNodeId: s.doorNodeId,
+        polygon: s.polygon,
+        labelPos: s.labelPos
+      }));
+
+      return {
+        metadata: {
+          mallId: 'sambil-chacao',
+          floorId: `floor-${lvl}`,
+          metersPerUnit: 0.52,
+          detectedBy: 'OpenCV.js + Tesseract.js Pipeline',
+          storesCount: cleanStores.length,
+          generatedAt: new Date().toISOString()
+        },
+        stores: cleanStores
+      };
+    }
+
+    function copyDetectedJSON() {
+      const payload = getExportPayload();
+      if (!payload) return;
+
+      const text = JSON.stringify(payload, null, 2);
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('btnCopyJSON');
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = '<span>✓ ¡Copiado al Portapapeles!</span>';
+        btn.classList.add('bg-emerald-600', 'text-white');
+        setTimeout(() => {
+          btn.innerHTML = oldHtml;
+          btn.classList.remove('bg-emerald-600', 'text-white');
+        }, 2200);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+        prompt('Copia el JSON manualmente:', text);
+      });
+    }
+
+    function downloadJSON(data, filename) {
+      const jsonString = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename.endsWith('.json') ? filename : filename + '.json';
+      a.style.display = 'none';
+      
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        if (a.parentNode) document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    }
+
+    function exportDetectedJSON() {
+      const payload = getExportPayload();
+      if (!payload) return;
+      const lvl = document.getElementById('levelSelector').value;
+      downloadJSON(payload, `sambil_${lvl}_detected_stores.json`);
+    }
+  </script>
+</body>
+</html>

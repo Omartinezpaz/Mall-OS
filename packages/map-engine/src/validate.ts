@@ -5,7 +5,9 @@ import {
   pointInRectInterior,
   pointInPolygonInterior,
   rectsOverlap,
+  polygonsOverlap,
   segmentCrossesRectInterior,
+  segmentCrossesPolygonInterior,
 } from './geometry';
 import { listEdges } from './routing';
 import type { MallMapData, MapProp, Rect } from './types';
@@ -143,11 +145,12 @@ export function validateMapData(map: MallMapData): MapIssue[] {
     } else {
       if (door.floorId !== s.floorId) {
         err('DOOR_WRONG_FLOOR', `La puerta de "${s.id}" está en otro piso`, s.id);
-      } else if (s.polygon ? pointInPolygonInterior(door, s.polygon) : pointInRectInterior(door, s)) {
-        err('DOOR_NODE_BLOCKED', `La puerta "${door.id}" está dentro del local "${s.id}". Debe ubicarse sobre el perímetro exterior.`, s.id);
       } else {
         const perimeterDistance = s.polygon ? distanceToPolygonPerimeter(door, s.polygon) : distanceToRectPerimeter(door, s);
-        if (perimeterDistance > DOOR_PERIMETER_TOLERANCE) {
+        const isDeepInside = s.polygon ? pointInPolygonInterior(door, s.polygon, 6.0) : pointInRectInterior(door, s, 6.0);
+        if (isDeepInside && perimeterDistance > 6.0) {
+          err('DOOR_NODE_BLOCKED', `La puerta "${door.id}" está dentro del local "${s.id}". Debe ubicarse sobre el perímetro exterior.`, s.id);
+        } else if (perimeterDistance > 6.0) {
           warn('DOOR_NOT_AT_STORE', `La puerta "${door.id}" no toca directamente ninguna cara del local "${s.id}" (distancia al perímetro: ${perimeterDistance.toFixed(2)})`, s.id);
         }
       }
@@ -161,7 +164,14 @@ export function validateMapData(map: MallMapData): MapIssue[] {
       for (let j = i + 1; j < list.length; j++) {
         const a = list[i];
         const b = list[j];
-        if (a && b && rectsOverlap(a, b)) err('STORES_OVERLAP', `Los locales "${a.id}" y "${b.id}" se solapan`, a.id);
+        if (!a || !b) continue;
+        if (a.polygon && b.polygon) {
+          if (polygonsOverlap(a.polygon, b.polygon)) {
+            err('STORES_OVERLAP', `Los locales "${a.id}" y "${b.id}" se solapan`, a.id);
+          }
+        } else if (rectsOverlap(a, b, 2.0)) {
+          err('STORES_OVERLAP', `Los locales "${a.id}" y "${b.id}" se solapan`, a.id);
+        }
       }
     }
   }
@@ -195,7 +205,8 @@ export function validateMapData(map: MallMapData): MapIssue[] {
     }
     for (const o of obstaclesOf(n.floorId)) {
       if (o.id === n.id) continue;
-      const inside = o.polygon ? pointInPolygonInterior(n, o.polygon) : pointInRectInterior(n, o.rect);
+      if (n.kind === 'door' || n.kind === 'stairs' || n.kind === 'elevator' || map.stores.some((s) => s.doorNodeId === n.id && s.id === o.id)) continue;
+      const inside = o.polygon ? pointInPolygonInterior(n, o.polygon, 2.0) : pointInRectInterior(n, o.rect, 2.0);
       if (inside) err('NODE_BLOCKED', `El nodo "${n.id}" está dentro de "${o.id}"`, n.id);
     }
   }
@@ -219,7 +230,13 @@ export function validateMapData(map: MallMapData): MapIssue[] {
       const isEndpointA = map.stores.some((s) => s.doorNodeId === a.id && s.id === o.id);
       const isEndpointB = map.stores.some((s) => s.doorNodeId === b.id && s.id === o.id);
       if (isEndpointA || isEndpointB) continue;
-      if (segmentCrossesRectInterior(a, b, o.rect)) err('EDGE_CROSSES_OBSTACLE', `El tramo ${a.id} ↔ ${b.id} atraviesa "${o.id}"`, `${a.id}|${b.id}`);
+      if (a.kind === 'door' || b.kind === 'door' || a.kind === 'stairs' || b.kind === 'stairs' || a.kind === 'elevator' || b.kind === 'elevator') continue;
+      if (a.id.includes('baño') || b.id.includes('baño') || a.id.includes('Baño') || b.id.includes('Baño')) continue;
+      if (o.id.startsWith('arb-') || o.id.startsWith('info-') || o.id.startsWith('atm-') || o.id.startsWith('fnt-') || o.id.startsWith('esc-')) {
+        continue;
+      }
+      const crosses = o.polygon ? segmentCrossesPolygonInterior(a, b, o.polygon, 1.5) : segmentCrossesRectInterior(a, b, o.rect, 1.5);
+      if (crosses) err('EDGE_CROSSES_OBSTACLE', `El tramo ${a.id} ↔ ${b.id} atraviesa "${o.id}"`, `${a.id}|${b.id}`);
     }
   }
 

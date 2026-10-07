@@ -22,7 +22,10 @@ export type SceneItem =
   | { kind: 'ellipse'; x: number; y: number; rx: number; ry: number; fill: string; opacity?: number }
   | { kind: 'text'; x: number; y: number; text: string; size: number; weight: number; fill: string; halo?: string; storeId?: string }
   | { kind: 'badge'; x: number; y: number; size: number; fill: string; glyph: PoiKind }
-  | { kind: 'pin'; x: number; y: number; fill: string };
+  | { kind: 'pin'; x: number; y: number; fill: string }
+  | { kind: 'userTrail'; segments: Array<{ points: Point[]; opacity: number }> }
+  | { kind: 'visionCone'; apex: Point; arc: Point[]; heading: number; opacity: number }
+  | { kind: 'userPin'; x: number; y: number; radius: number; heading: number };
 
 export interface Scene {
   items: SceneItem[];
@@ -74,25 +77,35 @@ export interface SceneOptions {
   theme?: Partial<SceneTheme>;
   /** Capa a generar: 'all' (por defecto), 'base' (sin ruta), 'route' (solo ruta). */
   layer?: 'all' | 'base' | 'route';
+  /** Posición del usuario en coordenadas del plano. */
+  userPosition?: Point;
+  /** Dirección de vista en radianes (0 = +x). undefined = detenido. */
+  userHeading?: number;
+  /** Muestras recientes del recorrido (últimos 15m). Más viejo primero. */
+  userTrail?: Point[];
+  /** Longitud del cono de visión en unidades del plano. Default 60. */
+  visionConeLength?: number;
+  /** Apertura total del cono en radianes. Default π/5 (36°). */
+  visionConeSpread?: number;
 }
 
 const DEFAULT_THEME: SceneTheme = {
   primary: '#4F46E5',
-  primaryDark: '#4338CA',
-  slab: '#F1F5F9',
-  slabStroke: '#CBD5E1',
+  primaryDark: '#3730A3',
+  slab: '#E2E8F0',
+  slabStroke: '#94A3B8',
   corridor: '#FFFFFF',
-  corridorStroke: '#E2E8F0',
-  tile: '#E8EDF4',
+  corridorStroke: '#CBD5E1',
+  tile: '#F1F5F9',
   plaza: '#EEF2FF',
-  plazaStroke: '#C7D2FE',
-  water: '#C7D2FE',
-  waterStroke: '#818CF8',
+  plazaStroke: '#A5B4FC',
+  water: '#BAE6FD',
+  waterStroke: '#38BDF8',
   leaf: '#22C55E',
   leafDark: '#16A34A',
   leafLight: '#4ADE80',
-  trunk: '#8B6B4A',
-  wood: '#B7916B',
+  trunk: '#78350F',
+  wood: '#92400E',
   badge: '#312E81',
 };
 
@@ -148,8 +161,8 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
     const { x, y, w, h } = r;
     const sid = storeId ? { storeId } : {};
     return [
-      quad([P(x, y + h, z0), P(x + w, y + h, z0), P(x + w, y + h, z1), P(x, y + h, z1)], darken(top, 0.14), stroke, 0.8, sid),
-      quad([P(x + w, y, z0), P(x + w, y + h, z0), P(x + w, y + h, z1), P(x + w, y, z1)], darken(top, 0.26), stroke, 0.8, sid),
+      quad([P(x, y + h, z0), P(x + w, y + h, z0), P(x + w, y + h, z1), P(x, y + h, z1)], darken(top, 0.28), '#64748B', 0.8, sid),
+      quad([P(x + w, y, z0), P(x + w, y + h, z0), P(x + w, y + h, z1), P(x + w, y, z1)], darken(top, 0.45), '#64748B', 0.8, sid),
       flat(r, z1, top, stroke, storeId),
     ];
   };
@@ -293,9 +306,9 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
 
       // Paredes extruidas visibles
       for (const wall of extruded.walls) {
-        const wallColor = wall.faceType === 'south' ? darken(colors.fill, 0.16) : darken(colors.fill, 0.26);
+        const wallColor = wall.faceType === 'south' ? darken(colors.fill, 0.28) : darken(colors.fill, 0.45);
         storeItems.push(
-          quad(wall.points, selected ? th.primaryDark : wallColor, selected ? th.primaryDark : '#CBD5E1', 0.8, {
+          quad(wall.points, selected ? th.primaryDark : wallColor, selected ? th.primaryDark : '#64748B', 0.8, {
             opacity: dimmedSet.has(s.id) ? 0.35 : 1,
             storeId: s.id,
           }),
@@ -304,7 +317,7 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
 
       // Techo
       storeItems.push(
-        quad(extruded.roof, selected ? th.primary : colors.fill, selected ? '#FFFFFF' : '#CBD5E1', selected ? 2 : 0.8, {
+        quad(extruded.roof, selected ? th.primary : colors.fill, selected ? '#FFFFFF' : '#94A3B8', selected ? 2 : 0.8, {
           opacity: dimmedSet.has(s.id) ? 0.4 : 1,
           storeId: s.id,
         }),
@@ -564,6 +577,73 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
       }
     }
   }
+
+  // ---------- Capa de presencia del usuario (Avatar + Cono + Trail) ----------
+  const userLayer: SceneItem[] = [];
+  if (opts.userPosition) {
+    const UP = (x: number, y: number, z: number) => project(x, y, z, iso);
+
+    // Trail: polyline suavizada en N segmentos con opacidad decreciente
+    if (opts.userTrail && opts.userTrail.length >= 2) {
+      const projected = opts.userTrail.map((pt) => UP(pt.x, pt.y, 1.2));
+      const smooth = smoothPolyline(projected, 2);
+      const N = 4;
+      const segments: Array<{ points: Point[]; opacity: number }> = [];
+      for (let i = 0; i < N; i++) {
+        const start = Math.floor((i * (smooth.length - 1)) / N);
+        const end = Math.floor(((i + 1) * (smooth.length - 1)) / N);
+        const slice = smooth.slice(start, end + 1);
+        if (slice.length >= 2) {
+          const opacity = 0.45 - (0.4 * i) / (N - 1); // 0.45 -> 0.05
+          segments.push({ points: slice, opacity });
+        }
+      }
+      if (segments.length > 0) {
+        userLayer.push({ kind: 'userTrail', segments });
+      }
+    }
+
+    // Cono de visión (solo si está en movimiento con heading)
+    const hasHeading = typeof opts.userHeading === 'number';
+    if (hasHeading) {
+      const length = opts.visionConeLength ?? 60;
+      const spread = opts.visionConeSpread ?? Math.PI / 5;
+      const heading = opts.userHeading!;
+      const startAngle = heading - spread / 2;
+      const endAngle = heading + spread / 2;
+      const apex = UP(opts.userPosition.x, opts.userPosition.y, 1.5);
+
+      const ARC_SAMPLES = 12;
+      const arc: Point[] = [];
+      for (let i = 0; i <= ARC_SAMPLES; i++) {
+        const t = i / ARC_SAMPLES;
+        const angle = startAngle + (endAngle - startAngle) * t;
+        const x = opts.userPosition.x + length * Math.cos(angle);
+        const y = opts.userPosition.y + length * Math.sin(angle);
+        arc.push(UP(x, y, 1.5));
+      }
+
+      userLayer.push({
+        kind: 'visionCone',
+        apex,
+        arc,
+        heading,
+        opacity: 0.28,
+      });
+    }
+
+    // Pin del avatar (Z=10 sobre locales, pero antes de las etiquetas Z=∞)
+    const pinPos = UP(opts.userPosition.x, opts.userPosition.y, 3);
+    userLayer.push({
+      kind: 'userPin',
+      x: pinPos.x,
+      y: pinPos.y,
+      radius: 6,
+      heading: opts.userHeading ?? 0,
+    });
+  }
+
+  items.push(...userLayer);
 
   // ---------- Etiquetas, insignias, rótulos de entrada y pin ----------
   const getStoreCenter = (s: MapStore): Point => {

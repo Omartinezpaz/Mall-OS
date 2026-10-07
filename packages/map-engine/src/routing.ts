@@ -106,9 +106,9 @@ export function findRoute(map: MallMapData, fromNodeId: string, toNodeId: string
   };
 }
 
-/** Ruta desde un nodo hasta la puerta de un local. */
-export function findRouteToStore(map: MallMapData, fromNodeId: string, storeId: string): RouteResult | null {
-  const store = map.stores.find((s) => s.id === storeId);
+/** Ruta desde un nodo hasta la puerta de un local. Admite id exacto, slug canónico o alias. */
+export function findRouteToStore(map: MallMapData, fromNodeId: string, storeIdOrSlug: string): RouteResult | null {
+  const store = map.stores.find((s) => s.id === storeIdOrSlug || s.slug === storeIdOrSlug || s.aliases?.includes(storeIdOrSlug));
   return store ? findRoute(map, fromNodeId, store.doorNodeId) : null;
 }
 

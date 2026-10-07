@@ -106,6 +106,12 @@ function renderItem(it: SceneItem, i: number): React.ReactElement | null {
           <Circle cx={0} cy={-1} r={4.5} fill="#FFFFFF" />
         </G>
       );
+    case 'userPin':
+    case 'visionCone':
+    case 'userTrail':
+      return null;
+    default:
+      return null;
   }
 }
 

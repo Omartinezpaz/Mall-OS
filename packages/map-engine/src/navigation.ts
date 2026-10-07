@@ -1,4 +1,4 @@
-import type { MallMapData, NavNode, MapFloor } from './types';
+import type { MallMapData, NavNode, MapFloor, CardinalDirection } from './types';
 import type { RouteResult } from './routing';
 import { distance } from './geometry';
 
@@ -23,6 +23,7 @@ export interface NavStepInstruction {
   floorId: string;
   targetNodeId: string;
   landmark?: string;
+  cardinalDirection?: CardinalDirection;
 }
 
 export interface NavigationPlan {
@@ -31,6 +32,39 @@ export interface NavigationPlan {
   walkingMinutes: number;
   destinationName: string;
   destinationFloorName: string;
+}
+
+const CARDINAL_NAMES: Record<number, { name: string; dir: CardinalDirection }> = {
+  0: { name: 'este', dir: 'east' },
+  1: { name: 'sureste', dir: 'southeast' },
+  2: { name: 'sur', dir: 'south' },
+  3: { name: 'suroeste', dir: 'southwest' },
+  4: { name: 'oeste', dir: 'west' },
+  5: { name: 'noroeste', dir: 'northwest' },
+  6: { name: 'norte', dir: 'north' },
+  7: { name: 'noreste', dir: 'northeast' },
+};
+
+/**
+ * Obtiene el nombre y dirección cardinal ajustados al norte arquitectónico del piso.
+ * @param movementAngleRad Ángulo de movimiento en el plano (Math.atan2(dy, dx))
+ * @param northAngleRad Ángulo hacia donde apunta el norte del plano (ej. -2.356 rad)
+ */
+export function getCardinalDirection(
+  movementAngleRad: number,
+  northAngleRad: number = 0
+): { name: string; cardinal: CardinalDirection } {
+  const relativeAngle = movementAngleRad - northAngleRad;
+  const normalized = ((relativeAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const octant = Math.round(normalized / (Math.PI / 4)) % 8;
+  return {
+    name: CARDINAL_NAMES[octant]?.name ?? 'norte',
+    cardinal: CARDINAL_NAMES[octant]?.dir ?? 'north',
+  };
+}
+
+export function getCardinalDirectionName(movementAngleRad: number, northAngleRad: number = 0): string {
+  return getCardinalDirection(movementAngleRad, northAngleRad).name;
 }
 
 const LANDMARK_NAMES: Record<string, string> = {
@@ -72,8 +106,14 @@ export function generateNavigationPlan(
   const nodeMap = new Map<string, NavNode>(mall.nodes.map((n) => [n.id, n]));
   const floorMap = new Map<string, MapFloor>(mall.floors.map((f) => [f.id, f]));
   const targetStore = targetStoreId
-    ? mall.stores.find((s) => s.id === targetStoreId)
+    ? mall.stores.find(
+        (s) =>
+          s.id === targetStoreId ||
+          s.slug === targetStoreId ||
+          s.aliases?.includes(targetStoreId)
+      )
     : undefined;
+
 
   const destinationName = targetStore?.name ?? 'Destino';
   const destinationFloor = targetStore
@@ -179,6 +219,8 @@ export function generateNavigationPlan(
 
     const landmark = getLandmarkName(next.id) ?? getLandmarkName(curr.id);
     const landmarkText = landmark ? `hacia ${landmark}` : 'por el corredor';
+    const moveAngle = Math.atan2(next.y - curr.y, next.x - curr.x);
+    const { cardinal } = getCardinalDirection(moveAngle, currFloor?.orientation?.northAngle ?? 0);
 
     rawSteps.push({
       index: rawSteps.length,
@@ -189,8 +231,10 @@ export function generateNavigationPlan(
       floorId: curr.floorId,
       targetNodeId: next.id,
       landmark,
+      cardinalDirection: cardinal,
     });
   }
+
 
   // Agrupamos pasos continuos idénticos para no saturar al usuario
   const consolidatedSteps: NavStepInstruction[] = [];

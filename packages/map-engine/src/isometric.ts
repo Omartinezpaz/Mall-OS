@@ -5,25 +5,39 @@ export interface IsoOptions {
   scale: number;
   /** Píxeles por unidad de altura. */
   heightScale: number;
+  /** Ángulo de inclinación visual en radianes (por defecto PI/6 = 30°). Menor ángulo = cámara más a ras de piso. */
+  pitchAngle?: number;
 }
 
-export const DEFAULT_ISO: IsoOptions = { scale: 1.7, heightScale: 1.7 };
+/** Cámara estándar isométrica (30° de inclinación) */
+export const ISO_STANDARD: IsoOptions = { scale: 1.7, heightScale: 1.7, pitchAngle: Math.PI / 6 };
 
-const COS30 = Math.cos(Math.PI / 6);
-const SIN30 = 0.5;
+/** Cámara inmersiva a ras de piso (20° de inclinación, paredes con mayor presencia vertical) */
+export const ISO_GROUND: IsoOptions = { scale: 1.85, heightScale: 2.3, pitchAngle: Math.PI / 9 };
 
-/** Proyecta un punto del plano (x, y) a pantalla con altura z. +x va a la derecha-abajo, +y a la izquierda-abajo. */
+/** Cámara aérea de planta (38° de inclinación) */
+export const ISO_AERIAL: IsoOptions = { scale: 1.5, heightScale: 1.2, pitchAngle: Math.PI / 4.8 };
+
+export const DEFAULT_ISO: IsoOptions = ISO_GROUND;
+
+/** Proyecta un punto del plano (x, y) a pantalla con altura z. */
 export function project(x: number, y: number, z = 0, iso: IsoOptions = DEFAULT_ISO): Point {
+  const angle = iso.pitchAngle ?? (Math.PI / 6);
+  const cosA = Math.cos(angle);
+  const sinA = Math.sin(angle);
   return {
-    x: (x - y) * COS30 * iso.scale,
-    y: (x + y) * SIN30 * iso.scale - z * iso.heightScale,
+    x: (x - y) * cosA * iso.scale,
+    y: (x + y) * sinA * iso.scale - z * iso.heightScale,
   };
 }
 
 /** Desproyecta un punto de pantalla (screenX, screenY) a coordenadas del plano (x, y) a altura z. */
 export function unproject(screenX: number, screenY: number, z = 0, iso: IsoOptions = DEFAULT_ISO): Point {
-  const u = screenX / (COS30 * iso.scale);
-  const v = ((screenY + z * iso.heightScale) * 2) / iso.scale;
+  const angle = iso.pitchAngle ?? (Math.PI / 6);
+  const cosA = Math.cos(angle);
+  const sinA = Math.sin(angle);
+  const u = screenX / (cosA * iso.scale);
+  const v = (screenY + z * iso.heightScale) / (sinA * iso.scale);
   return {
     x: (v + u) / 2,
     y: (v - u) / 2,

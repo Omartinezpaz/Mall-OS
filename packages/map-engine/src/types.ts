@@ -41,6 +41,40 @@ export interface MapStore extends Rect {
   polygon?: Point[];
   /** Posición personalizada para el centro de etiqueta. */
   labelPos?: Point;
+  /** Slug canónico alternativo (ej. 'tijerazo', 'farmatodo') para búsqueda y enrutamiento. */
+  slug?: string;
+  /** Lista de identificadores alias o nombres secundarios aceptados para búsqueda. */
+  aliases?: string[];
+  /** ID de la zona o sector del mall a la que pertenece el local. */
+  zoneId?: string;
+  /** Origen del nombre. 'official' = verificado en directorio, 'inferred' = asignación plausible por confirmar. */
+  nameSource?: 'official' | 'inferred';
+}
+
+export type CardinalDirection =
+  | 'north'
+  | 'northeast'
+  | 'east'
+  | 'southeast'
+  | 'south'
+  | 'southwest'
+  | 'west'
+  | 'northwest';
+
+export interface MapZone {
+  id: string;
+  label: string;
+  polygon: Point[];
+  color: string;
+  cardinal?: 'north' | 'south' | 'east' | 'west' | 'center';
+}
+
+export interface MapOrientation {
+  /**
+   * Ángulo del norte arquitectónico en radianes relativo a +X en plano 2D.
+   * Por ejemplo: -3 * Math.PI / 4 para (-1, -1) [Arriba-Izquierda].
+   */
+  northAngle: number;
 }
 
 export type AreaKind = 'corridor' | 'plaza' | 'entrance';
@@ -96,6 +130,10 @@ export interface MapFloor {
   level: number;
   width: number;
   height: number;
+  /** Orientación y ángulo del norte del plano arquitectónico. */
+  orientation?: MapOrientation;
+  /** Zonas o sectores temáticos/cardinales del piso. */
+  zones?: MapZone[];
   /** Contorno perimetral real del piso (ej. herradura / silueta curva del centro comercial). */
   footprint?: Point[];
   areas: MapArea[];
@@ -103,6 +141,7 @@ export interface MapFloor {
   /** Árboles, bancas, jardineras, escaleras mecánicas, vidrios e insignias. Opcional. */
   props?: MapProp[];
 }
+
 
 export interface MallMapData {
   /** Versión del esquema del modelo de mapa (por defecto 1). */

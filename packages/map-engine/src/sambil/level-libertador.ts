@@ -215,21 +215,23 @@ export const storesSambilLibertador: MapStore[] = [
   { id: 'only_for_kids', name: 'Only For Kids (82 m²)', category: 'fashion', floorId: LEVEL_LIBERTADOR, x: 514, y: 265, w: 22, h: 45, height: 7, doorNodeId: 'door-onlyforkids' },
 ];
 
-export const footprintSambilLibertador = [
+export const footprintSambilLibertador: { x: number; y: number }[] = [
   { x: 10, y: 10 },
-  { x: 180, y: 10 },
-  { x: 360, y: 10 },
-  { x: 540, y: 10 },
   { x: 710, y: 10 },
-  { x: 710, y: 120 },
-  { x: 710, y: 220 },
-  { x: 710, y: 350 },
-  { x: 550, y: 350 },
-  { x: 360, y: 350 },
-  { x: 180, y: 350 },
-  { x: 10, y: 350 },
-  { x: 10, y: 220 },
-  { x: 10, y: 120 },
+  { x: 715, y: 35 },
+  { x: 715, y: 320 },
+  { x: 700, y: 345 },
+  { x: 670, y: 350 },
+  { x: 575, y: 350 },
+  { x: 550, y: 335 },
+  { x: 520, y: 220 },
+  { x: 450, y: 120 },
+  { x: 270, y: 120 },
+  { x: 200, y: 220 },
+  { x: 170, y: 335 },
+  { x: 145, y: 350 },
+  { x: 25, y: 350 },
+  { x: 10, y: 330 },
 ];
 
 export const floorLibertadorData: MapFloor = {

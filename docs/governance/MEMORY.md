@@ -46,6 +46,8 @@
 | D-032 | 2026-10-02 | Grupo La Cascada (hotel, Maturín): oportunidad comercial abierta | Sin alcance ni requisitos definidos; no se desarrolla nada específico para hotel hasta tener especificación y planos | Abierta |
 | D-033 | 2026-10-02 | Cupones del demo se generan en el cliente y llevan rotulado "DEMO" | El canje real solo por RPC del servidor (`redeem_coupon`); los cupones locales llevan advertencia visible de simulación | Vigente |
 | D-034 | 2026-10-02 | Precios en pantalla: decisión pendiente | Por ahora solo porcentajes y beneficios promocionales; cero precios absolutos en USD | Pendiente |
+| D-035 | 2026-10-07 | Motor Skia GPU 60 FPS + Reanimated con capas HUD | Zero-allocations GPU paths, easing exponencial `cameraFollowSmooth` y resorte semi-implícito `cameraSpringTo` | Vigente |
+| D-036 | 2026-10-07 | Presencia del avatar con halo pulsante (0.8 Hz), cono direccional y trail persistente | Simulación fluida con trail de 15m, cono de visión 2D proyectado y heading en radianes | Vigente |
 
 
 ## Riesgos abiertos
@@ -72,5 +74,11 @@
 - 2026-10-02 | Gemini 2.5 Flash | Corrección y ajuste riguroso del mapa: modularización de `mapa.tsx` (< 290 líneas con hooks `useWalkSimulation` y `useMallTime`), aviso visible `[SIMULACIÓN]` y `[MODO DEMOSTRACIÓN]`, vitrina offline sin URLs remotas ni marcas ajenas, 0 precios en USD (solo porcentajes), y suite de 43 pruebas del motor pasando al 100% | Validación en dispositivo Android físico en modo avión |
 - 2026-10-02 | Gemini 2.5 Flash | Modelado completo de los 4 niveles oficiales de Sambil Chacao (Autopista, Acuario, Libertador, Diversión/Terrazas), 5 plazas icónicas, tiendas ancla (ZARA 2500m², Tijerazo, Mango Bajito 2136m², Samsung, Nike, Cines Unidos), vitrinas digitales sincronizadas y suite de 46 pruebas automatizadas | Listo para presentación de alto impacto y expansión Hotel La Cascada |
 - 2026-10-02 | Gemini 2.5 Flash | Mall OS Map Engine v0.4.1 (Authoring Foundation) & Icon System v2: Validación dimensional de pisos, locales, obstáculos y áreas; distancia exacta al perímetro de puertas (`distanceToRectPerimeter`); validación rigurosa de enlaces y alineación vertical; versionado `schemaVersion: 1`; Toolbar de copiado reactivo en Icon Lab con `expo-clipboard`; suite expandida a 61 pruebas unitarias | Siguiente etapa: Map Editor en `@mallos/admin` |
+- 2026-10-07 | Gemini 3.7 Flash | Integración y aplicación completa del Nivel Autopista (P1) de Sambil Chacao en @mallos/map-engine: 116 locales con polígonos y nombres reales identificados, 155 nodos de navegación de pasillos y puertas, calibración a 0.52 m/u, interconexión vertical de plazas y sincronización con el visor isométrico de la app móvil | Verificación en app móvil Expo |
+- 2026-10-07 | Gemini 3.7 Flash | Validación topológica y optimización geométrica del Map Engine: snapping de medianeras compartidas en Nivel Autopista (0 solapamientos), armonización de slugs/aliases canónicos para tiendas ancla, pre-filtrado bounding-box en cálculos de intersección geométrica y suite de pruebas unitarias al 100% (Reporte de Calidad Sambil Chacao PASSED con 0 errores bloqueantes) | Operativo en la app móvil |
+- 2026-10-07 | Gemini 3.7 Flash | Implementación de Cimientos Skia + Cámara Fluida 60 FPS (Nivel 2 - Mapa Vivo): incorporación de `cameraFollowSmooth` y `cameraSpringTo` en `@mallos/map-engine`, compilador inmutable `compileScene` en `apps/mobile/src/features/map/skia/compile-scene.ts` (cero allocations por frame), componente `IsometricSkiaMap.tsx` en UI thread con Reanimated + Skia, plugin Reanimated en `babel.config.js` y 100% de typecheck y tests unitarios pasando | Fase 2 lista para avatar con pulso e iluminación |
+
+
+
 
 

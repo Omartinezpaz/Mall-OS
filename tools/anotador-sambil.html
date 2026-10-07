@@ -3,25 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mall OS · Anotador Geométrico Sambil 2.5D</title>
+  <title>Mall OS · Anotador Geométrico Sambil 2.5D (v3)</title>
   <style>
     :root {
-      --bg-dark: #090D16;
-      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-dark: #070B14;
+      --bg-card: rgba(15, 23, 42, 0.94);
       --bg-panel: #0F172A;
-      --border: rgba(255, 255, 255, 0.1);
+      --border: rgba(255, 255, 255, 0.12);
       --border-focus: #10B981;
       --accent: #10B981;
       --accent-hover: #059669;
       --text: #F8FAFC;
       --text-muted: #94A3B8;
       --danger: #EF4444;
-      --plaza-fuente: #DC2626;
-      --plaza-jardin: #2563EB;
-      --plaza-central: #EA580C;
-      --plaza-arte: #7C3AED;
-      --plaza-musica: #1D4ED8;
-      --plaza-musica-green: #059669;
+      --selection: #F59E0B;
     }
 
     * {
@@ -42,9 +37,9 @@
 
     /* Header */
     header {
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.98);
       border-bottom: 1px solid var(--border);
-      padding: 10px 20px;
+      padding: 8px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -58,28 +53,29 @@
     }
 
     .brand-logo {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       background: linear-gradient(135deg, #10B981, #3B82F6);
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 14px;
+      font-size: 13px;
       color: #FFF;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
     }
 
     .brand h1 {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: -0.02em;
     }
 
     .brand span {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       padding: 2px 8px;
       border-radius: 12px;
       border: 1px solid var(--border);
@@ -91,6 +87,59 @@
       align-items: center;
     }
 
+    .quick-levels {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .level-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .level-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .level-btn.active {
+      background: #3B82F6;
+      color: #FFFFFF;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slider-container input[type="range"] {
+      width: 80px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
     /* Main workspace */
     .workspace {
       flex: 1;
@@ -99,58 +148,73 @@
       overflow: hidden;
     }
 
-    /* Toolbar Floating */
-    .toolbar-floating {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      z-index: 10;
-      background: var(--bg-card);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 6px;
+    /* Toolbar vertical */
+    .toolbar {
+      width: 58px;
+      background: rgba(15, 23, 42, 0.95);
+      border-right: 1px solid var(--border);
       display: flex;
-      gap: 6px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 8px;
+      z-index: 10;
     }
 
     .tool-btn {
+      width: 42px;
+      height: 42px;
       background: transparent;
       border: 1px solid transparent;
-      color: var(--text-muted);
-      padding: 8px 12px;
       border-radius: 8px;
+      color: var(--text-muted);
       cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
+      justify-content: center;
+      font-size: 15px;
+      gap: 2px;
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .tool-btn span.label {
+      font-size: 9px;
+      font-weight: 600;
     }
 
     .tool-btn:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text);
+      border-color: var(--border);
     }
 
     .tool-btn.active {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: rgba(16, 185, 129, 0.4);
-      color: var(--accent);
+      background: var(--accent);
+      color: #FFFFFF;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+      border-color: var(--accent);
+    }
+
+    .tool-separator {
+      width: 32px;
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
     }
 
     /* Canvas Area */
     .canvas-container {
       flex: 1;
       position: relative;
-      cursor: crosshair;
+      background: #0B1120;
       overflow: hidden;
-      background: #06090F;
+      cursor: crosshair;
     }
 
     canvas {
+      display: block;
       position: absolute;
       top: 0;
       left: 0;
@@ -158,16 +222,16 @@
 
     /* Side Panel */
     .side-panel {
-      width: 360px;
-      background: var(--bg-panel);
+      width: 330px;
+      background: rgba(15, 23, 42, 0.96);
       border-left: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      z-index: 15;
+      z-index: 10;
     }
 
     .panel-header {
-      padding: 14px 18px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -175,172 +239,205 @@
     }
 
     .panel-header h2 {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
     }
 
-    .panel-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .layer-group {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .layer-group-title {
-      padding: 8px 12px;
-      background: rgba(255, 255, 255, 0.04);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .layer-item {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .layer-item:last-child {
-      border-bottom: none;
-    }
-
-    .layer-item:hover {
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .layer-item.selected {
-      background: rgba(16, 185, 129, 0.1);
-      border-left: 3px solid var(--accent);
-    }
-
-    .layer-info {
+    /* Layer Rows (v3) */
+    .layer-row {
       display: flex;
       align-items: center;
       gap: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 3px;
+      border: 1px solid transparent;
     }
-
-    .layer-badge {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
+    .layer-row:hover { background: rgba(255,255,255,0.06); }
+    .layer-row.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
     }
-
-    .btn-delete {
+    .layer-row.locked { opacity: 0.6; }
+    .layer-row .layer-name { flex: 1; font-weight: 600; font-size: 12px; }
+    .layer-row .layer-count {
+      background: rgba(0,0,0,0.4);
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .layer-row .layer-icon-btn {
       background: transparent;
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 4px;
+      padding: 2px 4px;
       border-radius: 4px;
+      font-size: 13px;
+    }
+    .layer-row .layer-icon-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+    .layer-row .layer-icon-btn.active { color: var(--accent); }
+
+    .layer-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 6px 8px;
+      text-align: center;
+      font-style: italic;
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      margin-top: 6px;
     }
 
-    .btn-delete:hover {
-      color: var(--danger);
-      background: rgba(239, 68, 68, 0.1);
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    /* Bottom action bar */
+    .inspector-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .inspector-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 12px;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+    }
+
     .panel-footer {
-      padding: 14px 18px;
+      padding: 12px 16px;
       border-top: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       gap: 8px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(10, 15, 30, 0.9);
     }
 
     .btn-primary {
       background: var(--accent);
-      color: #06110D;
+      color: #FFFFFF;
       border: none;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      border: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 13px;
       padding: 8px 14px;
-      border-radius: 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: background 0.15s;
+      transition: all 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.14);
     }
 
-    /* Modal Export */
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-delete:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    /* Modal */
     .modal-backdrop {
-      display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(4px);
-      z-index: 50;
+      display: none;
       align-items: center;
       justify-content: center;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
+      z-index: 100;
     }
 
     .modal-card {
       background: var(--bg-panel);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      width: 680px;
+      border-radius: 12px;
+      width: 700px;
       max-width: 90vw;
       max-height: 85vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
     }
 
     .modal-header {
-      padding: 16px 20px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -348,86 +445,111 @@
     }
 
     .modal-body {
-      padding: 20px;
+      padding: 16px 20px;
       flex: 1;
       overflow-y: auto;
     }
 
-    textarea.code-export {
+    .code-export {
       width: 100%;
-      height: 320px;
-      background: #050811;
+      height: 380px;
+      background: #070B14;
       border: 1px solid var(--border);
       border-radius: 8px;
-      color: #34D399;
-      font-family: "Fira Code", monospace;
-      font-size: 12px;
+      color: #38BDF8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
       padding: 12px;
       resize: none;
+      outline: none;
+      white-space: pre;
     }
 
-    /* Info Badge / Status */
+    /* Status Bar */
     .status-bar {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 12px;
+      background: #070B14;
+      border-top: 1px solid var(--border);
+      padding: 4px 18px;
       font-size: 11px;
-      font-family: monospace;
       color: var(--text-muted);
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .quick-levels {
       display: flex;
-      gap: 6px;
+      justify-content: space-between;
+      z-index: 20;
     }
   </style>
 </head>
 <body>
 
+  <!-- Header -->
   <header>
     <div class="brand">
       <div class="brand-logo">2.5D</div>
       <div>
-        <h1>Mall OS · Anotador Geométrico Sambil</h1>
+        <h1>Anotador Geométrico Sambil · Sambil Chacao</h1>
       </div>
-      <span>Calibración Isométrica HD</span>
+      <span>v3 Arquitectura por Capas</span>
+    </div>
+
+    <div class="quick-levels">
+      <button class="level-btn active" id="lvl-autopista" onclick="selectLevel('autopista')">Autopista (P1)</button>
+      <button class="level-btn" id="lvl-acuario" onclick="selectLevel('acuario')">Acuario (P2)</button>
+      <button class="level-btn" id="lvl-libertador" onclick="selectLevel('libertador')">Libertador (P3)</button>
+      <button class="level-btn" id="lvl-feria" onclick="selectLevel('feria')">Feria (P4)</button>
+      <button class="level-btn" id="lvl-diversion" onclick="selectLevel('diversion')">Diversión (P5)</button>
     </div>
 
     <div class="header-actions">
-      <div class="quick-levels">
-        <button class="btn-secondary" onclick="loadSampleImage('nivel autopista.jpeg')">Autopista</button>
-        <button class="btn-secondary" onclick="loadSampleImage('nivel acuario.jpeg')">Acuario</button>
-        <button class="btn-secondary" onclick="loadSampleImage('nivel libertador.jpeg')">Libertador</button>
-        <button class="btn-secondary" onclick="loadSampleImage('nivel feria.jpeg')">Feria</button>
-        <button class="btn-secondary" onclick="loadSampleImage('nivel diversion.jpeg')">Diversión</button>
+      <div class="controls-bar">
+        <label class="btn-secondary" style="cursor: pointer; padding: 4px 10px; font-size: 11px;">
+          📁 Cargar Plano
+          <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFile(event)" />
+        </label>
+        <div class="slider-container">
+          <span>Opacidad:</span>
+          <input type="range" id="bgOpacity" min="0.1" max="1" step="0.05" value="0.75" oninput="redraw()" />
+        </div>
       </div>
-
-      <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFile(event)" />
-      <button class="btn-secondary" onclick="document.getElementById('fileInput').click()">📁 Cargar Plano</button>
-      <button class="btn-primary" onclick="openExportModal()">⚡ Exportar Código TS / JSON</button>
+      <button class="btn-primary" onclick="openExportModal()">📋 Exportar TS</button>
     </div>
   </header>
 
+  <!-- Workspace -->
   <div class="workspace">
-    <!-- Floating Toolbar -->
-    <div class="toolbar-floating">
-      <button class="tool-btn active" id="tool-pan" onclick="setMode('pan')">🖐️ Mover / Zoom</button>
-      <button class="tool-btn" id="tool-footprint" onclick="setMode('footprint')">⬡ Huella Herradura</button>
-      <button class="tool-btn" id="tool-plaza" onclick="setMode('plaza')">🔴 Plaza Circular</button>
-      <button class="tool-btn" id="tool-store" onclick="setMode('store')">🏬 Ancla / Local</button>
-      <button class="tool-btn" id="tool-corridor" onclick="setMode('corridor')">🛣️ Pasillo</button>
-      <button class="tool-btn" id="tool-node" onclick="setMode('node')">📍 Nodo Ruta</button>
-    </div>
-
-    <!-- Status Bar -->
-    <div class="status-bar" id="statusBar">
-      Coord: (0, 0) | Escala: 720×360 | Modo: Mover / Zoom (Rueda = Zoom, Arrastre = Pan)
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button class="tool-btn active" id="tool-select" onclick="setMode('select')" title="Seleccionar & Mover (S)">
+        <span>↖</span>
+        <span class="label">Mover</span>
+      </button>
+      <button class="tool-btn" id="tool-pan" onclick="setMode('pan')" title="Desplazar Lienzo (Espacio)">
+        <span>✋</span>
+        <span class="label">Pan</span>
+      </button>
+      <div class="tool-separator"></div>
+      <button class="tool-btn" id="tool-footprint" onclick="setMode('footprint')" title="1. Dibujar Huella / Planta">
+        <span>⬡</span>
+        <span class="label">Planta</span>
+      </button>
+      <button class="tool-btn" id="tool-corridor" onclick="setMode('corridor')" title="2. Dibujar Pasillo">
+        <span>🛣️</span>
+        <span class="label">Pasillo</span>
+      </button>
+      <button class="tool-btn" id="tool-core" onclick="setMode('core')" title="3. Escalera / Ascensor">
+        <span>🪜</span>
+        <span class="label">Núcleo</span>
+      </button>
+      <button class="tool-btn" id="tool-plaza" onclick="setMode('plaza')" title="Plaza Circular">
+        <span>⭕</span>
+        <span class="label">Plaza</span>
+      </button>
+      <button class="tool-btn" id="tool-store" onclick="setMode('store')" title="4. Dibujar Local">
+        <span>🏬</span>
+        <span class="label">Local</span>
+      </button>
+      <button class="tool-btn" id="tool-node" onclick="setMode('node')" title="5. Nodo de Ruta">
+        <span>📍</span>
+        <span class="label">Nodo</span>
+      </button>
     </div>
 
     <!-- Canvas -->
@@ -438,37 +560,86 @@
     <!-- Side Panel -->
     <div class="side-panel">
       <div class="panel-header">
-        <h2>Elementos Trazados (<span id="elemCount">0</span>)</h2>
-        <button class="btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="clearAll()">Limpiar</button>
+        <h2>Jerarquía de Capas</h2>
+        <div style="display: flex; gap: 4px;">
+          <button class="btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="reloadLevelPreset()" title="Restaurar preset calibrado">↺ Reset</button>
+          <button class="btn-secondary" style="padding: 2px 6px; font-size: 11px;" onclick="clearActiveLayer()" title="Limpiar capa activa">Limpiar</button>
+        </div>
       </div>
 
-      <div class="panel-content" id="layerList">
+      <!-- Panel dinámico de capas v3 -->
+      <div id="layersPanel" style="padding: 10px 14px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2);">
         <!-- Generado dinámicamente -->
+      </div>
+
+      <!-- Inspector de elemento seleccionado -->
+      <div class="panel-content" id="inspectorPanel" style="display: none;">
+        <div class="inspector-card">
+          <h3>
+            <span id="inspectTitle">Editar Elemento</span>
+            <button class="btn-delete" onclick="deleteSelectedItem()">Eliminar</button>
+          </h3>
+          <div class="form-group">
+            <label>Nombre / Identificador</label>
+            <input type="text" id="inspectName" oninput="updateInspectItem()" />
+          </div>
+          <div class="form-group" id="field-cat-wrap">
+            <label>Categoría</label>
+            <select id="inspectCategory" onchange="updateInspectItem()">
+              <option value="fashion">Moda & Ropa</option>
+              <option value="food">Gastronomía</option>
+              <option value="beauty">Belleza & Salud</option>
+              <option value="tech">Tecnología</option>
+              <option value="sports">Deportes</option>
+              <option value="services">Servicios & Banca</option>
+              <option value="entertainment">Entretenimiento</option>
+              <option value="pharmacy">Farmacia</option>
+              <option value="department_store">Tienda por Departamento</option>
+            </select>
+          </div>
+          <div class="form-group" id="field-kind-wrap" style="display: none;">
+            <label>Tipo de Núcleo</label>
+            <select id="inspectKind" onchange="updateInspectItem()">
+              <option value="stairs">Escaleras (Stairs)</option>
+              <option value="elevator">Ascensor (Elevator)</option>
+            </select>
+          </div>
+          <div class="form-group" id="field-radius-wrap" style="display: none;">
+            <label>Radio de la Plaza (px)</label>
+            <input type="number" id="inspectRadius" min="10" max="60" oninput="updateInspectItem()" />
+          </div>
+        </div>
       </div>
 
       <div class="panel-footer">
         <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
-          💡 <b>Atajos:</b><br/>
-          • <b>Clic:</b> Agregar vértice.<br/>
-          • <b>Enter / Doble clic:</b> Cerrar polígono.<br/>
-          • <b>Ctrl + Z:</b> Deshacer último punto.<br/>
-          • <b>Esc:</b> Cancelar trazo actual.
+          💡 <b>Flujo Arquitectónico:</b><br/>
+          1. <b>Planta:</b> Contorno exterior cerrado del mall.<br/>
+          2. <b>Pasillos:</b> Circulación continua entre plazas.<br/>
+          3. <b>Núcleos:</b> Escaleras/ascensores de interconexión.<br/>
+          4. <b>Locales:</b> Espacios comerciales con paredes compartidas.<br/>
+          • <b>Tab:</b> Ciclar capa · <b>L:</b> Bloquear · <b>H:</b> Ocultar
         </div>
-        <button class="btn-primary" onclick="openExportModal()">📋 Ver Código para level-*.ts</button>
+        <button class="btn-primary" onclick="openExportModal()">📋 Ver Código TS (@mallos/map-engine)</button>
       </div>
     </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar" id="statusBar">
+    Nivel: AUTOPISTA | Capa: PLANTA (FOOTPRINT) | Zoom: 100% | Modo: SELECT
   </div>
 
   <!-- Modal Export -->
   <div class="modal-backdrop" id="exportModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 style="font-size: 16px; font-weight: 700;">Código Generado para `@mallos/map-engine`</h3>
+        <h3 style="font-size: 15px; font-weight: 700;">Código TypeScript para `@mallos/map-engine`</h3>
         <button class="btn-delete" onclick="closeExportModal()">✕</button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-          Pega estas definiciones directamente en tu archivo <code>packages/map-engine/src/sambil/level-*.ts</code>:
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+          Geometría calibrada directamente desde el plano arquitectónico oficial de Sambil:
         </p>
         <textarea class="code-export" id="codeExportArea" readonly></textarea>
       </div>
@@ -480,12 +651,442 @@
   </div>
 
   <script>
+    // --- PRESETS ARQUITECTÓNICOS OFICIALES SAMBIL CHACAO CALIBRADOS (Preservación 1:1 Aspect Ratio) ---
+    const LEVEL_PRESETS = {
+      autopista: {
+        imageFile: 'nivel autopista.jpeg',
+        footprint: [
+          { x: 56, y: 45 },
+          { x: 236, y: 45 },
+          { x: 380, y: 45 },
+          { x: 470, y: 65 },
+          { x: 555, y: 115 },
+          { x: 625, y: 175 },
+          { x: 686, y: 235 },
+          { x: 686, y: 282 },
+          { x: 560, y: 282 },
+          { x: 138, y: 282 },
+          { x: 50, y: 282 },
+          { x: 48, y: 198 },
+          { x: 56, y: 45 }
+        ],
+        plazas: [
+          { id: 'pl-fuente', label: 'Plaza La Fuente', color: '#DC2626', center: { x: 225, y: 130 }, radius: 27 },
+          { id: 'pl-jardin', label: 'Plaza Jardin', color: '#2563EB', center: { x: 108, y: 220 }, radius: 25 },
+          { id: 'pl-central', label: 'Plaza Central', color: '#EA580C', center: { x: 358, y: 218 }, radius: 27 },
+          { id: 'pl-arte', label: 'Plaza El Arte', color: '#7C3AED', center: { x: 468, y: 132 }, radius: 26 },
+          { id: 'pl-musica', label: 'Plaza La Musica', color: '#1D4ED8', center: { x: 578, y: 222 }, radius: 27 }
+        ],
+        corridors: [
+          {
+            id: 'corr-north',
+            polygon: [
+              { x: 242, y: 114 }, { x: 300, y: 104 }, { x: 360, y: 102 }, { x: 410, y: 108 },
+              { x: 448, y: 120 }, { x: 448, y: 138 }, { x: 410, y: 126 }, { x: 360, y: 120 },
+              { x: 300, y: 122 }, { x: 242, y: 134 }
+            ]
+          },
+          {
+            id: 'corr-south',
+            polygon: [
+              { x: 132, y: 210 }, { x: 335, y: 210 }, { x: 385, y: 210 }, { x: 552, y: 218 },
+              { x: 552, y: 232 }, { x: 385, y: 224 }, { x: 335, y: 224 }, { x: 132, y: 224 }
+            ]
+          },
+          {
+            id: 'corr-east',
+            polygon: [
+              { x: 486, y: 144 }, { x: 535, y: 175 }, { x: 562, y: 202 },
+              { x: 546, y: 214 }, { x: 520, y: 188 }, { x: 472, y: 154 }
+            ]
+          },
+          {
+            id: 'corr-west',
+            polygon: [
+              { x: 120, y: 198 }, { x: 205, y: 140 }, { x: 218, y: 150 }, { x: 132, y: 208 }
+            ]
+          }
+        ],
+        cores: [
+          { id: 'v-pj-1', x: 72, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-plf-1', x: 180, y: 73, size: 14, kind: 'stairs' },
+          { id: 'v-pc-1', x: 350, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-pea-1', x: 530, y: 73, size: 14, kind: 'stairs' },
+          { id: 'v-plm-1', x: 584, y: 250, size: 14, kind: 'stairs' }
+        ],
+        stores: [
+          // Ala Noroeste
+          {
+            id: 'tijerazo', name: 'Tiendas Tijerazo', category: 'fashion', x: 56, y: 45, w: 100, h: 47, height: 14,
+            polygon: [{ x: 56, y: 45 }, { x: 156, y: 45 }, { x: 156, y: 92 }, { x: 56, y: 92 }],
+            labelPos: { x: 106, y: 68 }
+          },
+          {
+            id: 'macuto', name: 'Macuto', category: 'fashion', x: 158, y: 45, w: 78, h: 47, height: 13,
+            polygon: [{ x: 158, y: 45 }, { x: 236, y: 45 }, { x: 236, y: 92 }, { x: 158, y: 92 }],
+            labelPos: { x: 197, y: 68 }
+          },
+          {
+            id: 'lc_waikiki', name: 'LC Waikiki', category: 'fashion', x: 56, y: 95, w: 92, h: 37, height: 13,
+            polygon: [{ x: 56, y: 95 }, { x: 148, y: 95 }, { x: 148, y: 132 }, { x: 56, y: 132 }],
+            labelPos: { x: 102, y: 113 }
+          },
+          {
+            id: 'bath_body_works', name: 'Bath & Body Works', category: 'beauty', x: 58, y: 135, w: 78, h: 37, height: 12,
+            polygon: [{ x: 64, y: 135 }, { x: 136, y: 135 }, { x: 120, y: 172 }, { x: 58, y: 165 }],
+            labelPos: { x: 94, y: 152 }
+          },
+          {
+            id: 'banco_tesoro', name: 'Banco del Tesoro', category: 'services', x: 56, y: 172, w: 52, h: 32, height: 12,
+            polygon: [{ x: 58, y: 172 }, { x: 108, y: 174 }, { x: 100, y: 204 }, { x: 56, y: 200 }],
+            labelPos: { x: 80, y: 187 }
+          },
+          {
+            id: 'estivaneli', name: 'Estivaneli', category: 'fashion', x: 54, y: 205, w: 44, h: 31, height: 12,
+            polygon: [{ x: 56, y: 205 }, { x: 98, y: 205 }, { x: 96, y: 236 }, { x: 54, y: 236 }],
+            labelPos: { x: 76, y: 220 }
+          },
+
+          // Ala Sur
+          {
+            id: 'victoria_secret', name: "Victoria's Secret", category: 'beauty', x: 140, y: 230, w: 35, h: 46, height: 13,
+            polygon: [{ x: 140, y: 230 }, { x: 175, y: 230 }, { x: 175, y: 276 }, { x: 140, y: 276 }],
+            labelPos: { x: 157, y: 253 }
+          },
+          {
+            id: 'bhype', name: 'Bhype', category: 'fashion', x: 178, y: 230, w: 22, h: 46, height: 12,
+            polygon: [{ x: 178, y: 230 }, { x: 200, y: 230 }, { x: 200, y: 276 }, { x: 178, y: 276 }],
+            labelPos: { x: 189, y: 253 }
+          },
+          {
+            id: 'psyco_bunny', name: 'Psycho Bunny', category: 'fashion', x: 203, y: 230, w: 23, h: 46, height: 12,
+            polygon: [{ x: 203, y: 230 }, { x: 226, y: 230 }, { x: 226, y: 276 }, { x: 203, y: 276 }],
+            labelPos: { x: 214, y: 253 }
+          },
+          {
+            id: 'aishop', name: 'Aishop', category: 'fashion', x: 229, y: 230, w: 21, h: 46, height: 12,
+            polygon: [{ x: 229, y: 230 }, { x: 250, y: 230 }, { x: 250, y: 276 }, { x: 229, y: 276 }],
+            labelPos: { x: 239, y: 253 }
+          },
+          {
+            id: 'jadu_cosmetics', name: 'Jadu Cosmetics', category: 'beauty', x: 253, y: 230, w: 22, h: 46, height: 12,
+            polygon: [{ x: 253, y: 230 }, { x: 275, y: 230 }, { x: 275, y: 276 }, { x: 253, y: 276 }],
+            labelPos: { x: 264, y: 253 }
+          },
+          {
+            id: 'xc2', name: 'XC2 Blue', category: 'fashion', x: 278, y: 230, w: 24, h: 46, height: 12,
+            polygon: [{ x: 278, y: 230 }, { x: 302, y: 230 }, { x: 302, y: 276 }, { x: 278, y: 276 }],
+            labelPos: { x: 290, y: 253 }
+          },
+          {
+            id: 'skechers', name: 'Skechers', category: 'fashion', x: 305, y: 230, w: 21, h: 46, height: 12,
+            polygon: [{ x: 305, y: 230 }, { x: 326, y: 230 }, { x: 326, y: 276 }, { x: 305, y: 276 }],
+            labelPos: { x: 315, y: 253 }
+          },
+          {
+            id: 'libby_lu_usa_jeans', name: 'USA Jeans / Libby Lu', category: 'fashion', x: 328, y: 230, w: 22, h: 46, height: 12,
+            polygon: [{ x: 328, y: 230 }, { x: 350, y: 230 }, { x: 350, y: 276 }, { x: 328, y: 276 }],
+            labelPos: { x: 339, y: 253 }
+          },
+          {
+            id: 'reinaldo_sport', name: 'Reinaldo Sport', category: 'sports', x: 355, y: 236, w: 27, h: 40, height: 12,
+            polygon: [{ x: 355, y: 236 }, { x: 382, y: 236 }, { x: 382, y: 276 }, { x: 355, y: 276 }],
+            labelPos: { x: 368, y: 256 }
+          },
+          {
+            id: 'juventus', name: 'Juventus', category: 'fashion', x: 385, y: 236, w: 20, h: 40, height: 12,
+            polygon: [{ x: 385, y: 236 }, { x: 405, y: 236 }, { x: 405, y: 276 }, { x: 385, y: 276 }],
+            labelPos: { x: 395, y: 256 }
+          },
+          {
+            id: 'sport_market', name: 'Sport Market', category: 'sports', x: 418, y: 230, w: 30, h: 46, height: 12,
+            polygon: [{ x: 418, y: 230 }, { x: 448, y: 230 }, { x: 448, y: 276 }, { x: 418, y: 276 }],
+            labelPos: { x: 433, y: 253 }
+          },
+          {
+            id: 'al_giorno', name: 'Al Giorno', category: 'fashion', x: 450, y: 230, w: 22, h: 46, height: 12,
+            polygon: [{ x: 450, y: 230 }, { x: 472, y: 230 }, { x: 472, y: 276 }, { x: 450, y: 276 }],
+            labelPos: { x: 461, y: 253 }
+          },
+          {
+            id: 'farmatodo', name: 'Farmatodo (478 m²)', category: 'pharmacy', x: 475, y: 230, w: 35, h: 46, height: 13,
+            polygon: [{ x: 475, y: 230 }, { x: 510, y: 230 }, { x: 510, y: 276 }, { x: 475, y: 276 }],
+            labelPos: { x: 492, y: 253 }
+          },
+          {
+            id: 'make_waves', name: 'Make Waves', category: 'fashion', x: 512, y: 230, w: 24, h: 46, height: 12,
+            polygon: [{ x: 512, y: 230 }, { x: 536, y: 230 }, { x: 536, y: 276 }, { x: 512, y: 276 }],
+            labelPos: { x: 524, y: 253 }
+          },
+          {
+            id: 'pull_and_bear', name: 'Pull & Bear (788 m²)', category: 'fashion', x: 540, y: 230, w: 60, h: 48, height: 14,
+            polygon: [{ x: 540, y: 230 }, { x: 600, y: 230 }, { x: 600, y: 278 }, { x: 540, y: 278 }],
+            labelPos: { x: 570, y: 254 }
+          },
+          {
+            id: 'cines_unidos_1', name: 'Cines Unidos', category: 'entertainment', x: 605, y: 235, w: 81, h: 47, height: 16,
+            polygon: [{ x: 605, y: 235 }, { x: 686, y: 235 }, { x: 686, y: 282 }, { x: 605, y: 282 }],
+            labelPos: { x: 645, y: 258 }
+          },
+
+          // Ala Este
+          {
+            id: 'bershka', name: 'Bershka (812 m²)', category: 'fashion', x: 566, y: 165, w: 82, h: 70, height: 14,
+            polygon: [{ x: 580, y: 165 }, { x: 648, y: 195 }, { x: 624, y: 235 }, { x: 566, y: 205 }],
+            labelPos: { x: 604, y: 200 }
+          },
+          {
+            id: 'stradivarius', name: 'Stradivarius (735 m²)', category: 'fashion', x: 518, y: 122, w: 87, h: 68, height: 13,
+            polygon: [{ x: 535, y: 122 }, { x: 605, y: 160 }, { x: 580, y: 190 }, { x: 518, y: 152 }],
+            labelPos: { x: 559, y: 156 }
+          },
+          {
+            id: 'womensecret', name: "Women's Secret", category: 'fashion', x: 500, y: 98, w: 60, h: 50, height: 12,
+            polygon: [{ x: 518, y: 98 }, { x: 560, y: 124 }, { x: 540, y: 148 }, { x: 500, y: 124 }],
+            labelPos: { x: 529, y: 123 }
+          },
+          {
+            id: 'opticabilli', name: 'Optica Billi', category: 'services', x: 490, y: 84, w: 52, h: 42, height: 12,
+            polygon: [{ x: 504, y: 84 }, { x: 542, y: 108 }, { x: 526, y: 126 }, { x: 490, y: 104 }],
+            labelPos: { x: 515, y: 105 }
+          },
+          {
+            id: 'fashion_look', name: 'Fashion Look', category: 'fashion', x: 472, y: 70, w: 52, h: 40, height: 12,
+            polygon: [{ x: 486, y: 70 }, { x: 524, y: 92 }, { x: 508, y: 110 }, { x: 472, y: 90 }],
+            labelPos: { x: 497, y: 90 }
+          },
+
+          // Bloque Norte
+          {
+            id: 'sportland', name: 'Sportland', category: 'sports', x: 455, y: 64, w: 30, h: 44, height: 12,
+            polygon: [{ x: 455, y: 64 }, { x: 485, y: 64 }, { x: 485, y: 108 }, { x: 455, y: 108 }],
+            labelPos: { x: 470, y: 86 }
+          },
+          {
+            id: 'springfield', name: 'Springfield', category: 'fashion', x: 420, y: 58, w: 32, h: 46, height: 12,
+            polygon: [{ x: 420, y: 58 }, { x: 452, y: 58 }, { x: 452, y: 104 }, { x: 420, y: 104 }],
+            labelPos: { x: 436, y: 81 }
+          },
+          {
+            id: 'las_villas', name: 'Las Villas Perfumeria', category: 'beauty', x: 388, y: 54, w: 30, h: 46, height: 12,
+            polygon: [{ x: 388, y: 54 }, { x: 418, y: 54 }, { x: 418, y: 100 }, { x: 388, y: 100 }],
+            labelPos: { x: 403, y: 77 }
+          },
+          {
+            id: 'jeep_cat', name: 'Jeep / CAT', category: 'fashion', x: 362, y: 52, w: 24, h: 44, height: 12,
+            polygon: [{ x: 362, y: 52 }, { x: 386, y: 52 }, { x: 386, y: 96 }, { x: 362, y: 96 }],
+            labelPos: { x: 374, y: 74 }
+          },
+          {
+            id: 'euphoria_hangten', name: 'Euphoria / Hang Ten', category: 'fashion', x: 330, y: 58, w: 30, h: 40, height: 12,
+            polygon: [{ x: 330, y: 58 }, { x: 360, y: 58 }, { x: 360, y: 98 }, { x: 330, y: 98 }],
+            labelPos: { x: 345, y: 78 }
+          },
+          {
+            id: 'glam_eclat_movinet', name: 'Glam Eclat / Movinet', category: 'beauty', x: 275, y: 64, w: 53, h: 40, height: 12,
+            polygon: [{ x: 275, y: 64 }, { x: 328, y: 64 }, { x: 328, y: 104 }, { x: 275, y: 104 }],
+            labelPos: { x: 301, y: 84 }
+          },
+          {
+            id: 'hollywood_jump', name: 'Hollywood Star / Jump', category: 'fashion', x: 226, y: 74, w: 46, h: 38, height: 12,
+            polygon: [{ x: 226, y: 74 }, { x: 272, y: 74 }, { x: 272, y: 112 }, { x: 226, y: 112 }],
+            labelPos: { x: 249, y: 93 }
+          },
+
+          // Bloque Central
+          {
+            id: 'mng', name: 'Mango MNG', category: 'fashion', x: 196, y: 154, w: 30, h: 41, height: 12,
+            polygon: [{ x: 196, y: 154 }, { x: 226, y: 154 }, { x: 226, y: 195 }, { x: 196, y: 195 }],
+            labelPos: { x: 211, y: 174 }
+          },
+          {
+            id: 'james_bark', name: 'James Bark', category: 'fashion', x: 228, y: 154, w: 26, h: 41, height: 12,
+            polygon: [{ x: 228, y: 154 }, { x: 254, y: 154 }, { x: 254, y: 195 }, { x: 228, y: 195 }],
+            labelPos: { x: 241, y: 174 }
+          },
+          {
+            id: 'rs21', name: 'RS Performance', category: 'sports', x: 256, y: 154, w: 26, h: 41, height: 12,
+            polygon: [{ x: 256, y: 154 }, { x: 282, y: 154 }, { x: 282, y: 195 }, { x: 256, y: 195 }],
+            labelPos: { x: 269, y: 174 }
+          },
+          {
+            id: 'tommy_hilfiger', name: 'Tommy Hilfiger', category: 'fashion', x: 285, y: 154, w: 47, h: 41, height: 13,
+            polygon: [{ x: 285, y: 154 }, { x: 332, y: 154 }, { x: 332, y: 195 }, { x: 285, y: 195 }],
+            labelPos: { x: 308, y: 174 }
+          },
+          {
+            id: 'boomshoes_salome', name: 'Salome / Boom Shoes', category: 'fashion', x: 335, y: 154, w: 40, h: 41, height: 12,
+            polygon: [{ x: 335, y: 154 }, { x: 375, y: 154 }, { x: 375, y: 195 }, { x: 335, y: 195 }],
+            labelPos: { x: 355, y: 174 }
+          },
+          {
+            id: 'prime_bodegon', name: 'Prime Bodegon', category: 'food', x: 378, y: 154, w: 40, h: 41, height: 12,
+            polygon: [{ x: 378, y: 154 }, { x: 418, y: 154 }, { x: 418, y: 195 }, { x: 378, y: 195 }],
+            labelPos: { x: 398, y: 174 }
+          },
+          {
+            id: 'lucchi', name: 'Lucchi Calzados', category: 'fashion', x: 434, y: 156, w: 34, h: 40, height: 12,
+            polygon: [{ x: 434, y: 156 }, { x: 468, y: 156 }, { x: 468, y: 196 }, { x: 434, y: 196 }],
+            labelPos: { x: 451, y: 176 }
+          },
+          {
+            id: 'brands_shop', name: 'Brands Shop Damas', category: 'fashion', x: 470, y: 156, w: 34, h: 40, height: 12,
+            polygon: [{ x: 470, y: 156 }, { x: 504, y: 156 }, { x: 504, y: 196 }, { x: 470, y: 196 }],
+            labelPos: { x: 487, y: 176 }
+          }
+        ],
+        nodes: [
+          { id: 'node-jardin', x: 108, y: 220, kind: 'plaza' },
+          { id: 'node-fuente', x: 225, y: 130, kind: 'plaza' },
+          { id: 'node-central', x: 358, y: 218, kind: 'plaza' },
+          { id: 'node-arte', x: 468, y: 132, kind: 'plaza' },
+          { id: 'node-musica', x: 578, y: 222, kind: 'plaza' }
+        ]
+      },
+      acuario: {
+        imageFile: 'nivel acuario.jpeg',
+        footprint: [
+          { x: 56, y: 45 }, { x: 236, y: 45 }, { x: 380, y: 45 }, { x: 470, y: 65 },
+          { x: 555, y: 115 }, { x: 625, y: 175 }, { x: 686, y: 235 }, { x: 686, y: 282 },
+          { x: 560, y: 282 }, { x: 138, y: 282 }, { x: 50, y: 282 }, { x: 48, y: 198 },
+          { x: 56, y: 45 }
+        ],
+        plazas: [
+          { id: 'pl-fuente-ac', label: 'Plaza La Fuente', color: '#DC2626', center: { x: 225, y: 130 }, radius: 27 },
+          { id: 'pl-jardin-ac', label: 'Plaza Jardin', color: '#2563EB', center: { x: 108, y: 220 }, radius: 25 },
+          { id: 'pl-central-ac', label: 'Plaza Central', color: '#EA580C', center: { x: 358, y: 218 }, radius: 27 },
+          { id: 'pl-arte-ac', label: 'Plaza El Arte', color: '#7C3AED', center: { x: 468, y: 132 }, radius: 26 },
+          { id: 'pl-musica-ac', label: 'Plaza La Musica', color: '#1D4ED8', center: { x: 578, y: 222 }, radius: 27 }
+        ],
+        corridors: [],
+        cores: [
+          { id: 'v-pj-2', x: 72, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-plf-2', x: 180, y: 73, size: 14, kind: 'stairs' },
+          { id: 'v-pc-2', x: 350, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-pea-2', x: 530, y: 73, size: 14, kind: 'stairs' },
+          { id: 'v-plm-2', x: 584, y: 250, size: 14, kind: 'stairs' }
+        ],
+        stores: [
+          {
+            id: 'mango_bajito', name: 'Mango Bajito (2.136 m²)', category: 'department_store', x: 56, y: 45, w: 180, h: 47, height: 15,
+            polygon: [{ x: 56, y: 45 }, { x: 236, y: 45 }, { x: 236, y: 92 }, { x: 56, y: 92 }],
+            labelPos: { x: 146, y: 68 }
+          },
+          {
+            id: 'miniso', name: 'Miniso', category: 'fashion', x: 240, y: 56, w: 52, h: 44, height: 12,
+            polygon: [{ x: 240, y: 56 }, { x: 292, y: 56 }, { x: 292, y: 100 }, { x: 240, y: 100 }],
+            labelPos: { x: 266, y: 78 }
+          },
+          {
+            id: 'samsung', name: 'Samsung Experience Store', category: 'tech', x: 360, y: 52, w: 55, h: 46, height: 13,
+            polygon: [{ x: 360, y: 52 }, { x: 415, y: 52 }, { x: 415, y: 98 }, { x: 360, y: 98 }],
+            labelPos: { x: 387, y: 75 }
+          }
+        ],
+        nodes: []
+      },
+      libertador: {
+        imageFile: 'nivel libertador.jpeg',
+        footprint: [
+          { x: 56, y: 45 }, { x: 236, y: 45 }, { x: 380, y: 45 }, { x: 470, y: 65 },
+          { x: 555, y: 115 }, { x: 625, y: 175 }, { x: 686, y: 235 }, { x: 686, y: 282 },
+          { x: 560, y: 282 }, { x: 138, y: 282 }, { x: 50, y: 282 }, { x: 48, y: 198 },
+          { x: 56, y: 45 }
+        ],
+        plazas: [
+          { id: 'pl-fuente-lib', label: 'Plaza La Fuente', color: '#DC2626', center: { x: 225, y: 130 }, radius: 27 },
+          { id: 'pl-jardin-lib', label: 'Plaza Jardin', color: '#2563EB', center: { x: 108, y: 220 }, radius: 25 },
+          { id: 'pl-central-lib', label: 'Plaza Central', color: '#EA580C', center: { x: 358, y: 218 }, radius: 27 },
+          { id: 'pl-arte-lib', label: 'Plaza El Arte', color: '#7C3AED', center: { x: 468, y: 132 }, radius: 26 },
+          { id: 'pl-musica-lib', label: 'Plaza La Musica', color: '#1D4ED8', center: { x: 578, y: 222 }, radius: 27 }
+        ],
+        corridors: [],
+        cores: [
+          { id: 'v-pj-3', x: 72, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-plf-3', x: 180, y: 73, size: 14, kind: 'stairs' },
+          { id: 'v-pc-3', x: 350, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-pea-3', x: 530, y: 73, size: 14, kind: 'stairs' },
+          { id: 'v-plm-3', x: 584, y: 250, size: 14, kind: 'stairs' }
+        ],
+        stores: [
+          {
+            id: 'zara_chacao', name: 'ZARA (2.500 m²)', category: 'fashion', x: 56, y: 45, w: 180, h: 56, height: 16,
+            polygon: [{ x: 56, y: 45 }, { x: 236, y: 45 }, { x: 236, y: 102 }, { x: 56, y: 102 }],
+            labelPos: { x: 146, y: 74 }
+          },
+          {
+            id: 'nike_store', name: 'Nike Store Flagship', category: 'sports', x: 360, y: 52, w: 58, h: 48, height: 13,
+            polygon: [{ x: 360, y: 52 }, { x: 418, y: 52 }, { x: 418, y: 100 }, { x: 360, y: 100 }],
+            labelPos: { x: 389, y: 76 }
+          }
+        ],
+        nodes: []
+      },
+      feria: {
+        imageFile: 'nivel feria.jpeg',
+        footprint: [
+          { x: 56, y: 45 }, { x: 236, y: 45 }, { x: 380, y: 45 }, { x: 470, y: 65 },
+          { x: 555, y: 115 }, { x: 625, y: 175 }, { x: 686, y: 235 }, { x: 686, y: 282 },
+          { x: 560, y: 282 }, { x: 138, y: 282 }, { x: 50, y: 282 }, { x: 48, y: 198 },
+          { x: 56, y: 45 }
+        ],
+        plazas: [
+          { id: 'pl-feria-cent', label: 'Zona Gastronomica Central', color: '#EA580C', center: { x: 358, y: 218 }, radius: 34 }
+        ],
+        corridors: [],
+        cores: [
+          { id: 'v-pj-4', x: 72, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-pc-4', x: 350, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-plm-4', x: 584, y: 250, size: 14, kind: 'stairs' }
+        ],
+        stores: [
+          {
+            id: 'mcdonalds_feria', name: "McDonald's", category: 'food', x: 210, y: 70, w: 38, h: 32, height: 12,
+            polygon: [{ x: 210, y: 70 }, { x: 248, y: 70 }, { x: 248, y: 102 }, { x: 210, y: 102 }],
+            labelPos: { x: 229, y: 86 }
+          },
+          {
+            id: 'bonsai_sushi', name: 'Bonsai Sushi', category: 'food', x: 290, y: 70, w: 34, h: 32, height: 12,
+            polygon: [{ x: 290, y: 70 }, { x: 324, y: 70 }, { x: 324, y: 102 }, { x: 290, y: 102 }],
+            labelPos: { x: 307, y: 86 }
+          }
+        ],
+        nodes: []
+      },
+      diversion: {
+        imageFile: 'nivel diversion.jpeg',
+        footprint: [
+          { x: 56, y: 45 }, { x: 236, y: 45 }, { x: 380, y: 45 }, { x: 470, y: 65 },
+          { x: 555, y: 115 }, { x: 625, y: 175 }, { x: 686, y: 235 }, { x: 686, y: 282 },
+          { x: 560, y: 282 }, { x: 138, y: 282 }, { x: 50, y: 282 }, { x: 48, y: 198 },
+          { x: 56, y: 45 }
+        ],
+        plazas: [
+          { id: 'pl-anfiteatro', label: 'Terraza / Anfiteatro', color: '#7C3AED', center: { x: 468, y: 132 }, radius: 36 }
+        ],
+        corridors: [],
+        cores: [
+          { id: 'v-pc-5', x: 350, y: 250, size: 14, kind: 'stairs' },
+          { id: 'v-plm-5', x: 584, y: 250, size: 14, kind: 'stairs' }
+        ],
+        stores: [
+          {
+            id: 'cines_unidos_vip', name: 'Cines Unidos VIP', category: 'entertainment', x: 560, y: 190, w: 126, h: 92, height: 18,
+            polygon: [{ x: 560, y: 190 }, { x: 686, y: 190 }, { x: 686, y: 282 }, { x: 560, y: 282 }],
+            labelPos: { x: 623, y: 236 }
+          }
+        ],
+        nodes: []
+      }
+    };
+
     // --- ESTADO GLOBAL ---
     const canvas = document.getElementById('mainCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
 
-    let currentMode = 'pan';
+    let currentLevel = 'autopista';
+    let currentMode = 'select'; // 'select' | 'pan' | 'footprint' | 'corridor' | 'core' | 'plaza' | 'store' | 'node'
     let image = new Image();
     let isImageLoaded = false;
 
@@ -497,9 +1098,147 @@
     let startX = 0;
     let startY = 0;
 
-    // Escala del mall: unidades objetivo (720 × 360)
-    const TARGET_WIDTH = 720;
-    const TARGET_HEIGHT = 360;
+    // Escala del mall: unidades objetivo normalizadas con preservación de aspect ratio 1:1
+    let targetWidth = 720;
+    let targetHeight = 540;
+
+    function updateTargetDimensions() {
+      if (isImageLoaded && image.width > 0) {
+        targetWidth = 720;
+        targetHeight = Math.round(720 * (image.height / image.width));
+      } else {
+        targetWidth = 720;
+        targetHeight = 540;
+      }
+    }
+
+    // --- SISTEMA DE CAPAS CON JERARQUÍA (v3) ---
+    const LAYER_ORDER = ['footprint', 'corridors', 'cores', 'plazas', 'stores', 'nodes'];
+    const LAYER_LABELS = {
+      footprint: '🏗️ Planta (Footprint)',
+      corridors: '🛣️ Pasillos',
+      cores:     '🪜 Núcleos Verticales',
+      plazas:    '⭕ Plazas',
+      stores:    '🏬 Locales',
+      nodes:     '📍 Nodos de Ruta'
+    };
+    const LAYER_COLORS = {
+      footprint: '#10B981',
+      corridors: '#F59E0B',
+      cores:     '#06B6D4',
+      plazas:    '#EA580C',
+      stores:    '#3B82F6',
+      nodes:     '#EF4444'
+    };
+
+    // Estado por capa: visible & bloqueada
+    let layerState = {
+      footprint: { visible: true, locked: false },
+      corridors: { visible: true, locked: true },
+      cores:     { visible: true, locked: true },
+      plazas:    { visible: true, locked: true },
+      stores:    { visible: true, locked: true },
+      nodes:     { visible: true, locked: true }
+    };
+    let activeLayer = 'footprint';
+
+    function setActiveLayer(layer) {
+      if (!LAYER_ORDER.includes(layer)) return;
+      activeLayer = layer;
+
+      LAYER_ORDER.forEach(l => {
+        if (l === layer) {
+          layerState[l].locked = false;
+          layerState[l].visible = true;
+        } else {
+          layerState[l].locked = true;
+        }
+      });
+
+      renderLayerPanel();
+      updateStatus();
+      redraw();
+    }
+
+    function toggleLayerLock(layer) {
+      layerState[layer].locked = !layerState[layer].locked;
+      renderLayerPanel();
+      updateStatus();
+    }
+
+    function toggleLayerVisibility(layer) {
+      layerState[layer].visible = !layerState[layer].visible;
+      renderLayerPanel();
+      redraw();
+    }
+
+    function isLayerEditable(layer) {
+      return !layerState[layer]?.locked;
+    }
+
+    function isLayerVisible(layer) {
+      return !!layerState[layer]?.visible;
+    }
+
+    function getLayerCount(layer) {
+      if (!data) return 0;
+      switch (layer) {
+        case 'footprint': return data.footprint && data.footprint.length > 0 ? 1 : 0;
+        case 'corridors': return data.corridors ? data.corridors.length : 0;
+        case 'cores':     return data.cores ? data.cores.length : 0;
+        case 'plazas':    return data.plazas ? data.plazas.length : 0;
+        case 'stores':    return data.stores ? data.stores.length : 0;
+        case 'nodes':     return data.nodes ? data.nodes.length : 0;
+        default:          return 0;
+      }
+    }
+
+    function renderLayerPanel() {
+      const panel = document.getElementById('layersPanel');
+      if (!panel) return;
+      panel.innerHTML = '';
+
+      LAYER_ORDER.forEach((layer) => {
+        const state = layerState[layer];
+        const isActive = activeLayer === layer;
+        const count = getLayerCount(layer);
+
+        const row = document.createElement('div');
+        row.className = `layer-row ${isActive ? 'active' : ''} ${state.locked ? 'locked' : ''}`;
+        row.onclick = (e) => {
+          if (e.target.closest('.layer-icon-btn')) return;
+          setActiveLayer(layer);
+        };
+
+        row.innerHTML = `
+          <div class="layer-badge" style="background: ${LAYER_COLORS[layer]}; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;"></div>
+          <span class="layer-name">${LAYER_LABELS[layer]}</span>
+          <span class="layer-count">${count}</span>
+          <button class="layer-icon-btn ${state.visible ? 'active' : ''}"
+                  onclick="event.stopPropagation(); toggleLayerVisibility('${layer}')"
+                  title="${state.visible ? 'Ocultar capa' : 'Mostrar capa'}">
+            ${state.visible ? '👁️' : '👁️🗨️'}
+          </button>
+          <button class="layer-icon-btn ${!state.locked ? 'active' : ''}"
+                  onclick="event.stopPropagation(); toggleLayerLock('${layer}')"
+                  title="${state.locked ? 'Desbloquear capa' : 'Bloquear capa'}">
+            ${state.locked ? '🔒' : '🔓'}
+          </button>
+        `;
+        panel.appendChild(row);
+      });
+
+      const hint = document.createElement('div');
+      hint.className = 'layer-hint';
+      hint.innerHTML = `Tab: siguiente capa · L: lock/unlock · H: ocultar/mostrar`;
+      panel.appendChild(hint);
+    }
+
+    // Selección & Arrastre
+    let selectedItem = null;
+    let draggedVertexIdx = -1;
+    let dragStartMallPt = null;
+    let isMovingItem = false;
 
     // Polígono activo siendo dibujado
     let activePoints = [];
@@ -512,12 +1251,10 @@
       plazas: [],
       stores: [],
       corridors: [],
+      cores: [],
       nodes: []
     };
 
-    let selectedItemId = null;
-
-    // Inicialización del canvas
     function resizeCanvas() {
       canvas.width = container.clientWidth;
       canvas.height = container.clientHeight;
@@ -526,18 +1263,70 @@
 
     window.addEventListener('resize', resizeCanvas);
 
-    // Cargar imagen por defecto
+    // Cambiar de Nivel
+    function selectLevel(lvlKey) {
+      currentLevel = lvlKey;
+      document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('lvl-' + lvlKey);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      selectedItem = null;
+      hideInspector();
+
+      const preset = LEVEL_PRESETS[lvlKey] || LEVEL_PRESETS.autopista;
+      data = JSON.parse(JSON.stringify(preset));
+      if (!data.cores) data.cores = [];
+
+      loadSampleImage(preset.imageFile);
+      renderLayerPanel();
+    }
+
+    function reloadLevelPreset() {
+      if (confirm('¿Restaurar la geometría oficial de este nivel?')) {
+        const preset = LEVEL_PRESETS[currentLevel] || LEVEL_PRESETS.autopista;
+        data = JSON.parse(JSON.stringify(preset));
+        if (!data.cores) data.cores = [];
+        selectedItem = null;
+        hideInspector();
+        renderLayerPanel();
+        redraw();
+        showToast('Geometría restaurada correctamente');
+      }
+    }
+
+    function clearActiveLayer() {
+      if (confirm(`¿Limpiar todos los elementos de la capa "${LAYER_LABELS[activeLayer]}"?`)) {
+        if (activeLayer === 'footprint') data.footprint = [];
+        else if (activeLayer === 'corridors') data.corridors = [];
+        else if (activeLayer === 'cores') data.cores = [];
+        else if (activeLayer === 'plazas') data.plazas = [];
+        else if (activeLayer === 'stores') data.stores = [];
+        else if (activeLayer === 'nodes') data.nodes = [];
+        selectedItem = null;
+        hideInspector();
+        renderLayerPanel();
+        redraw();
+      }
+    }
+
+    // Cargar imagen de plano
     function loadSampleImage(filename) {
-      image.crossOrigin = 'anonymous';
+      isImageLoaded = false;
+      image = new Image();
       image.onload = () => {
         isImageLoaded = true;
-        // Ajustar zoom inicial
-        const scaleX = (canvas.width - 80) / image.width;
-        const scaleY = (canvas.height - 80) / image.height;
+        updateTargetDimensions();
+        const scaleX = (canvas.width - 60) / image.width;
+        const scaleY = (canvas.height - 60) / image.height;
         scale = Math.min(scaleX, scaleY);
         panX = (canvas.width - image.width * scale) / 2;
         panY = (canvas.height - image.height * scale) / 2;
         redraw();
+      };
+      image.onerror = () => {
+        if (!image.src.includes('../')) {
+          image.src = '../' + filename;
+        }
       };
       image.src = filename;
     }
@@ -549,7 +1338,8 @@
       reader.onload = (evt) => {
         image.onload = () => {
           isImageLoaded = true;
-          scale = Math.min((canvas.width - 80) / image.width, (canvas.height - 80) / image.height);
+          updateTargetDimensions();
+          scale = Math.min((canvas.width - 60) / image.width, (canvas.height - 60) / image.height);
           panX = (canvas.width - image.width * scale) / 2;
           panY = (canvas.height - image.height * scale) / 2;
           redraw();
@@ -568,30 +1358,103 @@
 
       activePoints = [];
       plazaCenter = null;
+      if (mode !== 'select') {
+        selectedItem = null;
+        hideInspector();
+      }
+
+      // Auto-cambiar capa activa según herramienta
+      if (mode === 'footprint') setActiveLayer('footprint');
+      else if (mode === 'corridor') setActiveLayer('corridors');
+      else if (mode === 'core') setActiveLayer('cores');
+      else if (mode === 'plaza') setActiveLayer('plazas');
+      else if (mode === 'store') setActiveLayer('stores');
+      else if (mode === 'node') setActiveLayer('nodes');
+
       redraw();
       updateStatus();
     }
 
-    // Conversión de coordenadas de Pantalla <-> Plano Mall (720x360)
+    // Conversión de coordenadas (Isotrópicas 1:1)
     function screenToMall(screenX, screenY) {
-      if (!isImageLoaded) return { x: 0, y: 0 };
+      const baseW = isImageLoaded ? image.width : targetWidth;
+      const baseH = isImageLoaded ? image.height : targetHeight;
       const imgX = (screenX - panX) / scale;
       const imgY = (screenY - panY) / scale;
-      const mallX = Math.round((imgX / image.width) * TARGET_WIDTH);
-      const mallY = Math.round((imgY / image.height) * TARGET_HEIGHT);
+      const mallX = Math.round((imgX / baseW) * targetWidth);
+      const mallY = Math.round((imgY / baseH) * targetHeight);
       return { x: mallX, y: mallY };
     }
 
     function mallToScreen(mallX, mallY) {
-      if (!isImageLoaded) return { x: 0, y: 0 };
-      const imgX = (mallX / TARGET_WIDTH) * image.width;
-      const imgY = (mallY / TARGET_HEIGHT) * image.height;
+      const baseW = isImageLoaded ? image.width : targetWidth;
+      const baseH = isImageLoaded ? image.height : targetHeight;
+      const imgX = (mallX / targetWidth) * baseW;
+      const imgY = (mallY / targetHeight) * baseH;
       const screenX = imgX * scale + panX;
       const screenY = imgY * scale + panY;
       return { x: screenX, y: screenY };
     }
 
-    // Interacciones de ratón
+    // Hit Testing
+    function pointInPoly(pt, poly) {
+      if (!poly || poly.length < 3) return false;
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const xi = poly[i].x, yi = poly[i].y;
+        const xj = poly[j].x, yj = poly[j].y;
+        const intersect = ((yi > pt.y) !== (yj > pt.y)) && (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    function findHitItem(mallPt) {
+      if (data.plazas && isLayerVisible('plazas')) {
+        for (let i = data.plazas.length - 1; i >= 0; i--) {
+          const pl = data.plazas[i];
+          const dist = Math.hypot(mallPt.x - pl.center.x, mallPt.y - pl.center.y);
+          if (dist <= pl.radius) return { type: 'plazas', index: i };
+        }
+      }
+      if (data.cores && isLayerVisible('cores')) {
+        for (let i = data.cores.length - 1; i >= 0; i--) {
+          const core = data.cores[i];
+          const half = (core.size || 14) / 2;
+          if (mallPt.x >= core.x - half && mallPt.x <= core.x + half && mallPt.y >= core.y - half && mallPt.y <= core.y + half) {
+            return { type: 'cores', index: i };
+          }
+        }
+      }
+      if (data.stores && isLayerVisible('stores')) {
+        for (let i = data.stores.length - 1; i >= 0; i--) {
+          const st = data.stores[i];
+          if (pointInPoly(mallPt, st.polygon)) return { type: 'stores', index: i };
+        }
+      }
+      if (data.corridors && isLayerVisible('corridors')) {
+        for (let i = data.corridors.length - 1; i >= 0; i--) {
+          const cr = data.corridors[i];
+          if (pointInPoly(mallPt, cr.polygon)) return { type: 'corridors', index: i };
+        }
+      }
+      if (data.footprint && isLayerVisible('footprint') && pointInPoly(mallPt, data.footprint)) {
+        return { type: 'footprint', index: 0 };
+      }
+      return null;
+    }
+
+    function findHitVertex(mallPt, pts, threshold = 6) {
+      if (!pts) return -1;
+      for (let i = 0; i < pts.length; i++) {
+        if (Math.hypot(mallPt.x - pts[i].x, mallPt.y - pts[i].y) <= threshold) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    // Mouse Events
     container.addEventListener('mousedown', (e) => {
       const rect = container.getBoundingClientRect();
       const sx = e.clientX - rect.left;
@@ -601,20 +1464,69 @@
         isDragging = true;
         startX = sx - panX;
         startY = sy - panY;
+        container.style.cursor = 'grabbing';
         return;
       }
 
-      if (e.button === 0 && isImageLoaded) {
+      if (e.button === 0) {
         const mallPt = screenToMall(sx, sy);
+
+        if (currentMode === 'select') {
+          if (selectedItem && isLayerEditable(selectedItem.type)) {
+            let pts = null;
+            if (selectedItem.type === 'stores') pts = data.stores[selectedItem.index]?.polygon;
+            else if (selectedItem.type === 'footprint') pts = data.footprint;
+            else if (selectedItem.type === 'corridors') pts = data.corridors[selectedItem.index]?.polygon;
+
+            if (pts) {
+              const vIdx = findHitVertex(mallPt, pts, 8 / scale);
+              if (vIdx !== -1) {
+                draggedVertexIdx = vIdx;
+                dragStartMallPt = mallPt;
+                return;
+              }
+            }
+          }
+
+          const hit = findHitItem(mallPt);
+          if (hit && isLayerEditable(hit.type)) {
+            selectedItem = hit;
+            isMovingItem = true;
+            dragStartMallPt = mallPt;
+            showInspector(hit);
+          } else if (hit && !isLayerEditable(hit.type)) {
+            showToast(`🔒 Capa "${LAYER_LABELS[hit.type]}" bloqueada. Actívala primero.`);
+            selectedItem = null;
+            hideInspector();
+          } else {
+            selectedItem = null;
+            hideInspector();
+          }
+          renderLayerPanel();
+          redraw();
+          return;
+        }
 
         if (currentMode === 'footprint' || currentMode === 'store' || currentMode === 'corridor') {
           activePoints.push(mallPt);
           redraw();
+        } else if (currentMode === 'core') {
+          if (!data.cores) data.cores = [];
+          data.cores.push({
+            id: `core-${data.cores.length + 1}`,
+            x: mallPt.x,
+            y: mallPt.y,
+            size: 14,
+            kind: 'stairs'
+          });
+          renderLayerPanel();
+          redraw();
+          showToast('Núcleo vertical añadido');
         } else if (currentMode === 'plaza') {
           if (!plazaCenter) {
             plazaCenter = mallPt;
           } else {
-            plazaRadius = Math.round(Math.hypot(mallPt.x - plazaCenter.x, mallPt.y - plazaCenter.y));
+            plazaRadius = Math.max(8, Math.round(Math.hypot(mallPt.x - plazaCenter.x, mallPt.y - plazaCenter.y)));
             finishPlaza();
           }
           redraw();
@@ -625,7 +1537,7 @@
             y: mallPt.y,
             kind: 'corridor'
           });
-          updateLayers();
+          renderLayerPanel();
           redraw();
         }
       }
@@ -646,14 +1558,63 @@
       const mallPt = screenToMall(sx, sy);
       updateStatus(mallPt);
 
+      if (draggedVertexIdx !== -1 && selectedItem && isLayerEditable(selectedItem.type)) {
+        let pts = null;
+        if (selectedItem.type === 'stores') pts = data.stores[selectedItem.index]?.polygon;
+        else if (selectedItem.type === 'footprint') pts = data.footprint;
+        else if (selectedItem.type === 'corridors') pts = data.corridors[selectedItem.index]?.polygon;
+
+        if (pts && pts[draggedVertexIdx]) {
+          pts[draggedVertexIdx].x = mallPt.x;
+          pts[draggedVertexIdx].y = mallPt.y;
+          recalculateBounds(selectedItem);
+          redraw();
+        }
+        return;
+      }
+
+      if (isMovingItem && selectedItem && dragStartMallPt && isLayerEditable(selectedItem.type)) {
+        const dx = mallPt.x - dragStartMallPt.x;
+        const dy = mallPt.y - dragStartMallPt.y;
+
+        if (dx !== 0 || dy !== 0) {
+          if (selectedItem.type === 'stores') {
+            const st = data.stores[selectedItem.index];
+            if (st && st.polygon) {
+              st.polygon.forEach(p => { p.x += dx; p.y += dy; });
+              if (st.labelPos) { st.labelPos.x += dx; st.labelPos.y += dy; }
+              recalculateBounds(selectedItem);
+            }
+          } else if (selectedItem.type === 'plazas') {
+            const pl = data.plazas[selectedItem.index];
+            if (pl) { pl.center.x += dx; pl.center.y += dy; }
+          } else if (selectedItem.type === 'cores') {
+            const core = data.cores[selectedItem.index];
+            if (core) { core.x += dx; core.y += dy; }
+          } else if (selectedItem.type === 'corridors') {
+            const cr = data.corridors[selectedItem.index];
+            if (cr && cr.polygon) { cr.polygon.forEach(p => { p.x += dx; p.y += dy; }); }
+          } else if (selectedItem.type === 'footprint') {
+            data.footprint.forEach(p => { p.x += dx; p.y += dy; });
+          }
+          dragStartMallPt = mallPt;
+          redraw();
+        }
+        return;
+      }
+
       if (currentMode === 'plaza' && plazaCenter) {
-        plazaRadius = Math.round(Math.hypot(mallPt.x - plazaCenter.x, mallPt.y - plazaCenter.y));
+        plazaRadius = Math.max(8, Math.round(Math.hypot(mallPt.x - plazaCenter.x, mallPt.y - plazaCenter.y)));
         redraw();
       }
     });
 
     container.addEventListener('mouseup', () => {
       isDragging = false;
+      draggedVertexIdx = -1;
+      isMovingItem = false;
+      dragStartMallPt = null;
+      container.style.cursor = currentMode === 'pan' ? 'grab' : 'default';
     });
 
     container.addEventListener('wheel', (e) => {
@@ -663,7 +1624,7 @@
       const sy = e.clientY - rect.top;
 
       const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
-      const newScale = Math.max(0.1, Math.min(20, scale * zoomFactor));
+      const newScale = Math.max(0.1, Math.min(25, scale * zoomFactor));
 
       panX = sx - (sx - panX) * (newScale / scale);
       panY = sy - (sy - panY) * (newScale / scale);
@@ -672,14 +1633,44 @@
       redraw();
     });
 
-    // Teclas rápidas
     window.addEventListener('keydown', (e) => {
+      // Tab: ciclar a la siguiente capa
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const currentIdx = LAYER_ORDER.indexOf(activeLayer);
+        const nextIdx = (currentIdx + 1) % LAYER_ORDER.length;
+        setActiveLayer(LAYER_ORDER[nextIdx]);
+        showToast(`Capa activa: ${LAYER_LABELS[LAYER_ORDER[nextIdx]]}`);
+        return;
+      }
+
+      // L: bloquear / desbloquear capa activa
+      if ((e.key === 'l' || e.key === 'L') && document.activeElement.tagName !== 'INPUT') {
+        toggleLayerLock(activeLayer);
+        showToast(`Capa ${LAYER_LABELS[activeLayer]}: ${layerState[activeLayer].locked ? 'Bloqueada 🔒' : 'Desbloqueada 🔓'}`);
+        return;
+      }
+
+      // H: ocultar / mostrar capa activa
+      if ((e.key === 'h' || e.key === 'H') && document.activeElement.tagName !== 'INPUT') {
+        toggleLayerVisibility(activeLayer);
+        showToast(`Capa ${LAYER_LABELS[activeLayer]}: ${layerState[activeLayer].visible ? 'Visible 👁️' : 'Oculta 👁️🗨️'}`);
+        return;
+      }
+
       if (e.key === 'Enter') {
         finishPolygon();
       } else if (e.key === 'Escape') {
         activePoints = [];
         plazaCenter = null;
+        selectedItem = null;
+        hideInspector();
+        renderLayerPanel();
         redraw();
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (selectedItem && document.activeElement.tagName !== 'INPUT') {
+          deleteSelectedItem();
+        }
       } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
         if (activePoints.length > 0) {
           activePoints.pop();
@@ -688,11 +1679,32 @@
       }
     });
 
+    function recalculateBounds(item) {
+      if (item.type === 'stores') {
+        const st = data.stores[item.index];
+        if (st && st.polygon && st.polygon.length > 0) {
+          const xs = st.polygon.map(p => p.x);
+          const ys = st.polygon.map(p => p.y);
+          st.x = Math.min(...xs);
+          st.y = Math.min(...ys);
+          st.w = Math.max(...xs) - st.x;
+          st.h = Math.max(...ys) - st.y;
+          if (!st.labelPos) {
+            st.labelPos = {
+              x: Math.round(xs.reduce((a, b) => a + b, 0) / xs.length),
+              y: Math.round(ys.reduce((a, b) => a + b, 0) / ys.length)
+            };
+          }
+        }
+      }
+    }
+
     function finishPolygon() {
       if (activePoints.length < 3) return;
 
       if (currentMode === 'footprint') {
         data.footprint = [...activePoints];
+        showToast('Huella arquitectónica guardada');
       } else if (currentMode === 'store') {
         const xs = activePoints.map(p => p.x);
         const ys = activePoints.map(p => p.y);
@@ -701,40 +1713,42 @@
         const minY = Math.min(...ys);
         const maxY = Math.max(...ys);
 
-        const id = prompt('Nombre o ID del local:', 'local_' + (data.stores.length + 1)) || 'local_' + (data.stores.length + 1);
+        const id = prompt('Nombre del Local / Ancla:', 'Local ' + (data.stores.length + 1)) || 'Local ' + (data.stores.length + 1);
         data.stores.push({
-          id: id.toLowerCase().replace(/\s+/g, '_'),
+          id: id.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, ''),
           name: id,
           category: 'fashion',
           x: minX,
           y: minY,
           w: maxX - minX,
           h: maxY - minY,
-          height: 12,
+          height: 13,
           polygon: [...activePoints],
           labelPos: {
             x: Math.round(xs.reduce((a, b) => a + b, 0) / xs.length),
             y: Math.round(ys.reduce((a, b) => a + b, 0) / ys.length)
           }
         });
+        showToast(`Local "${id}" añadido`);
       } else if (currentMode === 'corridor') {
         data.corridors.push({
-          id: 'corridor-' + (data.corridors.length + 1),
+          id: 'corr-' + (data.corridors.length + 1),
           polygon: [...activePoints]
         });
+        showToast('Pasillo añadido');
       }
 
       activePoints = [];
-      updateLayers();
+      renderLayerPanel();
       redraw();
     }
 
     function finishPlaza() {
       if (!plazaCenter || plazaRadius <= 0) return;
-      const name = prompt('Nombre de la Plaza:', 'Plaza La Fuente') || 'Plaza';
-      let color = '#DC2626';
+      const name = prompt('Nombre de la Plaza:', 'Plaza Sambil') || 'Plaza';
+      let color = '#EA580C';
       if (name.toLowerCase().includes('jard')) color = '#2563EB';
-      else if (name.toLowerCase().includes('centr')) color = '#EA580C';
+      else if (name.toLowerCase().includes('fuent')) color = '#DC2626';
       else if (name.toLowerCase().includes('arte')) color = '#7C3AED';
       else if (name.toLowerCase().includes('mús') || name.toLowerCase().includes('mus')) color = '#1D4ED8';
 
@@ -748,90 +1762,272 @@
 
       plazaCenter = null;
       plazaRadius = 0;
-      updateLayers();
+      renderLayerPanel();
       redraw();
+    }
+
+    function showInspector(item) {
+      const panel = document.getElementById('inspectorPanel');
+      panel.style.display = 'flex';
+
+      const title = document.getElementById('inspectTitle');
+      const nameInput = document.getElementById('inspectName');
+      const catSelect = document.getElementById('inspectCategory');
+      const catWrap = document.getElementById('field-cat-wrap');
+      const kindWrap = document.getElementById('field-kind-wrap');
+      const kindSelect = document.getElementById('inspectKind');
+      const radWrap = document.getElementById('field-radius-wrap');
+      const radInput = document.getElementById('inspectRadius');
+
+      if (item.type === 'stores') {
+        const st = data.stores[item.index];
+        title.innerText = 'Editar Local';
+        nameInput.value = st.name || '';
+        catSelect.value = st.category || 'fashion';
+        catWrap.style.display = 'flex';
+        kindWrap.style.display = 'none';
+        radWrap.style.display = 'none';
+      } else if (item.type === 'plazas') {
+        const pl = data.plazas[item.index];
+        title.innerText = 'Editar Plaza';
+        nameInput.value = pl.label || '';
+        radInput.value = pl.radius || 27;
+        catWrap.style.display = 'none';
+        kindWrap.style.display = 'none';
+        radWrap.style.display = 'flex';
+      } else if (item.type === 'cores') {
+        const core = data.cores[item.index];
+        title.innerText = 'Editar Núcleo Vertical';
+        nameInput.value = core.id || '';
+        kindSelect.value = core.kind || 'stairs';
+        catWrap.style.display = 'none';
+        kindWrap.style.display = 'flex';
+        radWrap.style.display = 'none';
+      } else if (item.type === 'corridors') {
+        const cr = data.corridors[item.index];
+        title.innerText = 'Editar Pasillo';
+        nameInput.value = cr.id || '';
+        catWrap.style.display = 'none';
+        kindWrap.style.display = 'none';
+        radWrap.style.display = 'none';
+      } else if (item.type === 'footprint') {
+        title.innerText = 'Huella Perimetral';
+        nameInput.value = 'Planta Sambil';
+        catWrap.style.display = 'none';
+        kindWrap.style.display = 'none';
+        radWrap.style.display = 'none';
+      }
+    }
+
+    function hideInspector() {
+      document.getElementById('inspectorPanel').style.display = 'none';
+    }
+
+    function updateInspectItem() {
+      if (!selectedItem) return;
+      const nameInput = document.getElementById('inspectName').value;
+      const catSelect = document.getElementById('inspectCategory').value;
+      const kindSelect = document.getElementById('inspectKind').value;
+      const radInput = parseInt(document.getElementById('inspectRadius').value) || 27;
+
+      if (selectedItem.type === 'stores') {
+        const st = data.stores[selectedItem.index];
+        if (st) {
+          st.name = nameInput;
+          st.category = catSelect;
+        }
+      } else if (selectedItem.type === 'plazas') {
+        const pl = data.plazas[selectedItem.index];
+        if (pl) {
+          pl.label = nameInput;
+          pl.radius = radInput;
+        }
+      } else if (selectedItem.type === 'cores') {
+        const core = data.cores[selectedItem.index];
+        if (core) {
+          core.id = nameInput;
+          core.kind = kindSelect;
+        }
+      } else if (selectedItem.type === 'corridors') {
+        const cr = data.corridors[selectedItem.index];
+        if (cr) cr.id = nameInput;
+      }
+      renderLayerPanel();
+      redraw();
+    }
+
+    function deleteSelectedItem() {
+      if (!selectedItem) return;
+      if (selectedItem.type === 'stores') {
+        data.stores.splice(selectedItem.index, 1);
+      } else if (selectedItem.type === 'plazas') {
+        data.plazas.splice(selectedItem.index, 1);
+      } else if (selectedItem.type === 'cores') {
+        data.cores.splice(selectedItem.index, 1);
+      } else if (selectedItem.type === 'corridors') {
+        data.corridors.splice(selectedItem.index, 1);
+      } else if (selectedItem.type === 'footprint') {
+        data.footprint = [];
+      }
+      selectedItem = null;
+      hideInspector();
+      renderLayerPanel();
+      redraw();
+      showToast('Elemento eliminado');
     }
 
     function updateStatus(mallPt = { x: 0, y: 0 }) {
       const bar = document.getElementById('statusBar');
-      bar.innerHTML = `Coord Plano: <b>(${mallPt.x}, ${mallPt.y})</b> | Zoom: <b>${Math.round(scale * 100)}%</b> | Modo: <b>${currentMode.toUpperCase()}</b>`;
+      bar.innerHTML = `Nivel: <b>${currentLevel.toUpperCase()}</b> | Capa: <b>${LAYER_LABELS[activeLayer]}</b> | Coord: <b>(${mallPt.x}, ${mallPt.y})</b> | Zoom: <b>${Math.round(scale * 100)}%</b>`;
     }
 
-    // Renderizado en Canvas
+    function showToast(message, duration = 2500) {
+      let toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.style.cssText = `
+          position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+          background: rgba(15, 23, 42, 0.95); color: #F8FAFC;
+          padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600;
+          border: 1px solid rgba(255,255,255,0.15); z-index: 1000;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none;
+          transition: opacity 0.25s ease;
+        `;
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.style.opacity = '1';
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => { toast.style.opacity = '0'; }, duration);
+    }
+
+    // --- RENDERIZADO PRINCIPAL (v3) ---
     function redraw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 1. Imagen de fondo del plano
+      // 1. Plano arquitectónico de fondo
       if (isImageLoaded) {
+        const opacity = parseFloat(document.getElementById('bgOpacity')?.value || '0.75');
         ctx.save();
+        ctx.globalAlpha = opacity;
         ctx.translate(panX, panY);
         ctx.scale(scale, scale);
         ctx.drawImage(image, 0, 0);
         ctx.restore();
       }
 
-      // 2. Dibujar Footprint
-      if (data.footprint.length >= 3) {
-        drawPoly(data.footprint, 'rgba(16, 185, 129, 0.25)', '#10B981', 3);
+      // 2. Footprint / Planta
+      if (data.footprint && data.footprint.length >= 3 && isLayerVisible('footprint')) {
+        const isActive = activeLayer === 'footprint';
+        const isSel = selectedItem && selectedItem.type === 'footprint';
+        const stroke = isSel ? '#F59E0B' : LAYER_COLORS.footprint;
+        drawPoly(data.footprint, isActive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.05)', stroke, isSel ? 3.5 : 2.5);
+        if (isSel && isActive) drawVertices(data.footprint);
       }
 
-      // 3. Dibujar Corredores
-      data.corridors.forEach(c => {
-        drawPoly(c.polygon, 'rgba(100, 116, 139, 0.3)', '#94A3B8', 1.5);
-      });
+      // 3. Pasillos (Corridors)
+      if (data.corridors && isLayerVisible('corridors')) {
+        data.corridors.forEach((c, idx) => {
+          const isActive = activeLayer === 'corridors';
+          const isSel = selectedItem && selectedItem.type === 'corridors' && selectedItem.index === idx;
+          const stroke = isSel ? '#FFFFFF' : LAYER_COLORS.corridors;
+          drawPoly(c.polygon, isActive ? 'rgba(245, 158, 11, 0.28)' : 'rgba(245, 158, 11, 0.12)', stroke, isSel ? 3 : 1.8);
+          if (isSel && isActive) drawVertices(c.polygon);
+        });
+      }
 
-      // 4. Dibujar Plazas
-      data.plazas.forEach(pl => {
-        const sc = mallToScreen(pl.center.x, pl.center.y);
-        const sr = (pl.radius / TARGET_WIDTH) * image.width * scale;
-        // Halo
-        ctx.beginPath();
-        ctx.arc(sc.x, sc.y, sr * 1.15, 0, Math.PI * 2);
-        ctx.fillStyle = pl.color + '44';
-        ctx.fill();
-        // Main circle
-        ctx.beginPath();
-        ctx.arc(sc.x, sc.y, sr, 0, Math.PI * 2);
-        ctx.fillStyle = pl.color + 'AA';
-        ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.stroke();
+      // 4. Núcleos Verticales (Escaleras & Ascensores)
+      if (data.cores && isLayerVisible('cores')) {
+        data.cores.forEach((core, idx) => {
+          const isActive = activeLayer === 'cores';
+          const isSel = selectedItem && selectedItem.type === 'cores' && selectedItem.index === idx;
+          const sc = mallToScreen(core.x, core.y);
+          const baseW = isImageLoaded ? image.width : targetWidth;
+          const size = (core.size || 14) * (baseW / targetWidth) * scale;
 
-        // Label
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(pl.label, sc.x, sc.y + 4);
-      });
+          ctx.fillStyle = isSel ? 'rgba(245, 158, 11, 0.5)' : (isActive ? 'rgba(6, 182, 212, 0.45)' : 'rgba(6, 182, 212, 0.2)');
+          ctx.fillRect(sc.x - size / 2, sc.y - size / 2, size, size);
+          ctx.strokeStyle = isSel ? '#F59E0B' : LAYER_COLORS.cores;
+          ctx.lineWidth = isSel ? 3 : 2;
+          ctx.strokeRect(sc.x - size / 2, sc.y - size / 2, size, size);
 
-      // 5. Dibujar Locales
-      data.stores.forEach(st => {
-        if (st.polygon && st.polygon.length >= 3) {
-          drawPoly(st.polygon, 'rgba(59, 130, 246, 0.35)', '#3B82F6', 2);
-          if (st.labelPos) {
-            const lp = mallToScreen(st.labelPos.x, st.labelPos.y);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 10px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(st.name, lp.x, lp.y);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = `bold ${Math.max(10, Math.round(size * 0.65))}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(core.kind === 'elevator' ? '🛗' : '🪜', sc.x, sc.y);
+        });
+      }
+
+      // 5. Plazas Circulares
+      if (data.plazas && isLayerVisible('plazas')) {
+        data.plazas.forEach((pl, idx) => {
+          const isActive = activeLayer === 'plazas';
+          const isSel = selectedItem && selectedItem.type === 'plazas' && selectedItem.index === idx;
+          const sc = mallToScreen(pl.center.x, pl.center.y);
+          const baseW = isImageLoaded ? image.width : targetWidth;
+          const sr = (pl.radius / targetWidth) * baseW * scale;
+
+          ctx.beginPath();
+          ctx.arc(sc.x, sc.y, sr * 1.15, 0, Math.PI * 2);
+          ctx.fillStyle = isSel ? 'rgba(245, 158, 11, 0.4)' : pl.color + '33';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(sc.x, sc.y, sr, 0, Math.PI * 2);
+          ctx.fillStyle = pl.color + 'AA';
+          ctx.fill();
+          ctx.lineWidth = isSel ? 3 : 2;
+          ctx.strokeStyle = isSel ? '#F59E0B' : '#FFFFFF';
+          ctx.stroke();
+
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(pl.label, sc.x, sc.y);
+        });
+      }
+
+      // 6. Locales Comerciales
+      if (data.stores && isLayerVisible('stores')) {
+        data.stores.forEach((st, idx) => {
+          if (st.polygon && st.polygon.length >= 3) {
+            const isActive = activeLayer === 'stores';
+            const isSel = selectedItem && selectedItem.type === 'stores' && selectedItem.index === idx;
+            const fill = isSel ? 'rgba(245, 158, 11, 0.45)' : (isActive ? 'rgba(59, 130, 246, 0.35)' : 'rgba(59, 130, 246, 0.15)');
+            const stroke = isSel ? '#F59E0B' : LAYER_COLORS.stores;
+            drawPoly(st.polygon, fill, stroke, isSel ? 2.5 : 1.5);
+            if (isSel && isActive) drawVertices(st.polygon);
+
+            if (st.labelPos && (isActive || isSel)) {
+              const lp = mallToScreen(st.labelPos.x, st.labelPos.y);
+              ctx.fillStyle = '#FFFFFF';
+              ctx.font = 'bold 9px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(st.name, lp.x, lp.y);
+            }
           }
-        }
-      });
+        });
+      }
 
-      // 6. Dibujar Nodos
-      data.nodes.forEach(nd => {
-        const p = mallToScreen(nd.x, nd.y);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-        ctx.fillStyle = '#F59E0B';
-        ctx.fill();
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      });
+      // 7. Nodos de Ruta
+      if (data.nodes && isLayerVisible('nodes')) {
+        data.nodes.forEach(nd => {
+          const p = mallToScreen(nd.x, nd.y);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = nd.kind === 'plaza' ? '#EF4444' : LAYER_COLORS.nodes;
+          ctx.fill();
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        });
+      }
 
-      // 7. Polígono activo en curso
+      // 8. Trazo activo
       if (activePoints.length > 0) {
         ctx.beginPath();
         const first = mallToScreen(activePoints[0].x, activePoints[0].y);
@@ -844,20 +2040,20 @@
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Vértices
         activePoints.forEach(p => {
           const sp = mallToScreen(p.x, p.y);
           ctx.beginPath();
-          ctx.arc(sp.x, sp.y, 4, 0, Math.PI * 2);
+          ctx.arc(sp.x, sp.y, 4.5, 0, Math.PI * 2);
           ctx.fillStyle = '#FBBF24';
           ctx.fill();
         });
       }
 
-      // Plaza activa en curso
+      // 9. Plaza activa
       if (plazaCenter && plazaRadius > 0) {
         const sc = mallToScreen(plazaCenter.x, plazaCenter.y);
-        const sr = (plazaRadius / TARGET_WIDTH) * image.width * scale;
+        const baseW = isImageLoaded ? image.width : targetWidth;
+        const sr = (plazaRadius / targetWidth) * baseW * scale;
         ctx.beginPath();
         ctx.arc(sc.x, sc.y, sr, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(245, 158, 11, 0.3)';
@@ -869,7 +2065,7 @@
     }
 
     function drawPoly(pts, fill, stroke, strokeWidth) {
-      if (pts.length < 3) return;
+      if (!pts || pts.length < 3) return;
       ctx.beginPath();
       const first = mallToScreen(pts[0].x, pts[0].y);
       ctx.moveTo(first.x, first.y);
@@ -885,116 +2081,65 @@
       ctx.stroke();
     }
 
-    // Actualizar Panel de Capas
-    function updateLayers() {
-      const container = document.getElementById('layerList');
-      container.innerHTML = '';
-
-      let count = 0;
-
-      // Footprint
-      if (data.footprint.length > 0) {
-        count++;
-        container.innerHTML += `
-          <div class="layer-group">
-            <div class="layer-group-title"><span>Huella Perimetral</span><span>1</span></div>
-            <div class="layer-item">
-              <div class="layer-info">
-                <div class="layer-badge" style="background: var(--accent);"></div>
-                <span>Perímetro Slab (${data.footprint.length} pts)</span>
-              </div>
-              <button class="btn-delete" onclick="data.footprint=[]; updateLayers(); redraw();">🗑️</button>
-            </div>
-          </div>
-        `;
-      }
-
-      // Plazas
-      if (data.plazas.length > 0) {
-        count += data.plazas.length;
-        let html = `<div class="layer-group"><div class="layer-group-title"><span>Plazas Circulares</span><span>${data.plazas.length}</span></div>`;
-        data.plazas.forEach((pl, idx) => {
-          html += `
-            <div class="layer-item">
-              <div class="layer-info">
-                <div class="layer-badge" style="background: ${pl.color};"></div>
-                <span>${pl.label} (r: ${pl.radius})</span>
-              </div>
-              <button class="btn-delete" onclick="data.plazas.splice(${idx},1); updateLayers(); redraw();">🗑️</button>
-            </div>
-          `;
-        });
-        html += `</div>`;
-        container.innerHTML += html;
-      }
-
-      // Stores
-      if (data.stores.length > 0) {
-        count += data.stores.length;
-        let html = `<div class="layer-group"><div class="layer-group-title"><span>Locales y Anclas</span><span>${data.stores.length}</span></div>`;
-        data.stores.forEach((st, idx) => {
-          html += `
-            <div class="layer-item">
-              <div class="layer-info">
-                <div class="layer-badge" style="background: #3B82F6;"></div>
-                <span>${st.name}</span>
-              </div>
-              <button class="btn-delete" onclick="data.stores.splice(${idx},1); updateLayers(); redraw();">🗑️</button>
-            </div>
-          `;
-        });
-        html += `</div>`;
-        container.innerHTML += html;
-      }
-
-      document.getElementById('elemCount').innerText = count;
+    function drawVertices(pts) {
+      pts.forEach(p => {
+        const sp = mallToScreen(p.x, p.y);
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#F59E0B';
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
     }
 
-    function clearAll() {
-      if (confirm('¿Deseas limpiar todos los trazos actuales?')) {
-        data = { footprint: [], plazas: [], stores: [], corridors: [], nodes: [] };
-        updateLayers();
-        redraw();
-      }
-    }
-
-    // Modal Export
+    // --- MODAL DE EXPORTACIÓN ---
     function openExportModal() {
+      const modal = document.getElementById('exportModal');
       const area = document.getElementById('codeExportArea');
 
-      let tsCode = `// Geometría Exportada desde el Anotador Sambil 2.5D\n\n`;
+      const levelName = currentLevel.toUpperCase();
+      const levelConst = 'LEVEL_' + levelName;
 
-      if (data.footprint.length > 0) {
-        tsCode += `export const footprintSambil = ${JSON.stringify(data.footprint, null, 2)};\n\n`;
-      }
+      let code = `// ==========================================================================\n`;
+      code += `// SAMBIL CHACAO — NIVEL ${levelName} (Calibrado con Anotador Geométrico v3)\n`;
+      code += `// ==========================================================================\n\n`;
 
-      if (data.plazas.length > 0) {
-        tsCode += `export const plazasSambil = ${JSON.stringify(data.plazas, null, 2)};\n\n`;
-      }
+      code += `// 1. HUELLA ARQUITECTÓNICA PERIMETRAL\n`;
+      code += `export const footprint${levelName} = ${JSON.stringify(data.footprint, null, 2)};\n\n`;
 
-      if (data.stores.length > 0) {
-        tsCode += `export const storesSambil = ${JSON.stringify(data.stores, null, 2)};\n\n`;
-      }
+      code += `// 2. PLAZAS ICÓNICAS\n`;
+      code += `export const plazas${levelName} = ${JSON.stringify(data.plazas, null, 2)};\n\n`;
 
-      area.value = tsCode;
-      document.getElementById('exportModal').classList.add('open');
+      code += `// 3. PASILLOS Y CORREDORES\n`;
+      code += `export const corridors${levelName} = ${JSON.stringify(data.corridors, null, 2)};\n\n`;
+
+      code += `// 4. NÚCLEOS VERTICALES (ESCALERAS / ASCENSORES)\n`;
+      code += `export const cores${levelName} = ${JSON.stringify(data.cores || [], null, 2)};\n\n`;
+
+      code += `// 5. LOCALES COMERCIALES CON POLÍGONOS REALES\n`;
+      code += `export const storesSambil${levelName}: MapStore[] = ${JSON.stringify(data.stores, null, 2)};\n`;
+
+      area.value = code;
+      modal.style.display = 'flex';
     }
 
     function closeExportModal() {
-      document.getElementById('exportModal').classList.remove('open');
+      document.getElementById('exportModal').style.display = 'none';
     }
 
     function copyExportCode() {
       const area = document.getElementById('codeExportArea');
       area.select();
       navigator.clipboard.writeText(area.value);
-      alert('¡Código copiado al portapapeles!');
+      showToast('¡Código TypeScript copiado al portapapeles!');
     }
 
-    // Inicializar al cargar
+    // Inicialización
     window.onload = () => {
       resizeCanvas();
-      loadSampleImage('nivel libertador.jpeg');
+      selectLevel('autopista');
     };
   </script>
 </body>
