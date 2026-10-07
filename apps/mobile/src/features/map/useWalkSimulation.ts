@@ -7,7 +7,7 @@ export interface UseWalkSimulationProps {
   targetStoreName?: string;
   /** Velocidad base de caminata en m/s. Default 1.2. */
   speedMps?: number;
-  /** Multiplicador de velocidad (1, 2, 4). Default 1. */
+  /** Multiplicador de velocidad (1, 2, 4, 8). Default 2. */
   speedMultiplier?: number;
   /** Longitud del trail en metros. Default 15. */
   trailMeters?: number;
@@ -25,7 +25,7 @@ export interface WalkSimulationState {
   trail: Point[];
   /** Progreso normalizado 0..1 a lo largo de la ruta. */
   walkProgress: number;
-  /** Multiplicador actual (1, 2, 4). */
+  /** Multiplicador actual (1, 2, 4, 8). */
   speedMultiplier: number;
   setSpeedMultiplier: (n: number) => void;
   startWalk: () => void;
@@ -40,7 +40,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     activeRoute,
     targetStoreName,
     speedMps = 1.2,
-    speedMultiplier: initialMultiplier = 1,
+    speedMultiplier: initialMultiplier = 2,
     trailMeters = 15,
     trailSampleMeters = 0.5,
     onArrival,

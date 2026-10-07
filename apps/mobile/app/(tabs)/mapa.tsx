@@ -17,6 +17,7 @@ import { StorefrontHUD } from '../../src/features/map/StorefrontHUD';
 import { VerticalFloorSelector } from '../../src/features/map/VerticalFloorSelector';
 import { NavigationHUD } from '../../src/features/map/NavigationHUD';
 import { DestinationBar } from '../../src/features/map/DestinationBar';
+import { MapSearchBar, SEARCH_CATEGORIES } from '../../src/features/map/MapSearchBar';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
 import { useStepProgress } from '../../src/features/map/useStepProgress';
 import { useMallTime } from '../../src/features/map/useMallTime';
@@ -44,6 +45,7 @@ export default function MapaScreen() {
   const [mapMode, setMapMode] = useState<'guide' | 'explore'>('guide');
   const [selectedLevel, setSelectedLevel] = useState<string>(LEVEL_AUTOPISTA);
   const [selectedStoreId, setSelectedStoreId] = useState<string>('local_4');
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [cameraMode, setCameraMode] = useState<'ground' | 'isometric' | 'aerial'>('ground');
   const [followUser, setFollowUser] = useState<boolean>(true);
   const [isNavigating, setIsNavigating] = useState<boolean>(true);
@@ -150,7 +152,7 @@ export default function MapaScreen() {
     activeRoute,
     targetStoreName: selectedStore?.name,
     speedMps: 1.2,
-    speedMultiplier: 1,
+    speedMultiplier: 2,
     trailMeters: 15,
     trailSampleMeters: 0.5,
     onArrival: () => {
@@ -167,13 +169,28 @@ export default function MapaScreen() {
   // Seguimiento de paso actual y porcentaje con useStepProgress
   const stepProgress = useStepProgress(navigationPlan, walk.position, currentFloorNodes);
 
+  // Tiendas destacadas por filtro de categoría activa
+  const highlightedStoreIds = useMemo(() => {
+    if (!activeCategory) return undefined;
+    const catItem = SEARCH_CATEGORIES.find((c) => c.id === activeCategory);
+    if (!catItem || catItem.categoryKeys.length === 0) return undefined;
+    return sambilMall.stores
+      .filter((s) => catItem.categoryKeys.includes(s.category))
+      .map((s) => s.id);
+  }, [activeCategory]);
+
+  // Limpiar la línea de recorrido una vez que se llega al destino
+  const isArrivalReached = !walk.isWalking && (walk.walkProgress >= 0.98 || walk.arrivalMessage !== null);
+  const effectiveRouteNodeIds = isArrivalReached ? undefined : activeRoute?.nodeIds;
+
   // Escena plana 2D optimizada (Modo Guía)
   const flatScene = useMemo(() => {
     return buildFlatScene(sambilMall, {
       floorId: selectedLevel,
       palette: categoryPalette,
       selectedStoreId: isNavigating ? selectedStoreId : undefined,
-      routeNodeIds: activeRoute ? activeRoute.nodeIds : undefined,
+      highlightedStoreIds,
+      routeNodeIds: effectiveRouteNodeIds,
       userPosition: walk.position,
       userHeading: walk.heading,
       userTrail: walk.trail,
@@ -181,15 +198,19 @@ export default function MapaScreen() {
       labels: 'auto',
       offers: DEMO_SAMBIL_OFFERS,
     });
-  }, [selectedLevel, isNavigating, selectedStoreId, activeRoute, walk.position, walk.heading, walk.trail]);
+  }, [selectedLevel, isNavigating, selectedStoreId, highlightedStoreIds, effectiveRouteNodeIds, walk.position, walk.heading, walk.trail]);
 
   // Manejar selección de tienda desde mapa o búsqueda
   const handleSelectStore = useCallback((storeId: string) => {
+    const store = sambilMall.stores.find((s) => s.id === storeId);
+    if (store && store.floorId !== selectedLevel) {
+      setSelectedLevel(store.floorId);
+    }
     setSelectedStoreId(storeId);
     setIsNavigating(true);
     setShowStorefrontHUD(false);
     mapRef.current?.focusOnStore(storeId);
-  }, []);
+  }, [selectedLevel]);
 
   // Salir del modo navegación
   const handleExitNavigation = useCallback(() => {
@@ -254,51 +275,62 @@ export default function MapaScreen() {
             />
           </View>
         ) : (
-          <View style={styles.exploreHeader}>
-            <View style={styles.brandBadge}>
-              <Text style={styles.brandTitle}>SAMBIL CHACAO</Text>
-              <Text style={styles.brandSubtitle}>
-                {openCount}/{totalStores} tiendas abiertas · {currentHour}:00
-              </Text>
+          <View style={styles.exploreHeaderContainer}>
+            <View style={styles.exploreHeader}>
+              <View style={styles.brandBadge}>
+                <Text style={styles.brandTitle}>SAMBIL CHACAO</Text>
+                <Text style={styles.brandSubtitle}>
+                  {openCount}/{totalStores} tiendas abiertas · {currentHour}:00
+                </Text>
+              </View>
+
+              {/* Selector de Modo Guía 2D vs Explorar 2.5D */}
+              <View style={styles.modeSwitchContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.modeSwitchBtn,
+                    mapMode === 'guide' && styles.modeSwitchBtnActive,
+                  ]}
+                  onPress={() => setMapMode('guide')}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      styles.modeSwitchText,
+                      mapMode === 'guide' && styles.modeSwitchTextActive,
+                    ]}
+                  >
+                    🧭 Guía 2D
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.modeSwitchBtn,
+                    mapMode === 'explore' && styles.modeSwitchBtnActive,
+                  ]}
+                  onPress={() => setMapMode('explore')}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      styles.modeSwitchText,
+                      mapMode === 'explore' && styles.modeSwitchTextActive,
+                    ]}
+                  >
+                    📐 2.5D
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
-            {/* Selector de Modo Guía 2D vs Explorar 2.5D */}
-            <View style={styles.modeSwitchContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.modeSwitchBtn,
-                  mapMode === 'guide' && styles.modeSwitchBtnActive,
-                ]}
-                onPress={() => setMapMode('guide')}
-                activeOpacity={0.8}
-              >
-                <Text
-                  style={[
-                    styles.modeSwitchText,
-                    mapMode === 'guide' && styles.modeSwitchTextActive,
-                  ]}
-                >
-                  🧭 Guía 2D
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.modeSwitchBtn,
-                  mapMode === 'explore' && styles.modeSwitchBtnActive,
-                ]}
-                onPress={() => setMapMode('explore')}
-                activeOpacity={0.8}
-              >
-                <Text
-                  style={[
-                    styles.modeSwitchText,
-                    mapMode === 'explore' && styles.modeSwitchTextActive,
-                  ]}
-                >
-                  📐 2.5D
-                </Text>
-              </TouchableOpacity>
-            </View>
+            {/* Barra flotante de búsqueda y categorías */}
+            <MapSearchBar
+              stores={sambilMall.stores}
+              activeCategory={activeCategory}
+              onSelectCategory={setActiveCategory}
+              onSelectStore={handleSelectStore}
+              currentFloorId={selectedLevel}
+            />
           </View>
         )}
       </SafeAreaView>
@@ -406,7 +438,13 @@ export default function MapaScreen() {
             }}
             onToggleSpeed={() => {
               walk.setSpeedMultiplier(
-                walk.speedMultiplier === 1 ? 2 : walk.speedMultiplier === 2 ? 4 : 1
+                walk.speedMultiplier === 1
+                  ? 2
+                  : walk.speedMultiplier === 2
+                  ? 4
+                  : walk.speedMultiplier === 4
+                  ? 8
+                  : 1
               );
             }}
             onResetWalk={() => walk.resetWalk()}
@@ -476,9 +514,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingTop: 8,
   },
+  exploreHeaderContainer: {
+    paddingTop: 4,
+  },
   exploreHeader: {
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -535,7 +576,7 @@ const styles = StyleSheet.create({
   verticalFloorWrapper: {
     position: 'absolute',
     right: 12,
-    top: 140,
+    top: 175,
     zIndex: 35,
   },
   mapControls: {

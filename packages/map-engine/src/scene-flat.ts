@@ -33,6 +33,10 @@ export interface FlatSceneOptions {
   viewport?: FlatViewport;
   /** Store seleccionado como destino. */
   selectedStoreId?: string;
+  /** IDs de tiendas a resaltar (ej: por búsqueda o filtro de categoría). */
+  highlightedStoreIds?: string[];
+  /** IDs de tiendas a atenuar. */
+  dimmedStoreIds?: string[];
   /** Nodos de la ruta activa (IDs del grafo). */
   routeNodeIds?: string[];
   /** Posición del usuario en coordenadas del plano. */
@@ -199,7 +203,7 @@ const FOCUS_RADIUS_UNITS = 50;
 const MAX_VIEWBOX_RADIUS_UNITS = 400;
 
 /** Distancia mínima entre etiquetas para evitar solapamiento (en unidades del plano). */
-const LABEL_MIN_DISTANCE_UNITS = 20;
+const LABEL_MIN_DISTANCE_UNITS = 34;
 
 /** Colores base del modo guía de alto contraste. */
 const FLAT_COLORS = {
@@ -293,8 +297,8 @@ function resolveLabels(candidates: LabelCandidate[], minDistance: number): Label
     for (const acc of accepted) {
       const dx = Math.abs(cand.x - acc.x);
       const dy = Math.abs(cand.y - acc.y);
-      const approxRadius = (cand.size + acc.size) * 0.6;
-      if (dx < minDistance && dy < approxRadius * 1.5) {
+      const approxRadius = (cand.size + acc.size) * 0.7;
+      if (dx < minDistance && dy < approxRadius * 1.6) {
         collides = true;
         break;
       }
@@ -336,6 +340,8 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     ? stores.find((s) => s.id === opts.selectedStoreId || s.slug === opts.selectedStoreId)
     : undefined;
 
+  const hasFilter = Boolean(opts.highlightedStoreIds && opts.highlightedStoreIds.length > 0);
+
   // --- 3. Áreas (pasillos y plazas) ---
   const items: FlatSceneItem[] = [];
 
@@ -364,7 +370,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     }
   }
 
-  // --- 4. Locales con visibilidad calculada ---
+  // --- 4. Locales con visibilidad calculada y filtros ---
   const visibleStores: MapStore[] = [];
   for (const s of stores) {
     const c = storeCenter(s);
@@ -376,6 +382,9 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     visibleStores.push(s);
 
     const isDestination = s.id === destination?.id;
+    const isHighlighted = hasFilter && opts.highlightedStoreIds!.includes(s.id);
+    const isDimmed = (hasFilter && !isHighlighted && !isDestination) || (opts.dimmedStoreIds?.includes(s.id) ?? false);
+
     const colors = opts.palette[s.category] ?? opts.palette['other'] ?? { fill: '#F1F5F9', ink: '#1E293B' };
 
     const points = s.polygon && s.polygon.length >= 3
@@ -387,14 +396,28 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
           { x: s.x, y: s.y + s.h },
         ];
 
+    let fill = colors.fill || FLAT_COLORS.storeFill;
+    let stroke = colors.ink || FLAT_COLORS.storeStroke;
+
+    if (isDestination) {
+      fill = FLAT_COLORS.destinationFill;
+      stroke = FLAT_COLORS.destinationStroke;
+    } else if (isHighlighted) {
+      fill = '#EFF6FF';
+      stroke = '#2563EB';
+    } else if (isDimmed) {
+      fill = '#F8FAFC';
+      stroke = '#E2E8F0';
+    }
+
     items.push({
       kind: 'store',
       id: s.id,
       points,
-      fill: isDestination ? FLAT_COLORS.destinationFill : (colors.fill || FLAT_COLORS.storeFill),
-      stroke: isDestination ? FLAT_COLORS.destinationStroke : (colors.ink || FLAT_COLORS.storeStroke),
+      fill,
+      stroke,
       isDestination,
-      isVisible: inside,
+      isVisible: !isDimmed,
     });
   }
 
@@ -525,7 +548,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     });
   }
 
-  // --- 8. Etiquetas con anti-solapamiento ---
+  // --- 8. Etiquetas con anti-solapamiento y LOD ---
   const labelsMode = opts.labels ?? 'auto';
   if (labelsMode !== 'none') {
     const candidates: LabelCandidate[] = [];
@@ -555,6 +578,23 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
       });
     }
 
+    // Tiendas resaltadas por búsqueda o filtro (prioridad 2)
+    if (hasFilter) {
+      for (const s of visibleStores) {
+        if (opts.highlightedStoreIds!.includes(s.id) && s.id !== destination?.id) {
+          const c = storeCenter(s);
+          candidates.push({
+            text: s.name,
+            x: c.x,
+            y: c.y,
+            size: 8.5,
+            priority: 2,
+            storeId: s.id,
+          });
+        }
+      }
+    }
+
     // Locales en ruta (prioridad 3) — los que están a <25m de la ruta
     if (opts.routeNodeIds && opts.routeNodeIds.length > 1) {
       const byId = new Map(map.nodes.map((n) => [n.id, n] as const));
@@ -564,7 +604,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
         if (n) routePts.push({ x: n.x, y: n.y });
       }
       for (const s of visibleStores) {
-        if (s.id === destination?.id) continue;
+        if (s.id === destination?.id || candidates.some((c) => c.storeId === s.id)) continue;
         const c = storeCenter(s);
         let nearRoute = false;
         for (const rp of routePts) {
@@ -583,21 +623,19 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
       }
     }
 
-    // Reglas de zoom para el resto
+    // Reglas de zoom para el resto (LOD limpio)
     const zoom = opts.zoom;
-    if (labelsMode === 'all' || zoom >= 0.4) {
-      // Anclas (prioridad 4): categorías importantes o locales medianos/grandes
+    if (labelsMode === 'all' || zoom >= 1.2) {
+      // Anclas (prioridad 4): categorías clave o locales grandes
       for (const s of visibleStores) {
         if (candidates.some((c) => c.storeId === s.id)) continue;
         const isAnchor = [
           'entertainment',
           'pharmacy',
           'department_store',
-          'sports',
-          'fashion',
-          'food',
+          'finance',
           'supermarket',
-        ].includes(s.category) || (s.w * s.h > 800);
+        ].includes(s.category) || (s.w * s.h > 1200);
 
         if (isAnchor) {
           const c = storeCenter(s);
@@ -612,8 +650,8 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
         }
       }
 
-      // Resto (prioridad 5): locales estándar
-      if (labelsMode === 'all' || zoom >= 0.8) {
+      // Resto (prioridad 5): solo visible con zoom cercano (zoom >= 1.8)
+      if (labelsMode === 'all' || zoom >= 1.8) {
         for (const s of visibleStores) {
           if (candidates.some((c) => c.storeId === s.id)) continue;
           const c = storeCenter(s);
@@ -675,4 +713,3 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     },
   };
 }
-
