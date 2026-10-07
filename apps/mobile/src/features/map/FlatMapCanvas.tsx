@@ -143,14 +143,14 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     }
   }, [userPosition, baseScale, screenWidth, screenHeight, cameraX, cameraY, zoom]);
 
-  // 5. Auto-seguimiento suave del avatar cuando camina
+  // 5. Auto-seguimiento centrado directo del avatar cuando camina
   useEffect(() => {
     if (isFollowingUser && userPosition && !isPanning.current) {
       const currentScale = baseScale * zoom.value;
       const targetX = screenWidth / 2 - userPosition.x * currentScale;
       const targetY = screenHeight / 2 - userPosition.y * currentScale;
-      cameraX.value = withSpring(targetX, { damping: 20, stiffness: 90 });
-      cameraY.value = withSpring(targetY, { damping: 20, stiffness: 90 });
+      cameraX.value = targetX;
+      cameraY.value = targetY;
     }
   }, [userPosition, isFollowingUser, baseScale, zoom, screenWidth, screenHeight, cameraX, cameraY]);
 
@@ -299,14 +299,14 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
                   path={s.path}
                   color={isTarget ? '#DBEAFE' : s.fill}
                   style="fill"
-                  opacity={s.isVisible ? 1 : 0.4}
+                  opacity={s.isVisible ? 1 : 0.25}
                 />
                 <Path
                   path={s.path}
                   color={isTarget ? '#2563EB' : s.stroke}
                   style="stroke"
-                  strokeWidth={isTarget ? 3 / (baseScale * zoom.value) : 1.5 / (baseScale * zoom.value)}
-                  opacity={s.isVisible ? 1 : 0.6}
+                  strokeWidth={isTarget ? 3 / (baseScale * zoom.value) : 1.2 / (baseScale * zoom.value)}
+                  opacity={s.isVisible ? 1 : 0.35}
                 />
               </React.Fragment>
             );

@@ -190,8 +190,8 @@ export default function MapaScreen() {
   }, [activeCategory]);
 
   // Limpiar la línea de recorrido una vez que se llega al destino
-  const isArrivalReached = !walk.isWalking && (walk.walkProgress >= 0.98 || walk.arrivalMessage !== null);
-  const effectiveRouteNodeIds = isArrivalReached ? undefined : activeRoute?.nodeIds;
+  const isArrivalReached = !walk.isWalking && (walk.walkProgress >= 0.98 || walk.arrivalMessage !== null || showStorefrontHUD);
+  const effectiveRouteNodeIds = (isArrivalReached || !isNavigating) ? undefined : activeRoute?.nodeIds;
 
   // Escena plana 2D optimizada (Modo Guía)
   const flatScene = useMemo(() => {
@@ -283,7 +283,7 @@ export default function MapaScreen() {
         ]}
         pointerEvents="box-none"
       >
-        {isNavigating && navigationPlan ? (
+        {isNavigating && !showStorefrontHUD && navigationPlan ? (
           <View style={styles.topHUDContainer}>
             <NavigationHUD
               plan={navigationPlan}
@@ -428,9 +428,21 @@ export default function MapaScreen() {
 
       {/* Toast flotante de Notificación de Llegada */}
       {walk.arrivalMessage && (
-        <View style={styles.arrivalToast}>
-          <Text style={styles.arrivalToastIcon}>🎉</Text>
-          <Text style={styles.arrivalToastText}>{walk.arrivalMessage}</Text>
+        <View
+          style={[
+            styles.arrivalToast,
+            { top: topSafe + (isNavigating && !showStorefrontHUD ? 74 : 126) },
+          ]}
+          pointerEvents="box-none"
+        >
+          <TouchableOpacity
+            style={styles.arrivalToastContent}
+            onPress={walk.clearArrivalMessage}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.arrivalToastIcon}>🎉</Text>
+            <Text style={styles.arrivalToastText}>{walk.arrivalMessage}</Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -643,24 +655,25 @@ const styles = StyleSheet.create({
   },
   arrivalToast: {
     position: 'absolute',
-    top: 130,
     alignSelf: 'center',
+    zIndex: 50,
+  },
+  arrivalToastContent: {
     backgroundColor: '#10B981',
     borderRadius: 20,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    zIndex: 50,
     shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 8,
   },
   arrivalToastIcon: {
-    fontSize: 16,
+    fontSize: 15,
   },
   arrivalToastText: {
     color: '#FFFFFF',

@@ -403,7 +403,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
       fill = FLAT_COLORS.destinationFill;
       stroke = FLAT_COLORS.destinationStroke;
     } else if (isHighlighted) {
-      fill = '#EFF6FF';
+      fill = '#DBEAFE';
       stroke = '#2563EB';
     } else if (isDimmed) {
       fill = '#F8FAFC';
@@ -623,9 +623,9 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
       }
     }
 
-    // Reglas de zoom para el resto (LOD limpio)
+    // Reglas de zoom para el resto (LOD limpio) - Solo cuando no hay filtro activo
     const zoom = opts.zoom;
-    if (labelsMode === 'all' || zoom >= 1.2) {
+    if (!hasFilter && (labelsMode === 'all' || zoom >= 1.2)) {
       // Anclas (prioridad 4): categorías clave o locales grandes
       for (const s of visibleStores) {
         if (candidates.some((c) => c.storeId === s.id)) continue;

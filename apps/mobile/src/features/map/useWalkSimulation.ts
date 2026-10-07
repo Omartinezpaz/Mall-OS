@@ -32,6 +32,7 @@ export interface WalkSimulationState {
   stopWalk: () => void;
   resetWalk: () => void;
   arrivalMessage: string | null;
+  clearArrivalMessage: () => void;
 }
 
 function getEffectiveSpeedMps(multiplier: number): number {
@@ -79,6 +80,12 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
   const lastProgressRef = useRef(0);
   const rafRef = useRef<number | undefined>(undefined);
   const routeLengthRef = useRef(1);
+  const arrivalTimerRef = useRef<NodeJS.Timeout | number | undefined>(undefined);
+
+  const clearArrivalMessage = useCallback(() => {
+    if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
+    setArrivalMessage(null);
+  }, []);
 
   // Calcular waypoints desde activeRoute
   const waypoints = useRef<Point[]>([]);
@@ -179,9 +186,12 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
       if (newProgress >= 1) {
         setIsWalking(false);
         setHeading(undefined);
-        setArrivalMessage(
-          targetStoreName ? `¡Llegaste a ${targetStoreName}!` : '¡Llegaste a tu destino!'
-        );
+        const msg = targetStoreName ? `¡Llegaste a ${targetStoreName}!` : '¡Llegaste a tu destino!';
+        setArrivalMessage(msg);
+        if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
+        arrivalTimerRef.current = setTimeout(() => {
+          setArrivalMessage(null);
+        }, 4500);
         onArrival?.();
         return;
       }
@@ -209,6 +219,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
   // Controles
   const startWalk = useCallback(() => {
     if (!activeRoute) return;
+    if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
     setArrivalMessage(null);
     setIsWalking(true);
   }, [activeRoute]);
@@ -223,6 +234,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     lastProgressRef.current = 0;
     setWalkProgress(0);
     setHeading(undefined);
+    if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
     setArrivalMessage(null);
     if (waypoints.current.length > 0) {
       setPosition(waypoints.current[0]);
@@ -247,6 +259,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     stopWalk,
     resetWalk,
     arrivalMessage,
+    clearArrivalMessage,
   };
 }
 
