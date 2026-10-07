@@ -176,11 +176,12 @@ export default function MapaScreen() {
       routeNodeIds: activeRoute ? activeRoute.nodeIds : undefined,
       userPosition: walk.position,
       userHeading: walk.heading,
+      userTrail: walk.trail,
       zoom: 1,
       labels: 'auto',
       offers: DEMO_SAMBIL_OFFERS,
     });
-  }, [selectedLevel, isNavigating, selectedStoreId, activeRoute, walk.position, walk.heading]);
+  }, [selectedLevel, isNavigating, selectedStoreId, activeRoute, walk.position, walk.heading, walk.trail]);
 
   // Manejar selección de tienda desde mapa o búsqueda
   const handleSelectStore = useCallback((storeId: string) => {
@@ -209,9 +210,11 @@ export default function MapaScreen() {
             scene={flatScene}
             userPosition={walk.position}
             userHeading={walk.heading}
+            userTrail={walk.trail}
             selectedStoreId={selectedStoreId}
             onStorePress={handleSelectStore}
             showCompass={true}
+            followUser={followUser}
           />
         ) : (
           <IsometricMap

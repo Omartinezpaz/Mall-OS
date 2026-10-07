@@ -7,6 +7,8 @@ import type {
   FlatZone,
   FlatRoute,
   FlatUserPin,
+  FlatVisionCone,
+  FlatUserTrail,
   FlatDestinationPin,
   FlatLabel,
   FlatOfferBadge,
@@ -43,12 +45,24 @@ export interface CompiledFlatRoute {
   points: Point[];
 }
 
+export interface CompiledFlatVisionCone {
+  path: SkPath;
+  opacity: number;
+}
+
+export interface CompiledFlatUserTrailSegment {
+  path: SkPath;
+  opacity: number;
+}
+
 export interface CompiledFlatScene {
   corridors: CompiledFlatCorridor[];
   zones: CompiledFlatZone[];
   stores: CompiledFlatStore[];
   plazas: FlatPlaza[];
   routes: CompiledFlatRoute[];
+  visionCones: CompiledFlatVisionCone[];
+  userTrails: CompiledFlatUserTrailSegment[][];
   userPins: FlatUserPin[];
   destinationPins: FlatDestinationPin[];
   labels: FlatLabel[];
@@ -80,6 +94,8 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
   const stores: CompiledFlatStore[] = [];
   const plazas: FlatPlaza[] = [];
   const routes: CompiledFlatRoute[] = [];
+  const visionCones: CompiledFlatVisionCone[] = [];
+  const userTrails: CompiledFlatUserTrailSegment[][] = [];
   const userPins: FlatUserPin[] = [];
   const destinationPins: FlatDestinationPin[] = [];
   const labels: FlatLabel[] = [];
@@ -135,6 +151,29 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
         });
         break;
       }
+      case 'visionCone': {
+        const p = Skia.Path.Make();
+        p.moveTo(item.apex.x, item.apex.y);
+        for (const pt of item.arc) {
+          p.lineTo(pt.x, pt.y);
+        }
+        p.close();
+        visionCones.push({ path: p, opacity: item.opacity });
+        break;
+      }
+      case 'userTrail': {
+        const segs: CompiledFlatUserTrailSegment[] = [];
+        for (const seg of item.segments) {
+          const sp = pointsToSkPath(seg.points, false);
+          if (sp) {
+            segs.push({ path: sp, opacity: seg.opacity });
+          }
+        }
+        if (segs.length > 0) {
+          userTrails.push(segs);
+        }
+        break;
+      }
       case 'userPin': {
         userPins.push(item);
         break;
@@ -160,6 +199,8 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
     stores,
     plazas,
     routes,
+    visionCones,
+    userTrails,
     userPins,
     destinationPins,
     labels,
@@ -168,3 +209,4 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
     meta: scene.meta,
   };
 }
+

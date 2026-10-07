@@ -202,6 +202,30 @@ test('buildFlatScene: incluye zonas y orientación en meta para Sambil Autopista
   assert.equal(scene.meta.northAngle, -2.356194);
 });
 
+test('buildFlatScene: genera visionCone y userTrail cuando están presentes en options', () => {
+  const scene = buildFlatScene(demoMall, {
+    floorId: 'floor-1',
+    palette,
+    userPosition: { x: 100, y: 100 },
+    userHeading: Math.PI / 2,
+    userTrail: [
+      { x: 90, y: 100 },
+      { x: 95, y: 100 },
+      { x: 100, y: 100 },
+    ],
+    zoom: 1,
+  });
+  const cone = scene.items.find((i) => i.kind === 'visionCone') as any;
+  const trail = scene.items.find((i) => i.kind === 'userTrail') as any;
+
+  assert.ok(cone, 'Debe generar visionCone');
+  assert.equal(cone.heading, Math.PI / 2);
+  assert.ok(cone.arc.length > 5);
+
+  assert.ok(trail, 'Debe generar userTrail');
+  assert.ok(trail.segments.length > 0);
+});
+
 test('buildFlatScene: lanza error si el piso no existe', () => {
   assert.throws(
     () =>
@@ -213,4 +237,5 @@ test('buildFlatScene: lanza error si el piso no existe', () => {
     /Piso inexistente/,
   );
 });
+
 

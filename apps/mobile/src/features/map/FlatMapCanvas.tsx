@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   useWindowDimensions,
   TouchableOpacity,
   PanResponder,
+  Platform,
   type GestureResponderEvent,
   type PanResponderGestureState,
 } from 'react-native';
@@ -14,6 +15,9 @@ import {
   Group,
   Path,
   Circle,
+  matchFont,
+  Text as SkiaText,
+  RoundedRect,
 } from '@shopify/react-native-skia';
 import {
   useSharedValue,
@@ -28,6 +32,7 @@ export interface FlatMapCanvasProps {
   scene: FlatScene;
   userPosition?: Point;
   userHeading?: number;
+  userTrail?: Point[];
   selectedStoreId?: string;
   onStorePress?: (storeId: string) => void;
   onResetNorth?: () => void;
@@ -35,9 +40,26 @@ export interface FlatMapCanvasProps {
   followUser?: boolean;
 }
 
-const MIN_ZOOM = 0.5;
-const MAX_ZOOM = 4.5;
+const MIN_ZOOM = 0.2;
+const MAX_ZOOM = 5.0;
 const PADDING = 20;
+
+const fontFamily = Platform.select({ ios: 'Helvetica', default: 'sans-serif' });
+const fontDest = matchFont({
+  fontFamily,
+  fontSize: 10,
+  fontWeight: 'bold',
+});
+const fontStore = matchFont({
+  fontFamily,
+  fontSize: 7.5,
+  fontWeight: '600',
+});
+const fontPlaza = matchFont({
+  fontFamily,
+  fontSize: 9,
+  fontWeight: 'bold',
+});
 
 /** Ray Casting Point-in-Polygon */
 function isPointInsidePolygon(point: Point, polygon: Point[]): boolean {
@@ -57,6 +79,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   scene,
   userPosition,
   userHeading,
+  userTrail,
   selectedStoreId,
   onStorePress,
   onResetNorth,
@@ -64,6 +87,12 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   followUser = true,
 }) => {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const [isFollowingUser, setIsFollowingUser] = useState<boolean>(followUser);
+
+  // Sincronizar si cambia followUser externo
+  useEffect(() => {
+    setIsFollowingUser(followUser);
+  }, [followUser]);
 
   // 1. Compilar la escena plana a primitivas GPU
   const compiled = useMemo(() => compileFlatScene(scene), [scene]);
@@ -81,13 +110,14 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   // 3. Variables compartidas de cámara y animación
   const cameraX = useSharedValue(initialOffsetX);
   const cameraY = useSharedValue(initialOffsetY);
-  const zoom = useSharedValue(1);
+  const zoom = useSharedValue(1.5);
   const pulse = useSharedValue(0);
 
   const dragStartX = useRef(initialOffsetX);
   const dragStartY = useRef(initialOffsetY);
   const lastPinchDist = useRef<number | null>(null);
   const isPanning = useRef<boolean>(false);
+  const hasInitialized = useRef<boolean>(false);
 
   // 4. Pulso suave para pins y avatar
   useFrameCallback((frameInfo) => {
@@ -95,16 +125,28 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     pulse.value = (pulse.value + dt * 0.8) % 1;
   });
 
+  // Centrado inicial en el avatar con zoom óptimo de navegación
+  useEffect(() => {
+    if (userPosition && !hasInitialized.current) {
+      hasInitialized.current = true;
+      const initialZ = 1.6;
+      zoom.value = initialZ;
+      const s = baseScale * initialZ;
+      cameraX.value = screenWidth / 2 - userPosition.x * s;
+      cameraY.value = screenHeight / 2 - userPosition.y * s;
+    }
+  }, [userPosition, baseScale, screenWidth, screenHeight, cameraX, cameraY, zoom]);
+
   // 5. Auto-seguimiento suave del avatar cuando camina
   useEffect(() => {
-    if (followUser && userPosition && !isPanning.current) {
+    if (isFollowingUser && userPosition && !isPanning.current) {
       const currentScale = baseScale * zoom.value;
       const targetX = screenWidth / 2 - userPosition.x * currentScale;
       const targetY = screenHeight / 2 - userPosition.y * currentScale;
       cameraX.value = withSpring(targetX, { damping: 20, stiffness: 90 });
       cameraY.value = withSpring(targetY, { damping: 20, stiffness: 90 });
     }
-  }, [userPosition, followUser, baseScale, zoom, screenWidth, screenHeight, cameraX, cameraY]);
+  }, [userPosition, isFollowingUser, baseScale, zoom, screenWidth, screenHeight, cameraX, cameraY]);
 
   // 6. PanResponder para paneo multitáctil, zoom y tap detection (hit-testing)
   const panResponder = useMemo(
@@ -122,6 +164,11 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
         },
         onPanResponderMove: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
           const touches = evt.nativeEvent.touches;
+          const moveDist = Math.hypot(gestureState.dx, gestureState.dy);
+          if (moveDist > 6 && isFollowingUser) {
+            setIsFollowingUser(false);
+          }
+
           if (touches.length === 2 && touches[0] && touches[1]) {
             // Gesto de Pinch (dos dedos)
             const dx = touches[0].pageX - touches[1].pageX;
@@ -164,7 +211,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
           }
         },
       }),
-    [cameraX, cameraY, zoom, baseScale, scene.items, onStorePress]
+    [cameraX, cameraY, zoom, baseScale, scene.items, onStorePress, isFollowingUser]
   );
 
   // 7. Matriz de transformación 2D combinada
@@ -174,13 +221,14 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     { scale: baseScale * zoom.value },
   ]);
 
-  // 7. Re-centrado manual
+  // 8. Re-centrado manual (reactiva auto-follow)
   const handleRecenter = useCallback(() => {
+    setIsFollowingUser(true);
     if (userPosition) {
       const targetX = screenWidth / 2 - userPosition.x * baseScale * zoom.value;
       const targetY = screenHeight / 2 - userPosition.y * baseScale * zoom.value;
-      cameraX.value = withSpring(targetX);
-      cameraY.value = withSpring(targetY);
+      cameraX.value = withSpring(targetX, { damping: 20, stiffness: 90 });
+      cameraY.value = withSpring(targetY, { damping: 20, stiffness: 90 });
     } else {
       cameraX.value = withSpring(initialOffsetX);
       cameraY.value = withSpring(initialOffsetY);
@@ -188,7 +236,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     }
   }, [userPosition, baseScale, zoom, screenWidth, screenHeight, initialOffsetX, initialOffsetY, cameraX, cameraY]);
 
-  // 8. Ángulo norte para brújula
+  // 9. Ángulo norte para brújula
   const northAngleDeg = scene.meta.northAngle
     ? (scene.meta.northAngle * 180) / Math.PI
     : 0;
@@ -218,7 +266,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
             />
           ))}
 
-          {/* Capa 3: Locales comerciales */}
+          {/* Capa 3: Locales comerciales (Alto Contraste) */}
           {compiled.stores.map((s) => {
             const isTarget = s.id === selectedStoreId || s.isDestination;
             return (
@@ -233,8 +281,8 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
                   path={s.path}
                   color={isTarget ? '#2563EB' : s.stroke}
                   style="stroke"
-                  strokeWidth={isTarget ? 3 / (baseScale * zoom.value) : 1 / (baseScale * zoom.value)}
-                  opacity={s.isVisible ? 1 : 0.5}
+                  strokeWidth={isTarget ? 3 / (baseScale * zoom.value) : 1.5 / (baseScale * zoom.value)}
+                  opacity={s.isVisible ? 1 : 0.6}
                 />
               </React.Fragment>
             );
@@ -258,7 +306,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
                 color="#6366F1"
                 style="stroke"
                 strokeWidth={1.5 / (baseScale * zoom.value)}
-                opacity={0.3}
+                opacity={0.35}
               />
             </React.Fragment>
           ))}
@@ -271,7 +319,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
                   path={r.remainingPath}
                   color="#93C5FD"
                   style="stroke"
-                  strokeWidth={4.5 / (baseScale * zoom.value)}
+                  strokeWidth={5 / (baseScale * zoom.value)}
                   strokeCap="round"
                   strokeJoin="round"
                   opacity={0.7}
@@ -282,12 +330,41 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
                   path={r.immediatePath}
                   color="#2563EB"
                   style="stroke"
-                  strokeWidth={6 / (baseScale * zoom.value)}
+                  strokeWidth={7.5 / (baseScale * zoom.value)}
                   strokeCap="round"
                   strokeJoin="round"
                 />
               )}
             </React.Fragment>
+          ))}
+
+          {/* Capa 5.1: Trail del Usuario (Migas de Pan) */}
+          {compiled.userTrails.map((trail, tIdx) => (
+            <React.Fragment key={`user-trail-${tIdx}`}>
+              {trail.map((seg, sIdx) => (
+                <Path
+                  key={`seg-${tIdx}-${sIdx}`}
+                  path={seg.path}
+                  color="#60A5FA"
+                  style="stroke"
+                  strokeWidth={4.5 / (baseScale * zoom.value)}
+                  strokeCap="round"
+                  strokeJoin="round"
+                  opacity={seg.opacity}
+                />
+              ))}
+            </React.Fragment>
+          ))}
+
+          {/* Capa 5.2: Cono de Visión Direccional */}
+          {compiled.visionCones.map((cone, cIdx) => (
+            <Path
+              key={`vision-cone-${cIdx}`}
+              path={cone.path}
+              color="#3B82F6"
+              style="fill"
+              opacity={cone.opacity}
+            />
           ))}
 
           {/* Capa 5.5: Badges de Ofertas Comerciales (Modo 2) */}
@@ -333,7 +410,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
             </React.Fragment>
           ))}
 
-          {/* Capa 7: Pin de Usuario (Beacon) */}
+          {/* Capa 7: Pin de Usuario (Beacon con Halo) */}
           {compiled.userPins.map((up, i) => (
             <React.Fragment key={`user-${i}`}>
               <Circle
@@ -342,25 +419,68 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
                 r={18 / (baseScale * zoom.value)}
                 color="#BFDBFE"
                 style="fill"
-                opacity={0.4}
+                opacity={0.45}
               />
               <Circle
                 cx={up.x}
                 cy={up.y}
-                r={7 / (baseScale * zoom.value)}
+                r={7.5 / (baseScale * zoom.value)}
                 color="#2563EB"
                 style="fill"
               />
               <Circle
                 cx={up.x}
                 cy={up.y}
-                r={7 / (baseScale * zoom.value)}
+                r={7.5 / (baseScale * zoom.value)}
                 color="#FFFFFF"
                 style="stroke"
                 strokeWidth={2 / (baseScale * zoom.value)}
               />
             </React.Fragment>
           ))}
+
+          {/* Capa 8: Etiquetas de Locales y Plazas (GPU Skia Text & Pills) */}
+          {compiled.labels.map((lbl, idx) => {
+            const isDest = lbl.priority === 1;
+            const isPlaza = lbl.priority === 2;
+            const font = isDest ? fontDest : isPlaza ? fontPlaza : fontStore;
+            const pillFill = isDest ? '#FEF3C7' : isPlaza ? '#EEF2FF' : '#FFFFFF';
+            const pillStroke = isDest ? '#F59E0B' : isPlaza ? '#818CF8' : '#CBD5E1';
+            const textColor = isDest ? '#B45309' : isPlaza ? '#3730A3' : '#0F172A';
+            const charWidth = isDest ? 6.2 : isPlaza ? 5.8 : 4.8;
+            const pillW = Math.max(26, lbl.text.length * charWidth + 8);
+            const pillH = isDest ? 15 : isPlaza ? 13 : 11;
+
+            return (
+              <React.Fragment key={`lbl-${idx}`}>
+                <RoundedRect
+                  x={lbl.x - pillW / 2}
+                  y={lbl.y - pillH / 2}
+                  width={pillW}
+                  height={pillH}
+                  r={pillH / 2}
+                  color={pillFill}
+                />
+                <RoundedRect
+                  x={lbl.x - pillW / 2}
+                  y={lbl.y - pillH / 2}
+                  width={pillW}
+                  height={pillH}
+                  r={pillH / 2}
+                  color={pillStroke}
+                  style="stroke"
+                  strokeWidth={1}
+                />
+                <SkiaText
+                  x={lbl.x - (lbl.text.length * charWidth) / 2}
+                  y={lbl.y + (isDest ? 3.5 : isPlaza ? 3.0 : 2.5)}
+                  text={lbl.text}
+                  font={font}
+                  color={textColor}
+                />
+              </React.Fragment>
+            );
+          })}
         </Group>
       </Canvas>
 
@@ -383,13 +503,16 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
         </TouchableOpacity>
       )}
 
-      {/* Botón de Auto-centrado */}
+      {/* Botón de Auto-centrado / Recentrar */}
       <TouchableOpacity
-        style={styles.recenterButton}
+        style={[
+          styles.recenterButton,
+          isFollowingUser && styles.recenterButtonActive,
+        ]}
         onPress={handleRecenter}
         activeOpacity={0.8}
       >
-        <Text style={styles.recenterIcon}>📍</Text>
+        <Text style={styles.recenterIcon}>🎯</Text>
       </TouchableOpacity>
     </View>
   );
@@ -398,7 +521,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F1F5F9',
   },
   canvas: {
     flex: 1,
@@ -454,6 +577,11 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderWidth: 1,
     borderColor: '#E2E8F0',
+  },
+  recenterButtonActive: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#3B82F6',
+    borderWidth: 2,
   },
   recenterIcon: {
     fontSize: 20,

@@ -12,6 +12,7 @@
 import type { MallMapData, MapStore, Point, Rect } from './types';
 import type { Palette, PaletteEntry } from './scene';
 import type { StoreOffer, OfferType } from './offers';
+import { smoothPolyline } from './path';
 
 // ============================================================================
 // Tipos de la escena plana
@@ -28,7 +29,7 @@ export interface FlatSceneOptions {
   floorId: string;
   /** Paleta por categoría de local. */
   palette: Palette;
-  /** Viewport visible. Si no se pasa, se calcula desde el usuario. */
+  /** Viewport visible. Si no se pasa, se calcula desde el usuario o centro del piso. */
   viewport?: FlatViewport;
   /** Store seleccionado como destino. */
   selectedStoreId?: string;
@@ -38,6 +39,12 @@ export interface FlatSceneOptions {
   userPosition?: Point;
   /** Heading del usuario en radianes. undefined = detenido. */
   userHeading?: number;
+  /** Rastro de posiciones recientes del usuario (trail). */
+  userTrail?: Point[];
+  /** Longitud del cono de visión en unidades del plano (default: 35). */
+  visionConeLength?: number;
+  /** Amplitud angular del cono de visión en radianes (default: PI/5). */
+  visionConeSpread?: number;
   /** Zoom actual del renderer. Determina qué etiquetas se muestran. */
   zoom: number;
   /** Modo de etiquetas: 'auto' aplica las reglas de zoom, 'all'/'none' fuerzan. */
@@ -97,6 +104,19 @@ export interface FlatUserPin {
   heading?: number;
 }
 
+export interface FlatVisionCone {
+  kind: 'visionCone';
+  apex: Point;
+  arc: Point[];
+  heading: number;
+  opacity: number;
+}
+
+export interface FlatUserTrail {
+  kind: 'userTrail';
+  segments: Array<{ points: Point[]; opacity: number }>;
+}
+
 export interface FlatDestinationPin {
   kind: 'destinationPin';
   x: number;
@@ -146,6 +166,8 @@ export type FlatSceneItem =
   | FlatZone
   | FlatRoute
   | FlatUserPin
+  | FlatVisionCone
+  | FlatUserTrail
   | FlatDestinationPin
   | FlatLabel
   | FlatOfferBadge;
@@ -170,25 +192,25 @@ export interface FlatScene {
 // Constantes de diseño
 // ============================================================================
 
-/** Radio de visibilidad principal. Fuera de este radio, opacidad reducida. */
+/** Radio de visibilidad principal cuando no se especifica viewport. */
 const FOCUS_RADIUS_UNITS = 50;
 
 /** Radio máximo del viewBox. */
 const MAX_VIEWBOX_RADIUS_UNITS = 400;
 
 /** Distancia mínima entre etiquetas para evitar solapamiento (en unidades del plano). */
-const LABEL_MIN_DISTANCE_UNITS = 25;
+const LABEL_MIN_DISTANCE_UNITS = 20;
 
-/** Colores base del modo guía. */
+/** Colores base del modo guía de alto contraste. */
 const FLAT_COLORS = {
-  background: '#F8FAFC',
+  background: '#F1F5F9',
   corridor: '#FFFFFF',
-  corridorStroke: '#E2E8F0',
+  corridorStroke: '#CBD5E1',
   storeFill: '#FFFFFF',
-  storeStroke: '#CBD5E1',
-  storeDimmed: '#F1F5F9',
-  destinationFill: '#DBEAFE',
-  destinationStroke: '#2563EB',
+  storeStroke: '#94A3B8',
+  storeDimmed: '#F8FAFC',
+  destinationFill: '#FEF3C7',
+  destinationStroke: '#F59E0B',
   routePrimary: '#2563EB',
   routeSecondary: '#93C5FD',
   userPin: '#2563EB',
@@ -294,8 +316,10 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
   const center: Point = opts.viewport?.center
     ?? opts.userPosition
     ?? { x: floor.width / 2, y: floor.height / 2 };
+
+  const defaultRadius = Math.max(floor.width, floor.height) / 2;
   const radius = Math.min(
-    opts.viewport?.radius ?? FOCUS_RADIUS_UNITS,
+    opts.viewport?.radius ?? defaultRadius,
     MAX_VIEWBOX_RADIUS_UNITS,
   );
   const viewBox: Rect = {
@@ -343,7 +367,6 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
   // --- 4. Locales con visibilidad calculada ---
   const visibleStores: MapStore[] = [];
   for (const s of stores) {
-    const bounds = storeBounds(s);
     const c = storeCenter(s);
     const inside = pointInRect(c, focusBox);
 
@@ -368,8 +391,8 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
       kind: 'store',
       id: s.id,
       points,
-      fill: isDestination ? FLAT_COLORS.destinationFill : colors.fill,
-      stroke: isDestination ? FLAT_COLORS.destinationStroke : colors.ink,
+      fill: isDestination ? FLAT_COLORS.destinationFill : (colors.fill || FLAT_COLORS.storeFill),
+      stroke: isDestination ? FLAT_COLORS.destinationStroke : (colors.ink || FLAT_COLORS.storeStroke),
       isDestination,
       isVisible: inside,
     });
@@ -404,7 +427,6 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
   }
 
   // --- 6. Ruta ---
-
   if (opts.routeNodeIds && opts.routeNodeIds.length > 1) {
     const byId = new Map(map.nodes.map((n) => [n.id, n] as const));
     const routePoints: Point[] = [];
@@ -416,7 +438,6 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     }
     if (routePoints.length > 1) {
       // Determinar cuántos puntos son "inmediatos" (primeros 50m o 30% de la ruta)
-      const userPos = opts.userPosition ?? routePoints[0]!;
       let immediateCount = 1;
       let accum = 0;
       const IMMEDIATE_DISTANCE_UNITS = 50;
@@ -434,7 +455,56 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     }
   }
 
-  // --- 7. Usuario y destino ---
+  // --- 7. Capa de presencia del usuario (Trail, Cono, Avatar y Destino) ---
+
+  // 7.1 Trail de migas del recorrido
+  if (opts.userTrail && opts.userTrail.length >= 2) {
+    const smooth = smoothPolyline(opts.userTrail, 2);
+    const N = 4;
+    const segments: Array<{ points: Point[]; opacity: number }> = [];
+    for (let i = 0; i < N; i++) {
+      const start = Math.floor((i * (smooth.length - 1)) / N);
+      const end = Math.floor(((i + 1) * (smooth.length - 1)) / N);
+      const slice = smooth.slice(start, end + 1);
+      if (slice.length >= 2) {
+        const opacity = 0.45 - (0.35 * i) / (N - 1);
+        segments.push({ points: slice, opacity });
+      }
+    }
+    if (segments.length > 0) {
+      items.push({ kind: 'userTrail', segments });
+    }
+  }
+
+  // 7.2 Cono de visión direccional
+  if (opts.userPosition && typeof opts.userHeading === 'number') {
+    const length = opts.visionConeLength ?? 35;
+    const spread = opts.visionConeSpread ?? Math.PI / 5;
+    const heading = opts.userHeading;
+    const startAngle = heading - spread / 2;
+    const endAngle = heading + spread / 2;
+    const apex = { x: opts.userPosition.x, y: opts.userPosition.y };
+
+    const ARC_SAMPLES = 12;
+    const arc: Point[] = [];
+    for (let i = 0; i <= ARC_SAMPLES; i++) {
+      const t = i / ARC_SAMPLES;
+      const angle = startAngle + (endAngle - startAngle) * t;
+      const x = opts.userPosition.x + length * Math.cos(angle);
+      const y = opts.userPosition.y + length * Math.sin(angle);
+      arc.push({ x, y });
+    }
+
+    items.push({
+      kind: 'visionCone',
+      apex,
+      arc,
+      heading,
+      opacity: 0.25,
+    });
+  }
+
+  // 7.3 Pin del usuario
   if (opts.userPosition) {
     items.push({
       kind: 'userPin',
@@ -444,6 +514,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     });
   }
 
+  // 7.4 Pin del destino
   if (destination) {
     const c = storeCenter(destination);
     items.push({
@@ -484,7 +555,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
       });
     }
 
-    // Locales en ruta (prioridad 3) — solo los que están a <20m de la ruta
+    // Locales en ruta (prioridad 3) — los que están a <25m de la ruta
     if (opts.routeNodeIds && opts.routeNodeIds.length > 1) {
       const byId = new Map(map.nodes.map((n) => [n.id, n] as const));
       const routePts: Point[] = [];
@@ -497,7 +568,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
         const c = storeCenter(s);
         let nearRoute = false;
         for (const rp of routePts) {
-          if (distance(c, rp) < 20) { nearRoute = true; break; }
+          if (distance(c, rp) < 25) { nearRoute = true; break; }
         }
         if (nearRoute) {
           candidates.push({
@@ -514,27 +585,35 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
 
     // Reglas de zoom para el resto
     const zoom = opts.zoom;
-    if (labelsMode === 'all' || zoom >= 1.5) {
-      // Anclas (prioridad 4): categorías importantes o locales grandes
+    if (labelsMode === 'all' || zoom >= 0.4) {
+      // Anclas (prioridad 4): categorías importantes o locales medianos/grandes
       for (const s of visibleStores) {
         if (candidates.some((c) => c.storeId === s.id)) continue;
-        const isAnchor = ['entertainment', 'pharmacy', 'department_store', 'sports'].includes(s.category)
-          || s.w * s.h > 1500;
+        const isAnchor = [
+          'entertainment',
+          'pharmacy',
+          'department_store',
+          'sports',
+          'fashion',
+          'food',
+          'supermarket',
+        ].includes(s.category) || (s.w * s.h > 800);
+
         if (isAnchor) {
           const c = storeCenter(s);
           candidates.push({
             text: s.name,
             x: c.x,
             y: c.y,
-            size: 8,
+            size: 7.5,
             priority: 4,
             storeId: s.id,
           });
         }
       }
 
-      // Resto (prioridad 5): solo con zoom alto
-      if (labelsMode === 'all' || zoom >= 3) {
+      // Resto (prioridad 5): locales estándar
+      if (labelsMode === 'all' || zoom >= 0.8) {
         for (const s of visibleStores) {
           if (candidates.some((c) => c.storeId === s.id)) continue;
           const c = storeCenter(s);
