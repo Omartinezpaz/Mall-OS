@@ -447,7 +447,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_1",
     "name": "Liah Spa",
-    "category": "fashion",
+    "category": "beauty",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 34,
@@ -724,7 +724,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_14",
     "name": "Pets Planet",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 50,
@@ -745,7 +745,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_15",
     "name": "Pit Body Care",
-    "category": "fashion",
+    "category": "beauty",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 51,
@@ -812,7 +812,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_18",
     "name": "Banco del Tesoro",
-    "category": "services",
+    "category": "finance",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 58,
@@ -856,7 +856,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_20",
     "name": "Jesus Morales",
-    "category": "fashion",
+    "category": "beauty",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 94,
@@ -1067,7 +1067,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_30",
     "name": "Jadu Cosmetics",
-    "category": "fashion",
+    "category": "beauty",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 225,
@@ -1172,7 +1172,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_35",
     "name": "Reinaldo Sport",
-    "category": "fashion",
+    "category": "sports",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 315,
@@ -1241,7 +1241,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_38",
     "name": "Sport Market",
-    "category": "fashion",
+    "category": "sports",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 379,
@@ -1286,7 +1286,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_40",
     "name": "Farmatodo",
-    "category": "fashion",
+    "category": "pharmacy",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 424,
@@ -1412,7 +1412,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_45",
     "name": "ORO Today",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 522,
@@ -1431,7 +1431,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_46",
     "name": "Ross ",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 508,
@@ -1551,7 +1551,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_52",
     "name": "Urban Market",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 482,
@@ -1637,7 +1637,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_56",
     "name": "Opticolor",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 429,
@@ -1861,7 +1861,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_67",
     "name": "New York Silver",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 395,
@@ -1880,7 +1880,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_68",
     "name": "Panots",
-    "category": "fashion",
+    "category": "food",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 386,
@@ -1959,7 +1959,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_72",
     "name": "Prime Bodegon",
-    "category": "fashion",
+    "category": "food",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 361,
@@ -2042,7 +2042,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_76",
     "name": "RS Performan",
-    "category": "fashion",
+    "category": "sports",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 254,
@@ -2063,7 +2063,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_77",
     "name": "Banco Provincial",
-    "category": "fashion",
+    "category": "finance",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 235,
@@ -2101,7 +2101,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_79",
     "name": "Mango MNG",
-    "category": "sports",
+    "category": "fashion",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 180,
@@ -2165,7 +2165,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_82",
     "name": "Panisse",
-    "category": "fashion",
+    "category": "food",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 143,
@@ -2185,7 +2185,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_83",
     "name": "Centro Piramedal y Mineral",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 155,
@@ -2204,7 +2204,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_84",
     "name": "Yuju",
-    "category": "fashion",
+    "category": "entertainment",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 173,
@@ -2225,7 +2225,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_85",
     "name": "El King Gourmet",
-    "category": "fashion",
+    "category": "food",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 182,
@@ -2246,7 +2246,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_86",
     "name": "Mini Good",
-    "category": "fashion",
+    "category": "home",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 197,
@@ -2270,7 +2270,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_87",
     "name": "Heladería 4D",
-    "category": "fashion",
+    "category": "food",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 222,
@@ -2290,7 +2290,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_88",
     "name": "Planeta Sport",
-    "category": "fashion",
+    "category": "sports",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 236,
@@ -2315,7 +2315,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_89",
     "name": "Joyeria Bellagio",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 252,
@@ -2441,7 +2441,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_95",
     "name": "Marbel Joyeros",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 361,
@@ -2460,7 +2460,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_96",
     "name": "Canguro",
-    "category": "fashion",
+    "category": "tech",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 374,
@@ -2480,7 +2480,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_97",
     "name": "Onity",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 387,
@@ -2525,7 +2525,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_99",
     "name": "Monivet",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 281,
@@ -2545,7 +2545,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_100",
     "name": "Glam Eclat",
-    "category": "fashion",
+    "category": "beauty",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 292,
@@ -2692,7 +2692,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_107",
     "name": "Las Villas Perfumeria",
-    "category": "fashion",
+    "category": "beauty",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 403,
@@ -2741,7 +2741,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_109",
     "name": "Sportland",
-    "category": "fashion",
+    "category": "sports",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 457,
@@ -2765,7 +2765,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_110",
     "name": "Banco Nacional de Credito",
-    "category": "fashion",
+    "category": "finance",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 482,
@@ -2811,7 +2811,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_112",
     "name": "Optica Billi",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 499,

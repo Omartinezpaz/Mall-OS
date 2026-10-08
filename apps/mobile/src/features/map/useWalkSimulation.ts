@@ -148,7 +148,9 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
       const newProgress = Math.min(1, lastProgressRef.current + progressDelta);
 
       // Interpolar posición
+      const finalPt = waypoints.current[waypoints.current.length - 1];
       const pos = interpolateAlongRoute(waypoints.current, newProgress);
+      const distToEnd = finalPt ? Math.hypot(pos.x - finalPt.x, pos.y - finalPt.y) : 0;
 
       // Heading (radianes en atan2(Δy, Δx))
       const lastPos = lastSampleRef.current;
@@ -184,13 +186,14 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
         }
       }
 
-      setPosition(pos);
-      setWalkProgress(newProgress);
-      lastProgressRef.current = newProgress;
-
-      if (newProgress >= 1) {
+      if (newProgress >= 0.999 || (finalPt && distToEnd < 0.5)) {
         setIsWalking(false);
         setHeading(undefined);
+        const arrivalPos = finalPt ?? pos;
+        setPosition(arrivalPos);
+        setWalkProgress(1);
+        lastProgressRef.current = 1;
+        setTrail((prev) => (finalPt ? [...prev, finalPt] : prev));
         const msg = targetStoreName ? `¡Llegaste a ${targetStoreName}!` : '¡Llegaste a tu destino!';
         setArrivalMessage(msg);
         if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
@@ -200,6 +203,10 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
         onArrival?.();
         return;
       }
+
+      setPosition(pos);
+      setWalkProgress(newProgress);
+      lastProgressRef.current = newProgress;
 
       rafRef.current = requestAnimationFrame(tick);
     };

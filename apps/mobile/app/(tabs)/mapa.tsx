@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   StatusBar,
+  Vibration,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -51,16 +52,17 @@ export default function MapaScreen() {
   // Estados interactivos
   const [mapMode, setMapMode] = useState<'guide' | 'explore'>('guide');
   const [selectedLevel, setSelectedLevel] = useState<string>(LEVEL_AUTOPISTA);
-  const [selectedStoreId, setSelectedStoreId] = useState<string>('local_4');
+  const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [guideOrientationMode, setGuideOrientationMode] = useState<'north-up' | 'heading-up'>('north-up');
   const [cameraMode, setCameraMode] = useState<'ground' | 'isometric' | 'aerial'>('ground');
   const [followUser, setFollowUser] = useState<boolean>(true);
-  const [isNavigating, setIsNavigating] = useState<boolean>(true);
+  const [isNavigating, setIsNavigating] = useState<boolean>(false);
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(true);
   const [showStorefrontHUD, setShowStorefrontHUD] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<RouteResult | null>(null);
   const [userStartNodeId, setUserStartNodeId] = useState<string>('node-plaza Jardin');
+  const currentUserNodeIdRef = useRef<string>('node-plaza Jardin');
 
   // Hook de tiempo simulado/real
   const {
@@ -77,6 +79,7 @@ export default function MapaScreen() {
 
   // Tienda seleccionada y metadatos
   const selectedStore = useMemo(() => {
+    if (!selectedStoreId) return null;
     const storeFromMall = sambilMall.stores.find((s) => s.id === selectedStoreId);
     const pilotStore = PILOT_STORES.find(
       (s) => s.id === selectedStoreId || s.slug === selectedStoreId
@@ -134,15 +137,7 @@ export default function MapaScreen() {
       };
     }
 
-    return {
-      id: 'local_4',
-      name: 'Tiendas Tijerazo',
-      category: 'fashion',
-      unit: 'Local AC-01',
-      floor: 1,
-      floorName: 'Nivel Autopista',
-      floorId: LEVEL_AUTOPISTA,
-    };
+    return null;
   }, [selectedStoreId]);
 
   // Cálculo de ruta Dijkstra hacia la tienda seleccionada
@@ -165,12 +160,23 @@ export default function MapaScreen() {
     trailMeters: 15,
     trailSampleMeters: 0.5,
     onArrival: () => {
-      setShowStorefrontHUD(true);
-      // Mantener la posición del usuario en el local al que acaba de llegar
+      // Vibración nativa háptica de llegada (patrón [espera, vibra, espera, vibra])
+      try {
+        Vibration.vibrate([0, 100, 50, 100]);
+      } catch {}
+
+      // Fijar nodo de llegada de forma síncrona
       if (activeRoute && activeRoute.nodeIds.length > 0) {
         const lastNode = activeRoute.nodeIds[activeRoute.nodeIds.length - 1];
+        currentUserNodeIdRef.current = lastNode;
         setUserStartNodeId(lastNode);
       }
+
+      // Dejar visible el toast de llegada primero, y abrir la vitrina a los 2.0s
+      setShowStorefrontHUD(false);
+      setTimeout(() => {
+        setShowStorefrontHUD(true);
+      }, 2000);
     },
   });
 
@@ -184,7 +190,7 @@ export default function MapaScreen() {
   // Generación de plan de navegación paso a paso
   const navigationPlan = useMemo(() => {
     if (!activeRoute) return null;
-    return generateNavigationPlan(sambilMall, activeRoute, selectedStoreId);
+    return generateNavigationPlan(sambilMall, activeRoute, selectedStoreId ?? undefined);
   }, [activeRoute, selectedStoreId]);
 
   // Seguimiento de paso actual y porcentaje con useStepProgress
@@ -209,7 +215,7 @@ export default function MapaScreen() {
     return buildFlatScene(sambilMall, {
       floorId: selectedLevel,
       palette: categoryPalette,
-      selectedStoreId: isNavigating ? selectedStoreId : undefined,
+      selectedStoreId: isNavigating && selectedStoreId ? selectedStoreId : undefined,
       highlightedStoreIds,
       routeNodeIds: effectiveRouteNodeIds,
       userPosition: walk.position,
@@ -232,23 +238,48 @@ export default function MapaScreen() {
 
   // Manejar selección de tienda desde mapa o búsqueda
   const handleSelectStore = useCallback((storeId: string) => {
-    const store = sambilMall.stores.find((s) => s.id === storeId);
+    setActiveCategory(null);
+    const store = sambilMall.stores.find((s) => s.id === storeId || s.slug === storeId);
+    const targetFloorId = store?.floorId ?? selectedLevel;
     if (store && store.floorId !== selectedLevel) {
       setSelectedLevel(store.floorId);
     }
-    // Si el usuario ya está en una posición/local específico, calcular la nueva ruta desde allí
+
+    // Calcular el nodo origen exacto desde la posición del avatar
+    let originNodeId = currentUserNodeIdRef.current;
     if (walk.position) {
-      const nearest = findNearestNode(sambilMall, selectedLevel, walk.position);
+      const nearest = findNearestNode(sambilMall, targetFloorId, walk.position);
       if (nearest) {
-        setUserStartNodeId(nearest.id);
+        originNodeId = nearest.id;
       }
     }
+    currentUserNodeIdRef.current = originNodeId;
+    setUserStartNodeId(originNodeId);
+
+    // Calcular la ruta inmediatamente para evitar lag de estado
+    const nextRoute = findRouteToStore(sambilMall, originNodeId, storeId);
+    setActiveRoute(nextRoute);
+
+    walk.stopWalk();
     walk.resetWalk();
     setSelectedStoreId(storeId);
     setIsNavigating(true);
     setShowStorefrontHUD(false);
     mapRef.current?.focusOnStore(storeId);
   }, [selectedLevel, walk]);
+
+  // Manejar filtro por categoría
+  const handleSelectCategory = useCallback((categoryId: string | null) => {
+    setActiveCategory(categoryId);
+    if (categoryId !== null) {
+      setSelectedStoreId(null);
+      setActiveRoute(null);
+      setIsNavigating(false);
+      setShowStorefrontHUD(false);
+      walk.stopWalk();
+      walk.resetWalk();
+    }
+  }, [walk]);
 
   // Salir del modo navegación
   const handleExitNavigation = useCallback(() => {
@@ -271,7 +302,7 @@ export default function MapaScreen() {
             userPosition={walk.position}
             userHeading={walk.heading}
             userTrail={walk.trail}
-            selectedStoreId={selectedStoreId}
+            selectedStoreId={selectedStoreId ?? undefined}
             onStorePress={handleSelectStore}
             cameraMode={guideOrientationMode}
             onToggleCameraMode={() =>
@@ -283,8 +314,8 @@ export default function MapaScreen() {
         ) : (
           <IsometricMap
             mapRef={mapRef}
-            selectedStoreId={selectedStoreId}
-            destinationStoreId={isNavigating ? selectedStoreId : undefined}
+            selectedStoreId={selectedStoreId ?? undefined}
+            destinationStoreId={isNavigating && selectedStoreId ? selectedStoreId : undefined}
             onSelectStore={handleSelectStore}
             floorId={selectedLevel}
             userNodeId={userStartNodeId}
@@ -340,7 +371,7 @@ export default function MapaScreen() {
                   onSelectFloor={(lvl) => {
                     setSelectedLevel(lvl);
                   }}
-                  destinationFloorId={isNavigating ? selectedStore.floorId : undefined}
+                  destinationFloorId={isNavigating && selectedStore ? selectedStore.floorId : undefined}
                   userFloorId={selectedLevel}
                 />
                 <View style={styles.modeSwitchContainer}>
@@ -386,7 +417,7 @@ export default function MapaScreen() {
             <MapSearchBar
               stores={sambilMall.stores}
               activeCategory={activeCategory}
-              onSelectCategory={setActiveCategory}
+              onSelectCategory={handleSelectCategory}
               onSelectStore={handleSelectStore}
               currentFloorId={selectedLevel}
             />
@@ -395,7 +426,7 @@ export default function MapaScreen() {
       </View>
 
       {/* Floating Floor Selector solo en modo navegación activa */}
-      {isNavigating && !showStorefrontHUD && (
+      {isNavigating && !showStorefrontHUD && selectedStore && (
         <View
           style={[
             styles.verticalFloorWrapperNav,
@@ -502,14 +533,14 @@ export default function MapaScreen() {
             onPress={walk.clearArrivalMessage}
             activeOpacity={0.85}
           >
-            <Text style={styles.arrivalToastIcon}>🎉</Text>
+            <AppIcon name="checkmark-circle" size={20} color="#10B981" />
             <Text style={styles.arrivalToastText}>{walk.arrivalMessage}</Text>
           </TouchableOpacity>
         </View>
       )}
 
       {/* Bottom Floating Bar / Barra de Navegación y Simulación */}
-      {isNavigating && !showStorefrontHUD && (
+      {isNavigating && !showStorefrontHUD && selectedStore && (
         <View style={styles.bottomBarContainer}>
           <DestinationBar
             storeName={selectedStore.name}
@@ -553,7 +584,7 @@ export default function MapaScreen() {
       )}
 
       {/* Bottom Sheet Vitrina Digital completa */}
-      {showStorefrontHUD && (
+      {showStorefrontHUD && selectedStore && (
         <StorefrontHUD
           store={sambilMall.stores.find((s) => s.id === selectedStoreId) ?? null}
           offers={DEMO_SAMBIL_OFFERS}
@@ -568,7 +599,7 @@ export default function MapaScreen() {
       )}
 
       {/* Explore Mode Bottom Store Preview Pill */}
-      {!isNavigating && !showStorefrontHUD && (
+      {!isNavigating && !showStorefrontHUD && selectedStore && (
         <View style={styles.exploreBottomPillWrapper}>
           <TouchableOpacity
             onPress={() => {

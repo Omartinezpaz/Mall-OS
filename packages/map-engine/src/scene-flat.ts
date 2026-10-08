@@ -332,7 +332,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     w: radius * 2,
     h: radius * 2,
   };
-  const focusBox = expandRect(viewBox, radius * 0.5); // margen para "casi visible"
+  const focusBox = expandRect(viewBox, radius * 1.5); // margen generoso para renderizado consistente de locales
 
   // --- 2. Culling de locales ---
   const stores = map.stores.filter((s) => s.floorId === opts.floorId);

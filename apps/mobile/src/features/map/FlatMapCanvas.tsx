@@ -43,8 +43,8 @@ export interface FlatMapCanvasProps {
   followUser?: boolean;
 }
 
-const MIN_ZOOM = 0.2;
-const MAX_ZOOM = 5.0;
+const MIN_ZOOM = 0.85;
+const MAX_ZOOM = 3.5;
 const PADDING = 20;
 
 const fontFamily = Platform.select({ ios: 'Helvetica', default: 'sans-serif' });
@@ -116,7 +116,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   // 3. Variables compartidas de cámara y animación
   const cameraX = useSharedValue(initialOffsetX);
   const cameraY = useSharedValue(initialOffsetY);
-  const zoom = useSharedValue(1.5);
+  const zoom = useSharedValue(1.15);
   const pulse = useSharedValue(0);
 
   const dragStartX = useRef(initialOffsetX);
@@ -125,6 +125,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   const lastPinchAngle = useRef<number | null>(null);
   const manualRotation = useSharedValue(0);
   const isPanning = useRef<boolean>(false);
+  const panPauseUntilRef = useRef<number>(0);
   const hasInitialized = useRef<boolean>(false);
 
   // 4. Pulso suave para pins y avatar
@@ -137,7 +138,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   useEffect(() => {
     if (userPosition && !hasInitialized.current) {
       hasInitialized.current = true;
-      const initialZ = 1.6;
+      const initialZ = 1.35;
       zoom.value = initialZ;
       const s = baseScale * initialZ;
       cameraX.value = screenWidth / 2 - userPosition.x * s;
@@ -145,9 +146,21 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     }
   }, [userPosition, baseScale, screenWidth, screenHeight, cameraX, cameraY, zoom]);
 
-  // 5. Auto-seguimiento centrado directo del avatar cuando camina
+  // 5. Auto-seguimiento centrado directo del avatar cuando camina (con pausa inteligente al panear)
   useEffect(() => {
     if (isFollowingUser && userPosition && !isPanning.current) {
+      const now = Date.now();
+      if (now < panPauseUntilRef.current) {
+        const remaining = panPauseUntilRef.current - now;
+        const timer = setTimeout(() => {
+          if (isFollowingUser && userPosition && !isPanning.current) {
+            const currentScale = baseScale * zoom.value;
+            cameraX.value = screenWidth / 2 - userPosition.x * currentScale;
+            cameraY.value = screenHeight / 2 - userPosition.y * currentScale;
+          }
+        }, remaining);
+        return () => clearTimeout(timer);
+      }
       const currentScale = baseScale * zoom.value;
       const targetX = screenWidth / 2 - userPosition.x * currentScale;
       const targetY = screenHeight / 2 - userPosition.y * currentScale;
@@ -156,7 +169,15 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     }
   }, [userPosition, isFollowingUser, baseScale, zoom, screenWidth, screenHeight, cameraX, cameraY]);
 
-  // 6. PanResponder para paneo multitáctil, zoom, rotación y tap detection
+  // 6. Ángulo de rotación del mapa (heading-up vs manual vs north-up)
+  const rotationAngle = useDerivedValue(() => {
+    if (cameraMode === 'heading-up' && userHeading !== undefined) {
+      return -userHeading - Math.PI / 2;
+    }
+    return manualRotation.value;
+  });
+
+  // 7. PanResponder para paneo multitáctil, zoom, rotación y tap detection
   const panResponder = useMemo(
     () =>
       PanResponder.create({
@@ -172,6 +193,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
           lastPinchAngle.current = null;
         },
         onPanResponderMove: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+          panPauseUntilRef.current = Date.now() + 3500;
           const touches = evt.nativeEvent.touches;
           const moveDist = Math.hypot(gestureState.dx, gestureState.dy);
           if (moveDist > 6 && isFollowingUser) {
@@ -200,25 +222,43 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
             lastPinchDist.current = dist;
             lastPinchAngle.current = currentAngle;
           } else {
-            // Paneo con 1 dedo
+            // Paneo con 1 dedo: desrotar el desplazamiento de pantalla para mover el mapa 1:1 con el dedo
             lastPinchDist.current = null;
             lastPinchAngle.current = null;
-            cameraX.value = dragStartX.current + gestureState.dx;
-            cameraY.value = dragStartY.current + gestureState.dy;
+            const rot = rotationAngle.value;
+            const cos = Math.cos(-rot);
+            const sin = Math.sin(-rot);
+            const rotatedDx = gestureState.dx * cos - gestureState.dy * sin;
+            const rotatedDy = gestureState.dx * sin + gestureState.dy * cos;
+
+            cameraX.value = dragStartX.current + rotatedDx;
+            cameraY.value = dragStartY.current + rotatedDy;
           }
         },
         onPanResponderRelease: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
           lastPinchDist.current = null;
           lastPinchAngle.current = null;
           isPanning.current = false;
-          // Si el movimiento fue mínimo, tratar como Tap (Hit-testing de tiendas)
+          // Si el movimiento fue mínimo, tratar como Tap (Hit-testing de tiendas con desrotación)
           const moveDist = Math.hypot(gestureState.dx, gestureState.dy);
           if (moveDist < 6 && onStorePress) {
             const touchX = evt.nativeEvent.locationX;
             const touchY = evt.nativeEvent.locationY;
+            const cx = screenWidth / 2;
+            const cy = screenHeight / 2;
+            const rot = rotationAngle.value;
+            const cos = Math.cos(-rot);
+            const sin = Math.sin(-rot);
+
+            // Desrotar el punto de toque con respecto al centro de pantalla
+            const dx = touchX - cx;
+            const dy = touchY - cy;
+            const unrotX = cx + (dx * cos - dy * sin);
+            const unrotY = cy + (dx * sin + dy * cos);
+
             const currentScale = baseScale * zoom.value;
-            const mallX = (touchX - cameraX.value) / currentScale;
-            const mallY = (touchY - cameraY.value) / currentScale;
+            const mallX = (unrotX - cameraX.value) / currentScale;
+            const mallY = (unrotY - cameraY.value) / currentScale;
 
             for (const item of scene.items) {
               if (item.kind === 'store') {
@@ -231,16 +271,8 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
           }
         },
       }),
-    [cameraX, cameraY, zoom, manualRotation, baseScale, scene.items, onStorePress, isFollowingUser]
+    [cameraX, cameraY, zoom, manualRotation, rotationAngle, baseScale, screenWidth, screenHeight, scene.items, onStorePress, isFollowingUser]
   );
-
-  // 7. Ángulo de rotación del mapa (heading-up vs manual vs north-up)
-  const rotationAngle = useDerivedValue(() => {
-    if (cameraMode === 'heading-up' && userHeading !== undefined) {
-      return -userHeading - Math.PI / 2;
-    }
-    return manualRotation.value;
-  });
 
   // Matriz de transformación 2D combinada (con rotación alrededor del centro de pantalla)
   const transform = useDerivedValue(() => [
