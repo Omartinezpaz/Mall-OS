@@ -32,10 +32,15 @@ export default function KidsModeScreen() {
 
   const [currentView, setCurrentView] = useState<KidsScreenView>('map');
   const [activeRiddleIdx, setActiveRiddleIdx] = useState<number>(0);
+  const lastHandledParamsTokenRef = React.useRef<string | null>(null);
 
   // Manejo de apertura directa desde el mapa (ej. llegar a la tienda y abrir escáner)
   useEffect(() => {
     if (params.view === 'scanner') {
+      const token = `${params.view}_${params.storeId || ''}_${params.t || ''}`;
+      if (lastHandledParamsTokenRef.current === token) return;
+      lastHandledParamsTokenRef.current = token;
+
       if (params.storeId && riddles.length > 0) {
         const foundIdx = riddles.findIndex((r) => r.storeId === params.storeId);
         if (foundIdx !== -1) {
@@ -83,7 +88,12 @@ export default function KidsModeScreen() {
     } else {
       const nextIdx = Math.min(riddles.length - 1, currentRiddleIndex);
       setActiveRiddleIdx(nextIdx);
-      setCurrentView('map');
+      const nextRiddle = riddles[nextIdx];
+      if (nextRiddle) {
+        handleNavigateToStoreMap(nextRiddle.storeId);
+      } else {
+        setCurrentView('map');
+      }
     }
   };
 

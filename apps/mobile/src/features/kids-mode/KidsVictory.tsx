@@ -37,6 +37,8 @@ export const KidsVictory: React.FC<KidsVictoryProps> = ({
     });
   }, [prizeUnlocked, playerName]);
 
+  const justCompletedRiddle = (stars > 0 && riddles[stars - 1]) ? riddles[stars - 1] : currentRiddle;
+
   if (!ageGroup) return null;
   const config = AGE_GROUP_CONFIG[ageGroup];
 
@@ -54,12 +56,12 @@ export const KidsVictory: React.FC<KidsVictoryProps> = ({
       </View>
 
       {/* Explanation Box */}
-      {currentRiddle && (
+      {justCompletedRiddle && (
         <View style={styles.explanationCard}>
           <Text style={styles.explanationHeader}>Pista Descifrada:</Text>
-          <Text style={styles.explanationText}>{currentRiddle.explanation}</Text>
+          <Text style={styles.explanationText}>{justCompletedRiddle.explanation}</Text>
           <Text style={[styles.storeBadge, { color: config.accentColor }]}>
-            📍 Estación completada en {currentRiddle.storeName} ({currentRiddle.floorName})
+            📍 Estación completada en {justCompletedRiddle.storeName} ({justCompletedRiddle.floorName})
           </Text>
         </View>
       )}
