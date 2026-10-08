@@ -156,7 +156,7 @@ export const storesSambilAutopista: MapStore[] = [
     labelPos: { x: 78, y: 274 }
   },
   {
-    id: "local_18", name: "Banco del Tesoro", category: "services", floorId: LEVEL_AUTOPISTA, height: 13,
+    id: "local_18", name: "Banco del Tesoro", category: "finance", floorId: LEVEL_AUTOPISTA, height: 13,
     x: 58, y: 216, w: 63, h: 79, doorNodeId: "node-72", slug: "banco_del_tesoro", aliases: ["banco_del_tesoro", "tesoro"],
     polygon: [{ x: 109, y: 292 }, { x: 105, y: 293 }, { x: 101, y: 295 }, { x: 98, y: 280 }, { x: 62, y: 242 }, { x: 58, y: 242 }, { x: 60, y: 216 }, { x: 65, y: 216 }, { x: 121, y: 274 }, { x: 112, y: 292 }],
     labelPos: { x: 89, y: 264 }
@@ -510,7 +510,7 @@ export const storesSambilAutopista: MapStore[] = [
     labelPos: { x: 263, y: 274 }
   },
   {
-    id: "local_77", name: "Banco Provincial", category: "services", floorId: LEVEL_AUTOPISTA, height: 13,
+    id: "local_77", name: "Banco Provincial", category: "finance", floorId: LEVEL_AUTOPISTA, height: 13,
     x: 235, y: 262, w: 19, h: 50, doorNodeId: "node-50", slug: "banco_provincial", aliases: ["banco_provincial", "provincial", "bbva"],
     polygon: [{ x: 254, y: 262 }, { x: 253, y: 312 }, { x: 235, y: 312 }, { x: 235, y: 262 }],
     labelPos: { x: 244, y: 287 }
@@ -708,7 +708,7 @@ export const storesSambilAutopista: MapStore[] = [
     labelPos: { x: 471, y: 148 }
   },
   {
-    id: "local_110", name: "Banco Nacional de Credito", category: "services", floorId: LEVEL_AUTOPISTA, height: 13,
+    id: "local_110", name: "Banco Nacional de Credito", category: "finance", floorId: LEVEL_AUTOPISTA, height: 13,
     x: 482, y: 125, w: 34, h: 44, doorNodeId: "node-91", slug: "bnc", aliases: ["bnc", "banco_nacional_de_credito"],
     polygon: [{ x: 485, y: 125 }, { x: 510, y: 136 }, { x: 507, y: 142 }, { x: 516, y: 147 }, { x: 492, y: 169 }, { x: 489, y: 167 }, { x: 487, y: 165 }, { x: 484, y: 163 }, { x: 482, y: 162 }, { x: 486, y: 149 }],
     labelPos: { x: 494, y: 153 }

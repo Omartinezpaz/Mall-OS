@@ -116,7 +116,8 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   // 3. Variables compartidas de cámara y animación
   const cameraX = useSharedValue(initialOffsetX);
   const cameraY = useSharedValue(initialOffsetY);
-  const zoom = useSharedValue(1.15);
+  const INITIAL_ZOOM = 0.92;
+  const zoom = useSharedValue(INITIAL_ZOOM);
   const pulse = useSharedValue(0);
 
   const dragStartX = useRef(initialOffsetX);
@@ -138,36 +139,38 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   useEffect(() => {
     if (userPosition && !hasInitialized.current) {
       hasInitialized.current = true;
-      const initialZ = 1.35;
+      const initialZ = 1.25;
       zoom.value = initialZ;
       const s = baseScale * initialZ;
+      const topOffset = insets.top > 0 ? insets.top + 30 : 50;
       cameraX.value = screenWidth / 2 - userPosition.x * s;
-      cameraY.value = screenHeight / 2 - userPosition.y * s;
+      cameraY.value = (screenHeight + topOffset) / 2 - userPosition.y * s;
     }
-  }, [userPosition, baseScale, screenWidth, screenHeight, cameraX, cameraY, zoom]);
+  }, [userPosition, baseScale, screenWidth, screenHeight, insets.top, cameraX, cameraY, zoom]);
 
   // 5. Auto-seguimiento centrado directo del avatar cuando camina (con pausa inteligente al panear)
   useEffect(() => {
     if (isFollowingUser && userPosition && !isPanning.current) {
       const now = Date.now();
+      const topOffset = insets.top > 0 ? insets.top + 30 : 50;
       if (now < panPauseUntilRef.current) {
         const remaining = panPauseUntilRef.current - now;
         const timer = setTimeout(() => {
           if (isFollowingUser && userPosition && !isPanning.current) {
             const currentScale = baseScale * zoom.value;
             cameraX.value = screenWidth / 2 - userPosition.x * currentScale;
-            cameraY.value = screenHeight / 2 - userPosition.y * currentScale;
+            cameraY.value = (screenHeight + topOffset) / 2 - userPosition.y * currentScale;
           }
         }, remaining);
         return () => clearTimeout(timer);
       }
       const currentScale = baseScale * zoom.value;
       const targetX = screenWidth / 2 - userPosition.x * currentScale;
-      const targetY = screenHeight / 2 - userPosition.y * currentScale;
+      const targetY = (screenHeight + topOffset) / 2 - userPosition.y * currentScale;
       cameraX.value = targetX;
       cameraY.value = targetY;
     }
-  }, [userPosition, isFollowingUser, baseScale, zoom, screenWidth, screenHeight, cameraX, cameraY]);
+  }, [userPosition, isFollowingUser, baseScale, zoom, screenWidth, screenHeight, insets.top, cameraX, cameraY]);
 
   // 6. Ángulo de rotación del mapa (heading-up vs manual vs north-up)
   const rotationAngle = useDerivedValue(() => {
@@ -187,16 +190,17 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
         },
         onPanResponderGrant: () => {
           isPanning.current = true;
+          panPauseUntilRef.current = Date.now() + 5000;
           dragStartX.current = cameraX.value;
           dragStartY.current = cameraY.value;
           lastPinchDist.current = null;
           lastPinchAngle.current = null;
         },
         onPanResponderMove: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-          panPauseUntilRef.current = Date.now() + 3500;
+          panPauseUntilRef.current = Date.now() + 5000;
           const touches = evt.nativeEvent.touches;
           const moveDist = Math.hypot(gestureState.dx, gestureState.dy);
-          if (moveDist > 6 && isFollowingUser) {
+          if ((moveDist > 3 || touches.length === 2) && isFollowingUser) {
             setIsFollowingUser(false);
           }
 

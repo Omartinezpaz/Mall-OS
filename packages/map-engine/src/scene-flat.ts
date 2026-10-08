@@ -376,13 +376,14 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     const c = storeCenter(s);
     const inside = pointInRect(c, focusBox);
 
-    // Solo renderizar locales dentro del foco (o el destino siempre)
-    if (!inside && s.id !== destination?.id) continue;
+    const isDestination = s.id === destination?.id;
+    const isHighlighted = hasFilter && opts.highlightedStoreIds!.includes(s.id);
+
+    // Solo renderizar locales dentro del foco (o el destino o los resaltados por filtro siempre)
+    if (!inside && !isDestination && !isHighlighted) continue;
 
     visibleStores.push(s);
 
-    const isDestination = s.id === destination?.id;
-    const isHighlighted = hasFilter && opts.highlightedStoreIds!.includes(s.id);
     const isDimmed = (hasFilter && !isHighlighted && !isDestination) || (opts.dimmedStoreIds?.includes(s.id) ?? false);
 
     const colors = opts.palette[s.category] ?? opts.palette['other'] ?? { fill: '#F1F5F9', ink: '#1E293B' };

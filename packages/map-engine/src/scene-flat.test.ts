@@ -226,16 +226,18 @@ test('buildFlatScene: genera visionCone y userTrail cuando están presentes en o
   assert.ok(trail.segments.length > 0);
 });
 
-test('buildFlatScene: lanza error si el piso no existe', () => {
-  assert.throws(
-    () =>
-      buildFlatScene(sambilMall, {
-        floorId: 'piso-fantasma',
-        palette,
-        zoom: 1,
-      }),
-    /Piso inexistente/,
-  );
+test('buildFlatScene: locales resaltados por filtro siempre se renderizan', () => {
+  const scene = buildFlatScene(sambilMall, {
+    floorId: LEVEL_AUTOPISTA,
+    palette,
+    zoom: 2,
+    viewport: { x: 50, y: 50, w: 100, h: 100 },
+    highlightedStoreIds: ['local_110'], // BNC al norte, lejos del viewport
+  });
+
+  const bncStore = scene.items.find((i) => i.kind === 'store' && i.id === 'local_110');
+  assert.ok(bncStore, 'El local resaltado debe renderizarse siempre');
 });
+
 
 

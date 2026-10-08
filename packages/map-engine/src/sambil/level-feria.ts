@@ -60,7 +60,7 @@ export const storesSambilFeria: MapStore[] = [
   },
   { id: 'palacio_blumer_feria', name: 'Palacio del Blumer (391 m²)', category: 'fashion', floorId: LEVEL_FERIA, x: 145, y: 20, w: 25, h: 48, height: 10, doorNodeId: 'door-palacioblumer-fer' },
   { id: 'shoe_box', name: 'Shoe Box (133 m²)', category: 'fashion', floorId: LEVEL_FERIA, x: 173, y: 20, w: 22, h: 48, height: 9, doorNodeId: 'door-shoebox' },
-  { id: 'farmatodo_feria', name: 'Farmatodo (225 m²)', category: 'services', floorId: LEVEL_FERIA, x: 198, y: 20, w: 30, h: 48, height: 10, doorNodeId: 'door-farmatodo-fer' },
+  { id: 'farmatodo_feria', name: 'Farmatodo (225 m²)', category: 'pharmacy', floorId: LEVEL_FERIA, x: 198, y: 20, w: 30, h: 48, height: 10, doorNodeId: 'door-farmatodo-fer' },
   {
     id: 'anfiteatro_feria',
     name: 'Anfiteatro Sambil / Terraza VIP',

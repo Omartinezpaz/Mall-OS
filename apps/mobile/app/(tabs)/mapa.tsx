@@ -524,7 +524,7 @@ export default function MapaScreen() {
         <View
           style={[
             styles.arrivalToast,
-            { top: topSafe + (isNavigating ? 190 : 160) },
+            { bottom: isNavigating ? 110 : 35 },
           ]}
           pointerEvents="box-none"
         >
@@ -533,7 +533,7 @@ export default function MapaScreen() {
             onPress={walk.clearArrivalMessage}
             activeOpacity={0.85}
           >
-            <AppIcon name="checkmark-circle" size={20} color="#10B981" />
+            <AppIcon name="checkmark-circle" size={20} color="#FFFFFF" />
             <Text style={styles.arrivalToastText}>{walk.arrivalMessage}</Text>
           </TouchableOpacity>
         </View>
