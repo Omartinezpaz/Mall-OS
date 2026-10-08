@@ -78,14 +78,25 @@ export default function HomeScreen() {
             <Text style={styles.mallSubtitle}>Plataforma Demo · 124 tiendas en 5 niveles</Text>
           </View>
 
-          <TouchableOpacity
-            style={styles.loyaltyBadge}
-            activeOpacity={0.8}
-            onPress={() => router.push('/(tabs)/directorio')}
-          >
-            <AppIcon name="star" size={13} color="#F59E0B" />
-            <Text style={styles.loyaltyPoints}>{loyalty.points} pts</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <TouchableOpacity
+              style={styles.kidsTopBtn}
+              activeOpacity={0.8}
+              onPress={() => router.push('/kids-mode')}
+            >
+              <Text style={{ fontSize: 14 }}>🎮</Text>
+              <Text style={styles.kidsTopBtnText}>Jugar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.loyaltyBadge}
+              activeOpacity={0.8}
+              onPress={() => router.push('/(tabs)/directorio')}
+            >
+              <AppIcon name="star" size={13} color="#F59E0B" />
+              <Text style={styles.loyaltyPoints}>{loyalty.points} pts</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Buscador Directo */}
@@ -98,30 +109,7 @@ export default function HomeScreen() {
           <Text style={styles.searchPlaceholder}>¿Qué buscas hoy en el Sambil?</Text>
         </TouchableOpacity>
 
-        {/* Hero Interactive Map Banner */}
-        <TouchableOpacity
-          style={styles.heroBanner}
-          activeOpacity={0.9}
-          onPress={() => router.push('/(tabs)/mapa')}
-        >
-          <View style={styles.heroPatternOverlay} />
-          <View style={styles.heroContent}>
-            <View style={styles.heroTagBadge}>
-              <AppIcon name="navigate" size={12} color="#38BDF8" />
-              <Text style={styles.heroTagText}>MAPA INTERACTIVO 2D / 2.5D</Text>
-            </View>
-            <Text style={styles.heroTitle}>Navegación paso a paso en el Sambil</Text>
-            <Text style={styles.heroSub}>
-              Encuentra tiendas, rutas accesibles entre pisos y calcula tu tiempo de caminata en vivo.
-            </Text>
-            <View style={styles.heroCTA}>
-              <Text style={styles.heroCTAText}>Abrir Mapa</Text>
-              <AppIcon name="arrow-forward" size={14} color="#0F172A" />
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        {/* Banner Gamificación: Modo Exploradores */}
+        {/* Banner Gamificación: Modo Exploradores (Promovido arriba) */}
         <TouchableOpacity
           style={styles.kidsBanner}
           activeOpacity={0.88}
@@ -150,6 +138,29 @@ export default function HomeScreen() {
           </View>
           <View style={styles.kidsArrowBtn}>
             <AppIcon name="chevron-forward" size={18} color="#D97706" />
+          </View>
+        </TouchableOpacity>
+
+        {/* Hero Interactive Map Banner */}
+        <TouchableOpacity
+          style={styles.heroBanner}
+          activeOpacity={0.9}
+          onPress={() => router.push('/(tabs)/mapa')}
+        >
+          <View style={styles.heroPatternOverlay} />
+          <View style={styles.heroContent}>
+            <View style={styles.heroTagBadge}>
+              <AppIcon name="navigate" size={12} color="#38BDF8" />
+              <Text style={styles.heroTagText}>MAPA INTERACTIVO 2D / 2.5D</Text>
+            </View>
+            <Text style={styles.heroTitle}>Navegación paso a paso en el Sambil</Text>
+            <Text style={styles.heroSub}>
+              Encuentra tiendas, rutas accesibles entre pisos y calcula tu tiempo de caminata en vivo.
+            </Text>
+            <View style={styles.heroCTA}>
+              <Text style={styles.heroCTAText}>Abrir Mapa</Text>
+              <AppIcon name="arrow-forward" size={14} color="#0F172A" />
+            </View>
           </View>
         </TouchableOpacity>
 
@@ -270,6 +281,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     marginTop: 1,
+  },
+  kidsTopBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    gap: 4,
+  },
+  kidsTopBtnText: {
+    color: '#B45309',
+    fontSize: 12,
+    fontWeight: '800',
   },
   loyaltyBadge: {
     flexDirection: 'row',
