@@ -18,6 +18,7 @@ export interface NavigationHUDProps {
   onCancel?: () => void;
   onVoiceToggle?: () => void;
   voiceEnabled?: boolean;
+  isWalking?: boolean;
 
   // Propiedades de compatibilidad
   currentStep?: NavStepInstruction;
@@ -49,6 +50,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
   onCancel,
   onVoiceToggle,
   voiceEnabled = false,
+  isWalking = true,
   currentStep: legacyStep,
   totalDistanceMeters: legacyDistance,
   walkingMinutes: legacyMinutes,
@@ -88,17 +90,17 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
 
   // Manejo de Locución TTS con expo-speech
   useEffect(() => {
-    if (voiceEnabled && currentStep) {
+    if (voiceEnabled && currentStep && isWalking) {
       Speech.stop();
       Speech.speak(currentStep.primaryText, {
         language: 'es-VE',
         pitch: 1.0,
         rate: 0.95,
       });
-    } else {
+    } else if (!voiceEnabled) {
       Speech.stop();
     }
-  }, [activeStepIndex, voiceEnabled, currentStep]);
+  }, [activeStepIndex, voiceEnabled, currentStep, isWalking]);
 
   useEffect(() => {
     return () => {

@@ -19,6 +19,7 @@ export default function KidsModeScreen() {
 
   const {
     ageGroup,
+    playerName,
     startAdventure,
     resetAdventure,
     unlockStoreQR,
@@ -70,7 +71,12 @@ export default function KidsModeScreen() {
   const handleNavigateToStoreMap = (storeId: string) => {
     router.push({
       pathname: '/(tabs)/mapa',
-      params: { storeId },
+      params: {
+        storeId,
+        kidsMode: 'true',
+        playerName: playerName || 'Explorador',
+        t: String(Date.now()),
+      },
     });
   };
 

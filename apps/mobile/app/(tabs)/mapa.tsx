@@ -8,6 +8,8 @@ import {
   Vibration,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from 'expo-router';
+import * as Speech from 'expo-speech';
 import {
   IsometricMap,
   type IsometricMapHandle,
@@ -22,6 +24,7 @@ import { MapSearchBar, SEARCH_CATEGORIES } from '../../src/features/map/MapSearc
 import { GlassSurface } from '../../src/components/GlassSurface';
 import { AppIcon } from '../../src/components/AppIcon';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
+import { useKidsMode } from '../../src/features/kids-mode/useKidsMode';
 
 
 import { useStepProgress } from '../../src/features/map/useStepProgress';
@@ -48,6 +51,16 @@ export default function MapaScreen() {
   const mapRef = useRef<IsometricMapHandle | null>(null);
   const insets = useSafeAreaInsets();
   const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 24);
+
+  // Parámetros de navegación externa (ej. Modo Niño)
+  const params = useLocalSearchParams<{
+    storeId?: string;
+    kidsMode?: string;
+    playerName?: string;
+    t?: string;
+  }>();
+  const kids = useKidsMode();
+  const lastHandledTokenRef = useRef<string | null>(null);
 
   // Estados interactivos
   const [mapMode, setMapMode] = useState<'guide' | 'explore'>('guide');
@@ -268,6 +281,40 @@ export default function MapaScreen() {
     mapRef.current?.focusOnStore(storeId);
   }, [selectedLevel, walk]);
 
+  // Auto-selección y enrutamiento cuando se navega con parámetros (ej. Modo Niño)
+  useEffect(() => {
+    if (!params.storeId) return;
+
+    const rawStoreId = Array.isArray(params.storeId) ? params.storeId[0] : params.storeId;
+    if (!rawStoreId) return;
+
+    const rawKidsMode = Array.isArray(params.kidsMode) ? params.kidsMode[0] : params.kidsMode;
+    const isKids = rawKidsMode === 'true';
+    const rawPlayerName = Array.isArray(params.playerName) ? params.playerName[0] : params.playerName;
+    const targetPlayerName = rawPlayerName || kids.playerName || 'Explorador';
+    const timeToken = Array.isArray(params.t) ? params.t[0] : (params.t ?? '');
+
+    const currentToken = `${rawStoreId}_${timeToken}_${isKids}`;
+    if (lastHandledTokenRef.current === currentToken) return;
+    lastHandledTokenRef.current = currentToken;
+
+    // 1. Trazar ruta hacia la tienda directamente
+    handleSelectStore(rawStoreId);
+
+    // 2. Si viene de Modo Niño, reproducir la bienvenida motivacional de aventura
+    if (isKids) {
+      const adventureGreeting = `Estamos listos para empezar con esta nueva aventura. ¿Estás listo para empezar, ${targetPlayerName}?`;
+      Speech.stop();
+      setTimeout(() => {
+        Speech.speak(adventureGreeting, {
+          language: 'es-VE',
+          pitch: 1.05,
+          rate: 0.95,
+        });
+      }, 400);
+    }
+  }, [params.storeId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName]);
+
   // Manejar filtro por categoría
   const handleSelectCategory = useCallback((categoryId: string | null) => {
     setActiveCategory(categoryId);
@@ -350,6 +397,7 @@ export default function MapaScreen() {
               currentStepIndex={stepProgress.currentStepIndex}
               progress={stepProgress.progress}
               voiceEnabled={voiceEnabled}
+              isWalking={walk.isWalking}
               onVoiceToggle={() => setVoiceEnabled((v) => !v)}
               onCancel={handleExitNavigation}
             />
