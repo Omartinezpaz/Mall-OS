@@ -57,6 +57,7 @@ export default function MapaScreen() {
   // Parámetros de navegación externa (ej. Modo Niño)
   const params = useLocalSearchParams<{
     storeId?: string;
+    originStoreId?: string;
     kidsMode?: string;
     playerName?: string;
     t?: string;
@@ -277,22 +278,34 @@ export default function MapaScreen() {
   }, [currentFloorStores, currentHour]);
 
   // Manejar selección de tienda desde mapa o búsqueda
-  const handleSelectStore = useCallback((storeId: string) => {
+  const handleSelectStore = useCallback((storeId: string, customOriginStoreId?: string) => {
     setActiveCategory(null);
     const store = sambilMall.stores.find((s) => s.id === storeId || s.slug === storeId);
     const targetFloorId = store?.floorId ?? selectedLevel;
-    if (store && store.floorId !== selectedLevel) {
-      setSelectedLevel(store.floorId);
-    }
 
-    // Calcular el nodo origen exacto desde la posición del avatar
+    // Calcular el nodo origen exacto
     let originNodeId = currentUserNodeIdRef.current;
-    if (walk.position) {
+
+    // Si se especifica una tienda de origen previa (ej. estación anterior del Modo Niño)
+    if (customOriginStoreId) {
+      const originStore = sambilMall.stores.find((s) => s.id === customOriginStoreId || s.slug === customOriginStoreId);
+      if (originStore?.doorNodeId) {
+        originNodeId = originStore.doorNodeId;
+        if (originStore.floorId !== selectedLevel) {
+          setSelectedLevel(originStore.floorId);
+        }
+      }
+    } else if (walk.position) {
       const nearest = findNearestNode(sambilMall, targetFloorId, walk.position);
       if (nearest) {
         originNodeId = nearest.id;
       }
     }
+
+    if (store && !customOriginStoreId && store.floorId !== selectedLevel) {
+      setSelectedLevel(store.floorId);
+    }
+
     currentUserNodeIdRef.current = originNodeId;
     setUserStartNodeId(originNodeId);
 
@@ -305,6 +318,7 @@ export default function MapaScreen() {
     setSelectedStoreId(storeId);
     setIsNavigating(true);
     setShowStorefrontHUD(false);
+    setShowKidsArrival(false);
     mapRef.current?.focusOnStore(storeId);
   }, [selectedLevel, walk]);
 
@@ -315,18 +329,19 @@ export default function MapaScreen() {
     const rawStoreId = Array.isArray(params.storeId) ? params.storeId[0] : params.storeId;
     if (!rawStoreId) return;
 
+    const rawOriginStoreId = Array.isArray(params.originStoreId) ? params.originStoreId[0] : params.originStoreId;
     const rawKidsMode = Array.isArray(params.kidsMode) ? params.kidsMode[0] : params.kidsMode;
     const isKids = rawKidsMode === 'true';
     const rawPlayerName = Array.isArray(params.playerName) ? params.playerName[0] : params.playerName;
     const targetPlayerName = rawPlayerName || kids.playerName || 'Explorador';
     const timeToken = Array.isArray(params.t) ? params.t[0] : (params.t ?? '');
 
-    const currentToken = `${rawStoreId}_${timeToken}_${isKids}`;
+    const currentToken = `${rawStoreId}_${rawOriginStoreId ?? ''}_${timeToken}_${isKids}`;
     if (lastHandledTokenRef.current === currentToken) return;
     lastHandledTokenRef.current = currentToken;
 
-    // 1. Trazar ruta hacia la tienda directamente
-    handleSelectStore(rawStoreId);
+    // 1. Trazar ruta hacia la tienda directamente respetando la tienda de partida previa
+    handleSelectStore(rawStoreId, rawOriginStoreId || undefined);
 
     // 2. Si viene de Modo Niño, reproducir la bienvenida motivacional de aventura con prioridad
     if (isKids) {
@@ -353,7 +368,7 @@ export default function MapaScreen() {
         setIsKidsIntroPlaying(false);
       }, 4500);
     }
-  }, [params.storeId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName, activeKidsRiddle?.number]);
+  }, [params.storeId, params.originStoreId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName, activeKidsRiddle?.number]);
 
   // Manejar filtro por categoría
   const handleSelectCategory = useCallback((categoryId: string | null) => {

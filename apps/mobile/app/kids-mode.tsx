@@ -26,6 +26,7 @@ export default function KidsModeScreen() {
     unlockStoreQR,
     riddles,
     currentRiddleIndex,
+    lastVisitedStoreId,
     prizeUnlocked,
   } = useKidsMode();
 
@@ -87,10 +88,19 @@ export default function KidsModeScreen() {
   };
 
   const handleNavigateToStoreMap = (storeId: string) => {
+    const storeIdx = riddles.findIndex((r) => r.storeId === storeId);
+    let originStoreId: string | undefined = undefined;
+    if (lastVisitedStoreId && lastVisitedStoreId !== storeId) {
+      originStoreId = lastVisitedStoreId;
+    } else if (storeIdx > 0) {
+      originStoreId = riddles[storeIdx - 1].storeId;
+    }
+
     router.push({
       pathname: '/(tabs)/mapa',
       params: {
         storeId,
+        originStoreId: originStoreId || undefined,
         kidsMode: 'true',
         playerName: playerName || 'Explorador',
         t: String(Date.now()),

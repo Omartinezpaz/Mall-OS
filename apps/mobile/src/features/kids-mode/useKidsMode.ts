@@ -16,6 +16,7 @@ export interface KidsModeState {
   currentRiddleIndex: number;
   completedRiddleIds: string[];
   unlockedQRStoreIds: string[];
+  lastVisitedStoreId: string | null;
   stars: number;
   prizeUnlocked: boolean;
   prizeCode: string | null;
@@ -32,6 +33,7 @@ const DEFAULT_STATE: KidsModeState = {
   currentRiddleIndex: 0,
   completedRiddleIds: [],
   unlockedQRStoreIds: [],
+  lastVisitedStoreId: null,
   stars: 0,
   prizeUnlocked: false,
   prizeCode: null,
@@ -76,6 +78,7 @@ export function useKidsMode() {
         currentRiddleIndex: 0,
         completedRiddleIds: [],
         unlockedQRStoreIds: [],
+        lastVisitedStoreId: null,
         stars: 0,
         prizeUnlocked: false,
         prizeCode: null,
@@ -115,6 +118,7 @@ export function useKidsMode() {
         globalState = {
           ...globalState,
           completedRiddleIds: newCompleted,
+          lastVisitedStoreId: currentRiddle.storeId,
           stars: newStars,
           currentRiddleIndex: isFinished ? state.currentRiddleIndex : nextIndex,
           prizeUnlocked: isFinished,
@@ -146,13 +150,16 @@ export function useKidsMode() {
   );
 
   const unlockStoreQR = useCallback((storeId: string) => {
-    if (!globalState.unlockedQRStoreIds.includes(storeId)) {
-      globalState = {
-        ...globalState,
-        unlockedQRStoreIds: [...globalState.unlockedQRStoreIds, storeId],
-      };
-      notifyListeners();
-    }
+    const nextUnlocked = globalState.unlockedQRStoreIds.includes(storeId)
+      ? globalState.unlockedQRStoreIds
+      : [...globalState.unlockedQRStoreIds, storeId];
+
+    globalState = {
+      ...globalState,
+      unlockedQRStoreIds: nextUnlocked,
+      lastVisitedStoreId: storeId,
+    };
+    notifyListeners();
   }, []);
 
   const resetAdventure = useCallback(() => {
