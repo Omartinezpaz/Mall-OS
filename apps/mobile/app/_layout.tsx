@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { SpaceGrotesk_600SemiBold, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
 import { queryClient } from '../src/offline/cache';
+import { hydrateKidsModeFromStorage } from '../src/features/kids-mode/useKidsMode';
 
 export default function RootLayout() {
+  // Hidratar estado persistente offline del Modo Niño en el arranque
+  useEffect(() => {
+    hydrateKidsModeFromStorage().catch(() => {
+      // Ignorar silenciosamente si no hay almacenamiento previo
+    });
+  }, []);
+
   // Carga de fuentes no bloqueante (offline-first: si fallan o tardan, la app arranca igual)
   useFonts({
     'Inter-Regular': Inter_400Regular,

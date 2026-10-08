@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Vibration } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 import {
   type AgeGroup,
   type KidsRiddle,
@@ -45,6 +46,62 @@ const DEFAULT_STATE: KidsModeState = {
 let globalState: KidsModeState = { ...DEFAULT_STATE };
 const listeners = new Set<(state: KidsModeState) => void>();
 
+const KIDS_STORAGE_FILE = `${FileSystem.documentDirectory ?? ''}kids_mode_state_v1.json`;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function schedulePersist() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try {
+      if (!FileSystem.documentDirectory) return;
+      const data = JSON.stringify({
+        version: 1,
+        state: globalState,
+        savedAt: Date.now(),
+      });
+      await FileSystem.writeAsStringAsync(KIDS_STORAGE_FILE, data);
+    } catch {
+      // Ignorar fallos de I/O silenciosamente
+    }
+  }, 250);
+}
+
+export async function hydrateKidsModeFromStorage(): Promise<void> {
+  try {
+    if (!FileSystem.documentDirectory) return;
+    const info = await FileSystem.getInfoAsync(KIDS_STORAGE_FILE);
+    if (!info.exists) return;
+
+    const raw = await FileSystem.readAsStringAsync(KIDS_STORAGE_FILE);
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.version === 1 && parsed.state) {
+      const s = parsed.state;
+      if (s.ageGroup === null || ['child', 'teen', 'young'].includes(s.ageGroup)) {
+        globalState = {
+          ...DEFAULT_STATE,
+          ...s,
+        };
+        notifyListeners();
+      }
+    }
+  } catch {
+    // Si el archivo está corrupto, arranca con estado default
+  }
+}
+
+export async function clearKidsModeStorage(): Promise<void> {
+  try {
+    if (!FileSystem.documentDirectory) return;
+    const info = await FileSystem.getInfoAsync(KIDS_STORAGE_FILE);
+    if (info.exists) {
+      await FileSystem.deleteAsync(KIDS_STORAGE_FILE, { idempotent: true });
+    }
+  } catch {}
+}
+
+// Auto-hidratación al cargar el módulo
+hydrateKidsModeFromStorage().catch(() => {});
+
 function notifyListeners() {
   for (const listener of listeners) {
     listener({ ...globalState });
@@ -87,6 +144,7 @@ export function useKidsMode() {
         lastUnlockedAt: null,
       };
       notifyListeners();
+      schedulePersist();
     },
     []
   );
@@ -126,6 +184,7 @@ export function useKidsMode() {
           lastUnlockedAt: Date.now(),
         };
         notifyListeners();
+        schedulePersist();
 
         return {
           correct: true,
@@ -160,11 +219,13 @@ export function useKidsMode() {
       lastVisitedStoreId: storeId,
     };
     notifyListeners();
+    schedulePersist();
   }, []);
 
   const resetAdventure = useCallback(() => {
     globalState = { ...DEFAULT_STATE };
     notifyListeners();
+    clearKidsModeStorage().catch(() => {});
   }, []);
 
   const claimPrize = useCallback(() => {
@@ -173,6 +234,7 @@ export function useKidsMode() {
       claimed: true,
     };
     notifyListeners();
+    schedulePersist();
   }, []);
 
   return {
