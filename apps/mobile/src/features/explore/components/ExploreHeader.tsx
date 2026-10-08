@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { GlassSurface } from '../../../components/GlassSurface';
+import { AppIcon } from '../../../components/AppIcon';
 
 interface ExploreHeaderProps {
   mallName?: string;
@@ -23,12 +23,12 @@ export const ExploreHeader: React.FC<ExploreHeaderProps> = ({
       {/* Selector / Píldora de Ubicación */}
       <View style={styles.locationPill}>
         <View style={styles.pinCircle}>
-          <Ionicons name="location" size={13} color="#EF4444" />
+          <AppIcon name="location" size={13} color="#EF4444" />
         </View>
         <Text style={styles.locationText} numberOfLines={1}>
           {mallName}
         </Text>
-        <Ionicons name="chevron-down" size={14} color="#64748B" />
+        <AppIcon name="chevron-down" size={14} color="#64748B" strokeWidth={2.5} />
       </View>
 
       {/* Píldora de Puntos & Nivel (Yummy-style) */}
@@ -43,7 +43,7 @@ export const ExploreHeader: React.FC<ExploreHeaderProps> = ({
           style={styles.pointsBadge}
         >
           <View style={styles.crownCircle}>
-            <Ionicons name="trophy" size={12} color="#F59E0B" />
+            <AppIcon name="trophy" size={12} color="#F59E0B" />
           </View>
           <View style={styles.pointsInfo}>
             <Text style={styles.pointsNumber}>{points} pts</Text>
@@ -54,6 +54,7 @@ export const ExploreHeader: React.FC<ExploreHeaderProps> = ({
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   header: {

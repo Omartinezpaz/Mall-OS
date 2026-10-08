@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
 import type { NavigationPlan, NavStepInstruction } from '@mallos/map-engine';
 import { GlassSurface } from '../../components/GlassSurface';
+import { AppIcon, type AppIconName } from '../../components/AppIcon';
 
 export interface NavigationHUDProps {
   plan?: NavigationPlan;
@@ -29,16 +29,16 @@ export interface NavigationHUDProps {
   onExitNavigation?: () => void;
 }
 
-const ICON_MAP: Record<string, keyof typeof Ionicons.glyphMap> = {
+const ICON_MAP: Record<string, AppIconName> = {
   straight: 'arrow-up',
   'turn-left': 'arrow-back',
   'turn-right': 'arrow-forward',
-  'slight-left': 'arrow-forward-outline',
-  'slight-right': 'arrow-forward-outline',
-  'stairs-up': 'trending-up-outline',
-  'stairs-down': 'trending-down-outline',
-  'elevator-up': 'swap-vertical-outline',
-  'elevator-down': 'swap-vertical-outline',
+  'slight-left': 'arrow-forward',
+  'slight-right': 'arrow-forward',
+  'stairs-up': 'arrow-up',
+  'stairs-down': 'arrow-forward',
+  'elevator-up': 'arrow-up',
+  'elevator-down': 'arrow-forward',
   arrival: 'location',
 };
 
@@ -121,7 +121,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
             isArrival && styles.iconCircleArrival,
           ]}
         >
-          <Ionicons
+          <AppIcon
             name={ICON_MAP[currentStep.icon] ?? 'arrow-up'}
             size={18}
             color={isArrival ? '#10B981' : '#38BDF8'}
@@ -146,8 +146,8 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name={voiceEnabled ? 'volume-high-outline' : 'volume-mute-outline'}
+            <AppIcon
+              name={voiceEnabled ? 'volume-high' : 'volume-mute'}
               size={16}
               color={voiceEnabled ? '#38BDF8' : '#94A3B8'}
             />
@@ -165,10 +165,11 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             activeOpacity={0.7}
           >
-            <Ionicons name="close" size={16} color="#EF4444" />
+            <AppIcon name="close" size={16} color="#EF4444" strokeWidth={2.5} />
           </TouchableOpacity>
         )}
       </GlassSurface>
+
 
       {/* Barra de progreso integrada */}
       <View style={styles.progressTrack}>

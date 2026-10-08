@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ImageBackground,
   TouchableOpacity,
   StatusBar,
   Animated,
@@ -11,16 +10,17 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 import { MallOsLogo } from '../src/components/MallOsLogo';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const TOTAL_DURATION_MS = 10000; // 10 segundos
+const TOTAL_DURATION_MS = 6000; // 6 segundos de transición suave
 
 const LOADING_PHASES = [
   { until: 0.25, text: 'Iniciando motor gráfico Skia 2D & CAD...' },
-  { until: 0.55, text: 'Cargando mapas Sambil Chacao (5 niveles)...' },
-  { until: 0.85, text: 'Sincronizando 124 tiendas, rutas y ofertas...' },
-  { until: 1.0, text: '¡Bienvenido a Mall OS!' },
+  { until: 0.55, text: 'Cargando planos Sambil Chacao (5 niveles)...' },
+  { until: 0.85, text: 'Sincronizando 124 tiendas, rutas y vitrinas...' },
+  { until: 1.0, text: '¡Bienvenido a Sambil Chacao!' },
 ];
 
 export default function SplashScreen() {
@@ -38,7 +38,7 @@ export default function SplashScreen() {
   };
 
   useEffect(() => {
-    // 1. Animación suave de la barra de progreso (0% -> 100% en 10s)
+    // 1. Animación suave de la barra de progreso
     Animated.timing(progressAnim, {
       toValue: 1,
       duration: TOTAL_DURATION_MS,
@@ -53,13 +53,13 @@ export default function SplashScreen() {
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
-          toValue: 1.04,
-          duration: 1500,
+          toValue: 1.05,
+          duration: 1600,
           useNativeDriver: true,
         }),
         Animated.timing(pulseAnim, {
           toValue: 1,
-          duration: 1500,
+          duration: 1600,
           useNativeDriver: true,
         }),
       ])
@@ -70,7 +70,9 @@ export default function SplashScreen() {
       const p = Math.min(100, Math.round(value * 100));
       setPercent(p);
 
-      const currentPhase = LOADING_PHASES.find((phase) => value <= phase.until) ?? LOADING_PHASES[LOADING_PHASES.length - 1]!;
+      const currentPhase =
+        LOADING_PHASES.find((phase) => value <= phase.until) ??
+        LOADING_PHASES[LOADING_PHASES.length - 1]!;
       setStatusText(currentPhase.text);
     });
 
@@ -88,50 +90,58 @@ export default function SplashScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
-      {/* Background Atrium Image con Overlay */}
-      <ImageBackground
-        source={{
-          uri: 'https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?w=1200&auto=format&fit=crop&q=80',
-        }}
-        style={styles.backgroundImage}
-        resizeMode="cover"
+      {/* Decorative Radial Background Aura */}
+      <View style={styles.backgroundAura}>
+        <Svg width={SCREEN_WIDTH} height={SCREEN_WIDTH * 1.5} viewBox="0 0 400 600">
+          <Defs>
+            <RadialGradient id="splashGlow" cx="50%" cy="40%" r="55%">
+              <Stop offset="0%" stopColor="#1E3A8A" stopOpacity="0.45" />
+              <Stop offset="50%" stopColor="#0F172A" stopOpacity="0.2" />
+              <Stop offset="100%" stopColor="#070C1A" stopOpacity="0" />
+            </RadialGradient>
+            <RadialGradient id="emeraldGlow" cx="65%" cy="35%" r="35%">
+              <Stop offset="0%" stopColor="#059669" stopOpacity="0.25" />
+              <Stop offset="100%" stopColor="#070C1A" stopOpacity="0" />
+            </RadialGradient>
+          </Defs>
+          <Circle cx="200" cy="240" r="220" fill="url(#splashGlow)" />
+          <Circle cx="260" cy="210" r="140" fill="url(#emeraldGlow)" />
+        </Svg>
+      </View>
+
+      {/* Botón Saltar */}
+      <TouchableOpacity
+        style={styles.skipButton}
+        onPress={navigateToHome}
+        activeOpacity={0.7}
       >
-        <View style={styles.darkGradientOverlay} />
+        <Text style={styles.skipText}>Saltar</Text>
+      </TouchableOpacity>
 
-        {/* Botón Saltar */}
-        <TouchableOpacity
-          style={styles.skipButton}
-          onPress={navigateToHome}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.skipText}>Saltar</Text>
-        </TouchableOpacity>
+      {/* Contenido Central: Logo y Marca */}
+      <View style={styles.centerContainer}>
+        <Animated.View style={[styles.logoWrapper, { transform: [{ scale: pulseAnim }] }]}>
+          <MallOsLogo size={120} />
+        </Animated.View>
 
-        {/* Contenido Central: Logo y Marca */}
-        <View style={styles.centerContainer}>
-          <Animated.View style={[styles.logoWrapper, { transform: [{ scale: pulseAnim }] }]}>
-            <MallOsLogo size={110} />
-          </Animated.View>
+        <Text style={styles.brandTitle}>Mall OS</Text>
+        <Text style={styles.brandTagline}>The Digital Layer of the Mall</Text>
+      </View>
 
-          <Text style={styles.brandTitle}>Mall OS</Text>
-          <Text style={styles.brandTagline}>The Digital Layer of the Mall</Text>
+      {/* Barra de Carga Inferior */}
+      <View style={styles.bottomLoadingContainer}>
+        <View style={styles.statusRow}>
+          <Text style={styles.statusText}>{statusText}</Text>
+          <Text style={styles.percentText}>{percent}%</Text>
         </View>
 
-        {/* Barra de Carga Inferior (10 segundos) */}
-        <View style={styles.bottomLoadingContainer}>
-          <View style={styles.statusRow}>
-            <Text style={styles.statusText}>{statusText}</Text>
-            <Text style={styles.percentText}>{percent}%</Text>
-          </View>
-
-          {/* Track de la barra */}
-          <View style={styles.progressBarTrack}>
-            <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
-          </View>
-
-          <Text style={styles.versionText}>Versión 1.0.0 · Sambil Chacao</Text>
+        {/* Track de la barra */}
+        <View style={styles.progressBarTrack}>
+          <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
         </View>
-      </ImageBackground>
+
+        <Text style={styles.versionText}>Versión 1.0.0 · Sambil Chacao</Text>
+      </View>
     </View>
   );
 }
@@ -140,28 +150,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#070C1A',
-  },
-  backgroundImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
+    position: 'relative',
   },
-  darkGradientOverlay: {
+  backgroundAura: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(7, 12, 26, 0.72)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   skipButton: {
     alignSelf: 'flex-end',
     marginTop: Platform.OS === 'ios' ? 56 : 48,
     marginRight: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     zIndex: 10,
   },
   skipText: {
@@ -176,24 +183,24 @@ const styles = StyleSheet.create({
     marginTop: -40,
   },
   logoWrapper: {
-    shadowColor: '#3B82F6',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.45,
-    shadowRadius: 18,
-    elevation: 8,
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 24,
+    elevation: 10,
   },
   brandTitle: {
     color: '#FFFFFF',
-    fontSize: 42,
+    fontSize: 40,
     fontWeight: '900',
     letterSpacing: -0.8,
-    marginTop: 18,
+    marginTop: 20,
   },
   brandTagline: {
     color: '#94A3B8',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
-    letterSpacing: 0.4,
+    letterSpacing: 0.5,
     marginTop: 6,
   },
   bottomLoadingContainer: {
@@ -214,7 +221,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   percentText: {
-    color: '#60A5FA',
+    color: '#38BDF8',
     fontSize: 14,
     fontWeight: '700',
     fontVariant: ['tabular-nums'],
@@ -222,17 +229,17 @@ const styles = StyleSheet.create({
   progressBarTrack: {
     height: 6,
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.14)',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     borderRadius: 4,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#38BDF8',
     borderRadius: 4,
-    shadowColor: '#60A5FA',
+    shadowColor: '#38BDF8',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.9,
     shadowRadius: 6,

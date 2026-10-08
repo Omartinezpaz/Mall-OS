@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { AppIcon } from '../../src/components/AppIcon';
 import { ExploreHeader } from '../../src/features/explore/components/ExploreHeader';
 import { WelcomeHeroCard } from '../../src/features/explore/components/WelcomeHeroCard';
 import { CategoryVisualGrid } from '../../src/features/explore/components/CategoryVisualGrid';
@@ -80,7 +80,7 @@ export default function ExplorarScreen() {
         {/* Barra de Búsqueda Flotante (Yummy Style) */}
         <View style={styles.searchSection}>
           <View style={styles.searchBar}>
-            <Ionicons name="search" size={17} color="#94A3B8" />
+            <AppIcon name="search" size={17} color="#94A3B8" />
             <TextInput
               placeholder="¿Qué buscas hoy en el Sambil?"
               placeholderTextColor="#94A3B8"
@@ -91,7 +91,7 @@ export default function ExplorarScreen() {
             />
             {search.length > 0 && (
               <TouchableOpacity onPress={() => setSearch('')} hitSlop={8}>
-                <Ionicons name="close-circle" size={16} color="#94A3B8" />
+                <AppIcon name="close-circle" size={16} color="#94A3B8" />
               </TouchableOpacity>
             )}
           </View>

@@ -7,7 +7,6 @@ import {
   StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import {
   IsometricMap,
   type IsometricMapHandle,
@@ -20,7 +19,10 @@ import { NavigationHUD } from '../../src/features/map/NavigationHUD';
 import { DestinationBar } from '../../src/features/map/DestinationBar';
 import { MapSearchBar, SEARCH_CATEGORIES } from '../../src/features/map/MapSearchBar';
 import { GlassSurface } from '../../src/components/GlassSurface';
+import { AppIcon } from '../../src/components/AppIcon';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
+
+
 import { useStepProgress } from '../../src/features/map/useStepProgress';
 import { useMallTime } from '../../src/features/map/useMallTime';
 import { PILOT_STORES } from '../../src/features/directory';
@@ -382,8 +384,8 @@ export default function MapaScreen() {
             onPress={() => setMapMode((m) => (m === 'guide' ? 'explore' : 'guide'))}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name={mapMode === 'guide' ? 'map-outline' : 'cube-outline'}
+            <AppIcon
+              name={mapMode === 'guide' ? 'map' : 'cube'}
               size={18}
               color="#FFFFFF"
             />
@@ -396,14 +398,14 @@ export default function MapaScreen() {
                 onPress={() => mapRef.current?.zoomIn()}
                 activeOpacity={0.7}
               >
-                <Ionicons name="add" size={20} color="#FFFFFF" />
+                <AppIcon name="add" size={20} color="#FFFFFF" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.controlBtn}
                 onPress={() => mapRef.current?.zoomOut()}
                 activeOpacity={0.7}
               >
-                <Ionicons name="remove" size={20} color="#FFFFFF" />
+                <AppIcon name="remove" size={20} color="#FFFFFF" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.controlBtn}
@@ -414,8 +416,8 @@ export default function MapaScreen() {
                 }}
                 activeOpacity={0.7}
               >
-                <Ionicons
-                  name={cameraMode === 'ground' ? 'eye-outline' : cameraMode === 'isometric' ? 'cube-outline' : 'map-outline'}
+                <AppIcon
+                  name={cameraMode === 'ground' ? 'eye' : cameraMode === 'isometric' ? 'cube' : 'map'}
                   size={16}
                   color="#FFFFFF"
                 />
@@ -441,12 +443,13 @@ export default function MapaScreen() {
           }}
           activeOpacity={0.8}
         >
-          <Ionicons
+          <AppIcon
             name="navigate"
             size={18}
             color={followUser ? '#38BDF8' : '#FFFFFF'}
           />
         </TouchableOpacity>
+
       )}
 
       {/* Toast flotante de Notificación de Llegada */}
@@ -545,7 +548,7 @@ export default function MapaScreen() {
               style={styles.exploreBottomPill}
             >
               <View style={styles.explorePillIconBox}>
-                <Ionicons name="storefront-outline" size={18} color="#818CF8" />
+                <AppIcon name="storefront" size={18} color="#818CF8" />
               </View>
               <View style={styles.explorePillInfo}>
                 <Text style={styles.explorePillTitle}>{selectedStore.name}</Text>
@@ -553,8 +556,9 @@ export default function MapaScreen() {
                   {selectedStore.floorName} · Toca para ver vitrina y trazar ruta
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color="#38BDF8" />
+              <AppIcon name="chevron-forward" size={18} color="#38BDF8" strokeWidth={2.5} />
             </GlassSurface>
+
           </TouchableOpacity>
         </View>
       )}

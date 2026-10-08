@@ -7,7 +7,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppIcon, type AppIconName } from '../../components/AppIcon';
 import {
   LEVEL_AUTOPISTA,
   LEVEL_ACUARIO,
@@ -22,7 +22,7 @@ export interface FloorItem {
   label: string;
   subtitle: string;
   level: number;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: AppIconName;
   storeCount: number;
 }
 
@@ -33,7 +33,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Diversión',
     subtitle: 'Terraza, Cines & Entretenimiento',
     level: 5,
-    icon: 'game-controller-outline',
+    icon: 'game-controller',
     storeCount: 28,
   },
   {
@@ -42,7 +42,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Feria',
     subtitle: 'Feria de Comida & Fast Food',
     level: 4,
-    icon: 'restaurant-outline',
+    icon: 'restaurant',
     storeCount: 46,
   },
   {
@@ -51,7 +51,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Libertador',
     subtitle: 'Moda, Calzado & Joyerías',
     level: 3,
-    icon: 'shirt-outline',
+    icon: 'shirt',
     storeCount: 74,
   },
   {
@@ -60,7 +60,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Acuario',
     subtitle: 'Tecnología, Hogar & Servicios',
     level: 2,
-    icon: 'hardware-chip-outline',
+    icon: 'hardware-chip',
     storeCount: 82,
   },
   {
@@ -69,7 +69,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Autopista',
     subtitle: 'Tiendas Ancla, Bancos & Farmacias',
     level: 1,
-    icon: 'storefront-outline',
+    icon: 'storefront',
     storeCount: 108,
   },
 ];
@@ -106,7 +106,7 @@ export function VerticalFloorSelector({
         <Text style={styles.floorPillLabel} numberOfLines={1}>
           {activeFloor?.label?.replace('Nivel ', '') ?? 'Autopista'}
         </Text>
-        <Ionicons name="chevron-down" size={14} color="#94A3B8" />
+        <AppIcon name="chevron-down" size={14} color="#94A3B8" />
 
         {/* Indicador si el usuario o destino están en este piso */}
         {userFloorId === selectedFloorId && <View style={styles.statusDot} />}
@@ -138,7 +138,7 @@ export function VerticalFloorSelector({
                     style={styles.closeBtn}
                     hitSlop={10}
                   >
-                    <Ionicons name="close" size={18} color="#94A3B8" />
+                    <AppIcon name="close" size={18} color="#94A3B8" />
                   </TouchableOpacity>
                 </View>
 
@@ -169,7 +169,7 @@ export function VerticalFloorSelector({
                               isSelected && styles.floorIconBoxSelected,
                             ]}
                           >
-                            <Ionicons
+                            <AppIcon
                               name={floor.icon}
                               size={18}
                               color={isSelected ? '#FFFFFF' : '#2563EB'}
@@ -204,7 +204,7 @@ export function VerticalFloorSelector({
 
                         {isSelected && (
                           <View style={styles.checkCircle}>
-                            <Ionicons name="checkmark" size={15} color="#FFFFFF" />
+                            <AppIcon name="checkmark" size={15} color="#FFFFFF" />
                           </View>
                         )}
                       </TouchableOpacity>

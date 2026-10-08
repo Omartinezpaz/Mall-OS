@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppIcon } from '../../../components/AppIcon';
 
 interface WelcomeHeroCardProps {
   visitsCount: number;
@@ -46,7 +46,7 @@ export const WelcomeHeroCard: React.FC<WelcomeHeroCardProps> = ({
                   filled && styles.dotFilled,
                 ]}
               >
-                {filled && <Ionicons name="checkmark" size={10} color="#FFFFFF" />}
+                {filled && <AppIcon name="checkmark" size={10} color="#FFFFFF" />}
               </View>
             );
           })}
@@ -63,7 +63,7 @@ export const WelcomeHeroCard: React.FC<WelcomeHeroCardProps> = ({
           <Text style={styles.ctaButtonText}>
             {isCompleted ? 'Canjear' : 'Comenzar'}
           </Text>
-          <Ionicons
+          <AppIcon
             name={isCompleted ? 'gift' : 'arrow-forward'}
             size={13}
             color="#0F172A"

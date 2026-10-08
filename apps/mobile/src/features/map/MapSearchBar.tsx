@@ -8,28 +8,27 @@ import {
   FlatList,
   StyleSheet,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import type { MapStore } from '@mallos/map-engine';
+import { AppIcon, type AppIconName } from '../../components/AppIcon';
 
 export interface CategoryChip {
   id: string;
   label: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: AppIconName;
   categoryKeys: string[];
 }
 
 export const SEARCH_CATEGORIES: CategoryChip[] = [
-  { id: 'all', label: 'Todos', icon: 'apps-outline', categoryKeys: [] },
-  { id: 'fashion', label: 'Moda', icon: 'shirt-outline', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'] },
-  { id: 'food', label: 'Comida', icon: 'fast-food-outline', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'] },
-  { id: 'finance', label: 'Bancos', icon: 'business-outline', categoryKeys: ['finance', 'bank', 'atm'] },
-  { id: 'pharmacy', label: 'Farmacias', icon: 'medkit-outline', categoryKeys: ['pharmacy', 'health', 'beauty'] },
-  { id: 'entertainment', label: 'Cines', icon: 'film-outline', categoryKeys: ['entertainment', 'cinema', 'games'] },
-  { id: 'services', label: 'Servicios', icon: 'construct-outline', categoryKeys: ['services', 'telecom', 'optical'] },
-  { id: 'tech', label: 'Tech', icon: 'hardware-chip-outline', categoryKeys: ['tech', 'electronics', 'computers'] },
-  { id: 'home', label: 'Hogar', icon: 'home-outline', categoryKeys: ['home', 'decor', 'department_store'] },
+  { id: 'all', label: 'Todos', icon: 'apps', categoryKeys: [] },
+  { id: 'fashion', label: 'Moda', icon: 'shirt', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'] },
+  { id: 'food', label: 'Comida', icon: 'fast-food', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'] },
+  { id: 'finance', label: 'Bancos', icon: 'business', categoryKeys: ['finance', 'bank', 'atm'] },
+  { id: 'pharmacy', label: 'Farmacias', icon: 'medkit', categoryKeys: ['pharmacy', 'health', 'beauty'] },
+  { id: 'entertainment', label: 'Cines', icon: 'film', categoryKeys: ['entertainment', 'cinema', 'games'] },
+  { id: 'services', label: 'Servicios', icon: 'construct', categoryKeys: ['services', 'telecom', 'optical'] },
+  { id: 'tech', label: 'Tech', icon: 'hardware-chip', categoryKeys: ['tech', 'electronics', 'computers'] },
+  { id: 'home', label: 'Hogar', icon: 'home', categoryKeys: ['home', 'decor', 'department_store'] },
 ];
-
 
 interface MapSearchBarProps {
   stores: MapStore[];
@@ -98,7 +97,7 @@ export function MapSearchBar({
     <View style={styles.wrapper} pointerEvents="box-none">
       {/* Input de Búsqueda Flotante */}
       <View style={[styles.searchBar, isFocused && styles.searchBarFocused]}>
-        <Ionicons name="search-outline" size={18} color="#64748B" style={styles.searchIcon} />
+        <AppIcon name="search" size={18} color="#64748B" style={styles.searchIcon} />
         <TextInput
           style={styles.input}
           placeholder="Buscar tienda, banco, café o producto..."
@@ -116,7 +115,7 @@ export function MapSearchBar({
         />
         {query.length > 0 && (
           <TouchableOpacity onPress={handleClear} style={styles.clearBtn} activeOpacity={0.7}>
-            <Ionicons name="close" size={14} color="#64748B" />
+            <AppIcon name="close" size={14} color="#64748B" strokeWidth={2.5} />
           </TouchableOpacity>
         )}
       </View>
@@ -143,7 +142,7 @@ export function MapSearchBar({
                 }}
                 activeOpacity={0.8}
               >
-                <Ionicons
+                <AppIcon
                   name={cat.icon}
                   size={15}
                   color={isSelected ? '#FFFFFF' : '#334155'}
@@ -174,7 +173,7 @@ export function MapSearchBar({
                   activeOpacity={0.7}
                 >
                   <View style={styles.resultIconBox}>
-                    <Ionicons name="storefront-outline" size={17} color="#2563EB" />
+                    <AppIcon name="storefront" size={17} color="#2563EB" />
                   </View>
                   <View style={styles.resultInfo}>
                     <Text style={styles.resultTitle} numberOfLines={1}>
@@ -185,7 +184,7 @@ export function MapSearchBar({
                     </Text>
                   </View>
                   <View style={styles.resultArrowBox}>
-                    <Ionicons name="chevron-forward" size={16} color="#2563EB" />
+                    <AppIcon name="chevron-forward" size={16} color="#2563EB" strokeWidth={2.5} />
                   </View>
                 </TouchableOpacity>
               );
@@ -193,6 +192,7 @@ export function MapSearchBar({
           />
         </View>
       )}
+
 
 
       {query.trim().length > 0 && searchResults.length === 0 && (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppIcon } from '../../../components/AppIcon';
 import type { StoreOffer } from '@mallos/map-engine';
 
 export interface DealItem extends StoreOffer {
@@ -46,7 +46,7 @@ export const DealsNearYouCarousel: React.FC<DealsNearYouCarouselProps> = ({
                 <Text style={styles.discountBadgeText}>{deal.badge}</Text>
               </View>
               <View style={styles.distancePill}>
-                <Ionicons name="walk" size={11} color="#64748B" />
+                <AppIcon name="walk" size={11} color="#64748B" />
                 <Text style={styles.distanceText}>{deal.distanceMeters}m</Text>
               </View>
             </View>
@@ -65,7 +65,7 @@ export const DealsNearYouCarousel: React.FC<DealsNearYouCarouselProps> = ({
 
             {deal.rewardPoints && (
               <View style={styles.rewardTag}>
-                <Ionicons name="star" size={10} color="#F59E0B" />
+                <AppIcon name="star" size={10} color="#F59E0B" />
                 <Text style={styles.rewardText}>+{deal.rewardPoints} pts con visita</Text>
               </View>
             )}
@@ -76,7 +76,7 @@ export const DealsNearYouCarousel: React.FC<DealsNearYouCarouselProps> = ({
               onPress={() => onGuideToStore(deal.storeId)}
               activeOpacity={0.8}
             >
-              <Ionicons name="navigate" size={13} color="#FFFFFF" />
+              <AppIcon name="navigate" size={13} color="#FFFFFF" />
               <Text style={styles.guideBtnText}>Guíame</Text>
             </TouchableOpacity>
           </View>

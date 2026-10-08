@@ -4,11 +4,10 @@ import Svg, {
   Path,
   Defs,
   LinearGradient,
-  RadialGradient,
   Stop,
-  Mask,
   G,
   Rect,
+  Polygon,
 } from 'react-native-svg';
 
 interface MallOsLogoProps {
@@ -29,76 +28,95 @@ export function MallOsLogo({
     <View style={styles.container}>
       <Svg width={size} height={size} viewBox="0 0 120 120">
         <Defs>
-          {/* Left Ribbon Loop Gradient */}
-          <LinearGradient id="leftRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={isMono ? '#475569' : '#38BDF8'} />
-            <Stop offset="50%" stopColor={isMono ? '#334155' : '#3B82F6'} />
-            <Stop offset="100%" stopColor={isMono ? '#1E293B' : '#1D4ED8'} />
+          {/* Primary Top Facet Gradient - Cyan / Emerald */}
+          <LinearGradient id="topFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor={isMono ? '#94A3B8' : '#38BDF8'} />
+            <Stop offset="100%" stopColor={isMono ? '#475569' : '#2563EB'} />
           </LinearGradient>
 
-          {/* Right Ribbon Loop Gradient */}
-          <LinearGradient id="rightRibbon" x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={isMono ? '#94A3B8' : '#C084FC'} />
-            <Stop offset="50%" stopColor={isMono ? '#64748B' : '#8B5CF6'} />
-            <Stop offset="100%" stopColor={isMono ? '#334155' : '#6D28D9'} />
+          {/* Left Facet Gradient - Deep Royal */}
+          <LinearGradient id="leftFacet" x1="0%" y1="0%" x2="0%" y2="100%">
+            <Stop offset="0%" stopColor={isMono ? '#64748B' : '#1D4ED8'} />
+            <Stop offset="100%" stopColor={isMono ? '#1E293B' : '#0F172A'} />
           </LinearGradient>
 
-          {/* Center Crossing Ribbon Loop Gradient */}
-          <LinearGradient id="centerRibbon" x1="0%" y1="100%" x2="100%" y2="0%">
-            <Stop offset="0%" stopColor={isMono ? '#1E293B' : '#1E40AF'} />
-            <Stop offset="50%" stopColor={isMono ? '#475569' : '#6366F1'} />
-            <Stop offset="100%" stopColor={isMono ? '#64748B' : '#9333EA'} />
+          {/* Right Facet Gradient - Luminous Accent */}
+          <LinearGradient id="rightFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor={isMono ? '#475569' : '#10B981'} />
+            <Stop offset="100%" stopColor={isMono ? '#0F172A' : '#059669'} />
           </LinearGradient>
 
-          {/* Glossy Specular Highlight */}
-          <LinearGradient id="gloss" x1="0%" y1="0%" x2="0%" y2="100%">
-            <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />
-            <Stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+          {/* Central Digital Core / Pulse */}
+          <LinearGradient id="coreGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <Stop offset="0%" stopColor="#38BDF8" stopOpacity="0.9" />
+            <Stop offset="100%" stopColor="#10B981" stopOpacity="0.9" />
           </LinearGradient>
         </Defs>
 
-        {/* 3D Ribbon Letter "M" Vector Curves */}
-        {/* Left Loop Arch */}
-        <Path
-          d="M 24,96 C 18,80 18,48 30,34 C 42,20 54,34 54,54 C 54,74 38,98 24,96 Z"
-          fill="url(#leftRibbon)"
-        />
+        {/* Isometric Layered Architectural Logo (Mall OS Emblem) */}
+        <G>
+          {/* Level 1: Bottom Base Plane (Isometric Floor Slab) */}
+          <Path
+            d="M 60,78 L 100,56 L 60,34 L 20,56 Z"
+            fill="url(#leftFacet)"
+            opacity="0.4"
+          />
 
-        {/* Center Intersecting Fold */}
-        <Path
-          d="M 36,44 C 48,28 60,40 60,60 C 60,84 48,96 42,94 C 36,92 32,80 36,44 Z"
-          fill="url(#centerRibbon)"
-          opacity="0.95"
-        />
+          {/* Level 2: Middle Suspended Floor Plane */}
+          <Path
+            d="M 60,64 L 94,45 L 60,26 L 26,45 Z"
+            fill="url(#topFacet)"
+            opacity="0.75"
+          />
 
-        {/* Center to Right Arch */}
-        <Path
-          d="M 60,60 C 60,40 72,28 84,44 C 88,80 84,92 78,94 C 72,96 60,84 60,60 Z"
-          fill="url(#rightRibbon)"
-          opacity="0.95"
-        />
+          {/* Isometric Left Pillar ("M" left leg) */}
+          <Path
+            d="M 26,45 L 42,36 L 42,76 L 26,85 Z"
+            fill="url(#leftFacet)"
+          />
 
-        {/* Right Loop Arch */}
-        <Path
-          d="M 96,96 C 82,98 66,74 66,54 C 66,34 78,20 90,34 C 102,48 102,80 96,96 Z"
-          fill="url(#rightRibbon)"
-        />
+          {/* Isometric Right Pillar ("M" right leg) */}
+          <Path
+            d="M 94,45 L 78,36 L 78,76 L 94,85 Z"
+            fill="url(#rightFacet)"
+          />
 
-        {/* Dynamic Specular Highlights */}
-        <Path
-          d="M 28,40 C 32,28 44,28 48,42"
-          stroke="url(#gloss)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <Path
-          d="M 72,42 C 76,28 88,28 92,40"
-          stroke="url(#gloss)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          fill="none"
-        />
+          {/* Center Valley / Apex Fold ("M" digital chevron) */}
+          <Path
+            d="M 42,36 L 60,52 L 78,36 L 60,20 Z"
+            fill="url(#topFacet)"
+          />
+
+          {/* Center Vertical Core Drop */}
+          <Path
+            d="M 60,52 L 60,88 L 42,76 L 42,40 Z"
+            fill="url(#leftFacet)"
+            opacity="0.85"
+          />
+          <Path
+            d="M 60,52 L 78,40 L 78,76 L 60,88 Z"
+            fill="url(#rightFacet)"
+            opacity="0.95"
+          />
+
+          {/* Luminous Neon Edge Highlights */}
+          <Path
+            d="M 26,45 L 60,26 L 94,45"
+            stroke="#38BDF8"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          <Path
+            d="M 42,36 L 60,52 L 78,36"
+            stroke="#10B981"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </G>
       </Svg>
 
       {showText && (

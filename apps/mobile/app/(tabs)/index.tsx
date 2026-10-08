@@ -5,176 +5,184 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image,
   StatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import Svg, { Path, Circle, Defs, RadialGradient, Stop, LinearGradient } from 'react-native-svg';
-import { CategoryIcon } from '../../src/components/CategoryIcon';
-import { OFFICIAL_CATEGORIES } from '@mallos/design-tokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AppIcon } from '../../src/components/AppIcon';
+import { useLoyaltyStore } from '../../src/features/loyalty/useLoyaltyStore';
+import {
+  LEVEL_AUTOPISTA,
+  LEVEL_ACUARIO,
+  LEVEL_LIBERTADOR,
+  LEVEL_FERIA,
+  LEVEL_DIVERSION,
+} from '@mallos/map-engine';
+
+const SAMBIL_LEVELS = [
+  { id: LEVEL_AUTOPISTA, short: 'L1', name: 'Autopista', count: 108, icon: 'storefront', color: '#2563EB' },
+  { id: LEVEL_ACUARIO, short: 'L2', name: 'Acuario', count: 82, icon: 'hardware-chip', color: '#0284C7' },
+  { id: LEVEL_LIBERTADOR, short: 'L3', name: 'Libertador', count: 74, icon: 'shirt', color: '#7C3AED' },
+  { id: LEVEL_FERIA, short: 'L4', name: 'Feria', count: 46, icon: 'restaurant', color: '#EA580C' },
+  { id: LEVEL_DIVERSION, short: 'L5', name: 'Diversión', count: 28, icon: 'game-controller', color: '#DB2777' },
+];
+
+const SAMBIL_ANCHORS = [
+  { id: 'local_farmatodo', name: 'Farmatodo', floor: 'Nivel Autopista', category: 'Farmacia & Belleza', badge: '2x1 Promo', color: '#16A34A', bg: '#F0FDF4' },
+  { id: 'st_pb_01', name: 'ZARA', floor: 'Nivel Autopista', category: 'Moda Internacional', badge: '30% OFF', color: '#2563EB', bg: '#EFF6FF' },
+  { id: 'st_pb_02', name: 'Nike Store', floor: 'Nivel Autopista', category: 'Calzado & Deporte', badge: 'Nuevo', color: '#D97706', bg: '#FFFBEB' },
+  { id: 'local_cines_unidos', name: 'Cines Unidos', floor: 'Nivel Diversión', category: 'Salas de Cine & IMAX', badge: 'Cartelera', color: '#9333EA', bg: '#FAF5FF' },
+  { id: 'local_4', name: 'Tiendas Tijerazo', floor: 'Nivel Autopista', category: 'Tienda por Dept.', badge: 'Destacado', color: '#DC2626', bg: '#FEF2F2' },
+  { id: 'local_bnc', name: 'Banco Nac. de Crédito', floor: 'Nivel Autopista', category: 'Banca & Servicios', badge: 'Cajeros', color: '#059669', bg: '#ECFDF5' },
+];
 
 export default function HomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 24);
+  const loyalty = useLoyaltyStore();
+
+  const handleOpenMapWithFloor = (floorId: string) => {
+    router.push({
+      pathname: '/(tabs)/mapa',
+      params: { floorId },
+    });
+  };
+
+  const handleOpenMapWithStore = (storeId: string) => {
+    router.push({
+      pathname: '/(tabs)/mapa',
+      params: { storeId },
+    });
+  };
 
   return (
     <View style={styles.screenWrapper}>
       <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingTop: topSafe + 8 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Top Bar Header */}
+        {/* Top Header: Mall OS & Loyalty Badge */}
         <View style={styles.topBar}>
           <View>
-            <Text style={styles.greetingText}>Hola, Daniela 👋</Text>
-            <TouchableOpacity style={styles.mallSelector} activeOpacity={0.7}>
-              <Text style={styles.mallName}>Mall del Sol</Text>
-              <Text style={styles.dropdownArrow}>▾</Text>
-            </TouchableOpacity>
+            <View style={styles.liveBeaconRow}>
+              <View style={styles.liveDot} />
+              <Text style={styles.liveText}>ABIERTO AHORA</Text>
+            </View>
+            <Text style={styles.mallTitle}>Sambil Chacao</Text>
+            <Text style={styles.mallSubtitle}>Caracas · 124 tiendas en 5 niveles</Text>
           </View>
 
-          <View style={styles.weatherBadge}>
-            <Text style={styles.weatherText}>☀️ 24°C</Text>
-          </View>
+          <TouchableOpacity
+            style={styles.loyaltyBadge}
+            activeOpacity={0.8}
+            onPress={() => router.push('/(tabs)/directorio')}
+          >
+            <AppIcon name="star" size={13} color="#F59E0B" />
+            <Text style={styles.loyaltyPoints}>{loyalty.points} pts</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Buscador Rápido tipo Pill */}
+        {/* Buscador Directo */}
         <TouchableOpacity
           style={styles.searchBar}
           activeOpacity={0.85}
           onPress={() => router.push('/(tabs)/directorio')}
         >
-          <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <Circle cx="11" cy="11" r="8" />
-            <Path d="M21 21l-4.35-4.35" />
-          </Svg>
-          <Text style={styles.searchPlaceholder}>¿Qué quieres hacer hoy?</Text>
+          <AppIcon name="search" size={18} color="#94A3B8" />
+          <Text style={styles.searchPlaceholder}>¿Qué buscas hoy en el Sambil?</Text>
         </TouchableOpacity>
 
-        {/* Hero Campaign Banner (Fashion Luxury) */}
-        <View style={styles.heroBanner}>
-          <Image
-            source={{
-              uri: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&auto=format&fit=crop&q=80',
-            }}
-            style={styles.heroImage}
-          />
-          <View style={styles.heroOverlay}>
-            <View style={styles.heroContent}>
-              <Text style={styles.heroTag}>TEMPORADA 2026</Text>
-              <Text style={styles.heroTitle}>Nueva colección{'\n'}Otoño · Invierno</Text>
-              <TouchableOpacity
-                style={styles.heroButton}
-                activeOpacity={0.85}
-                onPress={() => router.push('/(tabs)/ofertas')}
-              >
-                <Text style={styles.heroButtonText}>Descubrir</Text>
-              </TouchableOpacity>
+        {/* Hero Interactive Map Banner */}
+        <TouchableOpacity
+          style={styles.heroBanner}
+          activeOpacity={0.9}
+          onPress={() => router.push('/(tabs)/mapa')}
+        >
+          <View style={styles.heroPatternOverlay} />
+          <View style={styles.heroContent}>
+            <View style={styles.heroTagBadge}>
+              <AppIcon name="navigate" size={12} color="#38BDF8" />
+              <Text style={styles.heroTagText}>MAPA INTERACTIVO 2D / 2.5D</Text>
+            </View>
+            <Text style={styles.heroTitle}>Navegación paso a paso en el Sambil</Text>
+            <Text style={styles.heroSub}>
+              Encuentra tiendas, rutas accesibles entre pisos y calcula tu tiempo de caminata en vivo.
+            </Text>
+            <View style={styles.heroCTA}>
+              <Text style={styles.heroCTAText}>Abrir Mapa</Text>
+              <AppIcon name="arrow-forward" size={14} color="#0F172A" />
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
-        {/* Explora por Categoría (Todas las categorías oficiales) */}
+        {/* Selector de Niveles del Sambil */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Explora por categoría</Text>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/directorio')}>
-            <Text style={styles.seeAllText}>Ver todas</Text>
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Niveles del Mall</Text>
+          <Text style={styles.sectionSub}>Toca para ver el mapa del piso</Text>
         </View>
 
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesScroll}
+          contentContainerStyle={styles.levelsScroll}
         >
-          {OFFICIAL_CATEGORIES.map((cat) => (
+          {SAMBIL_LEVELS.map((lvl) => (
             <TouchableOpacity
-              key={cat.slug}
-              style={styles.categoryItem}
+              key={lvl.id}
+              style={styles.levelCard}
               activeOpacity={0.8}
-              onPress={() => router.push('/(tabs)/directorio')}
+              onPress={() => handleOpenMapWithFloor(lvl.id)}
             >
-              <CategoryIcon slug={cat.slug} size={56} bgColor={cat.color || '#4F46E5'} />
-              <Text style={styles.categoryName} numberOfLines={1}>{cat.name}</Text>
+              <View style={[styles.levelBadgeCircle, { backgroundColor: lvl.color }]}>
+                <Text style={styles.levelBadgeText}>{lvl.short}</Text>
+              </View>
+              <Text style={styles.levelName}>Nivel {lvl.name}</Text>
+              <Text style={styles.levelCount}>{lvl.count} locales</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* Mall Concierge IA Card */}
-        <TouchableOpacity
-          style={styles.conciergeCard}
-          activeOpacity={0.85}
-          onPress={() => router.push('/concierge')}
-        >
-          <View style={styles.conciergeOrb}>
-            <Svg width={40} height={40} viewBox="0 0 40 40">
-              <Defs>
-                <RadialGradient id="orbGrad" cx="35%" cy="30%" r="65%">
-                  <Stop offset="0%" stopColor="#DDD6FE" stopOpacity="1" />
-                  <Stop offset="40%" stopColor="#7C3AED" stopOpacity="1" />
-                  <Stop offset="100%" stopColor="#4C1D95" stopOpacity="1" />
-                </RadialGradient>
-              </Defs>
-              <Circle cx="20" cy="20" r="18" fill="url(#orbGrad)" />
-              <Circle cx="15" cy="14" r="4" fill="#FFFFFF" opacity="0.6" />
-            </Svg>
-          </View>
-          <View style={styles.conciergeInfo}>
-            <Text style={styles.conciergeCardTitle}>Mall Concierge IA</Text>
-            <Text style={styles.conciergeCardSub}>Tu asistente inteligente dentro del mall</Text>
-          </View>
-          <View style={styles.conciergeBadge}>
-            <Text style={styles.conciergeBadgeText}>Preguntar →</Text>
-          </View>
-        </TouchableOpacity>
-
-        {/* Hoy en el Mall (Clean Luxury Feed) */}
+        {/* Tiendas Principales / Anclas */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Hoy en el mall</Text>
+          <Text style={styles.sectionTitle}>Tiendas Destacadas</Text>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/directorio')}>
+            <Text style={styles.seeAllText}>Ver todas</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.feedContainer}>
-          {/* Card 1: Concierto en Vivo */}
-          <TouchableOpacity
-            style={styles.whiteFeedCard}
-            activeOpacity={0.85}
-            onPress={() => router.push('/(tabs)/directorio')}
-          >
-            <Image
-              source={{
-                uri: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&auto=format&fit=crop&q=80',
-              }}
-              style={styles.eventThumb}
-            />
-            <View style={styles.feedCardInfo}>
-              <Text style={styles.feedCardTitle}>Concierto en vivo</Text>
-              <Text style={styles.feedCardMeta}>7:00 PM · Plaza Central</Text>
-            </View>
-            <View style={styles.gratisBadge}>
-              <Text style={styles.gratisBadgeText}>GRATIS</Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Card 2: Nike 20% OFF Promo */}
-          <TouchableOpacity
-            style={styles.whiteFeedCard}
-            activeOpacity={0.85}
-            onPress={() => router.push('/(tabs)/ofertas')}
-          >
-            <View style={styles.nikeLogoBox}>
-              <Svg width={28} height={12} viewBox="0 0 24 10" fill="#FFFFFF">
-                <Path d="M21.71 0.29C15.67 3.51 10.3 6.94 5.6 10C3.73 8.35 1.87 6.42 0 4.21C0.93 6.07 2.33 7.86 4.2 9.38C2.33 9.77 0.93 9.4 0 8.27C4.67 11.23 9.8 11.75 15.4 9.83C18.67 8.7 21.47 5.48 23.8 0.17C23.1 0.21 22.4 0.25 21.71 0.29Z" />
-              </Svg>
-            </View>
-            <View style={styles.feedCardInfo}>
-              <Text style={styles.feedCardTitle}>20% OFF en Nike</Text>
-              <Text style={styles.feedCardMeta}>Productos seleccionados</Text>
-            </View>
-            <View style={styles.hoyBadge}>
-              <Text style={styles.hoyBadgeText}>Hoy</Text>
-            </View>
-          </TouchableOpacity>
+        <View style={styles.anchorsGrid}>
+          {SAMBIL_ANCHORS.map((store) => (
+            <TouchableOpacity
+              key={store.id}
+              style={styles.anchorCard}
+              activeOpacity={0.85}
+              onPress={() => handleOpenMapWithStore(store.id)}
+            >
+              <View style={[styles.anchorIconBox, { backgroundColor: store.bg }]}>
+                <Text style={[styles.anchorInitials, { color: store.color }]}>
+                  {store.name.slice(0, 2).toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.anchorInfo}>
+                <View style={styles.anchorTitleRow}>
+                  <Text style={styles.anchorName} numberOfLines={1}>{store.name}</Text>
+                  {store.badge && (
+                    <View style={[styles.anchorBadge, { backgroundColor: store.color }]}>
+                      <Text style={styles.anchorBadgeText}>{store.badge}</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.anchorCategory}>{store.category}</Text>
+                <View style={styles.anchorFloorRow}>
+                  <AppIcon name="location" size={10} color="#94A3B8" />
+                  <Text style={styles.anchorFloorText}>{store.floor}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
     </View>
@@ -191,54 +199,65 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
   },
   content: {
-    paddingHorizontal: 18,
-    paddingTop: 52,
+    paddingHorizontal: 16,
     paddingBottom: 40,
-    gap: 18,
+    gap: 16,
   },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
-  greetingText: {
-    color: '#0F172A',
-    fontSize: 20,
-    fontWeight: '800',
-    letterSpacing: -0.4,
-  },
-  mallSelector: {
+  liveBeaconRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    marginTop: 2,
+    gap: 6,
+    marginBottom: 2,
   },
-  mallName: {
-    color: '#64748B',
-    fontSize: 13,
-    fontWeight: '500',
+  liveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#10B981',
   },
-  dropdownArrow: {
+  liveText: {
+    color: '#059669',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 0.6,
+  },
+  mallTitle: {
+    color: '#0F172A',
+    fontSize: 24,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+  },
+  mallSubtitle: {
     color: '#64748B',
     fontSize: 12,
+    fontWeight: '600',
+    marginTop: 1,
   },
-  weatherBadge: {
-    backgroundColor: '#FFFFFF',
+  loyaltyBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
+    borderColor: '#FEF3C7',
+    gap: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
     elevation: 1,
   },
-  weatherText: {
-    color: '#334155',
+  loyaltyPoints: {
+    color: '#B45309',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   searchBar: {
     flexDirection: 'row',
@@ -246,8 +265,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     height: 48,
-    borderRadius: 24,
-    borderWidth: 1,
+    borderRadius: 20,
+    borderWidth: 1.5,
     borderColor: '#E2E8F0',
     gap: 10,
     shadowColor: '#0F172A',
@@ -258,72 +277,78 @@ const styles = StyleSheet.create({
   },
   searchPlaceholder: {
     color: '#94A3B8',
-    fontSize: 14,
-    fontWeight: '400',
+    fontSize: 13,
+    fontWeight: '600',
   },
   heroBanner: {
-    height: 185,
-    borderRadius: 22,
-    overflow: 'hidden',
-    position: 'relative',
     backgroundColor: '#0F172A',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  heroImage: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-  },
-  heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
-    justifyContent: 'center',
+    borderRadius: 24,
     padding: 20,
+    position: 'relative',
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: '#1E293B',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 14,
+    elevation: 6,
+  },
+  heroPatternOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(56, 189, 248, 0.04)',
   },
   heroContent: {
-    gap: 6,
-    maxWidth: '75%',
+    gap: 8,
   },
-  heroTag: {
-    color: '#F1F5F9',
+  heroTagBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(56, 189, 248, 0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+    gap: 5,
+  },
+  heroTagText: {
+    color: '#38BDF8',
     fontSize: 10,
     fontWeight: '900',
-    letterSpacing: 1.2,
-    opacity: 0.9,
+    letterSpacing: 0.6,
   },
   heroTitle: {
-    color: '#FFFFFF',
-    fontSize: 21,
+    color: '#F8FAFC',
+    fontSize: 20,
     fontWeight: '900',
-    lineHeight: 25,
-    letterSpacing: -0.4,
+    letterSpacing: -0.3,
+    lineHeight: 24,
   },
-  heroButton: {
+  heroSub: {
+    color: '#94A3B8',
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 4,
+  },
+  heroCTA: {
     alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 18,
-    paddingVertical: 7,
-    borderRadius: 20,
-    marginTop: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: '#38BDF8',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
-  heroButtonText: {
+  heroCTAText: {
     color: '#0F172A',
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'baseline',
     marginTop: 4,
   },
   sectionTitle: {
@@ -332,131 +357,125 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: -0.2,
   },
-  seeAllText: {
-    color: '#4F46E5',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  categoriesScroll: {
-    gap: 16,
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-  },
-  categoryItem: {
-    alignItems: 'center',
-    gap: 8,
-    width: 68,
-  },
-  categoryName: {
-    color: '#334155',
-    fontSize: 12,
+  sectionSub: {
+    color: '#64748B',
+    fontSize: 11,
     fontWeight: '600',
   },
-  conciergeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F3FF',
-    borderRadius: 18,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#DDD6FE',
-    gap: 12,
+  seeAllText: {
+    color: '#2563EB',
+    fontSize: 12,
+    fontWeight: '700',
   },
-  conciergeOrb: {
-    width: 42,
-    height: 42,
+  levelsScroll: {
+    gap: 10,
+    paddingVertical: 2,
+  },
+  levelCard: {
+    width: 105,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 12,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    alignItems: 'center',
+    gap: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  levelBadgeCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  conciergeInfo: {
-    flex: 1,
-  },
-  conciergeCardTitle: {
-    color: '#1E1B4B',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  conciergeCardSub: {
-    color: '#6D28D9',
-    fontSize: 11,
-    marginTop: 1,
-  },
-  conciergeBadge: {
-    backgroundColor: '#4F46E5',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  conciergeBadgeText: {
+  levelBadgeText: {
     color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '900',
   },
-  feedContainer: {
+  levelName: {
+    color: '#0F172A',
+    fontSize: 12,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  levelCount: {
+    color: '#64748B',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  anchorsGrid: {
     gap: 10,
   },
-  whiteFeedCard: {
+  anchorCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 12,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#E2E8F0',
     gap: 12,
-    shadowColor: '#0F172A',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
     elevation: 2,
   },
-  eventThumb: {
-    width: 52,
-    height: 52,
-    borderRadius: 12,
-  },
-  nikeLogoBox: {
-    width: 52,
-    height: 52,
-    borderRadius: 12,
-    backgroundColor: '#000000',
+  anchorIconBox: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  feedCardInfo: {
+  anchorInitials: {
+    fontSize: 16,
+    fontWeight: '900',
+  },
+  anchorInfo: {
     flex: 1,
     gap: 2,
   },
-  feedCardTitle: {
+  anchorTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  anchorName: {
     color: '#0F172A',
     fontSize: 14,
-    fontWeight: '700',
-  },
-  feedCardMeta: {
-    color: '#64748B',
-    fontSize: 12,
-  },
-  gratisBadge: {
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  gratisBadgeText: {
-    color: '#475569',
-    fontSize: 10,
     fontWeight: '800',
-    letterSpacing: 0.5,
   },
-  hoyBadge: {
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+  anchorBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 5,
   },
-  hoyBadgeText: {
-    color: '#4F46E5',
+  anchorBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '900',
+  },
+  anchorCategory: {
+    color: '#64748B',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '500',
+  },
+  anchorFloorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  anchorFloorText: {
+    color: '#94A3B8',
+    fontSize: 10,
+    fontWeight: '600',
   },
 });

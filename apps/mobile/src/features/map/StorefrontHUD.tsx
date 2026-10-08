@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import type { MapStore, StoreOffer } from '@mallos/map-engine';
 import { GlassSurface } from '../../components/GlassSurface';
+import { AppIcon } from '../../components/AppIcon';
 
 interface StorefrontHUDProps {
   store: MapStore | null;
@@ -35,13 +35,14 @@ export function StorefrontHUD({
           <Text style={styles.storeName} numberOfLines={1}>
             {store.name}
           </Text>
-          <Text style={styles.floorText}>
-            <Ionicons name="location-outline" size={13} color="#94A3B8" /> {floorName}
-          </Text>
+          <View style={styles.floorRow}>
+            <AppIcon name="location" size={13} color="#94A3B8" />
+            <Text style={styles.floorText}>{floorName}</Text>
+          </View>
         </View>
 
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Ionicons name="close" size={20} color="#94A3B8" />
+          <AppIcon name="close" size={18} color="#94A3B8" strokeWidth={2.5} />
         </TouchableOpacity>
       </View>
 
@@ -63,7 +64,7 @@ export function StorefrontHUD({
                 </Text>
                 {offer.rewardPoints && (
                   <View style={styles.pointsPill}>
-                    <Ionicons name="star" size={11} color="#F59E0B" />
+                    <AppIcon name="star" size={11} color="#F59E0B" />
                     <Text style={styles.pointsText}>+{offer.rewardPoints} pts por visita</Text>
                   </View>
                 )}
@@ -91,12 +92,13 @@ export function StorefrontHUD({
         onPress={() => onNavigateToStore(store.id)}
         activeOpacity={0.8}
       >
-        <Ionicons name="navigate" size={18} color="#FFFFFF" />
+        <AppIcon name="navigate" size={18} color="#FFFFFF" />
         <Text style={styles.navigateButtonText}>Guiarme hasta aquí</Text>
       </TouchableOpacity>
     </GlassSurface>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -140,11 +142,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '800',
   },
+  floorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
   floorText: {
     color: '#94A3B8',
     fontSize: 11,
-    marginTop: 1,
   },
+
   closeButton: {
     width: 28,
     height: 28,

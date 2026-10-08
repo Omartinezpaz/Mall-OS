@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppIcon } from '../../../components/AppIcon';
 import type { MapStore } from '@mallos/map-engine';
 
 interface TrendingStoreItem {
@@ -126,13 +126,13 @@ export const TrendingStoresGrid: React.FC<TrendingStoresGridProps> = ({
 
               <View style={styles.footerRow}>
                 <View style={styles.floorRow}>
-                  <Ionicons name="location-outline" size={11} color="#94A3B8" />
+                  <AppIcon name="location" size={11} color="#94A3B8" />
                   <Text style={styles.floorText} numberOfLines={1}>
                     {store.floorLabel}
                   </Text>
                 </View>
                 <View style={styles.arrowCircle}>
-                  <Ionicons name="arrow-forward" size={11} color="#2563EB" />
+                  <AppIcon name="arrow-forward" size={11} color="#2563EB" />
                 </View>
               </View>
             </View>
