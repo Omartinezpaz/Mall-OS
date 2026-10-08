@@ -70,7 +70,7 @@ export default function ExplorarScreen() {
       {/* Header Superior: Ubicación & Recompensas */}
       <View style={{ paddingTop: topSafe }}>
         <ExploreHeader
-          mallName="Sambil Chacao"
+          mallName="Mall Demo"
           points={loyalty.points}
           userLevel={loyalty.userLevel}
           levelName={loyalty.levelName}
@@ -85,7 +85,7 @@ export default function ExplorarScreen() {
               <Path d="M21 21l-4.35-4.35" />
             </Svg>
             <TextInput
-              placeholder="¿Qué buscas hoy en el Sambil?"
+              placeholder="¿Qué buscas hoy en el mall?"
               placeholderTextColor="#94A3B8"
               value={search}
               onChangeText={setSearch}

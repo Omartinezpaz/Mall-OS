@@ -91,7 +91,7 @@ export const TrendingStoresGrid: React.FC<TrendingStoresGridProps> = ({
           <View style={styles.trendIconBox}>
             <MallOsSpriteIcon name="destacados" size={14} showCircle={false} color="#2563EB" />
           </View>
-          <Text style={styles.sectionTitle}>Tendencias en el Sambil</Text>
+          <Text style={styles.sectionTitle}>Tendencias en el Mall</Text>
         </View>
         <Text style={styles.sectionSub}>Las más visitadas hoy</Text>
       </View>

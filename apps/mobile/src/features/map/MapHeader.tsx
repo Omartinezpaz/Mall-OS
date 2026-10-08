@@ -42,7 +42,7 @@ export function MapHeader({
       {/* Non-Official Illustrative Disclaimer Banner */}
       <View style={styles.disclaimerPill}>
         <Text style={styles.disclaimerText}>
-          📐 Sambil Chacao · Plano esquemático ilustrativo demo
+          📐 Mall Demo · Plano esquemático ilustrativo
         </Text>
       </View>
 

@@ -72,8 +72,8 @@ export default function HomeScreen() {
               <View style={styles.liveDot} />
               <Text style={styles.liveText}>ABIERTO AHORA</Text>
             </View>
-            <Text style={styles.mallTitle}>Sambil Chacao</Text>
-            <Text style={styles.mallSubtitle}>Caracas · 124 tiendas en 5 niveles</Text>
+            <Text style={styles.mallTitle}>Mall Demo</Text>
+            <Text style={styles.mallSubtitle}>Plataforma Demo · 124 tiendas en 5 niveles</Text>
           </View>
 
           <TouchableOpacity

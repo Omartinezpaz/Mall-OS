@@ -327,7 +327,7 @@ export default function MapaScreen() {
           <View style={styles.exploreHeaderContainer}>
             <View style={styles.exploreHeader}>
               <View style={styles.brandBadge}>
-                <Text style={styles.brandTitle}>SAMBIL CHACAO</Text>
+                <Text style={styles.brandTitle}>MALL DEMO</Text>
                 <Text style={styles.brandSubtitle}>
                   {openFloorCount} de {currentFloorStores.length} locales · {timeFormatted}
                 </Text>

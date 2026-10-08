@@ -18,9 +18,9 @@ const TOTAL_DURATION_MS = 6000; // 6 segundos de transición suave
 
 const LOADING_PHASES = [
   { until: 0.25, text: 'Iniciando motor gráfico Skia 2D & CAD...' },
-  { until: 0.55, text: 'Cargando planos Sambil Chacao (5 niveles)...' },
+  { until: 0.55, text: 'Cargando planos Mall Demo (5 niveles)...' },
   { until: 0.85, text: 'Sincronizando 124 tiendas, rutas y vitrinas...' },
-  { until: 1.0, text: '¡Bienvenido a Sambil Chacao!' },
+  { until: 1.0, text: '¡Bienvenido a Mall Demo!' },
 ];
 
 export default function SplashScreen() {
@@ -144,7 +144,7 @@ export default function SplashScreen() {
           <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
         </View>
 
-        <Text style={styles.versionText}>Versión 1.0.0 · Sambil Chacao</Text>
+        <Text style={styles.versionText}>Versión 1.0.0 · Mall Demo</Text>
       </View>
     </View>
   );

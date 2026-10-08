@@ -13,7 +13,7 @@ interface ExploreHeaderProps {
 }
 
 export const ExploreHeader: React.FC<ExploreHeaderProps> = ({
-  mallName = 'Sambil Chacao',
+  mallName = 'Mall Demo',
   points,
   userLevel,
   levelName,

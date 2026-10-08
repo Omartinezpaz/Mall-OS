@@ -46,7 +46,7 @@ export default function OfertasScreen() {
       {/* Top Bar */}
       <View style={styles.headerBar}>
         <Text style={styles.headerTitle}>Ofertas del Mall</Text>
-        <Text style={styles.headerSubtitle}>Promociones exclusivas y cupones canjeables</Text>
+        <Text style={styles.headerSubtitle}>Mall Demo · Promociones exclusivas y cupones canjeables</Text>
       </View>
 
       <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
