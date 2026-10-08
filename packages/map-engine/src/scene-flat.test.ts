@@ -231,7 +231,7 @@ test('buildFlatScene: locales resaltados por filtro siempre se renderizan', () =
     floorId: LEVEL_AUTOPISTA,
     palette,
     zoom: 2,
-    viewport: { x: 50, y: 50, w: 100, h: 100 },
+    viewport: { center: { x: 50, y: 50 }, radius: 30 },
     highlightedStoreIds: ['local_110'], // BNC al norte, lejos del viewport
   });
 

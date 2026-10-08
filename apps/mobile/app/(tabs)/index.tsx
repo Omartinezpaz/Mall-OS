@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppIcon } from '../../src/components/AppIcon';
 import { MallOsSpriteIcon, type MallOsIconId } from '../../src/components/MallOsSpriteIcon';
 import { useLoyaltyStore } from '../../src/features/loyalty/useLoyaltyStore';
+import { useKidsMode } from '../../src/features/kids-mode/useKidsMode';
 import {
   LEVEL_AUTOPISTA,
   LEVEL_ACUARIO,
@@ -42,6 +43,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 24);
   const loyalty = useLoyaltyStore();
+  const kids = useKidsMode();
 
   const handleOpenMapWithFloor = (floorId: string) => {
     router.push({
@@ -116,6 +118,38 @@ export default function HomeScreen() {
               <Text style={styles.heroCTAText}>Abrir Mapa</Text>
               <AppIcon name="arrow-forward" size={14} color="#0F172A" />
             </View>
+          </View>
+        </TouchableOpacity>
+
+        {/* Banner Gamificación: Modo Exploradores */}
+        <TouchableOpacity
+          style={styles.kidsBanner}
+          activeOpacity={0.88}
+          onPress={() => router.push('/kids-mode')}
+        >
+          <View style={styles.kidsIconBox}>
+            <Text style={{ fontSize: 24 }}>{kids.avatar || '🎮'}</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <View style={styles.kidsBadgeRow}>
+              <Text style={styles.kidsBadgeText}>BÚSQUEDA DEL TESORO</Text>
+              {kids.ageGroup && (
+                <Text style={styles.kidsStarsBadge}>⭐ {kids.stars}/5</Text>
+              )}
+            </View>
+            <Text style={styles.kidsTitle}>
+              {kids.ageGroup ? `Aventura: ${kids.playerName}` : 'Modo Exploradores del Mall'}
+            </Text>
+            <Text style={styles.kidsSub} numberOfLines={2}>
+              {kids.prizeUnlocked
+                ? '🏆 ¡Premio final listo para reclamar!'
+                : kids.ageGroup
+                ? 'Continúa resolviendo acertijos y gana premios.'
+                : 'Juego para Niños, Teens y Jóvenes · Premios reales en tiendas.'}
+            </Text>
+          </View>
+          <View style={styles.kidsArrowBtn}>
+            <AppIcon name="chevron-forward" size={18} color="#D97706" />
           </View>
         </TouchableOpacity>
 
@@ -476,5 +510,71 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     fontSize: 10,
     fontWeight: '600',
+  },
+  kidsBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: '#FDE68A',
+    padding: 14,
+    marginTop: 14,
+    gap: 12,
+    shadowColor: '#F59E0B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  kidsIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: '#FEF3C7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#FCD34D',
+  },
+  kidsBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+  },
+  kidsBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#D97706',
+    letterSpacing: 0.6,
+  },
+  kidsStarsBadge: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#B45309',
+    backgroundColor: '#FDE68A',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 6,
+  },
+  kidsTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#78350F',
+  },
+  kidsSub: {
+    fontSize: 11,
+    color: '#92400E',
+    marginTop: 2,
+    lineHeight: 14,
+  },
+  kidsArrowBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FEF3C7',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
