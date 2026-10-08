@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { AppIcon } from '../../../components/AppIcon';
+import { MallOsSpriteIcon } from '../../../components/MallOsSpriteIcon';
 import type { StoreOffer } from '@mallos/map-engine';
 
 export interface DealItem extends StoreOffer {
@@ -27,7 +27,7 @@ export const DealsNearYouCarousel: React.FC<DealsNearYouCarouselProps> = ({
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <View style={styles.titleRow}>
-          <Text style={styles.fireIcon}>🔥</Text>
+          <MallOsSpriteIcon name="promociones" size={18} color="#EA580C" />
           <Text style={styles.sectionTitle}>Ofertas cerca de ti</Text>
         </View>
         <Text style={styles.sectionTag}>DISTANCIA CORTA</Text>
@@ -46,7 +46,7 @@ export const DealsNearYouCarousel: React.FC<DealsNearYouCarouselProps> = ({
                 <Text style={styles.discountBadgeText}>{deal.badge}</Text>
               </View>
               <View style={styles.distancePill}>
-                <AppIcon name="walk" size={11} color="#64748B" />
+                <MallOsSpriteIcon name="navegacion" size={11} color="#64748B" />
                 <Text style={styles.distanceText}>{deal.distanceMeters}m</Text>
               </View>
             </View>
@@ -65,7 +65,7 @@ export const DealsNearYouCarousel: React.FC<DealsNearYouCarouselProps> = ({
 
             {deal.rewardPoints && (
               <View style={styles.rewardTag}>
-                <AppIcon name="star" size={10} color="#F59E0B" />
+                <MallOsSpriteIcon name="destacados" size={10} color="#F59E0B" />
                 <Text style={styles.rewardText}>+{deal.rewardPoints} pts con visita</Text>
               </View>
             )}
@@ -76,7 +76,7 @@ export const DealsNearYouCarousel: React.FC<DealsNearYouCarouselProps> = ({
               onPress={() => onGuideToStore(deal.storeId)}
               activeOpacity={0.8}
             >
-              <AppIcon name="navigate" size={13} color="#FFFFFF" />
+              <MallOsSpriteIcon name="navegacion" size={13} color="#FFFFFF" />
               <Text style={styles.guideBtnText}>Guíame</Text>
             </TouchableOpacity>
           </View>

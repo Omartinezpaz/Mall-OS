@@ -8,10 +8,10 @@ import {
   Animated,
   Dimensions,
   Platform,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
-import { MallOsLogo } from '../src/components/MallOsLogo';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TOTAL_DURATION_MS = 6000; // 6 segundos de transición suave
@@ -118,10 +118,14 @@ export default function SplashScreen() {
         <Text style={styles.skipText}>Saltar</Text>
       </TouchableOpacity>
 
-      {/* Contenido Central: Logo y Marca */}
+      {/* Contenido Central: Logo Oficial y Marca */}
       <View style={styles.centerContainer}>
         <Animated.View style={[styles.logoWrapper, { transform: [{ scale: pulseAnim }] }]}>
-          <MallOsLogo size={120} />
+          <Image
+            source={require('../assets/icon.png')}
+            style={styles.officialLogo}
+            resizeMode="contain"
+          />
         </Animated.View>
 
         <Text style={styles.brandTitle}>Mall OS</Text>
@@ -188,6 +192,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 24,
     elevation: 10,
+    borderRadius: 28,
+  },
+  officialLogo: {
+    width: 110,
+    height: 110,
+    borderRadius: 28,
   },
   brandTitle: {
     color: '#FFFFFF',

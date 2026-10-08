@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { AppIcon } from '../../src/components/AppIcon';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { ExploreHeader } from '../../src/features/explore/components/ExploreHeader';
 import { WelcomeHeroCard } from '../../src/features/explore/components/WelcomeHeroCard';
 import { CategoryVisualGrid } from '../../src/features/explore/components/CategoryVisualGrid';
@@ -80,7 +80,10 @@ export default function ExplorarScreen() {
         {/* Barra de Búsqueda Flotante (Yummy Style) */}
         <View style={styles.searchSection}>
           <View style={styles.searchBar}>
-            <AppIcon name="search" size={17} color="#94A3B8" />
+            <Svg width={17} height={17} viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <Circle cx="11" cy="11" r="8" />
+              <Path d="M21 21l-4.35-4.35" />
+            </Svg>
             <TextInput
               placeholder="¿Qué buscas hoy en el Sambil?"
               placeholderTextColor="#94A3B8"
@@ -91,7 +94,10 @@ export default function ExplorarScreen() {
             />
             {search.length > 0 && (
               <TouchableOpacity onPress={() => setSearch('')} hitSlop={8}>
-                <AppIcon name="close-circle" size={16} color="#94A3B8" />
+                <Svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <Circle cx="12" cy="12" r="10" />
+                  <Path d="M15 9l-6 6M9 9l6 6" />
+                </Svg>
               </TouchableOpacity>
             )}
           </View>

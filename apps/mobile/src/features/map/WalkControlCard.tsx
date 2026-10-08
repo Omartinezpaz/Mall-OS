@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import type { RouteResult } from '@mallos/map-engine';
+import { MallOsSpriteIcon } from '../../components/MallOsSpriteIcon';
 
 interface WalkControlCardProps {
   isWalking: boolean;
@@ -47,7 +48,10 @@ export function WalkControlCard({
         <View style={styles.actionsRow}>
           {isWalking ? (
             <TouchableOpacity style={styles.pauseBtn} onPress={onStopWalk} activeOpacity={0.8}>
-              <Text style={styles.pauseBtnText}>⏸ Pausar</Text>
+              <View style={styles.btnContentRow}>
+                <MallOsSpriteIcon name="otros" size={13} color="#FFFFFF" />
+                <Text style={styles.pauseBtnText}>Pausar</Text>
+              </View>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -56,7 +60,10 @@ export function WalkControlCard({
               activeOpacity={0.8}
               disabled={!hasWaypoints}
             >
-              <Text style={styles.startBtnText}>🚶 Simular</Text>
+              <View style={styles.btnContentRow}>
+                <MallOsSpriteIcon name="navegacion" size={13} color="#FFFFFF" />
+                <Text style={styles.startBtnText}>Simular</Text>
+              </View>
             </TouchableOpacity>
           )}
 
@@ -138,6 +145,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+  },
+  btnContentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   startBtn: {
     backgroundColor: '#4F46E5',

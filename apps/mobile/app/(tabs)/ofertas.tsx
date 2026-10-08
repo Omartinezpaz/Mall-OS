@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getOffers, activateLocalCoupon } from '../../src/features/offers';
+import { MallOsSpriteIcon } from '../../src/components/MallOsSpriteIcon';
 
 export default function OfertasScreen() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export default function OfertasScreen() {
 
           {/* Top Floating Badge */}
           <View style={styles.brandPill}>
-            <Text style={styles.brandIcon}>👟</Text>
+            <MallOsSpriteIcon name="deportes" size={14} showCircle={false} color="#FFFFFF" />
             <Text style={styles.brandPillText}>{heroOffer.storeName}</Text>
           </View>
 
@@ -78,7 +79,9 @@ export default function OfertasScreen() {
         {/* Offer Specs Chips */}
         <View style={styles.chipsRow}>
           <View style={styles.specChip}>
-            <Text style={styles.specChipIcon}>⏱</Text>
+            <View style={styles.specIconBox}>
+              <MallOsSpriteIcon name="promociones" size={16} showCircle={false} color="#3B82F6" />
+            </View>
             <View>
               <Text style={styles.specChipLabel}>Válida hoy</Text>
               <Text style={styles.specChipValue}>15 sep 2026</Text>
@@ -86,7 +89,9 @@ export default function OfertasScreen() {
           </View>
 
           <View style={styles.specChip}>
-            <Text style={styles.specChipIcon}>🏢</Text>
+            <View style={styles.specIconBox}>
+              <MallOsSpriteIcon name="ubicacion" size={16} showCircle={false} color="#3B82F6" />
+            </View>
             <View>
               <Text style={styles.specChipLabel}>Ubicación</Text>
               <Text style={styles.specChipValue}>
@@ -272,8 +277,13 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 1,
   },
-  specChipIcon: {
-    fontSize: 18,
+  specIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   specChipLabel: {
     color: '#64748B',

@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { AppIcon } from '../../../components/AppIcon';
+import { MallOsSpriteIcon, type MallOsIconId } from '../../../components/MallOsSpriteIcon';
 import type { MapStore } from '@mallos/map-engine';
 
 interface TrendingStoreItem {
   id: string;
   name: string;
-  category: string;
+  category: MallOsIconId;
   categoryLabel: string;
   floorLabel: string;
   badge?: string;
@@ -18,7 +19,7 @@ const TRENDING_STORES: TrendingStoreItem[] = [
   {
     id: 'st_pb_01',
     name: 'ZARA',
-    category: 'fashion',
+    category: 'moda',
     categoryLabel: 'Moda',
     floorLabel: 'Nivel Autopista',
     badge: '30% OFF',
@@ -28,7 +29,7 @@ const TRENDING_STORES: TrendingStoreItem[] = [
   {
     id: 'local_farmatodo',
     name: 'Farmatodo',
-    category: 'pharmacy',
+    category: 'salud',
     categoryLabel: 'Farmacia',
     floorLabel: 'Nivel Autopista',
     badge: '2x1 Promo',
@@ -38,7 +39,7 @@ const TRENDING_STORES: TrendingStoreItem[] = [
   {
     id: 'st_pb_02',
     name: 'Nike Store',
-    category: 'fashion',
+    category: 'deportes',
     categoryLabel: 'Sportswear',
     floorLabel: 'Nivel Autopista',
     badge: 'Nuevo',
@@ -48,7 +49,7 @@ const TRENDING_STORES: TrendingStoreItem[] = [
   {
     id: 'local_cines_unidos',
     name: 'Cines Unidos',
-    category: 'entertainment',
+    category: 'entretenimiento',
     categoryLabel: 'Cines',
     floorLabel: 'Nivel Diversión',
     badge: 'Cartelera',
@@ -58,7 +59,7 @@ const TRENDING_STORES: TrendingStoreItem[] = [
   {
     id: 'local_4',
     name: 'Tiendas Tijerazo',
-    category: 'fashion',
+    category: 'moda',
     categoryLabel: 'Tienda por Dept.',
     floorLabel: 'Nivel Autopista',
     badge: 'Favorito',
@@ -68,7 +69,7 @@ const TRENDING_STORES: TrendingStoreItem[] = [
   {
     id: 'local_bnc',
     name: 'Banco Nac. de Crédito',
-    category: 'finance',
+    category: 'finanzas',
     categoryLabel: 'Banca',
     floorLabel: 'Nivel Autopista',
     bgColor: '#ECFDF5',
@@ -87,7 +88,9 @@ export const TrendingStoresGrid: React.FC<TrendingStoresGridProps> = ({
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <View style={styles.titleRow}>
-          <Text style={styles.trendIcon}>📈</Text>
+          <View style={styles.trendIconBox}>
+            <MallOsSpriteIcon name="destacados" size={14} showCircle={false} color="#2563EB" />
+          </View>
           <Text style={styles.sectionTitle}>Tendencias en el Sambil</Text>
         </View>
         <Text style={styles.sectionSub}>Las más visitadas hoy</Text>
@@ -109,9 +112,7 @@ export const TrendingStoresGrid: React.FC<TrendingStoresGridProps> = ({
                 </View>
               )}
               <View style={[styles.initialsCircle, { backgroundColor: '#FFFFFF', borderColor: store.accentColor }]}>
-                <Text style={[styles.initialsText, { color: store.accentColor }]}>
-                  {store.name.slice(0, 2).toUpperCase()}
-                </Text>
+                <MallOsSpriteIcon name={store.category} size={18} showCircle={false} color={store.accentColor} />
               </View>
             </View>
 
@@ -126,7 +127,7 @@ export const TrendingStoresGrid: React.FC<TrendingStoresGridProps> = ({
 
               <View style={styles.footerRow}>
                 <View style={styles.floorRow}>
-                  <AppIcon name="location" size={11} color="#94A3B8" />
+                  <MallOsSpriteIcon name="ubicacion" size={11} showCircle={false} color="#94A3B8" />
                   <Text style={styles.floorText} numberOfLines={1}>
                     {store.floorLabel}
                   </Text>
@@ -160,8 +161,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
-  trendIcon: {
-    fontSize: 16,
+  trendIconBox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sectionTitle: {
     color: '#0F172A',

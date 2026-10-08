@@ -221,6 +221,15 @@ export default function MapaScreen() {
     });
   }, [selectedLevel, isNavigating, selectedStoreId, highlightedStoreIds, effectiveRouteNodeIds, walk.position, walk.heading, walk.trail]);
 
+  // Conteo de tiendas del piso seleccionado y horarios
+  const currentFloorStores = useMemo(() => {
+    return sambilMall.stores.filter((s) => s.floorId === selectedLevel);
+  }, [selectedLevel]);
+
+  const openFloorCount = useMemo(() => {
+    return currentFloorStores.filter((s) => isStoreOpenAt(s.id, currentHour, s.slug)).length;
+  }, [currentFloorStores, currentHour]);
+
   // Manejar selección de tienda desde mapa o búsqueda
   const handleSelectStore = useCallback((storeId: string) => {
     const store = sambilMall.stores.find((s) => s.id === storeId);
@@ -234,15 +243,17 @@ export default function MapaScreen() {
         setUserStartNodeId(nearest.id);
       }
     }
+    walk.resetWalk();
     setSelectedStoreId(storeId);
     setIsNavigating(true);
     setShowStorefrontHUD(false);
     mapRef.current?.focusOnStore(storeId);
-  }, [selectedLevel, walk.position]);
+  }, [selectedLevel, walk]);
 
   // Salir del modo navegación
   const handleExitNavigation = useCallback(() => {
     walk.stopWalk();
+    walk.resetWalk();
     setIsNavigating(false);
     setShowStorefrontHUD(false);
     setActiveRoute(null);
@@ -318,7 +329,7 @@ export default function MapaScreen() {
               <View style={styles.brandBadge}>
                 <Text style={styles.brandTitle}>SAMBIL CHACAO</Text>
                 <Text style={styles.brandSubtitle}>
-                  {openCount > 0 ? `${openCount} abiertas` : '124 locales activos'} · {timeFormatted}
+                  {openFloorCount} de {currentFloorStores.length} locales · {timeFormatted}
                 </Text>
               </View>
 
@@ -482,7 +493,7 @@ export default function MapaScreen() {
         <View
           style={[
             styles.arrivalToast,
-            { top: topSafe + (isNavigating ? 84 : 16) },
+            { top: topSafe + (isNavigating ? 190 : 160) },
           ]}
           pointerEvents="box-none"
         >

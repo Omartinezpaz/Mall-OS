@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppIcon } from '../../src/components/AppIcon';
+import { MallOsSpriteIcon, type MallOsIconId } from '../../src/components/MallOsSpriteIcon';
 import { useLoyaltyStore } from '../../src/features/loyalty/useLoyaltyStore';
 import {
   LEVEL_AUTOPISTA,
@@ -19,21 +20,21 @@ import {
   LEVEL_DIVERSION,
 } from '@mallos/map-engine';
 
-const SAMBIL_LEVELS = [
-  { id: LEVEL_AUTOPISTA, short: 'L1', name: 'Autopista', count: 108, icon: 'storefront', color: '#2563EB' },
-  { id: LEVEL_ACUARIO, short: 'L2', name: 'Acuario', count: 82, icon: 'hardware-chip', color: '#0284C7' },
-  { id: LEVEL_LIBERTADOR, short: 'L3', name: 'Libertador', count: 74, icon: 'shirt', color: '#7C3AED' },
-  { id: LEVEL_FERIA, short: 'L4', name: 'Feria', count: 46, icon: 'restaurant', color: '#EA580C' },
-  { id: LEVEL_DIVERSION, short: 'L5', name: 'Diversión', count: 28, icon: 'game-controller', color: '#DB2777' },
+const SAMBIL_LEVELS: Array<{ id: string; short: string; name: string; count: number; icon: MallOsIconId; color: string }> = [
+  { id: LEVEL_AUTOPISTA, short: 'L1', name: 'Autopista', count: 108, icon: 'otros', color: '#2563EB' },
+  { id: LEVEL_ACUARIO, short: 'L2', name: 'Acuario', count: 82, icon: 'tecnologia', color: '#0284C7' },
+  { id: LEVEL_LIBERTADOR, short: 'L3', name: 'Libertador', count: 74, icon: 'moda', color: '#7C3AED' },
+  { id: LEVEL_FERIA, short: 'L4', name: 'Feria', count: 46, icon: 'restaurantes', color: '#EA580C' },
+  { id: LEVEL_DIVERSION, short: 'L5', name: 'Diversión', count: 28, icon: 'entretenimiento', color: '#DB2777' },
 ];
 
-const SAMBIL_ANCHORS = [
-  { id: 'local_farmatodo', name: 'Farmatodo', floor: 'Nivel Autopista', category: 'Farmacia & Belleza', badge: '2x1 Promo', color: '#16A34A', bg: '#F0FDF4' },
-  { id: 'st_pb_01', name: 'ZARA', floor: 'Nivel Autopista', category: 'Moda Internacional', badge: '30% OFF', color: '#2563EB', bg: '#EFF6FF' },
-  { id: 'st_pb_02', name: 'Nike Store', floor: 'Nivel Autopista', category: 'Calzado & Deporte', badge: 'Nuevo', color: '#D97706', bg: '#FFFBEB' },
-  { id: 'local_cines_unidos', name: 'Cines Unidos', floor: 'Nivel Diversión', category: 'Salas de Cine & IMAX', badge: 'Cartelera', color: '#9333EA', bg: '#FAF5FF' },
-  { id: 'local_4', name: 'Tiendas Tijerazo', floor: 'Nivel Autopista', category: 'Tienda por Dept.', badge: 'Destacado', color: '#DC2626', bg: '#FEF2F2' },
-  { id: 'local_bnc', name: 'Banco Nac. de Crédito', floor: 'Nivel Autopista', category: 'Banca & Servicios', badge: 'Cajeros', color: '#059669', bg: '#ECFDF5' },
+const SAMBIL_ANCHORS: Array<{ id: string; name: string; floor: string; category: string; badge: string; color: string; bg: string; icon: MallOsIconId }> = [
+  { id: 'local_farmatodo', name: 'Farmatodo', floor: 'Nivel Autopista', category: 'Farmacia & Belleza', badge: '2x1 Promo', color: '#16A34A', bg: '#F0FDF4', icon: 'salud' },
+  { id: 'st_pb_01', name: 'ZARA', floor: 'Nivel Autopista', category: 'Moda Internacional', badge: '30% OFF', color: '#2563EB', bg: '#EFF6FF', icon: 'moda' },
+  { id: 'st_pb_02', name: 'Nike Store', floor: 'Nivel Autopista', category: 'Calzado & Deporte', badge: 'Nuevo', color: '#D97706', bg: '#FFFBEB', icon: 'deportes' },
+  { id: 'local_cines_unidos', name: 'Cines Unidos', floor: 'Nivel Diversión', category: 'Salas de Cine & IMAX', badge: 'Cartelera', color: '#9333EA', bg: '#FAF5FF', icon: 'entretenimiento' },
+  { id: 'local_4', name: 'Tiendas Tijerazo', floor: 'Nivel Autopista', category: 'Tienda por Dept.', badge: 'Destacado', color: '#DC2626', bg: '#FEF2F2', icon: 'moda' },
+  { id: 'local_bnc', name: 'Banco Nac. de Crédito', floor: 'Nivel Autopista', category: 'Banca & Servicios', badge: 'Cajeros', color: '#059669', bg: '#ECFDF5', icon: 'finanzas' },
 ];
 
 export default function HomeScreen() {
@@ -162,9 +163,7 @@ export default function HomeScreen() {
               onPress={() => handleOpenMapWithStore(store.id)}
             >
               <View style={[styles.anchorIconBox, { backgroundColor: store.bg }]}>
-                <Text style={[styles.anchorInitials, { color: store.color }]}>
-                  {store.name.slice(0, 2).toUpperCase()}
-                </Text>
+                <MallOsSpriteIcon name={store.icon} size={22} showCircle={false} color={store.color} />
               </View>
               <View style={styles.anchorInfo}>
                 <View style={styles.anchorTitleRow}>
@@ -177,7 +176,7 @@ export default function HomeScreen() {
                 </View>
                 <Text style={styles.anchorCategory}>{store.category}</Text>
                 <View style={styles.anchorFloorRow}>
-                  <AppIcon name="location" size={10} color="#94A3B8" />
+                  <MallOsSpriteIcon name="ubicacion" size={10} showCircle={false} color="#94A3B8" />
                   <Text style={styles.anchorFloorText}>{store.floor}</Text>
                 </View>
               </View>
