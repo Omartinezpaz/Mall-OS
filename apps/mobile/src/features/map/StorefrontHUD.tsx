@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import type { MapStore, StoreOffer } from '@mallos/map-engine';
 import { GlassSurface } from '../../components/GlassSurface';
 import { AppIcon } from '../../components/AppIcon';
+import { MallOsSpriteIcon } from '../../components/MallOsSpriteIcon';
 
 interface StorefrontHUDProps {
   store: MapStore | null;
@@ -36,7 +37,7 @@ export function StorefrontHUD({
             {store.name}
           </Text>
           <View style={styles.floorRow}>
-            <AppIcon name="location" size={13} color="#94A3B8" />
+            <MallOsSpriteIcon name="ubicacion" size={13} showCircle={false} color="#94A3B8" />
             <Text style={styles.floorText}>{floorName}</Text>
           </View>
         </View>
@@ -64,7 +65,7 @@ export function StorefrontHUD({
                 </Text>
                 {offer.rewardPoints && (
                   <View style={styles.pointsPill}>
-                    <AppIcon name="star" size={11} color="#F59E0B" />
+                    <MallOsSpriteIcon name="promociones" size={12} showCircle={false} color="#F59E0B" />
                     <Text style={styles.pointsText}>+{offer.rewardPoints} pts por visita</Text>
                   </View>
                 )}
@@ -92,7 +93,7 @@ export function StorefrontHUD({
         onPress={() => onNavigateToStore(store.id)}
         activeOpacity={0.8}
       >
-        <AppIcon name="navigate" size={18} color="#FFFFFF" />
+        <MallOsSpriteIcon name="navegacion" size={18} showCircle={false} color="#FFFFFF" />
         <Text style={styles.navigateButtonText}>Guiarme hasta aquí</Text>
       </TouchableOpacity>
     </GlassSurface>

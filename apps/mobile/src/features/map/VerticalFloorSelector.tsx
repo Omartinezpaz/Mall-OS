@@ -7,7 +7,8 @@ import {
   Modal,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { AppIcon, type AppIconName } from '../../components/AppIcon';
+import { AppIcon } from '../../components/AppIcon';
+import { MallOsSpriteIcon, type MallOsIconId } from '../../components/MallOsSpriteIcon';
 import {
   LEVEL_AUTOPISTA,
   LEVEL_ACUARIO,
@@ -22,7 +23,7 @@ export interface FloorItem {
   label: string;
   subtitle: string;
   level: number;
-  icon: AppIconName;
+  icon: MallOsIconId | string;
   storeCount: number;
 }
 
@@ -33,7 +34,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Diversión',
     subtitle: 'Terraza, Cines & Entretenimiento',
     level: 5,
-    icon: 'game-controller',
+    icon: 'entretenimiento',
     storeCount: 28,
   },
   {
@@ -42,7 +43,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Feria',
     subtitle: 'Feria de Comida & Fast Food',
     level: 4,
-    icon: 'restaurant',
+    icon: 'restaurantes',
     storeCount: 46,
   },
   {
@@ -51,7 +52,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Libertador',
     subtitle: 'Moda, Calzado & Joyerías',
     level: 3,
-    icon: 'shirt',
+    icon: 'moda',
     storeCount: 74,
   },
   {
@@ -60,7 +61,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Acuario',
     subtitle: 'Tecnología, Hogar & Servicios',
     level: 2,
-    icon: 'hardware-chip',
+    icon: 'tecnologia',
     storeCount: 82,
   },
   {
@@ -69,7 +70,7 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     label: 'Nivel Autopista',
     subtitle: 'Tiendas Ancla, Bancos & Farmacias',
     level: 1,
-    icon: 'storefront',
+    icon: 'otros',
     storeCount: 108,
   },
 ];
@@ -169,9 +170,10 @@ export function VerticalFloorSelector({
                               isSelected && styles.floorIconBoxSelected,
                             ]}
                           >
-                            <AppIcon
+                            <MallOsSpriteIcon
                               name={floor.icon}
                               size={18}
+                              showCircle={false}
                               color={isSelected ? '#FFFFFF' : '#2563EB'}
                             />
                           </View>

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { GlassSurface } from '../../../components/GlassSurface';
 import { AppIcon } from '../../../components/AppIcon';
+import { MallOsSpriteIcon } from '../../../components/MallOsSpriteIcon';
 
 interface ExploreHeaderProps {
   mallName?: string;
@@ -23,7 +24,7 @@ export const ExploreHeader: React.FC<ExploreHeaderProps> = ({
       {/* Selector / Píldora de Ubicación */}
       <View style={styles.locationPill}>
         <View style={styles.pinCircle}>
-          <AppIcon name="location" size={13} color="#EF4444" />
+          <MallOsSpriteIcon name="ubicacion" size={13} showCircle={false} color="#EF4444" />
         </View>
         <Text style={styles.locationText} numberOfLines={1}>
           {mallName}
@@ -43,7 +44,7 @@ export const ExploreHeader: React.FC<ExploreHeaderProps> = ({
           style={styles.pointsBadge}
         >
           <View style={styles.crownCircle}>
-            <AppIcon name="trophy" size={12} color="#F59E0B" />
+            <MallOsSpriteIcon name="promociones" size={14} showCircle={false} color="#F59E0B" />
           </View>
           <View style={styles.pointsInfo}>
             <Text style={styles.pointsNumber}>{points} pts</Text>

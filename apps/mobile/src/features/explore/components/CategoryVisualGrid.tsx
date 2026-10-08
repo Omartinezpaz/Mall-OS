@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { AppIcon, type AppIconName } from '../../../components/AppIcon';
+import { MallOsSpriteIcon, type MallOsIconId } from '../../../components/MallOsSpriteIcon';
 
 export interface VisualCategory {
   id: string;
   name: string;
-  icon: AppIconName;
+  icon: MallOsIconId;
   iconColor: string;
   bgColor: string;
   borderColor: string;
@@ -16,7 +16,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_fashion',
     name: 'Moda',
-    icon: 'shirt',
+    icon: 'moda',
     iconColor: '#2563EB',
     bgColor: '#EFF6FF',
     borderColor: '#BFDBFE',
@@ -25,7 +25,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_food',
     name: 'Comida',
-    icon: 'fast-food',
+    icon: 'restaurantes',
     iconColor: '#DC2626',
     bgColor: '#FEF2F2',
     borderColor: '#FECACA',
@@ -34,7 +34,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_banks',
     name: 'Bancos',
-    icon: 'business',
+    icon: 'finanzas',
     iconColor: '#059669',
     bgColor: '#ECFDF5',
     borderColor: '#A7F3D0',
@@ -43,7 +43,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_pharmacy',
     name: 'Farmacia',
-    icon: 'medkit',
+    icon: 'salud',
     iconColor: '#16A34A',
     bgColor: '#F0FDF4',
     borderColor: '#BBF7D0',
@@ -52,7 +52,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_cinema',
     name: 'Cines',
-    icon: 'film',
+    icon: 'entretenimiento',
     iconColor: '#9333EA',
     bgColor: '#FAF5FF',
     borderColor: '#E9D5FF',
@@ -61,7 +61,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_tech',
     name: 'Tecnología',
-    icon: 'hardware-chip',
+    icon: 'tecnologia',
     iconColor: '#0284C7',
     bgColor: '#F0F9FF',
     borderColor: '#BAE6FD',
@@ -70,7 +70,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_home',
     name: 'Hogar',
-    icon: 'home',
+    icon: 'hogar',
     iconColor: '#D97706',
     bgColor: '#FFFBEB',
     borderColor: '#FDE68A',
@@ -79,7 +79,7 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_services',
     name: 'Servicios',
-    icon: 'construct',
+    icon: 'servicios',
     iconColor: '#475569',
     bgColor: '#F8FAFC',
     borderColor: '#E2E8F0',
@@ -118,9 +118,10 @@ export const CategoryVisualGrid: React.FC<CategoryVisualGridProps> = ({
               activeOpacity={0.75}
             >
               <View style={[styles.iconBox, { backgroundColor: isSelected ? '#2563EB' : 'rgba(255, 255, 255, 0.75)' }]}>
-                <AppIcon
+                <MallOsSpriteIcon
                   name={cat.icon}
-                  size={20}
+                  size={24}
+                  showCircle={false}
                   color={isSelected ? '#FFFFFF' : cat.iconColor}
                 />
               </View>

@@ -9,25 +9,26 @@ import {
   StyleSheet,
 } from 'react-native';
 import type { MapStore } from '@mallos/map-engine';
-import { AppIcon, type AppIconName } from '../../components/AppIcon';
+import { AppIcon } from '../../components/AppIcon';
+import { MallOsSpriteIcon, type MallOsIconId } from '../../components/MallOsSpriteIcon';
 
 export interface CategoryChip {
   id: string;
   label: string;
-  icon: AppIconName;
+  icon: MallOsIconId | string;
   categoryKeys: string[];
 }
 
 export const SEARCH_CATEGORIES: CategoryChip[] = [
-  { id: 'all', label: 'Todos', icon: 'apps', categoryKeys: [] },
-  { id: 'fashion', label: 'Moda', icon: 'shirt', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'] },
-  { id: 'food', label: 'Comida', icon: 'fast-food', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'] },
-  { id: 'finance', label: 'Bancos', icon: 'business', categoryKeys: ['finance', 'bank', 'atm'] },
-  { id: 'pharmacy', label: 'Farmacias', icon: 'medkit', categoryKeys: ['pharmacy', 'health', 'beauty'] },
-  { id: 'entertainment', label: 'Cines', icon: 'film', categoryKeys: ['entertainment', 'cinema', 'games'] },
-  { id: 'services', label: 'Servicios', icon: 'construct', categoryKeys: ['services', 'telecom', 'optical'] },
-  { id: 'tech', label: 'Tech', icon: 'hardware-chip', categoryKeys: ['tech', 'electronics', 'computers'] },
-  { id: 'home', label: 'Hogar', icon: 'home', categoryKeys: ['home', 'decor', 'department_store'] },
+  { id: 'all', label: 'Todos', icon: 'categorias', categoryKeys: [] },
+  { id: 'fashion', label: 'Moda', icon: 'moda', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'] },
+  { id: 'food', label: 'Comida', icon: 'restaurantes', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'] },
+  { id: 'finance', label: 'Bancos', icon: 'finanzas', categoryKeys: ['finance', 'bank', 'atm'] },
+  { id: 'pharmacy', label: 'Farmacias', icon: 'salud', categoryKeys: ['pharmacy', 'health', 'beauty'] },
+  { id: 'entertainment', label: 'Cines', icon: 'entretenimiento', categoryKeys: ['entertainment', 'cinema', 'games'] },
+  { id: 'services', label: 'Servicios', icon: 'servicios', categoryKeys: ['services', 'telecom', 'optical'] },
+  { id: 'tech', label: 'Tech', icon: 'tecnologia', categoryKeys: ['tech', 'electronics', 'computers'] },
+  { id: 'home', label: 'Hogar', icon: 'hogar', categoryKeys: ['home', 'decor', 'department_store'] },
 ];
 
 interface MapSearchBarProps {
@@ -142,11 +143,11 @@ export function MapSearchBar({
                 }}
                 activeOpacity={0.8}
               >
-                <AppIcon
+                <MallOsSpriteIcon
                   name={cat.icon}
-                  size={15}
+                  size={16}
+                  showCircle={false}
                   color={isSelected ? '#FFFFFF' : '#334155'}
-                  style={styles.chipIcon}
                 />
                 <Text style={[styles.chipLabel, isSelected && styles.chipLabelSelected]}>
                   {cat.label}
@@ -173,7 +174,7 @@ export function MapSearchBar({
                   activeOpacity={0.7}
                 >
                   <View style={styles.resultIconBox}>
-                    <AppIcon name="storefront" size={17} color="#2563EB" />
+                    <MallOsSpriteIcon name={item.category || 'otros'} size={18} showCircle={false} color="#2563EB" />
                   </View>
                   <View style={styles.resultInfo}>
                     <Text style={styles.resultTitle} numberOfLines={1}>
