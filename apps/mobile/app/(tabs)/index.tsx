@@ -80,11 +80,20 @@ export default function HomeScreen() {
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <TouchableOpacity
+              style={styles.conciergeTopBtn}
+              activeOpacity={0.8}
+              onPress={() => router.push('/concierge')}
+            >
+              <Text style={{ fontSize: 13 }}>🤖</Text>
+              <Text style={styles.conciergeTopBtnText}>Asistente</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={styles.kidsTopBtn}
               activeOpacity={0.8}
               onPress={() => router.push('/kids-mode')}
             >
-              <Text style={{ fontSize: 14 }}>🎮</Text>
+              <Text style={{ fontSize: 13 }}>🎮</Text>
               <Text style={styles.kidsTopBtnText}>Jugar</Text>
             </TouchableOpacity>
 
@@ -107,6 +116,30 @@ export default function HomeScreen() {
         >
           <AppIcon name="search" size={18} color="#94A3B8" />
           <Text style={styles.searchPlaceholder}>¿Qué buscas hoy en el Sambil?</Text>
+        </TouchableOpacity>
+
+        {/* Banner Concierge IA */}
+        <TouchableOpacity
+          style={styles.conciergeBanner}
+          activeOpacity={0.88}
+          onPress={() => router.push('/concierge')}
+        >
+          <View style={styles.conciergeIconBox}>
+            <Text style={{ fontSize: 24 }}>🤖</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <View style={styles.conciergeBadgeRow}>
+              <View style={styles.liveDotSmall} />
+              <Text style={styles.conciergeBadgeText}>CONCIERGE IA · ASISTENTE DEL MALL</Text>
+            </View>
+            <Text style={styles.conciergeTitle}>¿Dónde comer, ofertas o baños?</Text>
+            <Text style={styles.conciergeSub} numberOfLines={1}>
+              Pregúntale a la IA y obtén la ruta directa al local en el mapa.
+            </Text>
+          </View>
+          <View style={styles.conciergeArrowBtn}>
+            <AppIcon name="chevron-forward" size={18} color="#38BDF8" />
+          </View>
         </TouchableOpacity>
 
         {/* Banner Gamificación: Modo Exploradores (Promovido arriba) */}
@@ -603,5 +636,86 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  conciergeTopBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+    gap: 4,
+  },
+  conciergeTopBtnText: {
+    color: '#4338CA',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  conciergeBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0F172A',
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: '#1E293B',
+    padding: 14,
+    marginTop: 14,
+    gap: 12,
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  conciergeIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: '#1E293B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#38BDF8',
+  },
+  conciergeBadgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+  },
+  liveDotSmall: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#10B981',
+  },
+  conciergeBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#38BDF8',
+    letterSpacing: 0.6,
+  },
+  conciergeTitle: {
+    fontSize: 14.5,
+    fontWeight: '800',
+    color: '#F8FAFC',
+  },
+  conciergeSub: {
+    fontSize: 11,
+    color: '#94A3B8',
+    marginTop: 2,
+    lineHeight: 14,
+  },
+  conciergeArrowBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#1E293B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(56, 189, 248, 0.3)',
   },
 });
