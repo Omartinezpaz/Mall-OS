@@ -8,7 +8,7 @@ import {
   Vibration,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Speech from 'expo-speech';
 import {
   IsometricMap,
@@ -25,6 +25,7 @@ import { GlassSurface } from '../../src/components/GlassSurface';
 import { AppIcon } from '../../src/components/AppIcon';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
 import { useKidsMode } from '../../src/features/kids-mode/useKidsMode';
+import { KidsArrivalCard } from '../../src/features/kids-mode/KidsArrivalCard';
 
 
 import { useStepProgress } from '../../src/features/map/useStepProgress';
@@ -48,6 +49,7 @@ import {
 import { categoryPalette } from '@mallos/design-tokens';
 
 export default function MapaScreen() {
+  const router = useRouter();
   const mapRef = useRef<IsometricMapHandle | null>(null);
   const insets = useSafeAreaInsets();
   const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 24);
@@ -60,6 +62,7 @@ export default function MapaScreen() {
     t?: string;
   }>();
   const kids = useKidsMode();
+  const isKidsMode = (Array.isArray(params.kidsMode) ? params.kidsMode[0] : params.kidsMode) === 'true';
   const lastHandledTokenRef = useRef<string | null>(null);
 
   // Estados interactivos
@@ -73,9 +76,18 @@ export default function MapaScreen() {
   const [isNavigating, setIsNavigating] = useState<boolean>(false);
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(true);
   const [showStorefrontHUD, setShowStorefrontHUD] = useState<boolean>(false);
+  const [showKidsArrival, setShowKidsArrival] = useState<boolean>(false);
+  const [isKidsIntroPlaying, setIsKidsIntroPlaying] = useState<boolean>(false);
   const [activeRoute, setActiveRoute] = useState<RouteResult | null>(null);
   const [userStartNodeId, setUserStartNodeId] = useState<string>('node-plaza Jardin');
   const currentUserNodeIdRef = useRef<string>('node-plaza Jardin');
+
+  // Acertijo activo de Modo Niño según la tienda seleccionada
+  const activeKidsRiddle = useMemo(() => {
+    if (!kids.ageGroup) return undefined;
+    const found = kids.riddles.find((r) => r.storeId === selectedStoreId);
+    return found || kids.currentRiddle;
+  }, [kids.ageGroup, kids.riddles, kids.currentRiddle, selectedStoreId]);
 
   // Hook de tiempo simulado/real
   const {
@@ -185,11 +197,26 @@ export default function MapaScreen() {
         setUserStartNodeId(lastNode);
       }
 
-      // Dejar visible el toast de llegada primero, y abrir la vitrina a los 2.0s
-      setShowStorefrontHUD(false);
-      setTimeout(() => {
-        setShowStorefrontHUD(true);
-      }, 2000);
+      // Si estamos en Modo Niño, abrir KidsArrivalCard con locución especial de misión
+      if (isKidsMode) {
+        setShowStorefrontHUD(false);
+        setShowKidsArrival(true);
+        const arrivalStoreName = selectedStore?.name || 'la tienda';
+        Speech.stop();
+        setTimeout(() => {
+          Speech.speak(`¡Llegaste a ${arrivalStoreName}! Busca el producto físico y escanea su código QR para responder el acertijo.`, {
+            language: 'es-VE',
+            pitch: 1.05,
+            rate: 0.95,
+          });
+        }, 400);
+      } else {
+        setShowKidsArrival(false);
+        setShowStorefrontHUD(false);
+        setTimeout(() => {
+          setShowStorefrontHUD(true);
+        }, 2000);
+      }
     },
   });
 
@@ -301,19 +328,32 @@ export default function MapaScreen() {
     // 1. Trazar ruta hacia la tienda directamente
     handleSelectStore(rawStoreId);
 
-    // 2. Si viene de Modo Niño, reproducir la bienvenida motivacional de aventura
+    // 2. Si viene de Modo Niño, reproducir la bienvenida motivacional de aventura con prioridad
     if (isKids) {
-      const adventureGreeting = `Estamos listos para empezar con esta nueva aventura. ¿Estás listo para empezar, ${targetPlayerName}?`;
+      setIsKidsIntroPlaying(true);
+      setShowKidsArrival(false);
+      const stationNumber = activeKidsRiddle?.number ?? 1;
+      const adventureGreeting = stationNumber === 1
+        ? `Estamos listos para empezar con esta nueva aventura. ¿Estás listo para empezar, ${targetPlayerName}?`
+        : `¡Vamos por la estación número ${stationNumber}, ${targetPlayerName}! Sigue la ruta en el mapa.`;
+
       Speech.stop();
       setTimeout(() => {
         Speech.speak(adventureGreeting, {
           language: 'es-VE',
           pitch: 1.05,
           rate: 0.95,
+          onDone: () => setIsKidsIntroPlaying(false),
+          onError: () => setIsKidsIntroPlaying(false),
         });
       }, 400);
+
+      // Timeout de seguridad para reactivar locución paso a paso
+      setTimeout(() => {
+        setIsKidsIntroPlaying(false);
+      }, 4500);
     }
-  }, [params.storeId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName]);
+  }, [params.storeId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName, activeKidsRiddle?.number]);
 
   // Manejar filtro por categoría
   const handleSelectCategory = useCallback((categoryId: string | null) => {
@@ -323,6 +363,7 @@ export default function MapaScreen() {
       setActiveRoute(null);
       setIsNavigating(false);
       setShowStorefrontHUD(false);
+      setShowKidsArrival(false);
       walk.stopWalk();
       walk.resetWalk();
     }
@@ -334,6 +375,7 @@ export default function MapaScreen() {
     walk.resetWalk();
     setIsNavigating(false);
     setShowStorefrontHUD(false);
+    setShowKidsArrival(false);
     setActiveRoute(null);
   }, [walk]);
 
@@ -390,19 +432,19 @@ export default function MapaScreen() {
         ]}
         pointerEvents="box-none"
       >
-        {isNavigating && !showStorefrontHUD && navigationPlan ? (
+        {isNavigating && !showStorefrontHUD && !showKidsArrival && navigationPlan ? (
           <View style={styles.topHUDContainer}>
             <NavigationHUD
               plan={navigationPlan}
               currentStepIndex={stepProgress.currentStepIndex}
               progress={stepProgress.progress}
-              voiceEnabled={voiceEnabled}
+              voiceEnabled={voiceEnabled && !isKidsIntroPlaying}
               isWalking={walk.isWalking}
               onVoiceToggle={() => setVoiceEnabled((v) => !v)}
               onCancel={handleExitNavigation}
             />
           </View>
-        ) : !showStorefrontHUD ? (
+        ) : !showStorefrontHUD && !showKidsArrival ? (
           <View style={styles.exploreHeaderContainer}>
             <View style={styles.exploreHeader}>
               <View style={styles.brandBadge}>
@@ -588,7 +630,7 @@ export default function MapaScreen() {
       )}
 
       {/* Bottom Floating Bar / Barra de Navegación y Simulación */}
-      {isNavigating && !showStorefrontHUD && selectedStore && (
+      {isNavigating && !showStorefrontHUD && !showKidsArrival && selectedStore && (
         <View style={styles.bottomBarContainer}>
           <DestinationBar
             storeName={selectedStore.name}
@@ -631,8 +673,35 @@ export default function MapaScreen() {
         </View>
       )}
 
+      {/* Overlay de Llegada a Tienda en Modo Niño (Misión QR) */}
+      {showKidsArrival && activeKidsRiddle && (
+        <KidsArrivalCard
+          riddle={activeKidsRiddle}
+          playerName={kids.playerName}
+          onOpenScanner={() => {
+            setShowKidsArrival(false);
+            handleExitNavigation();
+            router.push({
+              pathname: '/kids-mode',
+              params: {
+                view: 'scanner',
+                storeId: selectedStoreId ?? activeKidsRiddle.storeId,
+                t: String(Date.now()),
+              },
+            });
+          }}
+          onReturnToTreasureMap={() => {
+            setShowKidsArrival(false);
+            handleExitNavigation();
+            router.push({
+              pathname: '/kids-mode',
+            });
+          }}
+        />
+      )}
+
       {/* Bottom Sheet Vitrina Digital completa */}
-      {showStorefrontHUD && selectedStore && (
+      {showStorefrontHUD && !showKidsArrival && selectedStore && (
         <StorefrontHUD
           store={sambilMall.stores.find((s) => s.id === selectedStoreId) ?? null}
           offers={DEMO_SAMBIL_OFFERS}
@@ -647,7 +716,7 @@ export default function MapaScreen() {
       )}
 
       {/* Explore Mode Bottom Store Preview Pill */}
-      {!isNavigating && !showStorefrontHUD && selectedStore && (
+      {!isNavigating && !showStorefrontHUD && !showKidsArrival && selectedStore && (
         <View style={styles.exploreBottomPillWrapper}>
           <TouchableOpacity
             onPress={() => {

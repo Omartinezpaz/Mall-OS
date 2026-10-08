@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKidsMode } from '../src/features/kids-mode/useKidsMode';
 import { KidsOnboarding } from '../src/features/kids-mode/KidsOnboarding';
@@ -14,6 +14,7 @@ type KidsScreenView = 'map' | 'scanner' | 'riddle' | 'victory' | 'prize';
 
 export default function KidsModeScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ view?: string; storeId?: string; t?: string }>();
   const insets = useSafeAreaInsets();
   const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 20);
 
@@ -30,6 +31,23 @@ export default function KidsModeScreen() {
 
   const [currentView, setCurrentView] = useState<KidsScreenView>('map');
   const [activeRiddleIdx, setActiveRiddleIdx] = useState<number>(0);
+
+  // Manejo de apertura directa desde el mapa (ej. llegar a la tienda y abrir escáner)
+  useEffect(() => {
+    if (params.view === 'scanner') {
+      if (params.storeId && riddles.length > 0) {
+        const foundIdx = riddles.findIndex((r) => r.storeId === params.storeId);
+        if (foundIdx !== -1) {
+          setActiveRiddleIdx(foundIdx);
+        } else {
+          setActiveRiddleIdx(currentRiddleIndex);
+        }
+      } else {
+        setActiveRiddleIdx(currentRiddleIndex);
+      }
+      setCurrentView('scanner');
+    }
+  }, [params.view, params.storeId, params.t, riddles, currentRiddleIndex]);
 
   const handleStartAdventure = (group: any, name: string, avatar: string, isFamily: boolean) => {
     startAdventure(group, name, avatar, isFamily);
