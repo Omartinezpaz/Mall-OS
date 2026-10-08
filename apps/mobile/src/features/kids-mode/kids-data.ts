@@ -585,7 +585,7 @@ export const KIDS_PRIZES: Record<AgeGroup, KidsPrize> = {
     title: '¡Conquistador Urbano!',
     headline: 'Cupón 20% OFF en Stradivarius / Bershka + 150 Puntos Loyalty',
     description: 'Recorriste las tiendas clave del mall, escaneaste los productos y respondiste la trivia urbana.',
-    sponsor: 'Inditex & Mall OS Loyalty',
+    sponsor: 'Stradivarius & Bershka',
     sponsorStoreId: 'local_60',
     badge: '💎 VIP DIAMOND',
     icon: 'sparkles',

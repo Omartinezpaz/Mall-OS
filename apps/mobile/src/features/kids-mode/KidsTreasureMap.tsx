@@ -119,7 +119,7 @@ export const KidsTreasureMap: React.FC<KidsTreasureMapProps> = ({
           <View style={{ flex: 1 }}>
             <Text style={styles.unlockedPrizeBadge}>¡PREMIO DESBLOQUEADO!</Text>
             <Text style={styles.unlockedPrizeTitle}>{prize.headline}</Text>
-            <Text style={styles.unlockedPrizeSub}>Toca aquí para ver tu código de canje en McCafé</Text>
+            <Text style={styles.unlockedPrizeSub}>Toca aquí para ver tu código de canje en {prize.sponsor}</Text>
           </View>
           <AppIcon name="chevron-forward" size={20} color="#B45309" />
         </TouchableOpacity>
