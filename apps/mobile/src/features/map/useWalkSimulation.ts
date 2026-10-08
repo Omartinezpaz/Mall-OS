@@ -7,7 +7,7 @@ export interface UseWalkSimulationProps {
   targetStoreName?: string;
   /** Velocidad base de caminata en m/s. Default 1.2. */
   speedMps?: number;
-  /** Multiplicador de velocidad (1, 2, 4, 8). Default 2. */
+  /** Multiplicador de velocidad (1, 2, 4, 8, 16). Default 2. */
   speedMultiplier?: number;
   /** Longitud del trail en metros. Default 15. */
   trailMeters?: number;
@@ -25,7 +25,7 @@ export interface WalkSimulationState {
   trail: Point[];
   /** Progreso normalizado 0..1 a lo largo de la ruta. */
   walkProgress: number;
-  /** Multiplicador actual (1, 2, 4, 8). */
+  /** Multiplicador actual (1, 2, 4, 8, 16). */
   speedMultiplier: number;
   setSpeedMultiplier: (n: number) => void;
   startWalk: () => void;
@@ -87,18 +87,23 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     setArrivalMessage(null);
   }, []);
 
-  // Calcular waypoints desde activeRoute
+  // Calcular waypoints y RESETEAR progreso cada vez que activeRoute cambie
   const waypoints = useRef<Point[]>([]);
   useEffect(() => {
+    if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
+    setArrivalMessage(null);
+    setIsWalking(false);
+    setWalkProgress(0);
+    lastProgressRef.current = 0;
+    setHeading(undefined);
+
     if (!activeRoute || activeRoute.nodeIds.length === 0) {
       waypoints.current = [];
       setPosition(undefined);
       setTrail([]);
-      setHeading(undefined);
-      setWalkProgress(0);
-      lastProgressRef.current = 0;
       return;
     }
+
     const byId = new Map(mallData.nodes.map((n) => [n.id, n]));
     waypoints.current = activeRoute.nodeIds
       .map((id) => byId.get(id))
@@ -122,7 +127,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
       setTrail([startPt]);
       lastSampleRef.current = startPt;
     }
-  }, [activeRoute, mallData.nodes]);
+  }, [activeRoute?.nodeIds?.join(','), mallData.nodes]);
 
   // Loop de animación a 60 FPS
   useEffect(() => {
@@ -221,6 +226,15 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     if (!activeRoute) return;
     if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
     setArrivalMessage(null);
+    if (lastProgressRef.current >= 0.98) {
+      lastProgressRef.current = 0;
+      setWalkProgress(0);
+      if (waypoints.current.length > 0) {
+        setPosition(waypoints.current[0]);
+        setTrail([waypoints.current[0]]);
+        lastSampleRef.current = waypoints.current[0];
+      }
+    }
     setIsWalking(true);
   }, [activeRoute]);
 

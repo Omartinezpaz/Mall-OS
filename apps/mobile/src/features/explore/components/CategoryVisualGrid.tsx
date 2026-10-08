@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { AppIcon, type AppIconName } from '../../../components/AppIcon';
 
 export interface VisualCategory {
   id: string;
   name: string;
-  icon: string;
+  icon: AppIconName;
+  iconColor: string;
   bgColor: string;
   borderColor: string;
   categoryKey: string;
@@ -14,7 +16,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_fashion',
     name: 'Moda',
-    icon: '👗',
+    icon: 'shirt',
+    iconColor: '#2563EB',
     bgColor: '#EFF6FF',
     borderColor: '#BFDBFE',
     categoryKey: 'fashion',
@@ -22,7 +25,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_food',
     name: 'Comida',
-    icon: '🍔',
+    icon: 'fast-food',
+    iconColor: '#DC2626',
     bgColor: '#FEF2F2',
     borderColor: '#FECACA',
     categoryKey: 'food',
@@ -30,7 +34,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_banks',
     name: 'Bancos',
-    icon: '🏦',
+    icon: 'business',
+    iconColor: '#059669',
     bgColor: '#ECFDF5',
     borderColor: '#A7F3D0',
     categoryKey: 'finance',
@@ -38,7 +43,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_pharmacy',
     name: 'Farmacia',
-    icon: '💊',
+    icon: 'medkit',
+    iconColor: '#16A34A',
     bgColor: '#F0FDF4',
     borderColor: '#BBF7D0',
     categoryKey: 'pharmacy',
@@ -46,7 +52,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_cinema',
     name: 'Cines',
-    icon: '🎬',
+    icon: 'film',
+    iconColor: '#9333EA',
     bgColor: '#FAF5FF',
     borderColor: '#E9D5FF',
     categoryKey: 'entertainment',
@@ -54,7 +61,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_tech',
     name: 'Tecnología',
-    icon: '📱',
+    icon: 'hardware-chip',
+    iconColor: '#0284C7',
     bgColor: '#F0F9FF',
     borderColor: '#BAE6FD',
     categoryKey: 'electronics',
@@ -62,7 +70,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_home',
     name: 'Hogar',
-    icon: '🛋️',
+    icon: 'home',
+    iconColor: '#D97706',
     bgColor: '#FFFBEB',
     borderColor: '#FDE68A',
     categoryKey: 'home',
@@ -70,7 +79,8 @@ const VISUAL_CATEGORIES: VisualCategory[] = [
   {
     id: 'cat_services',
     name: 'Servicios',
-    icon: '⚙️',
+    icon: 'construct',
+    iconColor: '#475569',
     bgColor: '#F8FAFC',
     borderColor: '#E2E8F0',
     categoryKey: 'services',
@@ -107,8 +117,12 @@ export const CategoryVisualGrid: React.FC<CategoryVisualGridProps> = ({
               onPress={() => onSelectCategory(cat.categoryKey)}
               activeOpacity={0.75}
             >
-              <View style={styles.iconBox}>
-                <Text style={styles.iconText}>{cat.icon}</Text>
+              <View style={[styles.iconBox, { backgroundColor: isSelected ? '#2563EB' : 'rgba(255, 255, 255, 0.75)' }]}>
+                <AppIcon
+                  name={cat.icon}
+                  size={20}
+                  color={isSelected ? '#FFFFFF' : cat.iconColor}
+                />
               </View>
               <Text
                 style={[
@@ -184,9 +198,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 4,
-  },
-  iconText: {
-    fontSize: 22,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
   cardLabel: {
     color: '#1E293B',

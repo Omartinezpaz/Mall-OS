@@ -174,8 +174,8 @@ export const STORE_SCHEDULES: Record<string, [number, number]> = {
   st_pb_03: [10, 20],
 };
 
-export function isStoreOpenAt(storeId: string, hour: number): boolean {
-  const schedule = STORE_SCHEDULES[storeId] || [9, 21];
+export function isStoreOpenAt(storeId: string, hour: number, slug?: string): boolean {
+  const schedule = STORE_SCHEDULES[storeId] || (slug ? STORE_SCHEDULES[slug] : undefined) || [9, 22];
   return hour >= schedule[0] && hour < schedule[1];
 }
 

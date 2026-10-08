@@ -64,6 +64,7 @@ export default function MapaScreen() {
   // Hook de tiempo simulado/real
   const {
     currentHour,
+    timeFormatted,
     openCount,
     totalStores,
   } = useMallTime(sambilMall);
@@ -298,52 +299,62 @@ export default function MapaScreen() {
               onCancel={handleExitNavigation}
             />
           </View>
-        ) : (
+        ) : !showStorefrontHUD ? (
           <View style={styles.exploreHeaderContainer}>
             <View style={styles.exploreHeader}>
               <View style={styles.brandBadge}>
                 <Text style={styles.brandTitle}>SAMBIL CHACAO</Text>
                 <Text style={styles.brandSubtitle}>
-                  {openCount}/{totalStores} tiendas abiertas · {currentHour}:00
+                  {openCount > 0 ? `${openCount} abiertas` : '124 locales activos'} · {timeFormatted}
                 </Text>
               </View>
 
-              {/* Selector de Modo Guía 2D vs Explorar 2.5D */}
-              <View style={styles.modeSwitchContainer}>
-                <TouchableOpacity
-                  style={[
-                    styles.modeSwitchBtn,
-                    mapMode === 'guide' && styles.modeSwitchBtnActive,
-                  ]}
-                  onPress={() => setMapMode('guide')}
-                  activeOpacity={0.8}
-                >
-                  <Text
+              {/* Selector de Piso y Selector de Modo Guía 2D vs Explorar 2.5D */}
+              <View style={styles.topRightControls}>
+                <VerticalFloorSelector
+                  selectedFloorId={selectedLevel}
+                  onSelectFloor={(lvl) => {
+                    setSelectedLevel(lvl);
+                  }}
+                  destinationFloorId={isNavigating ? selectedStore.floorId : undefined}
+                  userFloorId={selectedLevel}
+                />
+                <View style={styles.modeSwitchContainer}>
+                  <TouchableOpacity
                     style={[
-                      styles.modeSwitchText,
-                      mapMode === 'guide' && styles.modeSwitchTextActive,
+                      styles.modeSwitchBtn,
+                      mapMode === 'guide' && styles.modeSwitchBtnActive,
                     ]}
+                    onPress={() => setMapMode('guide')}
+                    activeOpacity={0.8}
                   >
-                    🧭 Guía 2D
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    styles.modeSwitchBtn,
-                    mapMode === 'explore' && styles.modeSwitchBtnActive,
-                  ]}
-                  onPress={() => setMapMode('explore')}
-                  activeOpacity={0.8}
-                >
-                  <Text
+                    <Text
+                      style={[
+                        styles.modeSwitchText,
+                        mapMode === 'guide' && styles.modeSwitchTextActive,
+                      ]}
+                    >
+                      🧭 2D
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     style={[
-                      styles.modeSwitchText,
-                      mapMode === 'explore' && styles.modeSwitchTextActive,
+                      styles.modeSwitchBtn,
+                      mapMode === 'explore' && styles.modeSwitchBtnActive,
                     ]}
+                    onPress={() => setMapMode('explore')}
+                    activeOpacity={0.8}
                   >
-                    📐 2.5D
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={[
+                        styles.modeSwitchText,
+                        mapMode === 'explore' && styles.modeSwitchTextActive,
+                      ]}
+                    >
+                      📐 2.5D
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
 
@@ -356,25 +367,27 @@ export default function MapaScreen() {
               currentFloorId={selectedLevel}
             />
           </View>
-        )}
+        ) : null}
       </View>
 
-      {/* Selector vertical de pisos (Píldora flotante moderna compacta) */}
-      <View
-        style={[
-          styles.verticalFloorWrapper,
-          { top: topSafe + (isNavigating && !showStorefrontHUD ? 74 : 126) },
-        ]}
-      >
-        <VerticalFloorSelector
-          selectedFloorId={selectedLevel}
-          onSelectFloor={(lvl) => {
-            setSelectedLevel(lvl);
-          }}
-          destinationFloorId={isNavigating ? selectedStore.floorId : undefined}
-          userFloorId={selectedLevel}
-        />
-      </View>
+      {/* Floating Floor Selector solo en modo navegación activa */}
+      {isNavigating && !showStorefrontHUD && (
+        <View
+          style={[
+            styles.verticalFloorWrapperNav,
+            { top: topSafe + 84 },
+          ]}
+        >
+          <VerticalFloorSelector
+            selectedFloorId={selectedLevel}
+            onSelectFloor={(lvl) => {
+              setSelectedLevel(lvl);
+            }}
+            destinationFloorId={selectedStore.floorId}
+            userFloorId={selectedLevel}
+          />
+        </View>
+      )}
 
       {/* Controles de Vista de Mapa (Modo Switcher / Zoom / Perspectiva) */}
       {!isNavigating && !showStorefrontHUD && (
@@ -449,15 +462,14 @@ export default function MapaScreen() {
             color={followUser ? '#38BDF8' : '#FFFFFF'}
           />
         </TouchableOpacity>
-
       )}
 
       {/* Toast flotante de Notificación de Llegada */}
-      {walk.arrivalMessage && (
+      {walk.arrivalMessage && !showStorefrontHUD && (
         <View
           style={[
             styles.arrivalToast,
-            { top: topSafe + (isNavigating && !showStorefrontHUD ? 74 : 126) },
+            { top: topSafe + (isNavigating ? 84 : 16) },
           ]}
           pointerEvents="box-none"
         >
@@ -619,6 +631,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 2,
   },
+  topRightControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   modeSwitchContainer: {
     flexDirection: 'row',
     backgroundColor: 'rgba(15, 23, 42, 0.92)',
@@ -643,7 +660,7 @@ const styles = StyleSheet.create({
   modeSwitchTextActive: {
     color: '#FFFFFF',
   },
-  verticalFloorWrapper: {
+  verticalFloorWrapperNav: {
     position: 'absolute',
     right: 14,
     zIndex: 35,
