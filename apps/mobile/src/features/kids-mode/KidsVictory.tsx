@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import * as Speech from 'expo-speech';
 import {
   type AgeGroup,
   AGE_GROUP_CONFIG,
@@ -21,7 +22,20 @@ export const KidsVictory: React.FC<KidsVictoryProps> = ({
   onContinue,
   onViewTreasureMap,
 }) => {
-  const { ageGroup, stars, prizeUnlocked, currentRiddle, riddles } = useKidsMode();
+  const { ageGroup, playerName, stars, prizeUnlocked, currentRiddle, riddles } = useKidsMode();
+
+  useEffect(() => {
+    Speech.stop();
+    const celebrationText = prizeUnlocked
+      ? `¡Felicidades, ${playerName || 'Explorador'}! ¡Conseguiste las 5 estrellas y desbloqueaste tu premio final!`
+      : `¡Excelente trabajo, ${playerName || 'Explorador'}! Ganaste una estrella del mall.`;
+
+    Speech.speak(celebrationText, {
+      language: 'es-VE',
+      pitch: 1.1,
+      rate: 0.95,
+    });
+  }, [prizeUnlocked, playerName]);
 
   if (!ageGroup) return null;
   const config = AGE_GROUP_CONFIG[ageGroup];

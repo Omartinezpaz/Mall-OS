@@ -12,6 +12,7 @@ interface DestinationBarProps {
   onToggleSpeed: () => void;
   onResetWalk?: () => void;
   onSimulateStep?: () => void;
+  onForceArrival?: () => void;
   onOpenStorefront: () => void;
   onExitRoute: () => void;
 }
@@ -27,6 +28,7 @@ export function DestinationBar({
   onToggleSpeed,
   onResetWalk,
   onSimulateStep,
+  onForceArrival,
   onOpenStorefront,
   onExitRoute,
 }: DestinationBarProps) {
@@ -61,6 +63,16 @@ export function DestinationBar({
             {isWalking ? '⏸ Pausa' : '▶ Caminar'}
           </Text>
         </TouchableOpacity>
+
+        {onForceArrival && (
+          <TouchableOpacity
+            style={styles.arriveBtn}
+            onPress={onForceArrival}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.arriveBtnText}>📍 Llegar</Text>
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity
           style={styles.speedBtn}
@@ -170,6 +182,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#059669',
   },
   walkBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  arriveBtn: {
+    backgroundColor: '#F59E0B',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 12,
+    shadowColor: '#F59E0B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  arriveBtnText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '800',

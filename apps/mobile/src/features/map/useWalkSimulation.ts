@@ -31,6 +31,7 @@ export interface WalkSimulationState {
   startWalk: () => void;
   stopWalk: () => void;
   resetWalk: () => void;
+  forceArrival: () => void;
   arrivalMessage: string | null;
   clearArrivalMessage: () => void;
 }
@@ -268,6 +269,24 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     }
   }, []);
 
+  const forceArrival = useCallback(() => {
+    if (!activeRoute || waypoints.current.length === 0) return;
+    setIsWalking(false);
+    setHeading(undefined);
+    const lastPt = waypoints.current[waypoints.current.length - 1];
+    setPosition(lastPt);
+    setWalkProgress(1);
+    lastProgressRef.current = 1;
+    setTrail(waypoints.current);
+    const msg = targetStoreName ? `¡Llegaste a ${targetStoreName}!` : '¡Llegaste a tu destino!';
+    setArrivalMessage(msg);
+    if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
+    arrivalTimerRef.current = setTimeout(() => {
+      setArrivalMessage(null);
+    }, 4500);
+    onArrival?.();
+  }, [activeRoute, targetStoreName, onArrival]);
+
   return {
     isWalking,
     position,
@@ -279,6 +298,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     startWalk,
     stopWalk,
     resetWalk,
+    forceArrival,
     arrivalMessage,
     clearArrivalMessage,
   };

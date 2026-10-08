@@ -78,7 +78,7 @@ export default function MapaScreen() {
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(true);
   const [showStorefrontHUD, setShowStorefrontHUD] = useState<boolean>(false);
   const [showKidsArrival, setShowKidsArrival] = useState<boolean>(false);
-  const [isKidsIntroPlaying, setIsKidsIntroPlaying] = useState<boolean>(false);
+  const [kidsAudioPhase, setKidsAudioPhase] = useState<'idle' | 'intro' | 'arrival' | 'done'>('idle');
   const [activeRoute, setActiveRoute] = useState<RouteResult | null>(null);
   const [userStartNodeId, setUserStartNodeId] = useState<string>('node-plaza Jardin');
   const currentUserNodeIdRef = useRef<string>('node-plaza Jardin');
@@ -202,15 +202,16 @@ export default function MapaScreen() {
       if (isKidsMode) {
         setShowStorefrontHUD(false);
         setShowKidsArrival(true);
+        setKidsAudioPhase('arrival');
         const arrivalStoreName = selectedStore?.name || 'la tienda';
         Speech.stop();
-        setTimeout(() => {
-          Speech.speak(`¡Llegaste a ${arrivalStoreName}! Busca el producto físico y escanea su código QR para responder el acertijo.`, {
-            language: 'es-VE',
-            pitch: 1.05,
-            rate: 0.95,
-          });
-        }, 400);
+        Speech.speak(`¡Llegaste a ${arrivalStoreName}! Busca el producto físico con el código QR para desbloquear el acertijo.`, {
+          language: 'es-VE',
+          pitch: 1.05,
+          rate: 0.95,
+          onDone: () => setKidsAudioPhase('done'),
+          onError: () => setKidsAudioPhase('done'),
+        });
       } else {
         setShowKidsArrival(false);
         setShowStorefrontHUD(false);
@@ -345,30 +346,25 @@ export default function MapaScreen() {
 
     // 2. Si viene de Modo Niño, reproducir la bienvenida motivacional de aventura con prioridad
     if (isKids) {
-      setIsKidsIntroPlaying(true);
+      setKidsAudioPhase('intro');
       setShowKidsArrival(false);
       const stationNumber = activeKidsRiddle?.number ?? 1;
+      const targetStore = sambilMall.stores.find((s) => s.id === rawStoreId || s.slug === rawStoreId);
+      const targetStoreName = targetStore?.name || activeKidsRiddle?.storeName || 'tu destino';
       const adventureGreeting = stationNumber === 1
-        ? `Estamos listos para empezar con esta nueva aventura. ¿Estás listo para empezar, ${targetPlayerName}?`
-        : `¡Vamos por la estación número ${stationNumber}, ${targetPlayerName}! Sigue la ruta en el mapa.`;
+        ? `¡Estamos listos para empezar esta gran aventura! ¿Estás listo, ${targetPlayerName}? Sigue la ruta en el mapa hacia ${targetStoreName}.`
+        : `¡Vamos por la estación número ${stationNumber}, ${targetPlayerName}! Sigue la ruta en el mapa hacia ${targetStoreName}.`;
 
       Speech.stop();
-      setTimeout(() => {
-        Speech.speak(adventureGreeting, {
-          language: 'es-VE',
-          pitch: 1.05,
-          rate: 0.95,
-          onDone: () => setIsKidsIntroPlaying(false),
-          onError: () => setIsKidsIntroPlaying(false),
-        });
-      }, 400);
-
-      // Timeout de seguridad para reactivar locución paso a paso
-      setTimeout(() => {
-        setIsKidsIntroPlaying(false);
-      }, 4500);
+      Speech.speak(adventureGreeting, {
+        language: 'es-VE',
+        pitch: 1.05,
+        rate: 0.95,
+        onDone: () => setKidsAudioPhase('idle'),
+        onError: () => setKidsAudioPhase('idle'),
+      });
     }
-  }, [params.storeId, params.originStoreId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName, activeKidsRiddle?.number]);
+  }, [params.storeId, params.originStoreId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName, activeKidsRiddle?.number, activeKidsRiddle?.storeName]);
 
   // Manejar filtro por categoría
   const handleSelectCategory = useCallback((categoryId: string | null) => {
@@ -453,7 +449,7 @@ export default function MapaScreen() {
               plan={navigationPlan}
               currentStepIndex={stepProgress.currentStepIndex}
               progress={stepProgress.progress}
-              voiceEnabled={voiceEnabled && !isKidsIntroPlaying}
+              voiceEnabled={voiceEnabled && kidsAudioPhase === 'idle' && walk.isWalking}
               isWalking={walk.isWalking}
               onVoiceToggle={() => setVoiceEnabled((v) => !v)}
               onCancel={handleExitNavigation}
@@ -682,6 +678,7 @@ export default function MapaScreen() {
               );
             }}
             onResetWalk={() => walk.resetWalk()}
+            onForceArrival={isKidsMode ? () => walk.forceArrival() : undefined}
             onOpenStorefront={() => setShowStorefrontHUD(true)}
             onExitRoute={handleExitNavigation}
           />
