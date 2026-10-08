@@ -7,6 +7,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import {
   IsometricMap,
   type IsometricMapHandle,
@@ -355,8 +356,13 @@ export default function MapaScreen() {
         )}
       </View>
 
-      {/* Selector vertical de pisos (Derecha) */}
-      <View style={[styles.verticalFloorWrapper, { top: topSafe + 120 }]}>
+      {/* Selector vertical de pisos (Píldora flotante moderna compacta) */}
+      <View
+        style={[
+          styles.verticalFloorWrapper,
+          { top: topSafe + (isNavigating && !showStorefrontHUD ? 74 : 126) },
+        ]}
+      >
         <VerticalFloorSelector
           selectedFloorId={selectedLevel}
           onSelectFloor={(lvl) => {
@@ -375,7 +381,11 @@ export default function MapaScreen() {
             onPress={() => setMapMode((m) => (m === 'guide' ? 'explore' : 'guide'))}
             activeOpacity={0.7}
           >
-            <Text style={styles.controlIcon}>{mapMode === 'guide' ? '🗺️' : '📐'}</Text>
+            <Ionicons
+              name={mapMode === 'guide' ? 'map-outline' : 'cube-outline'}
+              size={18}
+              color="#FFFFFF"
+            />
           </TouchableOpacity>
 
           {mapMode === 'explore' && (
@@ -385,14 +395,14 @@ export default function MapaScreen() {
                 onPress={() => mapRef.current?.zoomIn()}
                 activeOpacity={0.7}
               >
-                <Text style={styles.controlText}>+</Text>
+                <Ionicons name="add" size={20} color="#FFFFFF" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.controlBtn}
                 onPress={() => mapRef.current?.zoomOut()}
                 activeOpacity={0.7}
               >
-                <Text style={styles.controlText}>−</Text>
+                <Ionicons name="remove" size={20} color="#FFFFFF" />
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.controlBtn}
@@ -403,27 +413,39 @@ export default function MapaScreen() {
                 }}
                 activeOpacity={0.7}
               >
-                <Text style={styles.controlIcon}>
-                  {cameraMode === 'ground' ? '👁️' : cameraMode === 'isometric' ? '📐' : '🗺️'}
-                </Text>
+                <Ionicons
+                  name={cameraMode === 'ground' ? 'eye-outline' : cameraMode === 'isometric' ? 'cube-outline' : 'map-outline'}
+                  size={16}
+                  color="#FFFFFF"
+                />
               </TouchableOpacity>
             </>
           )}
-
-          <TouchableOpacity
-            style={[styles.controlBtn, followUser && styles.controlBtnActive]}
-            onPress={() => {
-              const next = !followUser;
-              setFollowUser(next);
-              if (next && mapMode === 'explore') {
-                mapRef.current?.recenterOnUser();
-              }
-            }}
-            activeOpacity={0.7}
-          >
-            <Text style={[styles.controlIcon, followUser && styles.controlIconActive]}>🎯</Text>
-          </TouchableOpacity>
         </View>
+      )}
+
+      {/* Botón Flotante de Recentrado / GPS (Bottom Right - Clean Marketplace) */}
+      {!showStorefrontHUD && (
+        <TouchableOpacity
+          style={[
+            styles.recenterFab,
+            { bottom: isNavigating ? 96 : 30 },
+            followUser && styles.recenterFabActive,
+          ]}
+          onPress={() => {
+            setFollowUser(true);
+            if (mapMode === 'explore') {
+              mapRef.current?.recenterOnUser();
+            }
+          }}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name="navigate"
+            size={18}
+            color={followUser ? '#38BDF8' : '#FFFFFF'}
+          />
+        </TouchableOpacity>
       )}
 
       {/* Toast flotante de Notificación de Llegada */}
@@ -611,14 +633,39 @@ const styles = StyleSheet.create({
   },
   verticalFloorWrapper: {
     position: 'absolute',
-    right: 12,
-    top: 175,
+    right: 14,
     zIndex: 35,
+  },
+  recenterFab: {
+    position: 'absolute',
+    right: 14,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#0F172A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#334155',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    zIndex: 35,
+  },
+  recenterFabActive: {
+    backgroundColor: '#0F172A',
+    borderColor: '#38BDF8',
+    shadowColor: '#38BDF8',
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 8,
   },
   mapControls: {
     position: 'absolute',
     left: 12,
-    bottom: 120,
+    bottom: 30,
     backgroundColor: 'rgba(15, 23, 42, 0.92)',
     borderRadius: 16,
     borderWidth: 1,
