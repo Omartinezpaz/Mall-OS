@@ -12,7 +12,7 @@ export const minTouchTarget = 48;
  * Tipografía para móvil. Fuente del sistema en el piloto (Roboto en Android):
  * cero peso añadido al APK y cero parpadeo de carga. Una fuente propia es decisión posterior.
  */
-export const typography = {
+export const scaleTypography = {
   display: { fontSize: 34, lineHeight: 40, fontWeight: '700' },
   h1: { fontSize: 28, lineHeight: 34, fontWeight: '700' },
   h2: { fontSize: 22, lineHeight: 28, fontWeight: '700' },
@@ -24,7 +24,8 @@ export const typography = {
   caption: { fontSize: 12, lineHeight: 16, fontWeight: '400' },
 } as const;
 
-export type TypographyToken = keyof typeof typography;
+export type TypographyScaleToken = keyof typeof scaleTypography;
+
 
 /** Elevación compatible con React Native (iOS shadow* + Android elevation). Sombras suaves, nunca negras intensas. */
 export const elevation = {

@@ -19,6 +19,7 @@ import { VerticalFloorSelector } from '../../src/features/map/VerticalFloorSelec
 import { NavigationHUD } from '../../src/features/map/NavigationHUD';
 import { DestinationBar } from '../../src/features/map/DestinationBar';
 import { MapSearchBar, SEARCH_CATEGORIES } from '../../src/features/map/MapSearchBar';
+import { GlassSurface } from '../../src/components/GlassSurface';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
 import { useStepProgress } from '../../src/features/map/useStepProgress';
 import { useMallTime } from '../../src/features/map/useMallTime';
@@ -531,26 +532,33 @@ export default function MapaScreen() {
       {!isNavigating && !showStorefrontHUD && (
         <View style={styles.exploreBottomPillWrapper}>
           <TouchableOpacity
-            style={styles.exploreBottomPill}
             onPress={() => {
               setIsNavigating(true);
               setShowStorefrontHUD(true);
             }}
             activeOpacity={0.88}
           >
-            <View style={styles.explorePillIconBox}>
-              <Text style={styles.explorePillIcon}>🏬</Text>
-            </View>
-            <View style={styles.explorePillInfo}>
-              <Text style={styles.explorePillTitle}>{selectedStore.name}</Text>
-              <Text style={styles.explorePillSub}>
-                {selectedStore.floorName} · Toca para ver vitrina y trazar ruta
-              </Text>
-            </View>
-            <Text style={styles.explorePillArrow}>➔</Text>
+            <GlassSurface
+              variant="dark"
+              intensity="strong"
+              radius="xl"
+              style={styles.exploreBottomPill}
+            >
+              <View style={styles.explorePillIconBox}>
+                <Ionicons name="storefront-outline" size={18} color="#818CF8" />
+              </View>
+              <View style={styles.explorePillInfo}>
+                <Text style={styles.explorePillTitle}>{selectedStore.name}</Text>
+                <Text style={styles.explorePillSub}>
+                  {selectedStore.floorName} · Toca para ver vitrina y trazar ruta
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#38BDF8" />
+            </GlassSurface>
           </TouchableOpacity>
         </View>
       )}
+
     </View>
   );
 }

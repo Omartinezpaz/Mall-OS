@@ -3,3 +3,4 @@ export * from './CategoryIcon';
 export * from './IsometricSceneElements';
 export * from './MallOsIllustrations';
 export * from './MallOsSpriteIcon';
+export * from './GlassSurface';

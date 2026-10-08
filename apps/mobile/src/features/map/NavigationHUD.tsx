@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
 import type { NavigationPlan, NavStepInstruction } from '@mallos/map-engine';
+import { GlassSurface } from '../../components/GlassSurface';
 
 export interface NavigationHUDProps {
   plan?: NavigationPlan;
@@ -27,17 +29,17 @@ export interface NavigationHUDProps {
   onExitNavigation?: () => void;
 }
 
-const ICON_MAP: Record<string, string> = {
-  straight: '⬆️',
-  'turn-left': '⬅️',
-  'turn-right': '➡️',
-  'slight-left': '↖️',
-  'slight-right': '↗️',
-  'stairs-up': '🔼',
-  'stairs-down': '🔽',
-  'elevator-up': '🛗',
-  'elevator-down': '🛗',
-  arrival: '📍',
+const ICON_MAP: Record<string, keyof typeof Ionicons.glyphMap> = {
+  straight: 'arrow-up',
+  'turn-left': 'arrow-back',
+  'turn-right': 'arrow-forward',
+  'slight-left': 'arrow-forward-outline',
+  'slight-right': 'arrow-forward-outline',
+  'stairs-up': 'trending-up-outline',
+  'stairs-down': 'trending-down-outline',
+  'elevator-up': 'swap-vertical-outline',
+  'elevator-down': 'swap-vertical-outline',
+  arrival: 'location',
 };
 
 export const NavigationHUD: React.FC<NavigationHUDProps> = ({
@@ -111,7 +113,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.topCard}>
+      <GlassSurface variant="dark" intensity="strong" radius="xl" style={styles.topCard}>
         {/* Icono de Giro / Hito */}
         <View
           style={[
@@ -119,7 +121,11 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
             isArrival && styles.iconCircleArrival,
           ]}
         >
-          <Text style={styles.iconText}>{ICON_MAP[currentStep.icon] ?? '⬆️'}</Text>
+          <Ionicons
+            name={ICON_MAP[currentStep.icon] ?? 'arrow-up'}
+            size={18}
+            color={isArrival ? '#10B981' : '#38BDF8'}
+          />
         </View>
 
         {/* Instrucción de Navegación */}
@@ -140,7 +146,11 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             activeOpacity={0.7}
           >
-            <Text style={styles.actionIcon}>{voiceEnabled ? '🔊' : '🔇'}</Text>
+            <Ionicons
+              name={voiceEnabled ? 'volume-high-outline' : 'volume-mute-outline'}
+              size={16}
+              color={voiceEnabled ? '#38BDF8' : '#94A3B8'}
+            />
           </TouchableOpacity>
         )}
 
@@ -155,10 +165,10 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             activeOpacity={0.7}
           >
-            <Text style={styles.exitIcon}>✕</Text>
+            <Ionicons name="close" size={16} color="#EF4444" />
           </TouchableOpacity>
         )}
-      </View>
+      </GlassSurface>
 
       {/* Barra de progreso integrada */}
       <View style={styles.progressTrack}>
@@ -185,8 +195,6 @@ const styles = StyleSheet.create({
   topCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0F172A',
-    borderRadius: 18,
     paddingVertical: 10,
     paddingHorizontal: 14,
     shadowColor: '#000',
@@ -194,8 +202,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 8,
-    borderWidth: 1.5,
-    borderColor: '#334155',
   },
   iconCircle: {
     width: 38,
@@ -209,11 +215,8 @@ const styles = StyleSheet.create({
     borderColor: '#475569',
   },
   iconCircleArrival: {
-    backgroundColor: '#065F46',
+    backgroundColor: 'rgba(6, 95, 70, 0.4)',
     borderColor: '#10B981',
-  },
-  iconText: {
-    fontSize: 18,
   },
   instructionContainer: {
     flex: 1,
@@ -241,17 +244,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#334155',
   },
-  actionIcon: {
-    fontSize: 14,
-  },
   exitBtn: {
     backgroundColor: 'rgba(239, 68, 68, 0.15)',
     borderColor: 'rgba(239, 68, 68, 0.3)',
-  },
-  exitIcon: {
-    color: '#EF4444',
-    fontSize: 13,
-    fontWeight: '800',
   },
   progressTrack: {
     height: 3,
@@ -267,3 +262,4 @@ const styles = StyleSheet.create({
     borderRadius: 1.5,
   },
 });
+

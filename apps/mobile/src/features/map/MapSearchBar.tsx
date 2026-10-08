@@ -8,26 +8,28 @@ import {
   FlatList,
   StyleSheet,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import type { MapStore } from '@mallos/map-engine';
 
 export interface CategoryChip {
   id: string;
   label: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   categoryKeys: string[];
 }
 
 export const SEARCH_CATEGORIES: CategoryChip[] = [
-  { id: 'all', label: 'Todos', icon: '✨', categoryKeys: [] },
-  { id: 'fashion', label: 'Moda', icon: '👗', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'] },
-  { id: 'food', label: 'Comida', icon: '🍔', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'] },
-  { id: 'finance', label: 'Bancos', icon: '🏦', categoryKeys: ['finance', 'bank', 'atm'] },
-  { id: 'pharmacy', label: 'Farmacias', icon: '💊', categoryKeys: ['pharmacy', 'health', 'beauty'] },
-  { id: 'entertainment', label: 'Cines', icon: '🎬', categoryKeys: ['entertainment', 'cinema', 'games'] },
-  { id: 'services', label: 'Servicios', icon: '⚙️', categoryKeys: ['services', 'telecom', 'optical'] },
-  { id: 'tech', label: 'Tech', icon: '📱', categoryKeys: ['tech', 'electronics', 'computers'] },
-  { id: 'home', label: 'Hogar', icon: '🏠', categoryKeys: ['home', 'decor', 'department_store'] },
+  { id: 'all', label: 'Todos', icon: 'apps-outline', categoryKeys: [] },
+  { id: 'fashion', label: 'Moda', icon: 'shirt-outline', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'] },
+  { id: 'food', label: 'Comida', icon: 'fast-food-outline', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'] },
+  { id: 'finance', label: 'Bancos', icon: 'business-outline', categoryKeys: ['finance', 'bank', 'atm'] },
+  { id: 'pharmacy', label: 'Farmacias', icon: 'medkit-outline', categoryKeys: ['pharmacy', 'health', 'beauty'] },
+  { id: 'entertainment', label: 'Cines', icon: 'film-outline', categoryKeys: ['entertainment', 'cinema', 'games'] },
+  { id: 'services', label: 'Servicios', icon: 'construct-outline', categoryKeys: ['services', 'telecom', 'optical'] },
+  { id: 'tech', label: 'Tech', icon: 'hardware-chip-outline', categoryKeys: ['tech', 'electronics', 'computers'] },
+  { id: 'home', label: 'Hogar', icon: 'home-outline', categoryKeys: ['home', 'decor', 'department_store'] },
 ];
+
 
 interface MapSearchBarProps {
   stores: MapStore[];
@@ -96,7 +98,7 @@ export function MapSearchBar({
     <View style={styles.wrapper} pointerEvents="box-none">
       {/* Input de Búsqueda Flotante */}
       <View style={[styles.searchBar, isFocused && styles.searchBarFocused]}>
-        <Text style={styles.searchIcon}>🔍</Text>
+        <Ionicons name="search-outline" size={18} color="#64748B" style={styles.searchIcon} />
         <TextInput
           style={styles.input}
           placeholder="Buscar tienda, banco, café o producto..."
@@ -114,7 +116,7 @@ export function MapSearchBar({
         />
         {query.length > 0 && (
           <TouchableOpacity onPress={handleClear} style={styles.clearBtn} activeOpacity={0.7}>
-            <Text style={styles.clearText}>✕</Text>
+            <Ionicons name="close" size={14} color="#64748B" />
           </TouchableOpacity>
         )}
       </View>
@@ -141,7 +143,12 @@ export function MapSearchBar({
                 }}
                 activeOpacity={0.8}
               >
-                <Text style={styles.chipIcon}>{cat.icon}</Text>
+                <Ionicons
+                  name={cat.icon}
+                  size={15}
+                  color={isSelected ? '#FFFFFF' : '#334155'}
+                  style={styles.chipIcon}
+                />
                 <Text style={[styles.chipLabel, isSelected && styles.chipLabelSelected]}>
                   {cat.label}
                 </Text>
@@ -167,7 +174,7 @@ export function MapSearchBar({
                   activeOpacity={0.7}
                 >
                   <View style={styles.resultIconBox}>
-                    <Text style={styles.resultIcon}>🏬</Text>
+                    <Ionicons name="storefront-outline" size={17} color="#2563EB" />
                   </View>
                   <View style={styles.resultInfo}>
                     <Text style={styles.resultTitle} numberOfLines={1}>
@@ -178,7 +185,7 @@ export function MapSearchBar({
                     </Text>
                   </View>
                   <View style={styles.resultArrowBox}>
-                    <Text style={styles.resultArrow}>➔</Text>
+                    <Ionicons name="chevron-forward" size={16} color="#2563EB" />
                   </View>
                 </TouchableOpacity>
               );
@@ -186,6 +193,7 @@ export function MapSearchBar({
           />
         </View>
       )}
+
 
       {query.trim().length > 0 && searchResults.length === 0 && (
         <View style={styles.dropdownContainer}>
@@ -224,7 +232,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   searchIcon: {
-    fontSize: 16,
     marginRight: 8,
   },
   input: {
@@ -276,8 +283,7 @@ const styles = StyleSheet.create({
     borderColor: '#1D4ED8',
   },
   chipIcon: {
-    fontSize: 13,
-    marginRight: 4,
+    marginRight: 5,
   },
   chipLabel: {
     fontSize: 12,

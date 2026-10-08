@@ -11,6 +11,7 @@ export * from './shadows';
 export * from './brand-assets';
 export * from './illustrations';
 export * from './icons-catalog';
+export * from './glass';
 
 
 

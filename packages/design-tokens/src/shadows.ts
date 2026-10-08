@@ -21,3 +21,39 @@ export const shadows = {
     elevation: 6,
   },
 } as const;
+
+/**
+ * Sombras semánticas multi-capa.
+ * Más profundas que `sm/md/lg` para UI flotante.
+ */
+export const shadowsSemantic = {
+  card: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  floating: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  modal: {
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.16,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+  glow: (color: string) => ({
+    shadowColor: color,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 6,
+  }),
+} as const;
+

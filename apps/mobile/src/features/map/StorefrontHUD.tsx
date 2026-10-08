@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { MapStore, StoreOffer } from '@mallos/map-engine';
+import { GlassSurface } from '../../components/GlassSurface';
 
 interface StorefrontHUDProps {
   store: MapStore | null;
@@ -25,7 +26,7 @@ export function StorefrontHUD({
   const storeOffers = offers.filter((o) => o.storeId === store.id);
 
   return (
-    <View style={styles.container}>
+    <GlassSurface variant="dark" intensity="strong" radius="xl" style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerInfo}>
           <View style={styles.categoryBadge}>
@@ -93,7 +94,7 @@ export function StorefrontHUD({
         <Ionicons name="navigate" size={18} color="#FFFFFF" />
         <Text style={styles.navigateButtonText}>Guiarme hasta aquí</Text>
       </TouchableOpacity>
-    </View>
+    </GlassSurface>
   );
 }
 
@@ -103,10 +104,6 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 14,
     right: 14,
-    backgroundColor: '#0F172A',
-    borderRadius: 18,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
     padding: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
@@ -115,6 +112,7 @@ const styles = StyleSheet.create({
     elevation: 10,
     zIndex: 45,
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

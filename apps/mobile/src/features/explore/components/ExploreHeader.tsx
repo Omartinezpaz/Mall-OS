@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { GlassSurface } from '../../../components/GlassSurface';
 
 interface ExploreHeaderProps {
   mallName?: string;
@@ -32,17 +33,23 @@ export const ExploreHeader: React.FC<ExploreHeaderProps> = ({
 
       {/* Píldora de Puntos & Nivel (Yummy-style) */}
       <TouchableOpacity
-        style={styles.pointsBadge}
         onPress={onPointsPress}
         activeOpacity={0.8}
       >
-        <View style={styles.crownCircle}>
-          <Text style={styles.crownIcon}>👑</Text>
-        </View>
-        <View style={styles.pointsInfo}>
-          <Text style={styles.pointsNumber}>{points} pts</Text>
-          <Text style={styles.levelTag}>Nv. {userLevel}</Text>
-        </View>
+        <GlassSurface
+          variant="dark"
+          intensity="normal"
+          radius="pill"
+          style={styles.pointsBadge}
+        >
+          <View style={styles.crownCircle}>
+            <Ionicons name="trophy" size={12} color="#F59E0B" />
+          </View>
+          <View style={styles.pointsInfo}>
+            <Text style={styles.pointsNumber}>{points} pts</Text>
+            <Text style={styles.levelTag}>Nv. {userLevel}</Text>
+          </View>
+        </GlassSurface>
       </TouchableOpacity>
     </View>
   );
@@ -90,13 +97,9 @@ const styles = StyleSheet.create({
   pointsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0F172A',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 18,
     gap: 6,
-    borderWidth: 1,
-    borderColor: '#334155',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
@@ -110,9 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(245, 158, 11, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  crownIcon: {
-    fontSize: 13,
   },
   pointsInfo: {
     alignItems: 'flex-start',
@@ -128,3 +128,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

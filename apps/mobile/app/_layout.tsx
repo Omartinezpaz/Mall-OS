@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
+import { SpaceGrotesk_600SemiBold, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
+import * as SplashScreen from 'expo-splash-screen';
 import { queryClient } from '../src/offline/cache';
 
+SplashScreen.preventAutoHideAsync().catch(() => {
+  /* ignore splash screen errors in web/dev preview */
+});
+
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    'Inter-Regular': Inter_400Regular,
+    'Inter-Medium': Inter_500Medium,
+    'Inter-SemiBold': Inter_600SemiBold,
+    'Inter-Bold': Inter_700Bold,
+    'SpaceGrotesk-SemiBold': SpaceGrotesk_600SemiBold,
+    'SpaceGrotesk-Bold': SpaceGrotesk_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return null;
+
   return (
     <QueryClientProvider client={queryClient}>
       <Stack
@@ -27,3 +51,4 @@ export default function RootLayout() {
     </QueryClientProvider>
   );
 }
+
