@@ -99,9 +99,6 @@ export async function clearKidsModeStorage(): Promise<void> {
   } catch {}
 }
 
-// Auto-hidratación al cargar el módulo
-hydrateKidsModeFromStorage().catch(() => {});
-
 function notifyListeners() {
   for (const listener of listeners) {
     listener({ ...globalState });

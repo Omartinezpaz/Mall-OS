@@ -88,6 +88,14 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
     setArrivalMessage(null);
   }, []);
 
+  // Cleanup de temporizadores al desmontar el hook
+  useEffect(() => {
+    return () => {
+      if (arrivalTimerRef.current) clearTimeout(arrivalTimerRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   // Calcular waypoints y RESETEAR progreso cada vez que activeRoute cambie
   const waypoints = useRef<Point[]>([]);
   useEffect(() => {
