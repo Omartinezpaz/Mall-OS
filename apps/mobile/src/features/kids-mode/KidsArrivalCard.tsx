@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import * as Speech from 'expo-speech';
 import { GlassSurface } from '../../components/GlassSurface';
 import { AppIcon } from '../../components/AppIcon';
 import type { KidsRiddle } from './kids-data';
@@ -13,6 +14,7 @@ import type { KidsRiddle } from './kids-data';
 interface KidsArrivalCardProps {
   riddle: KidsRiddle;
   playerName: string;
+  isListening?: boolean;
   onOpenScanner: () => void;
   onReturnToTreasureMap: () => void;
 }
@@ -20,9 +22,20 @@ interface KidsArrivalCardProps {
 export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
   riddle,
   playerName,
+  isListening = false,
   onOpenScanner,
   onReturnToTreasureMap,
 }) => {
+  const handleOpenScannerWithVoice = () => {
+    Speech.stop();
+    Speech.speak('¡Muy bien! Enfoca con la cámara el código QR del producto.', {
+      language: 'es-VE',
+      pitch: 1.05,
+      rate: 0.95,
+    });
+    onOpenScanner();
+  };
+
   return (
     <View style={styles.overlay}>
       <GlassSurface
@@ -33,9 +46,11 @@ export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
       >
         {/* Header Badge */}
         <View style={styles.headerRow}>
-          <View style={styles.arrivalBadge}>
-            <AppIcon name="checkmark-circle" size={16} color="#10B981" />
-            <Text style={styles.arrivalBadgeText}>¡LLEGASTE AL LOCAL!</Text>
+          <View style={[styles.arrivalBadge, isListening && styles.listeningBadge]}>
+            <AppIcon name={isListening ? 'volume-high' : 'checkmark-circle'} size={16} color={isListening ? '#38BDF8' : '#10B981'} />
+            <Text style={[styles.arrivalBadgeText, isListening && styles.listeningBadgeText]}>
+              {isListening ? '🔊 ESCUCHANDO INSTRUCCIONES...' : '¡LLEGASTE AL LOCAL!'}
+            </Text>
           </View>
           <TouchableOpacity
             style={styles.closeBtn}
@@ -70,7 +85,7 @@ export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
         <View style={styles.actionsContainer}>
           <TouchableOpacity
             style={styles.scanBtn}
-            onPress={onOpenScanner}
+            onPress={handleOpenScannerWithVoice}
             activeOpacity={0.88}
           >
             <AppIcon name="qr-code" size={18} color="#FFFFFF" />
@@ -125,11 +140,18 @@ const styles = StyleSheet.create({
     borderColor: '#10B981',
     gap: 6,
   },
+  listeningBadge: {
+    backgroundColor: 'rgba(56, 189, 248, 0.2)',
+    borderColor: '#38BDF8',
+  },
   arrivalBadgeText: {
+    fontSize: 11,
+    fontWeight: '800',
     color: '#10B981',
-    fontSize: 10,
-    fontWeight: '900',
     letterSpacing: 0.5,
+  },
+  listeningBadgeText: {
+    color: '#38BDF8',
   },
   closeBtn: {
     width: 28,

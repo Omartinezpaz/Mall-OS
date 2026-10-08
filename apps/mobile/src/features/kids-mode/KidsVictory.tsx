@@ -26,16 +26,17 @@ export const KidsVictory: React.FC<KidsVictoryProps> = ({
 
   useEffect(() => {
     Speech.stop();
+    const stationNum = stars;
     const celebrationText = prizeUnlocked
       ? `¡Felicidades, ${playerName || 'Explorador'}! ¡Conseguiste las 5 estrellas y desbloqueaste tu premio final!`
-      : `¡Excelente trabajo, ${playerName || 'Explorador'}! Ganaste una estrella del mall.`;
+      : `¡Estación ${stationNum} completada, ${playerName || 'Explorador'}! Vas muy bien, ganaste una estrella del mall.`;
 
     Speech.speak(celebrationText, {
       language: 'es-VE',
       pitch: 1.1,
       rate: 0.95,
     });
-  }, [prizeUnlocked, playerName]);
+  }, [prizeUnlocked, playerName, stars]);
 
   const justCompletedRiddle = (stars > 0 && riddles[stars - 1]) ? riddles[stars - 1] : currentRiddle;
 

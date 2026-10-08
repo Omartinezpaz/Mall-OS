@@ -690,6 +690,7 @@ export default function MapaScreen() {
         <KidsArrivalCard
           riddle={activeKidsRiddle}
           playerName={kids.playerName}
+          isListening={kidsAudioPhase === 'arrival'}
           onOpenScanner={() => {
             setShowKidsArrival(false);
             handleExitNavigation();
