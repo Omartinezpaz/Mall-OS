@@ -122,6 +122,8 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
   const dragStartX = useRef(initialOffsetX);
   const dragStartY = useRef(initialOffsetY);
   const lastPinchDist = useRef<number | null>(null);
+  const lastPinchAngle = useRef<number | null>(null);
+  const manualRotation = useSharedValue(0);
   const isPanning = useRef<boolean>(false);
   const hasInitialized = useRef<boolean>(false);
 
@@ -154,7 +156,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     }
   }, [userPosition, isFollowingUser, baseScale, zoom, screenWidth, screenHeight, cameraX, cameraY]);
 
-  // 6. PanResponder para paneo multitáctil, zoom y tap detection (hit-testing)
+  // 6. PanResponder para paneo multitáctil, zoom, rotación y tap detection
   const panResponder = useMemo(
     () =>
       PanResponder.create({
@@ -167,6 +169,7 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
           dragStartX.current = cameraX.value;
           dragStartY.current = cameraY.value;
           lastPinchDist.current = null;
+          lastPinchAngle.current = null;
         },
         onPanResponderMove: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
           const touches = evt.nativeEvent.touches;
@@ -176,26 +179,37 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
           }
 
           if (touches.length === 2 && touches[0] && touches[1]) {
-            // Gesto de Pinch (dos dedos)
+            // Gesto de Pinch y Rotación con dos dedos
             const dx = touches[0].pageX - touches[1].pageX;
             const dy = touches[0].pageY - touches[1].pageY;
             const dist = Math.hypot(dx, dy);
+            const currentAngle = Math.atan2(dy, dx);
 
             if (lastPinchDist.current !== null && lastPinchDist.current > 0) {
               const factor = dist / lastPinchDist.current;
               const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom.value * factor));
               zoom.value = nextZoom;
             }
+            if (lastPinchAngle.current !== null) {
+              let deltaAngle = currentAngle - lastPinchAngle.current;
+              // Normalizar salto angular
+              if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
+              if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
+              manualRotation.value = manualRotation.value + deltaAngle;
+            }
             lastPinchDist.current = dist;
+            lastPinchAngle.current = currentAngle;
           } else {
             // Paneo con 1 dedo
             lastPinchDist.current = null;
+            lastPinchAngle.current = null;
             cameraX.value = dragStartX.current + gestureState.dx;
             cameraY.value = dragStartY.current + gestureState.dy;
           }
         },
         onPanResponderRelease: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
           lastPinchDist.current = null;
+          lastPinchAngle.current = null;
           isPanning.current = false;
           // Si el movimiento fue mínimo, tratar como Tap (Hit-testing de tiendas)
           const moveDist = Math.hypot(gestureState.dx, gestureState.dy);
@@ -217,15 +231,15 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
           }
         },
       }),
-    [cameraX, cameraY, zoom, baseScale, scene.items, onStorePress, isFollowingUser]
+    [cameraX, cameraY, zoom, manualRotation, baseScale, scene.items, onStorePress, isFollowingUser]
   );
 
-  // 7. Ángulo de rotación del mapa (heading-up vs north-up)
+  // 7. Ángulo de rotación del mapa (heading-up vs manual vs north-up)
   const rotationAngle = useDerivedValue(() => {
     if (cameraMode === 'heading-up' && userHeading !== undefined) {
       return -userHeading - Math.PI / 2;
     }
-    return 0;
+    return manualRotation.value;
   });
 
   // Matriz de transformación 2D combinada (con rotación alrededor del centro de pantalla)
@@ -240,7 +254,16 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
     { scale: baseScale * zoom.value },
   ]);
 
-  // 8. Re-centrado manual (reactiva auto-follow)
+  // 8. Reset de rotación al Norte
+  const handleResetNorth = useCallback(() => {
+    manualRotation.value = withSpring(0, { damping: 18, stiffness: 120 });
+    onResetNorth?.();
+    if (onToggleCameraMode && cameraMode === 'heading-up') {
+      onToggleCameraMode();
+    }
+  }, [manualRotation, onResetNorth, onToggleCameraMode, cameraMode]);
+
+  // 9. Re-centrado manual (reactiva auto-follow)
   const handleRecenter = useCallback(() => {
     setIsFollowingUser(true);
     if (userPosition) {
@@ -531,11 +554,11 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
         </Group>
       </Canvas>
 
-      {/* Brújula / Indicador de Norte */}
+      {/* Brújula / Indicador de Norte e Interacción de Giro */}
       {showCompass && (
         <TouchableOpacity
-          style={[styles.compassButton, { top: Math.max(insets.top, 24) + 8 }]}
-          onPress={onToggleCameraMode ?? onResetNorth ?? handleRecenter}
+          style={[styles.compassButton, { top: Math.max(insets.top, 24) + 124 }]}
+          onPress={handleResetNorth}
           activeOpacity={0.8}
         >
           <View
@@ -549,19 +572,6 @@ export const FlatMapCanvas: React.FC<FlatMapCanvasProps> = ({
           </View>
         </TouchableOpacity>
       )}
-
-      {/* Botón de Auto-centrado / Recentrar */}
-      <TouchableOpacity
-        style={[
-          styles.recenterButton,
-          { top: Math.max(insets.top, 24) + 60 },
-          isFollowingUser && styles.recenterButtonActive,
-        ]}
-        onPress={handleRecenter}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.recenterIcon}>🎯</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -576,62 +586,36 @@ const styles = StyleSheet.create({
   },
   compassButton: {
     position: 'absolute',
-    top: 54,
-    right: 16,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#FFFFFF',
+    right: 14,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+    borderWidth: 1.5,
+    borderColor: '#CBD5E1',
+    zIndex: 20,
   },
   compassArrowContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   compassText: {
-    fontSize: 12,
-    fontWeight: '800',
+    fontSize: 10,
+    fontWeight: '900',
     color: '#EF4444',
+    marginBottom: -1,
   },
   compassNeedle: {
-    width: 3,
-    height: 10,
+    width: 2.5,
+    height: 9,
     backgroundColor: '#EF4444',
     borderRadius: 1.5,
-    marginTop: 1,
-  },
-  recenterButton: {
-    position: 'absolute',
-    top: 108,
-    right: 16,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  recenterButtonActive: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#3B82F6',
-    borderWidth: 2,
-  },
-  recenterIcon: {
-    fontSize: 20,
   },
 });

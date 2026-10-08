@@ -34,6 +34,7 @@ import {
   LEVEL_FERIA,
   LEVEL_DIVERSION,
   findRouteToStore,
+  findNearestNode,
   generateNavigationPlan,
   buildFlatScene,
   DEMO_SAMBIL_OFFERS,
@@ -165,6 +166,11 @@ export default function MapaScreen() {
     trailSampleMeters: 0.5,
     onArrival: () => {
       setShowStorefrontHUD(true);
+      // Mantener la posición del usuario en el local al que acaba de llegar
+      if (activeRoute && activeRoute.nodeIds.length > 0) {
+        const lastNode = activeRoute.nodeIds[activeRoute.nodeIds.length - 1];
+        setUserStartNodeId(lastNode);
+      }
     },
   });
 
@@ -221,11 +227,18 @@ export default function MapaScreen() {
     if (store && store.floorId !== selectedLevel) {
       setSelectedLevel(store.floorId);
     }
+    // Si el usuario ya está en una posición/local específico, calcular la nueva ruta desde allí
+    if (walk.position) {
+      const nearest = findNearestNode(sambilMall, selectedLevel, walk.position);
+      if (nearest) {
+        setUserStartNodeId(nearest.id);
+      }
+    }
     setSelectedStoreId(storeId);
     setIsNavigating(true);
     setShowStorefrontHUD(false);
     mapRef.current?.focusOnStore(storeId);
-  }, [selectedLevel]);
+  }, [selectedLevel, walk.position]);
 
   // Salir del modo navegación
   const handleExitNavigation = useCallback(() => {
