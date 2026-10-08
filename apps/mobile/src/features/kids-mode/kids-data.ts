@@ -7,6 +7,15 @@ export interface KidsRiddleOption {
   description?: string;
 }
 
+export interface KidsProductDeal {
+  name: string;
+  price: string;
+  originalPrice?: string;
+  discountBadge: string;
+  qrCodeTag: string;
+  description: string;
+}
+
 export interface KidsRiddle {
   id: string;
   number: number;
@@ -22,6 +31,7 @@ export interface KidsRiddle {
   correctOptionId: string;
   badge: string;
   sponsorName: string;
+  featuredProduct: KidsProductDeal;
 }
 
 export interface KidsPrize {
@@ -55,7 +65,7 @@ export const AGE_GROUP_CONFIG: Record<
 > = {
   child: {
     title: 'Pequeños Exploradores',
-    subtitle: '4 a 8 años · Juego visual y divertido',
+    subtitle: '4 a 8 años · Búsqueda de QR y premios en tiendas',
     badge: '4 - 8 AÑOS',
     emoji: '🧒',
     color: '#F59E0B',
@@ -66,7 +76,7 @@ export const AGE_GROUP_CONFIG: Record<
   },
   teen: {
     title: 'Misión Secreta',
-    subtitle: '9 a 14 años · Acertijos y pistas del mall',
+    subtitle: '9 a 14 años · Visitas a locales y desafíos de marcas',
     badge: '9 - 14 AÑOS',
     emoji: '🧑',
     color: '#8B5CF6',
@@ -77,7 +87,7 @@ export const AGE_GROUP_CONFIG: Record<
   },
   young: {
     title: 'Reto Urbano',
-    subtitle: '15 a 25 años · Trivia y exploración urbana',
+    subtitle: '15 a 25 años · Micro-compras, moda y códigos QR',
     badge: '15 - 25 AÑOS',
     emoji: '🧑‍🦱',
     color: '#0284C7',
@@ -110,6 +120,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_cat',
       badge: 'Peluche Mágico',
       sponsorName: 'Tijerazo Kids',
+      featuredProduct: {
+        name: 'Llavero de Peluche Animalitos',
+        price: '$2.00',
+        originalPrice: '$3.50',
+        discountBadge: 'PROMO $2',
+        qrCodeTag: 'QR-TIJERAZO-KIDS',
+        description: 'Ubica el stand de peluches en la entrada y escanea el QR en la etiqueta.',
+      },
     },
     {
       id: 'riddle-child-2',
@@ -131,6 +149,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_med',
       badge: 'Super Guardián',
       sponsorName: 'Farmatodo Baby',
+      featuredProduct: {
+        name: 'Gomitas de Frutas / Curitas Divertidas',
+        price: '$1.50',
+        originalPrice: '$2.50',
+        discountBadge: 'OFERTA $1.50',
+        qrCodeTag: 'QR-FARMATODO-KIDS',
+        description: 'Escanea el QR en el mostrador infantil de caramelos y vitaminas.',
+      },
     },
     {
       id: 'riddle-child-3',
@@ -152,6 +178,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_choc',
       badge: 'Chef Dulcero',
       sponsorName: 'McCafé',
+      featuredProduct: {
+        name: 'Mini Donita Glaseada / Conito',
+        price: '$1.00',
+        originalPrice: '$1.80',
+        discountBadge: 'SOLO $1',
+        qrCodeTag: 'QR-MCCAFE-KIDS',
+        description: 'Escanea el sticker QR en el mostrador de postres McCafé.',
+      },
     },
     {
       id: 'riddle-child-4',
@@ -173,6 +207,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_croc',
       badge: 'Amigo Cocodrilo',
       sponsorName: 'Crocs Kids',
+      featuredProduct: {
+        name: 'Pin Jibbitz Infantil Coleccionable',
+        price: '$3.00',
+        originalPrice: '$5.00',
+        discountBadge: '40% OFF',
+        qrCodeTag: 'QR-CROCS-KIDS',
+        description: 'Encuentra el expositor de pins decorativos y escanea el código.',
+      },
     },
     {
       id: 'riddle-child-5',
@@ -194,6 +236,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_lionking',
       badge: 'Estrella de Cine',
       sponsorName: 'Cines Unidos Kids',
+      featuredProduct: {
+        name: 'Vaso Infantil Coleccionable con Cotufas',
+        price: '$3.50',
+        originalPrice: '$5.50',
+        discountBadge: 'COMBO KIDS',
+        qrCodeTag: 'QR-CINES-KIDS',
+        description: 'Escanea el QR en la caramelería de Cines Unidos para desbloquear.',
+      },
     },
   ],
   teen: [
@@ -217,6 +267,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_8',
       badge: 'Criptógrafo',
       sponsorName: 'Skechers Sambil',
+      featuredProduct: {
+        name: 'Par de Medias Deportivas Skechers Pro',
+        price: '$3.00',
+        originalPrice: '$6.00',
+        discountBadge: '50% OFF',
+        qrCodeTag: 'QR-SKECHERS-TEEN',
+        description: 'Escanea el QR en el exhibidor de accesorios y calcetines.',
+      },
     },
     {
       id: 'riddle-teen-2',
@@ -238,6 +296,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_hoodie',
       badge: 'Estilo Urbano',
       sponsorName: 'Bershka Style',
+      featuredProduct: {
+        name: 'Pack de Stickers / Accesorio de Cabello',
+        price: '$2.50',
+        originalPrice: '$4.00',
+        discountBadge: 'TREND $2.50',
+        qrCodeTag: 'QR-BERSHKA-TEEN',
+        description: 'Escanea el QR en la zona de cajas o accesorios de Bershka.',
+      },
     },
     {
       id: 'riddle-teen-3',
@@ -259,6 +325,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_denim',
       badge: 'Experto Denim',
       sponsorName: 'Pull&Bear',
+      featuredProduct: {
+        name: 'Llavero Metálico Streetwear',
+        price: '$2.00',
+        originalPrice: '$4.50',
+        discountBadge: 'DESCUENTO',
+        qrCodeTag: 'QR-PULLBEAR-TEEN',
+        description: 'Escanea el QR en la mesa de novedades de Pull&Bear.',
+      },
     },
     {
       id: 'riddle-teen-4',
@@ -280,6 +354,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_vanilla',
       badge: 'Alquimista de Aromas',
       sponsorName: 'Bath & Body Works',
+      featuredProduct: {
+        name: 'Gel Antibacterial PocketBac Aromático',
+        price: '$2.00',
+        originalPrice: '$3.50',
+        discountBadge: 'POCKETBAC $2',
+        qrCodeTag: 'QR-BATHBODY-TEEN',
+        description: 'Escanea el QR junto a la torre de geles PocketBac.',
+      },
     },
     {
       id: 'riddle-teen-5',
@@ -301,6 +383,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_italy',
       badge: 'Capitán Calcio',
       sponsorName: 'Juventus Official',
+      featuredProduct: {
+        name: 'Muñequera Deportiva Oficial Juventus',
+        price: '$4.00',
+        originalPrice: '$7.00',
+        discountBadge: 'FAN DEAL',
+        qrCodeTag: 'QR-JUVENTUS-TEEN',
+        description: 'Escanea el código QR en la vitrina de balones y accesorios.',
+      },
     },
   ],
   young: [
@@ -324,6 +414,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_sol',
       badge: 'Oído Musical',
       sponsorName: 'Stradivarius VIP',
+      featuredProduct: {
+        name: 'Set de Scrunchies / Accesorios Minimal',
+        price: '$3.00',
+        originalPrice: '$5.50',
+        discountBadge: 'MUST-HAVE',
+        qrCodeTag: 'QR-STRADIVARIUS-YNG',
+        description: 'Escanea el QR en la zona de joyería y complementos.',
+      },
     },
     {
       id: 'riddle-young-2',
@@ -345,6 +443,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_drop',
       badge: 'Sneakerhead',
       sponsorName: 'Sportland Pro',
+      featuredProduct: {
+        name: 'Cordones Reflectivos Sneaker Pro',
+        price: '$2.50',
+        originalPrice: '$5.00',
+        discountBadge: '50% OFF',
+        qrCodeTag: 'QR-SPORTLAND-YNG',
+        description: 'Escanea el QR en la barra de cuidado y limpieza de zapatillas.',
+      },
     },
     {
       id: 'riddle-young-3',
@@ -366,6 +472,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_nfc',
       badge: 'Fintech Master',
       sponsorName: 'BNC Digital',
+      featuredProduct: {
+        name: 'Funda Antirrobo RFID para Tarjetas BNC',
+        price: '$1.00',
+        originalPrice: '$3.00',
+        discountBadge: 'SEGURIDAD $1',
+        qrCodeTag: 'QR-BNC-YNG',
+        description: 'Escanea el QR en el tótem digital de atención al cliente BNC.',
+      },
     },
     {
       id: 'riddle-young-4',
@@ -387,6 +501,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_hyal',
       badge: 'Skincare Guru',
       sponsorName: 'Farmatodo Derma',
+      featuredProduct: {
+        name: 'Mascarilla Facial Hidratante de Tela',
+        price: '$1.50',
+        originalPrice: '$3.00',
+        discountBadge: '2x1 PROMO',
+        qrCodeTag: 'QR-FARMATODO-DERMA',
+        description: 'Escanea el QR en el pasillo de cosmética y cuidado facial.',
+      },
     },
     {
       id: 'riddle-young-5',
@@ -408,6 +530,14 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_imax',
       badge: 'Cinéfilo Pro',
       sponsorName: 'Cines Unidos VIP',
+      featuredProduct: {
+        name: 'Refresco Mediano + Topping de Caramelo',
+        price: '$2.50',
+        originalPrice: '$4.50',
+        discountBadge: 'IMAX SPECIAL',
+        qrCodeTag: 'QR-CINES-IMAX',
+        description: 'Escanea el QR en el mostrador VIP de Cines Unidos.',
+      },
     },
   ],
 };
@@ -418,7 +548,7 @@ export const KIDS_PRIZES: Record<AgeGroup, KidsPrize> = {
     ageGroup: 'child',
     title: '¡Super Explorador del Mall!',
     headline: 'Helado Gratis + Pack de Stickers Coleccionables',
-    description: '¡Felicidades! Has resuelto los 5 acertijos del plano y desbloqueaste tu premio dulce en McCafé.',
+    description: '¡Felicidades! Has visitado las 5 tiendas del plano, escaneaste sus códigos QR y desbloqueaste tu premio dulce en McCafé.',
     sponsor: 'McCafé Sambil',
     sponsorStoreId: 'local_1',
     badge: '🏆 TROFEO ORO',
@@ -436,7 +566,7 @@ export const KIDS_PRIZES: Record<AgeGroup, KidsPrize> = {
     ageGroup: 'teen',
     title: '¡Agente Secreto del Mall!',
     headline: 'Combo Cine 2x1 (Entrada + Cotufas) + Pase Ninja Park',
-    description: 'Demostraste máximo ingenio descifrando los códigos secretos en los 5 locales del recorrido.',
+    description: 'Completaste las 5 visitas en tiendas físicas, escaneaste los productos y descifraste los códigos secretos.',
     sponsor: 'Cines Unidos & Ninja Park',
     sponsorStoreId: 'local_116',
     badge: '🎖️ MEDALLA PLATA',
@@ -454,7 +584,7 @@ export const KIDS_PRIZES: Record<AgeGroup, KidsPrize> = {
     ageGroup: 'young',
     title: '¡Conquistador Urbano!',
     headline: 'Cupón 20% OFF en Stradivarius / Bershka + 150 Puntos Loyalty',
-    description: 'Completaste el Reto Urbano contrarreloj con conocimiento perfecto de marcas y tecnología.',
+    description: 'Recorriste las tiendas clave del mall, escaneaste los productos y respondiste la trivia urbana.',
     sponsor: 'Inditex & Mall OS Loyalty',
     sponsorStoreId: 'local_60',
     badge: '💎 VIP DIAMOND',

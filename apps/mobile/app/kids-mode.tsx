@@ -5,11 +5,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKidsMode } from '../src/features/kids-mode/useKidsMode';
 import { KidsOnboarding } from '../src/features/kids-mode/KidsOnboarding';
 import { KidsTreasureMap } from '../src/features/kids-mode/KidsTreasureMap';
+import { KidsQRScanner } from '../src/features/kids-mode/KidsQRScanner';
 import { KidsRiddle } from '../src/features/kids-mode/KidsRiddle';
 import { KidsVictory } from '../src/features/kids-mode/KidsVictory';
 import { KidsPrize } from '../src/features/kids-mode/KidsPrize';
 
-type KidsScreenView = 'map' | 'riddle' | 'victory' | 'prize';
+type KidsScreenView = 'map' | 'scanner' | 'riddle' | 'victory' | 'prize';
 
 export default function KidsModeScreen() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function KidsModeScreen() {
     ageGroup,
     startAdventure,
     resetAdventure,
+    unlockStoreQR,
     riddles,
     currentRiddleIndex,
     prizeUnlocked,
@@ -33,8 +35,21 @@ export default function KidsModeScreen() {
     setCurrentView('map');
   };
 
+  const handleOpenQRScanner = (idx: number) => {
+    setActiveRiddleIdx(idx);
+    setCurrentView('scanner');
+  };
+
   const handleOpenRiddle = (idx: number) => {
     setActiveRiddleIdx(idx);
+    setCurrentView('riddle');
+  };
+
+  const handleQRScanned = () => {
+    const targetRiddle = riddles[activeRiddleIdx] || riddles[currentRiddleIndex];
+    if (targetRiddle) {
+      unlockStoreQR(targetRiddle.storeId);
+    }
     setCurrentView('riddle');
   };
 
@@ -48,7 +63,7 @@ export default function KidsModeScreen() {
     } else {
       const nextIdx = Math.min(riddles.length - 1, currentRiddleIndex);
       setActiveRiddleIdx(nextIdx);
-      setCurrentView('riddle');
+      setCurrentView('map');
     }
   };
 
@@ -84,6 +99,14 @@ export default function KidsModeScreen() {
           }}
           onClose={() => router.back()}
         />
+      ) : currentView === 'scanner' && activeRiddle ? (
+        <KidsQRScanner
+          riddle={activeRiddle}
+          ageGroup={ageGroup}
+          onScanned={handleQRScanned}
+          onNavigateToStore={handleNavigateToStoreMap}
+          onBack={() => setCurrentView('map')}
+        />
       ) : currentView === 'riddle' && activeRiddle ? (
         <KidsRiddle
           riddle={activeRiddle}
@@ -94,6 +117,7 @@ export default function KidsModeScreen() {
       ) : (
         <KidsTreasureMap
           onOpenRiddle={handleOpenRiddle}
+          onOpenQRScanner={handleOpenQRScanner}
           onOpenPrize={() => setCurrentView('prize')}
           onReset={resetAdventure}
           onNavigateToStore={handleNavigateToStoreMap}
@@ -109,3 +133,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
 });
+

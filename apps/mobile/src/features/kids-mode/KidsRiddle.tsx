@@ -79,6 +79,18 @@ export const KidsRiddle: React.FC<KidsRiddleProps> = ({
         </View>
       </View>
 
+      {/* Verified Micro-Deal Product Banner */}
+      <View style={styles.verifiedProductCard}>
+        <View style={styles.verifiedCheckBadge}>
+          <AppIcon name="checkmark-circle" size={16} color="#10B981" />
+          <Text style={styles.verifiedBadgeText}>QR VERIFICADO EN TIENDA</Text>
+        </View>
+        <Text style={styles.verifiedProductName}>{riddle.featuredProduct.name}</Text>
+        <Text style={styles.verifiedProductPrice}>
+          Oferta: {riddle.featuredProduct.price} ({riddle.featuredProduct.discountBadge})
+        </Text>
+      </View>
+
       {/* Family Mode Alert */}
       {isFamilyMode && (
         <View style={styles.familyNotice}>
@@ -234,6 +246,37 @@ const styles = StyleSheet.create({
   sponsorText: {
     fontSize: 11,
     fontWeight: '700',
+  },
+  verifiedProductCard: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    padding: 10,
+    marginBottom: 12,
+  },
+  verifiedCheckBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginBottom: 2,
+  },
+  verifiedBadgeText: {
+    color: '#16A34A',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  verifiedProductName: {
+    color: '#0F172A',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  verifiedProductPrice: {
+    color: '#059669',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 1,
   },
   familyNotice: {
     flexDirection: 'row',

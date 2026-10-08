@@ -15,6 +15,7 @@ export interface KidsModeState {
   isFamilyMode: boolean;
   currentRiddleIndex: number;
   completedRiddleIds: string[];
+  unlockedQRStoreIds: string[];
   stars: number;
   prizeUnlocked: boolean;
   prizeCode: string | null;
@@ -30,6 +31,7 @@ const DEFAULT_STATE: KidsModeState = {
   isFamilyMode: false,
   currentRiddleIndex: 0,
   completedRiddleIds: [],
+  unlockedQRStoreIds: [],
   stars: 0,
   prizeUnlocked: false,
   prizeCode: null,
@@ -73,6 +75,7 @@ export function useKidsMode() {
         isFamilyMode,
         currentRiddleIndex: 0,
         completedRiddleIds: [],
+        unlockedQRStoreIds: [],
         stars: 0,
         prizeUnlocked: false,
         prizeCode: null,
@@ -142,6 +145,16 @@ export function useKidsMode() {
     [currentRiddle, state.ageGroup, state.currentRiddleIndex, state.completedRiddleIds, riddles.length]
   );
 
+  const unlockStoreQR = useCallback((storeId: string) => {
+    if (!globalState.unlockedQRStoreIds.includes(storeId)) {
+      globalState = {
+        ...globalState,
+        unlockedQRStoreIds: [...globalState.unlockedQRStoreIds, storeId],
+      };
+      notifyListeners();
+    }
+  }, []);
+
   const resetAdventure = useCallback(() => {
     globalState = { ...DEFAULT_STATE };
     notifyListeners();
@@ -162,6 +175,7 @@ export function useKidsMode() {
     prize,
     startAdventure,
     submitAnswer,
+    unlockStoreQR,
     resetAdventure,
     claimPrize,
     totalRiddles: riddles.length,
