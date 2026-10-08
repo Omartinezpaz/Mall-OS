@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import * as Speech from 'expo-speech';
+import { audioManager } from '../../lib/audio-manager';
 import type { NavigationPlan, NavStepInstruction } from '@mallos/map-engine';
 import { GlassSurface } from '../../components/GlassSurface';
 import { AppIcon, type AppIconName } from '../../components/AppIcon';
@@ -88,23 +88,24 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
     }).start();
   }, [calcProgress, progressAnim]);
 
-  // Manejo de Locución TTS con expo-speech
+  // Manejo de Locución TTS con audioManager coordinado
   useEffect(() => {
     if (voiceEnabled && currentStep && isWalking) {
-      Speech.stop();
-      Speech.speak(currentStep.primaryText, {
+      audioManager.speak({
+        text: currentStep.primaryText,
+        priority: 'normal',
         language: 'es-VE',
         pitch: 1.0,
         rate: 0.95,
       });
     } else if (!voiceEnabled) {
-      Speech.stop();
+      audioManager.stop();
     }
   }, [activeStepIndex, voiceEnabled, currentStep, isWalking]);
 
   useEffect(() => {
     return () => {
-      Speech.stop();
+      audioManager.stop();
     };
   }, []);
 
@@ -161,7 +162,7 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           <TouchableOpacity
             style={[styles.actionBtn, styles.exitBtn]}
             onPress={() => {
-              Speech.stop();
+              audioManager.stop();
               handleExit();
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

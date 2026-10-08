@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import * as Speech from 'expo-speech';
+import { audioManager } from '../../lib/audio-manager';
 import {
   type AgeGroup,
   AGE_GROUP_CONFIG,
@@ -25,16 +25,18 @@ export const KidsVictory: React.FC<KidsVictoryProps> = ({
   const { ageGroup, playerName, stars, prizeUnlocked, currentRiddle, riddles } = useKidsMode();
 
   useEffect(() => {
-    Speech.stop();
     const stationNum = stars;
     const celebrationText = prizeUnlocked
       ? `¡Felicidades, ${playerName || 'Explorador'}! ¡Conseguiste las 5 estrellas y desbloqueaste tu premio final!`
       : `¡Estación ${stationNum} completada, ${playerName || 'Explorador'}! Vas muy bien, ganaste una estrella del mall.`;
 
-    Speech.speak(celebrationText, {
+    audioManager.speak({
+      text: celebrationText,
+      priority: 'high',
       language: 'es-VE',
       pitch: 1.1,
       rate: 0.95,
+      delayMs: 250,
     });
   }, [prizeUnlocked, playerName, stars]);
 

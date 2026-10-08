@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import * as Speech from 'expo-speech';
+import { audioManager } from '../../src/lib/audio-manager';
 import {
   IsometricMap,
   type IsometricMapHandle,
@@ -204,8 +204,9 @@ export default function MapaScreen() {
         setShowKidsArrival(true);
         setKidsAudioPhase('arrival');
         const arrivalStoreName = selectedStore?.name || 'la tienda';
-        Speech.stop();
-        Speech.speak(`¡Llegaste a ${arrivalStoreName}! Busca el producto físico con el código QR para desbloquear el acertijo.`, {
+        audioManager.speak({
+          text: `¡Llegaste a ${arrivalStoreName}! Busca el producto físico con el código QR para desbloquear el acertijo.`,
+          priority: 'critical',
           language: 'es-VE',
           pitch: 1.05,
           rate: 0.95,
@@ -355,11 +356,13 @@ export default function MapaScreen() {
         ? `¡Estamos listos para empezar esta gran aventura! ¿Estás listo, ${targetPlayerName}? Sigue la ruta en el mapa hacia ${targetStoreName}.`
         : `¡Vamos por la estación número ${stationNumber}, ${targetPlayerName}! Sigue la ruta en el mapa hacia ${targetStoreName}.`;
 
-      Speech.stop();
-      Speech.speak(adventureGreeting, {
+      audioManager.speak({
+        text: adventureGreeting,
+        priority: 'high',
         language: 'es-VE',
         pitch: 1.05,
         rate: 0.95,
+        delayMs: 320, // Colchón de inicialización para Android al cambiar de pantalla
         onDone: () => setKidsAudioPhase('idle'),
         onError: () => setKidsAudioPhase('idle'),
       });

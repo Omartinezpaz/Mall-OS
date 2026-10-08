@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import * as Speech from 'expo-speech';
+import { audioManager } from '../../lib/audio-manager';
 import { AppIcon } from '../../components/AppIcon';
 import { GlassSurface } from '../../components/GlassSurface';
 import type { ConciergeMessage } from './useConcierge';
@@ -26,12 +26,13 @@ export const ConciergeBubble: React.FC<ConciergeBubbleProps> = ({
 
   const handleToggleVoice = () => {
     if (isPlayingAudio) {
-      Speech.stop();
+      audioManager.stop();
       setIsPlayingAudio(false);
     } else {
-      Speech.stop();
       setIsPlayingAudio(true);
-      Speech.speak(message.text, {
+      audioManager.speak({
+        text: message.text,
+        priority: 'normal',
         language: 'es-VE',
         pitch: 1.0,
         rate: 0.95,

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import * as Speech from 'expo-speech';
+import { audioManager } from '../../lib/audio-manager';
 import { GlassSurface } from '../../components/GlassSurface';
 import { AppIcon } from '../../components/AppIcon';
 import type { KidsRiddle } from './kids-data';
@@ -27,11 +27,13 @@ export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
   onReturnToTreasureMap,
 }) => {
   const handleOpenScannerWithVoice = () => {
-    Speech.stop();
-    Speech.speak('¡Muy bien! Enfoca con la cámara el código QR del producto.', {
+    audioManager.speak({
+      text: '¡Muy bien! Enfoca con la cámara el código QR del producto.',
+      priority: 'high',
       language: 'es-VE',
       pitch: 1.05,
       rate: 0.95,
+      delayMs: 150,
     });
     onOpenScanner();
   };
