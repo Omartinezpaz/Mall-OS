@@ -3,6 +3,8 @@ import { z } from 'zod';
 export const productColorSchema = z.object({
   name: z.string().min(1, 'El nombre del color es obligatorio'),
   hex: z.string().regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, 'Color hexadecimal inválido').optional(),
+  image_url: z.string().url('URL de imagen del color inválida').optional().nullable(),
+  images: z.array(z.string().url()).optional().default([]),
 });
 
 export const productSchema = z.object({

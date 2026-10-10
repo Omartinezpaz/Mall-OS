@@ -16,6 +16,13 @@ export type AuditLog = Database['public']['Tables']['audit_log']['Row'];
 export type Invitation = Database['public']['Tables']['invitations']['Row'];
 export type MallSettings = Database['public']['Tables']['mall_settings']['Row'];
 
+export interface ProductColorVariant {
+  name: string;
+  hex?: string;
+  image_url?: string | null;
+  images: string[];
+}
+
 export interface ActivatedCouponResult {
   coupon_id: string;
   code: string;

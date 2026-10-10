@@ -140,6 +140,12 @@ Debe sentirse sofisticado para la administración y sencillo para un visitante c
 3. **Scroll Anclado Inteligente**:
    - Al seleccionar una categoría o sugerencia rápida, el viewport se ancla suavemente en la cabecera de la opción elegida, evitando saltos bruscos al final del chat.
 
+### 3.5 Regla de Oro de Conversión Visual (>75%): Galería por Variante de Color
+Todo producto en el ecosistema Mall OS (tanto en el portal web Store OS como en la App Móvil del visitante) debe poseer una o varias imágenes fotográficas reales asociadas a cada variante de color disponible (`ProductColorVariant.images: string[]`).
+- **Conmutación Instantánea**: Al pulsar o hacer click sobre un chip de color (ej. Beige vs. Negro), la fotografía principal conmuta inmediatamente a la imagen de dicho color.
+- **Galería Multi-Foto**: Si un color dispone de múltiples tomas (frente, dorso, detalle del textil), se exhibe un selector de miniaturas subordinado a esa variante.
+- **Cero Ambigüedad**: El usuario no debe imaginar cómo luce la prenda en su color preferido; la visualización fidedigna pre-visita es la clave que eleva la intención de compra por encima del 75% antes de llegar al local.
+
 ---
 
 ## 4. Design Tokens
