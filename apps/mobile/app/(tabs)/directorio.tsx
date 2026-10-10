@@ -52,12 +52,23 @@ export default function ExplorarScreen() {
     });
   }, []);
 
-  // Navegar a mapa con tienda seleccionada
+  // Navegar a mapa con tienda seleccionada (guía paso a paso)
   const handleGuideToStore = useCallback(
     (storeId: string) => {
       router.push({
         pathname: '/(tabs)/mapa',
         params: { storeId },
+      });
+    },
+    [router]
+  );
+
+  // Navegar a perfil de la tienda con fachada y catálogo
+  const handleOpenStoreProfile = useCallback(
+    (storeId: string) => {
+      router.push({
+        pathname: '/local/[id]',
+        params: { id: storeId },
       });
     },
     [router]
@@ -115,7 +126,7 @@ export default function ExplorarScreen() {
         <WelcomeHeroCard
           visitsCount={loyalty.visitsCount}
           visitsTarget={loyalty.visitsTarget}
-          onPressCTA={() => handleGuideToStore('st_pb_01')}
+          onPressCTA={() => handleOpenStoreProfile('st_pb_01')}
         />
 
         {/* 2. Grid Visual de Categorías (Iconos Grandes + Fondos) */}
@@ -132,9 +143,12 @@ export default function ExplorarScreen() {
           onGuideToStore={handleGuideToStore}
         />
 
-        {/* 4. Grid 2 Columnas: Tendencias en el Sambil */}
+        {/* 4. Grid 2 Columnas: Directorio oficial con logos y fachadas */}
         <TrendingStoresGrid
-          onSelectStore={handleGuideToStore}
+          selectedCategory={selectedCategory}
+          searchQuery={search}
+          onSelectStore={handleOpenStoreProfile}
+          onClearCategoryFilter={() => setSelectedCategory(undefined)}
         />
       </ScrollView>
     </View>

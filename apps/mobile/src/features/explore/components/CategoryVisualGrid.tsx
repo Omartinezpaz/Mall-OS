@@ -100,7 +100,7 @@ export const CategoryVisualGrid: React.FC<CategoryVisualGridProps> = ({
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Categorías</Text>
-        <Text style={styles.sectionSub}>Explora por tipo de local</Text>
+        <Text style={styles.sectionSub}>EXPLORA POR TIPO</Text>
       </View>
 
       <View style={styles.grid}>
@@ -109,26 +109,28 @@ export const CategoryVisualGrid: React.FC<CategoryVisualGridProps> = ({
           return (
             <TouchableOpacity
               key={cat.id}
-              style={[
-                styles.card,
-                { backgroundColor: cat.bgColor, borderColor: isSelected ? '#2563EB' : cat.borderColor },
-                isSelected && styles.cardActive,
-              ]}
+              style={styles.itemWrapper}
               onPress={() => onSelectCategory(cat.categoryKey)}
-              activeOpacity={0.75}
+              activeOpacity={0.7}
             >
-              <View style={[styles.iconBox, { backgroundColor: isSelected ? '#2563EB' : 'rgba(255, 255, 255, 0.75)' }]}>
+              <View
+                style={[
+                  styles.circleBox,
+                  { backgroundColor: cat.bgColor },
+                  isSelected && styles.circleBoxActive,
+                ]}
+              >
                 <MallOsSpriteIcon
                   name={cat.icon}
-                  size={24}
+                  size={26}
                   showCircle={false}
-                  color={isSelected ? '#FFFFFF' : cat.iconColor}
+                  color={isSelected ? '#2563EB' : cat.iconColor}
                 />
               </View>
               <Text
                 style={[
-                  styles.cardLabel,
-                  isSelected && styles.cardLabelActive,
+                  styles.categoryLabel,
+                  isSelected && styles.categoryLabelActive,
                 ]}
                 numberOfLines={1}
               >
@@ -145,70 +147,62 @@ export const CategoryVisualGrid: React.FC<CategoryVisualGridProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    marginVertical: 10,
+    marginVertical: 12,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: 12,
+    alignItems: 'center',
+    marginBottom: 14,
   },
   sectionTitle: {
     color: '#0F172A',
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '800',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   sectionSub: {
-    color: '#64748B',
-    fontSize: 11,
-    fontWeight: '600',
+    color: '#94A3B8',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
     justifyContent: 'space-between',
+    rowGap: 14,
   },
-  card: {
+  itemWrapper: {
     width: '23%',
-    aspectRatio: 0.95,
-    borderRadius: 16,
-    borderWidth: 1.5,
+    alignItems: 'center',
+  },
+  circleBox: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+    marginBottom: 6,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 3,
+    elevation: 1,
   },
-  cardActive: {
-    borderWidth: 2,
-    shadowColor: '#2563EB',
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
+  circleBoxActive: {
+    borderWidth: 2.5,
+    borderColor: '#2563EB',
+    transform: [{ scale: 1.05 }],
   },
-  iconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
-  },
-  cardLabel: {
-    color: '#1E293B',
+  categoryLabel: {
+    color: '#334155',
     fontSize: 11,
     fontWeight: '700',
     textAlign: 'center',
   },
-  cardLabelActive: {
+  categoryLabelActive: {
     color: '#2563EB',
     fontWeight: '800',
   },

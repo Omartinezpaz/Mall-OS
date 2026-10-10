@@ -15,17 +15,25 @@ import {
   type IsometricMapHandle,
   isStoreOpenAt,
 } from '../../src/features/map/IsometricMap';
-import { FlatMapCanvas } from '../../src/features/map/FlatMapCanvas';
+import {
+  FlatMapCanvas,
+  type FlatMapCanvasHandle,
+} from '../../src/features/map/FlatMapCanvas';
 import { StorefrontHUD } from '../../src/features/map/StorefrontHUD';
 import { VerticalFloorSelector } from '../../src/features/map/VerticalFloorSelector';
 import { NavigationHUD } from '../../src/features/map/NavigationHUD';
 import { DestinationBar } from '../../src/features/map/DestinationBar';
 import { MapSearchBar, SEARCH_CATEGORIES } from '../../src/features/map/MapSearchBar';
+import { MapOffersCarousel } from '../../src/features/map/MapOffersCarousel';
 import { GlassSurface } from '../../src/components/GlassSurface';
 import { AppIcon } from '../../src/components/AppIcon';
+import { MallOsSpriteIcon } from '../../src/components/MallOsSpriteIcon';
+import { useAccessibleMode } from '../../src/features/accessible/useAccessibleMode';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
 import { useKidsMode } from '../../src/features/kids-mode/useKidsMode';
 import { KidsArrivalCard } from '../../src/features/kids-mode/KidsArrivalCard';
+import { notifyStoreArrival } from '../../src/features/concierge/useConcierge';
+import { track } from '../../src/lib/analytics';
 
 
 import { useStepProgress } from '../../src/features/map/useStepProgress';
@@ -51,6 +59,7 @@ import { categoryPalette } from '@mallos/design-tokens';
 export default function MapaScreen() {
   const router = useRouter();
   const mapRef = useRef<IsometricMapHandle | null>(null);
+  const flatMapRef = useRef<FlatMapCanvasHandle | null>(null);
   const insets = useSafeAreaInsets();
   const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 24);
 
@@ -65,6 +74,7 @@ export default function MapaScreen() {
   const kids = useKidsMode();
   const isKidsMode = (Array.isArray(params.kidsMode) ? params.kidsMode[0] : params.kidsMode) === 'true';
   const lastHandledTokenRef = useRef<string | null>(null);
+  const { isAccessibleMode, toggleAccessibleMode } = useAccessibleMode();
 
   // Estados interactivos
   const [mapMode, setMapMode] = useState<'guide' | 'explore'>('guide');
@@ -77,6 +87,7 @@ export default function MapaScreen() {
   const [isNavigating, setIsNavigating] = useState<boolean>(false);
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(true);
   const [showStorefrontHUD, setShowStorefrontHUD] = useState<boolean>(false);
+  const [hasArrived, setHasArrived] = useState<boolean>(false);
   const [showKidsArrival, setShowKidsArrival] = useState<boolean>(false);
   const [kidsAudioPhase, setKidsAudioPhase] = useState<'idle' | 'intro' | 'arrival' | 'done'>('idle');
   const [activeRoute, setActiveRoute] = useState<RouteResult | null>(null);
@@ -106,7 +117,9 @@ export default function MapaScreen() {
   // Tienda seleccionada y metadatos
   const selectedStore = useMemo(() => {
     if (!selectedStoreId) return null;
-    const storeFromMall = sambilMall.stores.find((s) => s.id === selectedStoreId);
+    const storeFromMall = sambilMall.stores.find(
+      (s) => s.id === selectedStoreId || s.slug === selectedStoreId || s.aliases?.includes(selectedStoreId)
+    );
     const pilotStore = PILOT_STORES.find(
       (s) => s.id === selectedStoreId || s.slug === selectedStoreId
     );
@@ -140,9 +153,13 @@ export default function MapaScreen() {
     }
 
     if (storeFromMall) {
+      const rawName = storeFromMall.name || '';
+      const isLegible = !rawName.toLowerCase().includes('no legible') && rawName.trim().length > 0;
+      const cleanName = isLegible ? rawName : (pilotStore?.name || `Local ${storeFromMall.id.toUpperCase()}`);
+
       return {
         id: storeFromMall.id,
-        name: storeFromMall.name,
+        name: cleanName,
         category: storeFromMall.category,
         unit: `Local ${storeFromMall.id.toUpperCase()}`,
         floor: floorNum,
@@ -169,12 +186,22 @@ export default function MapaScreen() {
   // Cálculo de ruta Dijkstra hacia la tienda seleccionada
   useEffect(() => {
     if (isNavigating && selectedStoreId) {
-      const calculatedRoute = findRouteToStore(sambilMall, userStartNodeId, selectedStoreId);
+      const calculatedRoute = findRouteToStore(sambilMall, userStartNodeId, selectedStoreId, {
+        accessibleOnly: isAccessibleMode,
+      });
       setActiveRoute(calculatedRoute);
+      if (calculatedRoute) {
+        track('map_route_calculated', {
+          toStoreId: selectedStoreId,
+          storeName: selectedStore?.name,
+          isAccessible: isAccessibleMode,
+          distanceMeters: Math.round(calculatedRoute.distanceMeters),
+        });
+      }
     } else {
       setActiveRoute(null);
     }
-  }, [isNavigating, selectedStoreId, userStartNodeId]);
+  }, [isNavigating, selectedStoreId, userStartNodeId, isAccessibleMode, selectedStore?.name]);
 
   // Hook de simulación de caminata con trail, heading y controles
   const walk = useWalkSimulation({
@@ -191,11 +218,10 @@ export default function MapaScreen() {
         Vibration.vibrate([0, 100, 50, 100]);
       } catch {}
 
-      // Fijar nodo de llegada de forma síncrona
+      // Fijar nodo de llegada de forma síncrona para futuras rutas sin destruir la ruta actual
       if (activeRoute && activeRoute.nodeIds.length > 0) {
         const lastNode = activeRoute.nodeIds[activeRoute.nodeIds.length - 1];
         currentUserNodeIdRef.current = lastNode;
-        setUserStartNodeId(lastNode);
       }
 
       // Si estamos en Modo Niño, abrir KidsArrivalCard con locución especial de misión
@@ -213,28 +239,29 @@ export default function MapaScreen() {
           onDone: () => setKidsAudioPhase('done'),
           onError: () => setKidsAudioPhase('done'),
         });
+        track('map_arrival', { storeId: selectedStoreId, storeName: arrivalStoreName, mode: 'kids' });
       } else {
         setShowKidsArrival(false);
-        setShowStorefrontHUD(false);
+        setHasArrived(true);
+        // Permitir que el usuario aprecie la llegada a la puerta con el badge de destino alcanzado
         setTimeout(() => {
           setShowStorefrontHUD(true);
-        }, 2000);
+        }, 850);
+        if (selectedStoreId) {
+          notifyStoreArrival(selectedStoreId, selectedStore?.name);
+          track('map_arrival', { storeId: selectedStoreId, storeName: selectedStore?.name, mode: 'standard' });
+        }
       }
     },
   });
 
-  // Al comenzar a caminar, orientar automáticamente hacia la marcha del avatar (Google Maps style)
-  useEffect(() => {
-    if (walk.isWalking) {
-      setGuideOrientationMode('heading-up');
-    }
-  }, [walk.isWalking]);
-
   // Generación de plan de navegación paso a paso
   const navigationPlan = useMemo(() => {
     if (!activeRoute) return null;
-    return generateNavigationPlan(sambilMall, activeRoute, selectedStoreId ?? undefined);
-  }, [activeRoute, selectedStoreId]);
+    return generateNavigationPlan(sambilMall, activeRoute, selectedStoreId ?? undefined, {
+      accessibleOnly: isAccessibleMode,
+    });
+  }, [activeRoute, selectedStoreId, isAccessibleMode]);
 
   // Seguimiento de paso actual y porcentaje con useStepProgress
   const stepProgress = useStepProgress(navigationPlan, walk.position, currentFloorNodes);
@@ -249,9 +276,9 @@ export default function MapaScreen() {
       .map((s) => s.id);
   }, [activeCategory]);
 
-  // Limpiar la línea de recorrido una vez que se llega al destino
-  const isArrivalReached = !walk.isWalking && (walk.walkProgress >= 0.98 || walk.arrivalMessage !== null || showStorefrontHUD);
-  const effectiveRouteNodeIds = (isArrivalReached || !isNavigating) ? undefined : activeRoute?.nodeIds;
+  // Mantener la línea de recorrido visible durante toda la navegación (incluso al llegar a destino hasta que se cierre)
+  const isArrivalReached = hasArrived || (!walk.isWalking && (walk.walkProgress >= 0.95 || walk.arrivalMessage !== null));
+  const effectiveRouteNodeIds = !isNavigating ? undefined : activeRoute?.nodeIds;
 
   // Escena plana 2D optimizada (Modo Guía)
   const flatScene = useMemo(() => {
@@ -266,9 +293,10 @@ export default function MapaScreen() {
       userTrail: walk.trail,
       zoom: 1,
       labels: 'auto',
-      offers: DEMO_SAMBIL_OFFERS,
+      offers: activeCategory === 'offers' ? DEMO_SAMBIL_OFFERS : undefined,
+      accessibleOnly: isAccessibleMode,
     });
-  }, [selectedLevel, isNavigating, selectedStoreId, highlightedStoreIds, effectiveRouteNodeIds, walk.position, walk.heading, walk.trail]);
+  }, [selectedLevel, isNavigating, selectedStoreId, highlightedStoreIds, effectiveRouteNodeIds, walk.position, walk.heading, walk.trail, activeCategory, isAccessibleMode]);
 
   // Conteo de tiendas del piso seleccionado y horarios
   const currentFloorStores = useMemo(() => {
@@ -282,15 +310,16 @@ export default function MapaScreen() {
   // Manejar selección de tienda desde mapa o búsqueda
   const handleSelectStore = useCallback((storeId: string, customOriginStoreId?: string) => {
     setActiveCategory(null);
-    const store = sambilMall.stores.find((s) => s.id === storeId || s.slug === storeId);
+    const store = sambilMall.stores.find((s) => s.id === storeId || s.slug === storeId || s.aliases?.includes(storeId));
     const targetFloorId = store?.floorId ?? selectedLevel;
+    const canonicalStoreId = store ? store.id : storeId;
 
     // Calcular el nodo origen exacto
     let originNodeId = currentUserNodeIdRef.current;
 
     // Si se especifica una tienda de origen previa (ej. estación anterior del Modo Niño)
     if (customOriginStoreId) {
-      const originStore = sambilMall.stores.find((s) => s.id === customOriginStoreId || s.slug === customOriginStoreId);
+      const originStore = sambilMall.stores.find((s) => s.id === customOriginStoreId || s.slug === customOriginStoreId || s.aliases?.includes(customOriginStoreId));
       if (originStore?.doorNodeId) {
         originNodeId = originStore.doorNodeId;
         if (originStore.floorId !== selectedLevel) {
@@ -312,17 +341,20 @@ export default function MapaScreen() {
     setUserStartNodeId(originNodeId);
 
     // Calcular la ruta inmediatamente para evitar lag de estado
-    const nextRoute = findRouteToStore(sambilMall, originNodeId, storeId);
+    const nextRoute = findRouteToStore(sambilMall, originNodeId, canonicalStoreId, {
+      accessibleOnly: isAccessibleMode,
+    });
     setActiveRoute(nextRoute);
 
     walk.stopWalk();
     walk.resetWalk();
-    setSelectedStoreId(storeId);
+    setHasArrived(false);
+    setSelectedStoreId(canonicalStoreId);
     setIsNavigating(true);
     setShowStorefrontHUD(false);
     setShowKidsArrival(false);
-    mapRef.current?.focusOnStore(storeId);
-  }, [selectedLevel, walk]);
+    mapRef.current?.focusOnStore(canonicalStoreId);
+  }, [selectedLevel, walk, isAccessibleMode]);
 
   // Auto-selección y enrutamiento cuando se navega con parámetros (ej. Modo Niño)
   useEffect(() => {
@@ -342,15 +374,20 @@ export default function MapaScreen() {
     if (lastHandledTokenRef.current === currentToken) return;
     lastHandledTokenRef.current = currentToken;
 
+    const resolvedStore = sambilMall.stores.find(
+      (s) => s.id === rawStoreId || s.slug === rawStoreId || s.aliases?.includes(rawStoreId)
+    );
+    const targetStoreId = resolvedStore ? resolvedStore.id : rawStoreId;
+
     // 1. Trazar ruta hacia la tienda directamente respetando la tienda de partida previa
-    handleSelectStore(rawStoreId, rawOriginStoreId || undefined);
+    handleSelectStore(targetStoreId, rawOriginStoreId || undefined);
 
     // 2. Si viene de Modo Niño, reproducir la bienvenida motivacional de aventura con prioridad
     if (isKids) {
       setKidsAudioPhase('intro');
       setShowKidsArrival(false);
       const stationNumber = activeKidsRiddle?.number ?? 1;
-      const targetStore = sambilMall.stores.find((s) => s.id === rawStoreId || s.slug === rawStoreId);
+      const targetStore = sambilMall.stores.find((s) => s.id === rawStoreId || s.slug === rawStoreId || s.aliases?.includes(rawStoreId));
       const targetStoreName = targetStore?.name || activeKidsRiddle?.storeName || 'tu destino';
       const adventureGreeting = stationNumber === 1
         ? `¡Estamos listos para empezar esta gran aventura! ¿Estás listo, ${targetPlayerName}? Sigue la ruta en el mapa hacia ${targetStoreName}.`
@@ -385,23 +422,30 @@ export default function MapaScreen() {
 
   // Salir del modo navegación
   const handleExitNavigation = useCallback(() => {
+    if (activeRoute && activeRoute.nodeIds.length > 0 && hasArrived) {
+      const lastNode = activeRoute.nodeIds[activeRoute.nodeIds.length - 1];
+      setUserStartNodeId(lastNode);
+    }
     walk.stopWalk();
     walk.resetWalk();
+    setHasArrived(false);
     setIsNavigating(false);
     setShowStorefrontHUD(false);
     setShowKidsArrival(false);
     setActiveRoute(null);
-  }, [walk]);
+  }, [walk, activeRoute, hasArrived]);
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#090D16" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       {/* Renderizado de Mapa según el modo activo */}
       <View style={StyleSheet.absoluteFillObject}>
         {mapMode === 'guide' ? (
           <FlatMapCanvas
+            ref={flatMapRef}
             scene={flatScene}
+            floorId={selectedLevel}
             userPosition={walk.position}
             userHeading={walk.heading}
             userTrail={walk.trail}
@@ -413,6 +457,8 @@ export default function MapaScreen() {
             }
             showCompass={true}
             followUser={followUser}
+            isNavigating={isNavigating}
+            walkProgress={walk.walkProgress}
           />
         ) : (
           <IsometricMap
@@ -452,7 +498,7 @@ export default function MapaScreen() {
               plan={navigationPlan}
               currentStepIndex={stepProgress.currentStepIndex}
               progress={stepProgress.progress}
-              voiceEnabled={voiceEnabled && kidsAudioPhase === 'idle' && walk.isWalking}
+              voiceEnabled={voiceEnabled && kidsAudioPhase === 'idle'}
               isWalking={walk.isWalking}
               onVoiceToggle={() => setVoiceEnabled((v) => !v)}
               onCancel={handleExitNavigation}
@@ -466,6 +512,12 @@ export default function MapaScreen() {
                 <Text style={styles.brandSubtitle}>
                   {openFloorCount} de {currentFloorStores.length} locales · {timeFormatted}
                 </Text>
+                {isAccessibleMode && (
+                  <View style={styles.accessibleBadge}>
+                    <MallOsSpriteIcon name="accesible" size={11} showCircle={false} color="#0284C7" />
+                    <Text style={styles.accessibleBadgeText}>Modo Accesible</Text>
+                  </View>
+                )}
               </View>
 
               {/* Selector de Piso y Selector de Modo Guía 2D vs Explorar 2.5D */}
@@ -487,14 +539,17 @@ export default function MapaScreen() {
                     onPress={() => setMapMode('guide')}
                     activeOpacity={0.8}
                   >
-                    <Text
-                      style={[
-                        styles.modeSwitchText,
-                        mapMode === 'guide' && styles.modeSwitchTextActive,
-                      ]}
-                    >
-                      🧭 2D
-                    </Text>
+                    <View style={styles.modeSwitchInner}>
+                      <AppIcon name="navigate" size={12} color={mapMode === 'guide' ? '#FFFFFF' : '#64748B'} />
+                      <Text
+                        style={[
+                          styles.modeSwitchText,
+                          mapMode === 'guide' && styles.modeSwitchTextActive,
+                        ]}
+                      >
+                        2D
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[
@@ -504,14 +559,17 @@ export default function MapaScreen() {
                     onPress={() => setMapMode('explore')}
                     activeOpacity={0.8}
                   >
-                    <Text
-                      style={[
-                        styles.modeSwitchText,
-                        mapMode === 'explore' && styles.modeSwitchTextActive,
-                      ]}
-                    >
-                      📐 2.5D
-                    </Text>
+                    <View style={styles.modeSwitchInner}>
+                      <AppIcon name="layers" size={12} color={mapMode === 'explore' ? '#FFFFFF' : '#64748B'} />
+                      <Text
+                        style={[
+                          styles.modeSwitchText,
+                          mapMode === 'explore' && styles.modeSwitchTextActive,
+                        ]}
+                      >
+                        2.5D
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -548,80 +606,101 @@ export default function MapaScreen() {
         </View>
       )}
 
-      {/* Controles de Vista de Mapa (Modo Switcher / Zoom / Perspectiva) */}
-      {!isNavigating && !showStorefrontHUD && (
-        <View style={styles.mapControls}>
+      {/* Controles Cilíndricos Verticales del Lado Derecho (Zoom In, Zoom Out, GPS) */}
+      {!showStorefrontHUD && !showKidsArrival && (
+        <View style={[styles.rightFloatingControls, isNavigating && { bottom: 155 }]}>
+          {/* Botones de Zoom In / Zoom Out Cilíndricos */}
+          <View style={styles.cyberControlPill}>
+            <TouchableOpacity
+              style={styles.cyberZoomBtn}
+              onPress={() => {
+                if (mapMode === 'guide') {
+                  flatMapRef.current?.zoomIn();
+                } else {
+                  mapRef.current?.zoomIn();
+                }
+              }}
+              activeOpacity={0.75}
+            >
+              <AppIcon name="add" size={18} color="#1E293B" strokeWidth={2.5} />
+            </TouchableOpacity>
+
+            <View style={styles.cyberDivider} />
+
+            <TouchableOpacity
+              style={styles.cyberZoomBtn}
+              onPress={() => {
+                if (mapMode === 'guide') {
+                  flatMapRef.current?.zoomOut();
+                } else {
+                  mapRef.current?.zoomOut();
+                }
+              }}
+              activeOpacity={0.75}
+            >
+              <AppIcon name="remove" size={18} color="#1E293B" strokeWidth={2.5} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Botón Recentrado / GPS */}
           <TouchableOpacity
-            style={[styles.controlBtn, mapMode === 'guide' && styles.controlBtnActive]}
-            onPress={() => setMapMode((m) => (m === 'guide' ? 'explore' : 'guide'))}
-            activeOpacity={0.7}
+            style={[
+              styles.cyberGpsBtn,
+              followUser && styles.cyberGpsBtnActive,
+            ]}
+            onPress={() => {
+              setFollowUser(true);
+              if (mapMode === 'guide') {
+                flatMapRef.current?.recenterOnUser();
+              } else {
+                mapRef.current?.recenterOnUser();
+              }
+            }}
+            activeOpacity={0.8}
           >
             <AppIcon
-              name={mapMode === 'guide' ? 'map' : 'cube'}
+              name="navigate"
               size={18}
-              color="#FFFFFF"
+              color={followUser ? '#E11D48' : '#64748B'}
+              strokeWidth={2.2}
             />
           </TouchableOpacity>
 
-          {mapMode === 'explore' && (
-            <>
-              <TouchableOpacity
-                style={styles.controlBtn}
-                onPress={() => mapRef.current?.zoomIn()}
-                activeOpacity={0.7}
-              >
-                <AppIcon name="add" size={20} color="#FFFFFF" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.controlBtn}
-                onPress={() => mapRef.current?.zoomOut()}
-                activeOpacity={0.7}
-              >
-                <AppIcon name="remove" size={20} color="#FFFFFF" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.controlBtn}
-                onPress={() => {
-                  setCameraMode((prev) =>
-                    prev === 'ground' ? 'isometric' : prev === 'isometric' ? 'aerial' : 'ground'
-                  );
-                }}
-                activeOpacity={0.7}
-              >
-                <AppIcon
-                  name={cameraMode === 'ground' ? 'eye' : cameraMode === 'isometric' ? 'cube' : 'map'}
-                  size={16}
-                  color="#FFFFFF"
-                />
-              </TouchableOpacity>
-            </>
-          )}
+          {/* Botón Modo Accesible Global */}
+          <TouchableOpacity
+            style={[
+              styles.cyberGpsBtn,
+              isAccessibleMode && styles.cyberAccessibleBtnActive,
+            ]}
+            onPress={() => {
+              try {
+                Vibration.vibrate(40);
+              } catch {}
+              const nextVal = toggleAccessibleMode();
+              track('map_accessible_mode_toggled', { enabled: nextVal });
+              audioManager.speak({
+                text: nextVal
+                  ? 'Modo accesible activado. Rutas por ascensores panorámicos y rampas.'
+                  : 'Modo accesible desactivado.',
+                priority: 'low',
+                language: 'es-VE',
+                pitch: 1.0,
+                rate: 1.0,
+              });
+            }}
+            activeOpacity={0.8}
+            accessibilityLabel="Alternar Modo Accesible"
+          >
+            <MallOsSpriteIcon
+              name="accesible"
+              size={18}
+              showCircle={false}
+              color={isAccessibleMode ? '#FFFFFF' : '#0284C7'}
+            />
+          </TouchableOpacity>
         </View>
       )}
 
-      {/* Botón Flotante de Recentrado / GPS (Bottom Right - Clean Marketplace) */}
-      {!showStorefrontHUD && (
-        <TouchableOpacity
-          style={[
-            styles.recenterFab,
-            { bottom: isNavigating ? 96 : 30 },
-            followUser && styles.recenterFabActive,
-          ]}
-          onPress={() => {
-            setFollowUser(true);
-            if (mapMode === 'explore') {
-              mapRef.current?.recenterOnUser();
-            }
-          }}
-          activeOpacity={0.8}
-        >
-          <AppIcon
-            name="navigate"
-            size={18}
-            color={followUser ? '#38BDF8' : '#FFFFFF'}
-          />
-        </TouchableOpacity>
-      )}
 
       {/* Toast flotante de Notificación de Llegada */}
       {walk.arrivalMessage && !showStorefrontHUD && (
@@ -719,7 +798,7 @@ export default function MapaScreen() {
       {/* Bottom Sheet Vitrina Digital completa */}
       {showStorefrontHUD && !showKidsArrival && selectedStore && (
         <StorefrontHUD
-          store={sambilMall.stores.find((s) => s.id === selectedStoreId) ?? null}
+          store={sambilMall.stores.find((s) => s.id === selectedStoreId) ?? (selectedStore as any)}
           offers={DEMO_SAMBIL_OFFERS}
           floorName={selectedStore.floorName}
           onClose={() => setShowStorefrontHUD(false)}
@@ -728,10 +807,25 @@ export default function MapaScreen() {
             handleSelectStore(id);
             walk.startWalk();
           }}
+          onOpenStoreDetail={(id) => {
+            router.push(`/local/${id}`);
+          }}
+          isArrived={isArrivalReached}
         />
       )}
 
-      {/* Explore Mode Bottom Store Preview Pill */}
+      {/* Bottom "Ofertas Flash (EN VIVO)" Carousel cuando no se navega */}
+      {!isNavigating && !showStorefrontHUD && !showKidsArrival && !selectedStore && (
+        <View style={styles.offersCarouselWrapper}>
+          <MapOffersCarousel
+            onSelectOffer={(storeId) => {
+              handleSelectStore(storeId);
+            }}
+          />
+        </View>
+      )}
+
+      {/* Explore Mode Bottom Store Preview Pill (cuando se selecciona un local) */}
       {!isNavigating && !showStorefrontHUD && !showKidsArrival && selectedStore && (
         <View style={styles.exploreBottomPillWrapper}>
           <TouchableOpacity
@@ -748,7 +842,7 @@ export default function MapaScreen() {
               style={styles.exploreBottomPill}
             >
               <View style={styles.explorePillIconBox}>
-                <AppIcon name="storefront" size={18} color="#818CF8" />
+                <AppIcon name="storefront" size={18} color="#F43F5E" />
               </View>
               <View style={styles.explorePillInfo}>
                 <Text style={styles.explorePillTitle}>{selectedStore.name}</Text>
@@ -756,9 +850,8 @@ export default function MapaScreen() {
                   {selectedStore.floorName} · Toca para ver vitrina y trazar ruta
                 </Text>
               </View>
-              <AppIcon name="chevron-forward" size={18} color="#38BDF8" strokeWidth={2.5} />
+              <AppIcon name="chevron-forward" size={18} color="#F43F5E" strokeWidth={2.5} />
             </GlassSurface>
-
           </TouchableOpacity>
         </View>
       )}
@@ -770,7 +863,7 @@ export default function MapaScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: '#FFFFFF',
     position: 'relative',
   },
   topSafeArea: {
@@ -795,26 +888,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   brandBadge: {
-    backgroundColor: 'rgba(15, 23, 42, 0.92)',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(51, 65, 85, 0.7)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 6,
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   brandTitle: {
-    color: '#38BDF8',
+    color: '#2563EB', // Azul Cobalto
     fontSize: 12,
     fontWeight: '900',
-    letterSpacing: 1,
+    letterSpacing: 0.8,
   },
   brandSubtitle: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 10,
     fontWeight: '600',
     marginTop: 2,
@@ -826,96 +919,151 @@ const styles = StyleSheet.create({
   },
   modeSwitchContainer: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(15, 23, 42, 0.92)',
-    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 3,
-    borderWidth: 1,
-    borderColor: 'rgba(51, 65, 85, 0.7)',
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
   modeSwitchBtn: {
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 10,
+    borderRadius: 12,
   },
   modeSwitchBtnActive: {
     backgroundColor: '#2563EB',
   },
+  modeSwitchInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
   modeSwitchText: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 11,
     fontWeight: '700',
   },
   modeSwitchTextActive: {
     color: '#FFFFFF',
+    fontWeight: '800',
   },
   verticalFloorWrapperNav: {
     position: 'absolute',
     right: 14,
     zIndex: 35,
   },
-  recenterFab: {
+  rightFloatingControls: {
     position: 'absolute',
     right: 14,
+    bottom: 120,
+    alignItems: 'center',
+    gap: 12,
+    zIndex: 40,
+  },
+  cyberControlPill: {
+    width: 44,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
+    overflow: 'hidden',
+    alignItems: 'center',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  cyberFloorBtn: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cyberFloorBtnActive: {
+    backgroundColor: '#FFE4E6',
+  },
+  cyberFloorText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#64748B',
+  },
+  cyberFloorTextActive: {
+    color: '#E11D48',
+    fontWeight: '900',
+  },
+  cyberZoomBtn: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cyberDivider: {
+    width: 28,
+    height: 1,
+    backgroundColor: '#E2E8F0',
+  },
+  cyberGpsBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#334155',
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 6,
-    zIndex: 35,
+    elevation: 4,
   },
-  recenterFabActive: {
-    backgroundColor: '#0F172A',
-    borderColor: '#38BDF8',
-    shadowColor: '#38BDF8',
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 8,
+  cyberGpsBtnActive: {
+    borderColor: '#E11D48',
+    backgroundColor: '#FFF1F2',
+    shadowColor: '#E11D48',
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  mapControls: {
-    position: 'absolute',
-    left: 12,
-    bottom: 30,
-    backgroundColor: 'rgba(15, 23, 42, 0.92)',
-    borderRadius: 16,
+  cyberAccessibleBtnActive: {
+    borderColor: '#0284C7',
+    backgroundColor: '#0284C7',
+    shadowColor: '#0284C7',
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  accessibleBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#E0F2FE',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 8,
+    marginTop: 4,
+    alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: 'rgba(51, 65, 85, 0.8)',
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-    zIndex: 30,
+    borderColor: 'rgba(2, 132, 199, 0.25)',
   },
-  controlBtn: {
-    width: 42,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(51, 65, 85, 0.5)',
+  accessibleBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#0284C7',
   },
-  controlBtnActive: {
-    backgroundColor: 'rgba(99, 102, 241, 0.35)',
-  },
-  controlText: {
-    color: '#F8FAFC',
-    fontSize: 20,
-    fontWeight: '700',
-  },
-  controlIcon: {
-    fontSize: 16,
-  },
-  controlIconActive: {
-    fontSize: 18,
+
+  offersCarouselWrapper: {
+    position: 'absolute',
+    bottom: 12,
+    left: 0,
+    right: 0,
+    zIndex: 35,
   },
   arrivalToast: {
     position: 'absolute',

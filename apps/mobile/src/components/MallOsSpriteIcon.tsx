@@ -122,6 +122,22 @@ export function MallOsSpriteIcon({
           </G>
         );
 
+      case 'cafeteria':
+        return (
+          <G fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M6 9h10v6a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V9Z" />
+            <Path d="M16 11h2a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2h-2M5 21h12M9 5v2M13 5v2" />
+          </G>
+        );
+
+      case 'bebidas':
+        return (
+          <G fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="m6 8 1.5 12a2 2 0 0 0 2 1.8h5a2 2 0 0 0 2-1.8L18 8H6Z" />
+            <Path d="M5 8h14M15 4l-2 4" />
+          </G>
+        );
+
       case 'libreria':
         return (
           <G fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -222,6 +238,15 @@ export function MallOsSpriteIcon({
           <G fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <Rect x="6" y="4" width="12" height="16" rx="2" />
             <Path d="m10 10 2-2 2 2M10 14l2 2 2-2" />
+          </G>
+        );
+
+      case 'accesible':
+        return (
+          <G fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <Circle cx="12" cy="5" r="2" />
+            <Path d="M10 9h4l-.8 5.5H16l1 4.5" />
+            <Path d="M8 12.5a5 5 0 1 0 7 4.5" />
           </G>
         );
 

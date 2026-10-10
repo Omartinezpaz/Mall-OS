@@ -25,15 +25,17 @@ test('buildFlatScene: sin viewport usa el centro del piso', () => {
   assert.equal(scene.viewBox.y + scene.viewBox.h / 2, 130);
 });
 
-test('buildFlatScene: con userPosition usa esa posición como centro', () => {
+test('buildFlatScene: con userPosition genera el pin de usuario en esas coordenadas', () => {
   const scene = buildFlatScene(demoMall, {
     floorId: 'floor-1',
     palette,
     userPosition: { x: 100, y: 50 },
     zoom: 1,
   });
-  assert.equal(scene.viewBox.x + scene.viewBox.w / 2, 100);
-  assert.equal(scene.viewBox.y + scene.viewBox.h / 2, 50);
+  const userPin = scene.items.find((i) => i.kind === 'userPin') as any;
+  assert.ok(userPin);
+  assert.equal(userPin.x, 100);
+  assert.equal(userPin.y, 50);
 });
 
 test('buildFlatScene: culling oculta locales fuera del viewport', () => {

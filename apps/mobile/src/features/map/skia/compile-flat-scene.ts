@@ -12,6 +12,9 @@ import type {
   FlatDestinationPin,
   FlatLabel,
   FlatOfferBadge,
+  FlatProp,
+  FlatPoi,
+  FlatPedestrian,
   Point,
   Rect,
 } from '@mallos/map-engine';
@@ -40,9 +43,14 @@ export interface CompiledFlatZone {
 }
 
 export interface CompiledFlatRoute {
+  fullPath: SkPath | null;
   immediatePath: SkPath | null;
   remainingPath: SkPath | null;
   points: Point[];
+  chevrons: Array<{
+    path: SkPath;
+    isImmediate: boolean;
+  }>;
 }
 
 export interface CompiledFlatVisionCone {
@@ -60,6 +68,9 @@ export interface CompiledFlatScene {
   zones: CompiledFlatZone[];
   stores: CompiledFlatStore[];
   plazas: FlatPlaza[];
+  props: FlatProp[];
+  pois: FlatPoi[];
+  pedestrians: FlatPedestrian[];
   routes: CompiledFlatRoute[];
   visionCones: CompiledFlatVisionCone[];
   userTrails: CompiledFlatUserTrailSegment[][];
@@ -84,6 +95,35 @@ function pointsToSkPath(pts: Point[], close = true): SkPath | null {
   return path;
 }
 
+function makeChevronPath(x: number, y: number, angle: number, size = 6.2): SkPath {
+  const path = Skia.Path.Make();
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  // Vértice frontal (punta ancha del chevron hacia adelante)
+  const tipX = x + cos * (size * 0.95);
+  const tipY = y + sin * (size * 0.95);
+
+  // Ala izquierda (retrocedida y extendida lateralmente por el pasillo)
+  const leftX = x - cos * (size * 0.65) - sin * (size * 0.85);
+  const leftY = y - sin * (size * 0.65) + cos * (size * 0.85);
+
+  // Muesca central interior
+  const notchX = x - cos * (size * 0.15);
+  const notchY = y - sin * (size * 0.15);
+
+  // Ala derecha (retrocedida y extendida lateralmente por el pasillo)
+  const rightX = x - cos * (size * 0.65) + sin * (size * 0.85);
+  const rightY = y - sin * (size * 0.65) - cos * (size * 0.85);
+
+  path.moveTo(tipX, tipY);
+  path.lineTo(leftX, leftY);
+  path.lineTo(notchX, notchY);
+  path.lineTo(rightX, rightY);
+  path.close();
+  return path;
+}
+
 /**
  * Compila una FlatScene a primitivas Skia 2D inmutables en memoria GPU.
  * Se ejecuta una sola vez cuando cambian los datos o filtros de la escena.
@@ -93,6 +133,9 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
   const zones: CompiledFlatZone[] = [];
   const stores: CompiledFlatStore[] = [];
   const plazas: FlatPlaza[] = [];
+  const props: FlatProp[] = [];
+  const pois: FlatPoi[] = [];
+  const pedestrians: FlatPedestrian[] = [];
   const routes: CompiledFlatRoute[] = [];
   const visionCones: CompiledFlatVisionCone[] = [];
   const userTrails: CompiledFlatUserTrailSegment[][] = [];
@@ -141,13 +184,42 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
         plazas.push(item);
         break;
       }
+      case 'prop': {
+        props.push(item);
+        break;
+      }
+      case 'poi': {
+        pois.push(item);
+        break;
+      }
+      case 'pedestrian': {
+        pedestrians.push(item);
+        break;
+      }
       case 'route': {
         const immPts = item.points.slice(0, item.immediatePointCount);
         const remPts = item.points.slice(Math.max(0, item.immediatePointCount - 1));
+        const fullPath = pointsToSkPath(item.points, false);
+        const immPath = pointsToSkPath(immPts, false);
+        const remPath = pointsToSkPath(remPts, false);
+
+        const compiledChevrons: Array<{ path: SkPath; isImmediate: boolean }> = [];
+        if (item.chevrons) {
+          for (const ch of item.chevrons) {
+            const cp = makeChevronPath(ch.x, ch.y, ch.angle, 3.8);
+            compiledChevrons.push({
+              path: cp,
+              isImmediate: ch.isImmediate,
+            });
+          }
+        }
+
         routes.push({
-          immediatePath: pointsToSkPath(immPts, false),
-          remainingPath: pointsToSkPath(remPts, false),
+          fullPath,
+          immediatePath: immPath,
+          remainingPath: remPath,
           points: item.points,
+          chevrons: compiledChevrons,
         });
         break;
       }
@@ -198,6 +270,9 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
     zones,
     stores,
     plazas,
+    props,
+    pois,
+    pedestrians,
     routes,
     visionCones,
     userTrails,

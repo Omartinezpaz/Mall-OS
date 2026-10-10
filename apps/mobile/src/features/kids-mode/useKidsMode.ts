@@ -8,6 +8,8 @@ import {
   KIDS_RIDDLES,
   KIDS_PRIZES,
 } from './kids-data';
+import { notifyStoreArrival } from '../concierge/useConcierge';
+import { track } from '../../lib/analytics';
 
 export interface KidsModeState {
   ageGroup: AgeGroup | null;
@@ -47,17 +49,20 @@ let globalState: KidsModeState = { ...DEFAULT_STATE };
 const listeners = new Set<(state: KidsModeState) => void>();
 
 const KIDS_STORAGE_FILE = `${FileSystem.documentDirectory ?? ''}kids_mode_state_v1.json`;
+const KIDS_PERSISTENCE_TTL_MS = 12 * 60 * 60 * 1000; // 12 Horas de persistencia activa
+let lastKidsInteractionTimestamp = Date.now();
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
 function schedulePersist() {
   if (saveTimer) clearTimeout(saveTimer);
+  lastKidsInteractionTimestamp = Date.now();
   saveTimer = setTimeout(async () => {
     try {
       if (!FileSystem.documentDirectory) return;
       const data = JSON.stringify({
         version: 1,
         state: globalState,
-        savedAt: Date.now(),
+        savedAt: lastKidsInteractionTimestamp,
       });
       await FileSystem.writeAsStringAsync(KIDS_STORAGE_FILE, data);
     } catch {
@@ -75,17 +80,33 @@ export async function hydrateKidsModeFromStorage(): Promise<void> {
     const raw = await FileSystem.readAsStringAsync(KIDS_STORAGE_FILE);
     const parsed = JSON.parse(raw);
     if (parsed && parsed.version === 1 && parsed.state) {
+      const now = Date.now();
+      const savedAt = typeof parsed.savedAt === 'number' ? parsed.savedAt : 0;
+      const isExpired = now - savedAt > KIDS_PERSISTENCE_TTL_MS;
+
+      if (isExpired) {
+        // Han pasado más de 12 horas: limpiar almacenamiento y reiniciar de cero
+        await clearKidsModeStorage();
+        globalState = { ...DEFAULT_STATE };
+        lastKidsInteractionTimestamp = now;
+        notifyListeners();
+        return;
+      }
+
       const s = parsed.state;
       if (s.ageGroup === null || ['child', 'teen', 'young'].includes(s.ageGroup)) {
         globalState = {
           ...DEFAULT_STATE,
           ...s,
         };
+        lastKidsInteractionTimestamp = savedAt;
         notifyListeners();
       }
     }
   } catch {
     // Si el archivo está corrupto, arranca con estado default
+    globalState = { ...DEFAULT_STATE };
+    notifyListeners();
   }
 }
 
@@ -117,6 +138,16 @@ export function useKidsMode() {
 
   useEffect(() => {
     listeners.add(setState);
+
+    // Si la app estuvo en background o suspendida más de 12 horas, reiniciar
+    const now = Date.now();
+    if (globalState.ageGroup && now - lastKidsInteractionTimestamp > KIDS_PERSISTENCE_TTL_MS) {
+      globalState = { ...DEFAULT_STATE };
+      lastKidsInteractionTimestamp = now;
+      notifyListeners();
+      clearKidsModeStorage().catch(() => {});
+    }
+
     return () => {
       listeners.delete(setState);
     };
@@ -142,6 +173,7 @@ export function useKidsMode() {
       };
       notifyListeners();
       schedulePersist();
+      track('kids_adventure_started', { ageGroup, playerName, isFamilyMode });
     },
     []
   );
@@ -183,6 +215,20 @@ export function useKidsMode() {
         notifyListeners();
         schedulePersist();
 
+        track('kids_station_completed', {
+          riddleId: currentRiddle.id,
+          storeId: currentRiddle.storeId,
+          stars: newStars,
+          isFinished,
+        });
+
+        if (isFinished) {
+          track('kids_prize_unlocked', {
+            ageGroup: state.ageGroup,
+            prizeName: prize?.title,
+          });
+        }
+
         return {
           correct: true,
           explanation: currentRiddle.explanation,
@@ -202,7 +248,7 @@ export function useKidsMode() {
         };
       }
     },
-    [currentRiddle, state.ageGroup, state.currentRiddleIndex, state.completedRiddleIds, riddles.length]
+    [currentRiddle, state.ageGroup, state.currentRiddleIndex, state.completedRiddleIds, riddles.length, prize]
   );
 
   const unlockStoreQR = useCallback((storeId: string) => {
@@ -217,10 +263,12 @@ export function useKidsMode() {
     };
     notifyListeners();
     schedulePersist();
+    notifyStoreArrival(storeId);
   }, []);
 
   const resetAdventure = useCallback(() => {
     globalState = { ...DEFAULT_STATE };
+    lastKidsInteractionTimestamp = Date.now();
     notifyListeners();
     clearKidsModeStorage().catch(() => {});
   }, []);
@@ -232,7 +280,12 @@ export function useKidsMode() {
     };
     notifyListeners();
     schedulePersist();
-  }, []);
+    track('kids_prize_claimed', {
+      ageGroup: state.ageGroup,
+      prizeName: prize?.title,
+      sponsor: prize?.sponsor,
+    });
+  }, [state.ageGroup, prize]);
 
   return {
     ...state,

@@ -5,8 +5,26 @@ import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_7
 import { SpaceGrotesk_600SemiBold, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
 import { queryClient } from '../src/offline/cache';
 import { hydrateKidsModeFromStorage } from '../src/features/kids-mode/useKidsMode';
+import * as Updates from 'expo-updates';
 
 export default function RootLayout() {
+  // Verificación proactiva de actualización OTA al iniciar
+  useEffect(() => {
+    async function checkUpdates() {
+      if (__DEV__) return;
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch {
+        // En offline o sin conexión directa, continúa con la versión en caché
+      }
+    }
+    checkUpdates();
+  }, []);
+
   // Hidratar estado persistente offline del Modo Niño en el arranque
   useEffect(() => {
     hydrateKidsModeFromStorage().catch(() => {
@@ -38,15 +56,14 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="splash" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="iconos" options={{ title: 'Iconos Mall OS' }} />
         <Stack.Screen name="m/[slug]" options={{ title: 'Cambiando de Mall' }} />
         <Stack.Screen name="local/[id]" options={{ title: 'Detalle del Local' }} />
         <Stack.Screen name="cupon/[id]" options={{ title: 'Mi Cupón' }} />
         <Stack.Screen name="kids-mode" options={{ title: 'Exploradores del Mall', headerShown: false, presentation: 'modal' }} />
-        <Stack.Screen name="concierge" options={{ title: 'Asistente Concierge', presentation: 'modal' }} />
+        <Stack.Screen name="concierge" options={{ title: 'Asistente Concierge', presentation: 'modal', headerShown: false }} />
       </Stack>
     </QueryClientProvider>
   );
 }
-
-

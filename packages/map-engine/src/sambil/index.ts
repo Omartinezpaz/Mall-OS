@@ -54,6 +54,62 @@ export const verticalCoreNodes: NavNode[] = [
   { id: 'v-plm-5', floorId: LEVEL_DIVERSION, x: 584, y: 250, kind: 'stairs', connections: ['v-plm-4', `plm-${LEVEL_DIVERSION}`] },
 ];
 
+/** Núcleos de ascensores panorámicos accesibles que conectan los 5 niveles en las plazas icónicas */
+export const elevatorCoreNodes: NavNode[] = [
+  // Nivel Autopista (Piso 1)
+  { id: 'elev-pj-1', floorId: LEVEL_AUTOPISTA, x: 74, y: 248, kind: 'elevator', connections: ['node-plaza Jardin', 'elev-pj-2'] },
+  { id: 'elev-plf-1', floorId: LEVEL_AUTOPISTA, x: 182, y: 75, kind: 'elevator', connections: ['node-plaza la Fuente', 'elev-plf-2'] },
+  { id: 'elev-pc-1', floorId: LEVEL_AUTOPISTA, x: 352, y: 248, kind: 'elevator', connections: ['node-plaza Central', 'elev-pc-2'] },
+  { id: 'elev-pea-1', floorId: LEVEL_AUTOPISTA, x: 532, y: 75, kind: 'elevator', connections: ['node-plaza  el Arte', 'elev-pea-2'] },
+  { id: 'elev-plm-1', floorId: LEVEL_AUTOPISTA, x: 586, y: 248, kind: 'elevator', connections: ['node-plaza musica', 'elev-plm-2'] },
+
+  // Nivel Acuario (Piso 2)
+  { id: 'elev-pj-2', floorId: LEVEL_ACUARIO, x: 74, y: 248, kind: 'elevator', connections: ['elev-pj-1', `pj-${LEVEL_ACUARIO}`, 'elev-pj-3'] },
+  { id: 'elev-plf-2', floorId: LEVEL_ACUARIO, x: 182, y: 75, kind: 'elevator', connections: ['elev-plf-1', `plf-${LEVEL_ACUARIO}`, 'elev-plf-3'] },
+  { id: 'elev-pc-2', floorId: LEVEL_ACUARIO, x: 352, y: 248, kind: 'elevator', connections: ['elev-pc-1', `pc-${LEVEL_ACUARIO}`, 'elev-pc-3'] },
+  { id: 'elev-pea-2', floorId: LEVEL_ACUARIO, x: 532, y: 75, kind: 'elevator', connections: ['elev-pea-1', `pea-${LEVEL_ACUARIO}`, 'elev-pea-3'] },
+  { id: 'elev-plm-2', floorId: LEVEL_ACUARIO, x: 586, y: 248, kind: 'elevator', connections: ['elev-plm-1', `plm-${LEVEL_ACUARIO}`, 'elev-plm-3'] },
+
+  // Nivel Libertador (Piso 3)
+  { id: 'elev-pj-3', floorId: LEVEL_LIBERTADOR, x: 74, y: 248, kind: 'elevator', connections: ['elev-pj-2', `pj-${LEVEL_LIBERTADOR}`, 'elev-pj-4'] },
+  { id: 'elev-plf-3', floorId: LEVEL_LIBERTADOR, x: 182, y: 75, kind: 'elevator', connections: ['elev-plf-2', `plf-${LEVEL_LIBERTADOR}`, 'elev-plf-4'] },
+  { id: 'elev-pc-3', floorId: LEVEL_LIBERTADOR, x: 352, y: 248, kind: 'elevator', connections: ['elev-pc-2', `pc-${LEVEL_LIBERTADOR}`, 'elev-pc-4'] },
+  { id: 'elev-pea-3', floorId: LEVEL_LIBERTADOR, x: 532, y: 75, kind: 'elevator', connections: ['elev-pea-2', `pea-${LEVEL_LIBERTADOR}`, 'elev-pea-4'] },
+  { id: 'elev-plm-3', floorId: LEVEL_LIBERTADOR, x: 586, y: 248, kind: 'elevator', connections: ['elev-plm-2', `plm-${LEVEL_LIBERTADOR}`, 'elev-plm-4'] },
+
+  // Nivel Feria (Piso 4)
+  { id: 'elev-pj-4', floorId: LEVEL_FERIA, x: 74, y: 248, kind: 'elevator', connections: ['elev-pj-3', `pj-${LEVEL_FERIA}`, 'elev-pj-5'] },
+  { id: 'elev-plf-4', floorId: LEVEL_FERIA, x: 182, y: 75, kind: 'elevator', connections: ['elev-plf-3', `plf-${LEVEL_FERIA}`, 'elev-plf-5'] },
+  { id: 'elev-pc-4', floorId: LEVEL_FERIA, x: 352, y: 248, kind: 'elevator', connections: ['elev-pc-3', `pc-${LEVEL_FERIA}`, 'elev-pc-5'] },
+  { id: 'elev-pea-4', floorId: LEVEL_FERIA, x: 532, y: 75, kind: 'elevator', connections: ['elev-pea-3', `pea-${LEVEL_FERIA}`, 'elev-pea-5'] },
+  { id: 'elev-plm-4', floorId: LEVEL_FERIA, x: 586, y: 248, kind: 'elevator', connections: ['elev-plm-3', `plm-${LEVEL_FERIA}`, 'elev-plm-5'] },
+
+  // Nivel Diversión (Piso 5)
+  { id: 'elev-pj-5', floorId: LEVEL_DIVERSION, x: 74, y: 248, kind: 'elevator', connections: ['elev-pj-4', `pj-${LEVEL_DIVERSION}`] },
+  { id: 'elev-plf-5', floorId: LEVEL_DIVERSION, x: 182, y: 75, kind: 'elevator', connections: ['elev-plf-4', `plf-${LEVEL_DIVERSION}`] },
+  { id: 'elev-pc-5', floorId: LEVEL_DIVERSION, x: 352, y: 248, kind: 'elevator', connections: ['elev-pc-4', `pc-${LEVEL_DIVERSION}`] },
+  { id: 'elev-pea-5', floorId: LEVEL_DIVERSION, x: 532, y: 75, kind: 'elevator', connections: ['elev-pea-4', `pea-${LEVEL_DIVERSION}`] },
+  { id: 'elev-plm-5', floorId: LEVEL_DIVERSION, x: 586, y: 248, kind: 'elevator', connections: ['elev-plm-4', `plm-${LEVEL_DIVERSION}`] },
+];
+
+const assembledFloorNodes: NavNode[] = [
+  ...nodesAutopista.map((n) => ({ ...n, connections: [...n.connections] })),
+  ...nodesAcuario.map((n) => ({ ...n, connections: [...n.connections] })),
+  ...nodesLibertador.map((n) => ({ ...n, connections: [...n.connections] })),
+  ...nodesFeria.map((n) => ({ ...n, connections: [...n.connections] })),
+  ...nodesDiversion.map((n) => ({ ...n, connections: [...n.connections] })),
+];
+
+// Enlazar reciprocidad con los núcleos de ascensores
+for (const elev of elevatorCoreNodes) {
+  for (const targetId of elev.connections) {
+    const target = assembledFloorNodes.find((n) => n.id === targetId);
+    if (target && !target.connections.includes(elev.id)) {
+      target.connections.push(elev.id);
+    }
+  }
+}
+
 export const sambilMall: MallMapData = {
   schemaVersion: 1,
   mallSlug: 'sambil-chacao',
@@ -73,11 +129,8 @@ export const sambilMall: MallMapData = {
     ...storesSambilDiversion,
   ],
   nodes: [
-    ...nodesAutopista,
-    ...nodesAcuario,
-    ...nodesLibertador,
-    ...nodesFeria,
-    ...nodesDiversion,
+    ...assembledFloorNodes,
     ...verticalCoreNodes,
+    ...elevatorCoreNodes,
   ],
 };

@@ -11,6 +11,7 @@ import type { MallMapData, MapFloor, MapProp, MapStore, Point, PoiKind, Rect } f
 export interface PaletteEntry {
   fill: string;
   ink: string;
+  stroke?: string;
 }
 
 export type Palette = Readonly<Record<string, PaletteEntry>>;

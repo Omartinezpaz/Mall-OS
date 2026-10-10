@@ -31,13 +31,13 @@ export interface ConciergeQuickReply {
 }
 
 export const CONCIERGE_QUICK_REPLIES: ConciergeQuickReply[] = [
-  { id: 'qr_food', label: '🍔 ¿Dónde comer?', icon: 'fast-food', query: '¿Dónde puedo comer hamburguesas o comida rápida?' },
-  { id: 'qr_offers', label: '🏷️ Ofertas de hoy', icon: 'pricetag', query: '¿Cuáles son las mejores ofertas y descuentos de hoy?' },
-  { id: 'qr_wc', label: '🚻 Baños cercanos', icon: 'water', query: '¿Dónde están los baños y sanitarios?' },
-  { id: 'qr_kids', label: '🎮 Modo Niño', icon: 'game-controller', query: '¿Cómo funciona el juego de búsqueda del tesoro para niños?' },
-  { id: 'qr_cinema', label: '🍿 Cine y películas', icon: 'film', query: '¿Dónde está el cine y qué funciones hay?' },
-  { id: 'qr_parking', label: '🚗 Estacionamiento', icon: 'car', query: '¿Dónde está el estacionamiento y cómo pago el ticket?' },
-  { id: 'qr_wifi', label: '📶 Clave Wi-Fi', icon: 'wifi', query: '¿Cuál es la red Wi-Fi y contraseña del mall?' },
+  { id: 'qr_shop_done', label: 'Registrar compra', icon: 'storefront', query: 'Ya llegué a la tienda y compré algo' },
+  { id: 'qr_food', label: '¿Dónde comer?', icon: 'fast-food', query: '¿Dónde puedo comer o tomar un café?' },
+  { id: 'qr_offers', label: 'Ofertas de hoy', icon: 'pricetag', query: '¿Cuáles son las mejores promociones y eventos de hoy?' },
+  { id: 'qr_wc', label: 'Baños y accesos', icon: 'water', query: '¿Dónde están los baños y accesos para sillas de ruedas?' },
+  { id: 'qr_kids', label: 'Modo Niño', icon: 'game-controller', query: '¿Cómo funciona el juego del tesoro de Modo Niño?' },
+  { id: 'qr_parking', label: 'Estacionamiento', icon: 'car', query: '¿Cómo funciona el estacionamiento y dónde pago?' },
+  { id: 'qr_wifi', label: 'Clave Wi-Fi', icon: 'wifi', query: '¿Cuál es la red Wi-Fi gratuita del mall?' },
 ];
 
 export const CONCIERGE_INTENTS: ConciergeIntent[] = [
@@ -58,63 +58,62 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
       },
       {
         storeId: 'local_39',
-        storeName: 'Burger King',
-        floorName: 'Nivel Feria (L4)',
-        category: 'Comida Rápida',
-        badge: '2x1 Whopper',
-        dealHighlight: 'Whopper Jr + Bebida $4.50',
-      },
-      {
-        storeId: 'local_37',
-        storeName: "Arturo's",
+        storeName: 'Arturo’s',
         floorName: 'Nivel Feria (L4)',
         category: 'Pollo Frito',
-        badge: 'Familiar',
-        dealHighlight: 'Combo 2 Piezas $3.99',
+        badge: 'Favorito',
+        dealHighlight: 'Combo 2 Piezas con Pan y Ensalada',
+      },
+      {
+        storeId: 'local_13',
+        storeName: 'McCafé',
+        floorName: 'Nivel Autopista (L1)',
+        category: 'Cafetería & Frappés',
+        badge: 'Cortesía Sambil',
+        dealHighlight: '25 bebidas artesanales frías y calientes',
       },
     ],
     actionCta: {
-      label: 'Ver Zona Gourmet en Mapa',
-      actionType: 'navigate',
-      targetId: 'local_38',
+      label: 'Ver Opciones Gastronómicas',
+      actionType: 'directory',
     },
   },
   {
-    id: 'intent_bathroom',
-    title: 'Baños y Sanitarios',
+    id: 'intent_wc',
+    title: 'Baños Públicos & Sanitarios',
     icon: 'water',
-    keywords: ['bano', 'banos', 'sanitario', 'sanitarios', 'wc', 'bano publico', 'orinar', 'lavamanos', 'tocador'],
-    replyMessage: 'Los módulos de baños públicos están ubicados estratégicamente cerca de las escaleras mecánicas y plazas principales de cada nivel, con acceso para personas con movilidad reducida.',
+    keywords: ['bano', 'banos', 'sanitario', 'sanitarios', 'toilet', 'wc', 'lavabo', 'orinal'],
+    replyMessage: 'Encuentras baterías de baños completamente equipadas y con acceso universal en cada piso del centro comercial:',
     stores: [
       {
-        storeId: 'local_4',
-        storeName: 'Baños Plaza Jardín',
+        storeId: 'wc_p1',
+        storeName: 'Baños Nivel Autopista',
         floorName: 'Nivel Autopista (L1)',
-        category: 'Servicios Públicos',
-        badge: 'Abierto',
-        dealHighlight: 'Módulo Central con cambiador de bebés',
+        category: 'Servicio Sanitario',
+        badge: 'Acceso Universal',
+        dealHighlight: 'Junto a Plaza Jardín y módulo de escaleras',
       },
       {
-        storeId: 'local_38',
-        storeName: 'Baños Nivel Feria',
-        floorName: 'Nivel Feria (L4)',
-        category: 'Servicios Públicos',
-        badge: 'Alto Tráfico',
-        dealHighlight: 'Junto a la zona de mesas este',
+        storeId: 'wc_p2',
+        storeName: 'Baños Nivel Acuario',
+        floorName: 'Nivel Acuario (L2)',
+        category: 'Servicio Sanitario',
+        badge: 'Cambiador de Bebés',
+        dealHighlight: 'Pasillo este, frente a locales de calzado',
       },
     ],
     actionCta: {
-      label: 'Trazar ruta al baño más cercano',
+      label: 'Localizar Baños en el Mapa',
       actionType: 'navigate',
-      targetId: 'local_4',
+      targetId: 'wc_p1',
     },
   },
   {
     id: 'intent_offers',
     title: 'Ofertas y Promociones Activas',
     icon: 'pricetag',
-    keywords: ['oferta', 'ofertas', 'descuento', 'descuentos', 'promo', 'promocion', 'promociones', 'rebaja', 'rebajas', 'barato', 'cupon'],
-    replyMessage: '¡Hoy tenemos promociones destacadas en tiendas de moda, tecnología y belleza! Estas son las más atractivas:',
+    keywords: ['oferta', 'ofertas', 'descuento', 'descuentos', 'promo', 'promocion', 'promociones', 'rebaja', 'cupon', 'cupones'],
+    replyMessage: '¡Hoy tenemos activas excelentes oportunidades comerciales en Sambil Chacao! Destacan:',
     stores: [
       {
         storeId: 'local_40',
@@ -125,7 +124,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
         dealHighlight: '2x1 en Skincare y Protector Solar',
       },
       {
-        storeId: 'local_2',
+        storeId: 'zara',
         storeName: 'ZARA',
         floorName: 'Nivel Autopista (L1)',
         category: 'Moda Internacional',
@@ -151,7 +150,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Horarios de Atención',
     icon: 'time',
     keywords: ['horario', 'horarios', 'hora', 'abre', 'abren', 'cierra', 'cierran', 'abierto', 'cerrado', 'atencion'],
-    replyMessage: '🕒 El centro comercial opera de Lunes a Sábado de 10:00 AM a 9:00 PM, y Domingos de 12:00 PM a 8:00 PM. La Feria de Comida y Cines extienden su horario hasta las 11:00 PM.',
+    replyMessage: 'El centro comercial opera de Lunes a Sábado de 10:00 AM a 9:00 PM, y Domingos de 12:00 PM a 8:00 PM. La Feria de Comida y Cines extienden su horario hasta las 11:00 PM.',
     actionCta: {
       label: 'Ver Directorio Completo',
       actionType: 'directory',
@@ -184,7 +183,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Cine & Entretenimiento',
     icon: 'film',
     keywords: ['cine', 'cines', 'pelicula', 'peliculas', 'cartelera', 'cines unidos', 'imax', 'sala', 'cotufas', 'estreno'],
-    replyMessage: '🍿 Cines Unidos está ubicado en el Nivel Diversión (L5). Cuenta con salas digitales 3D, sonido Dolby Atmos y área VIP con cotufas gourmet.',
+    replyMessage: 'Cines Unidos está ubicado en el Nivel Diversión (L5). Cuenta con salas digitales 3D, sonido Dolby Atmos y área VIP con cotufas gourmet.',
     stores: [
       {
         storeId: 'local_43',
@@ -206,7 +205,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Estacionamiento & Tarifas',
     icon: 'car',
     keywords: ['estacionamiento', 'estacionar', 'parqueo', 'parking', 'carro', 'auto', 'vehiculo', 'ticket', 'pagar estacionamiento'],
-    replyMessage: '🚗 El estacionamiento cuenta con 4 niveles subterráneos y guiado óptico inteligente. Puedes pagar tu ticket en los cajeros automáticos de Plaza Jardín o mediante la app.',
+    replyMessage: 'El estacionamiento cuenta con 4 niveles subterráneos y guiado óptico inteligente. Puedes pagar tu ticket en los cajeros automáticos de Plaza Jardín o mediante la app.',
     actionCta: {
       label: 'Ver Accesos de Estacionamiento',
       actionType: 'navigate',
@@ -218,7 +217,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Conectividad Wi-Fi Gratuita',
     icon: 'wifi',
     keywords: ['wifi', 'wi-fi', 'internet', 'conexion', 'red', 'clave', 'password', 'datos'],
-    replyMessage: '📶 La red pública gratuita de alta velocidad es **"MALL-GUEST-FREE"**. No requiere clave; solo selecciona la red y acepta los términos en el portal de bienvenida.',
+    replyMessage: 'La red pública gratuita de alta velocidad es "MALL-GUEST-FREE". No requiere clave; solo selecciona la red y acepta los términos en el portal de bienvenida.',
   },
   {
     id: 'intent_atm',
@@ -247,9 +246,9 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Modo Niño: Búsqueda del Tesoro',
     icon: 'game-controller',
     keywords: ['nino', 'ninos', 'juego', 'juegos', 'tesoro', 'kids', 'explorador', 'premio nino', 'acertijo', 'reto'],
-    replyMessage: '🎮 ¡El juego "Exploradores del Mall" te desafía a recorrer 5 estaciones, escanear productos con código QR, resolver acertijos y ganar premios reales como helados y cotufas gratis!',
+    replyMessage: 'El juego "Exploradores del Mall" te desafía a recorrer 5 estaciones, escanear productos con código QR, resolver acertijos y ganar premios reales como helados y cotufas gratis.',
     actionCta: {
-      label: '¡Abrir Búsqueda del Tesoro! 🏆',
+      label: 'Abrir Búsqueda del Tesoro',
       actionType: 'kids_mode',
     },
   },
@@ -258,10 +257,10 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Moda y Ropa',
     icon: 'shirt',
     keywords: ['ropa', 'moda', 'zara', 'bershka', 'stradivarius', 'camisa', 'pantalon', 'vestido', 'zapatos', 'tiendas de ropa', 'tijerazo'],
-    replyMessage: '👗 Encuentra las mejores marcas de moda y retail en Nivel Autopista y Nivel Acuario:',
+    replyMessage: 'Encuentra las mejores marcas de moda y retail en Nivel Autopista y Nivel Acuario:',
     stores: [
       {
-        storeId: 'local_2',
+        storeId: 'zara',
         storeName: 'ZARA',
         floorName: 'Nivel Autopista (L1)',
         category: 'Moda Internacional',
@@ -288,7 +287,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     actionCta: {
       label: 'Ver Tiendas de Moda en Mapa',
       actionType: 'navigate',
-      targetId: 'local_2',
+      targetId: 'zara',
     },
   },
   {
@@ -296,7 +295,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Deportes y Calzado',
     icon: 'football',
     keywords: ['deporte', 'deportes', 'nike', 'adidas', 'sportland', 'zapato', 'zapatos', 'sneakers', 'gimnasio', 'fitness'],
-    replyMessage: '👟 Para calzado deportivo, indumentaria y accesorios de entrenamiento, estas son las tiendas líderes:',
+    replyMessage: 'Para calzado deportivo, indumentaria y accesorios de entrenamiento, estas son las tiendas líderes:',
     stores: [
       {
         storeId: 'st_pb_02',
@@ -318,7 +317,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Tecnología & Celulares',
     icon: 'phone-portrait',
     keywords: ['tecnologia', 'celular', 'celulares', 'apple', 'iphone', 'samsung', 'computadora', 'laptop', 'cargador', 'audifonos'],
-    replyMessage: '📱 En Nivel Acuario y Nivel Libertador encuentras tiendas especializadas en telefonía, accesorios certificados y servicio técnico.',
+    replyMessage: 'En Nivel Acuario y Nivel Libertador encuentras tiendas especializadas en telefonía, accesorios certificados y servicio técnico.',
     stores: [
       {
         storeId: 'local_12',
@@ -340,7 +339,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Información y Seguridad',
     icon: 'help-buoy',
     keywords: ['seguridad', 'perdi', 'perdida', 'informacion', 'ayuda', 'modulo', 'emergencia', 'policia', 'enfermeria'],
-    replyMessage: '🛡️ El módulo central de Atención al Visitante y Seguridad está ubicado en Plaza Central (Nivel Autopista). También puedes notificar a cualquier oficial de seguridad identificado en los pasillos.',
+    replyMessage: 'El módulo central de Atención al Visitante y Seguridad está ubicado en Plaza Central (Nivel Autopista). También puedes notificar a cualquier oficial de seguridad identificado en los pasillos.',
     actionCta: {
       label: 'Trazar ruta a Información Central',
       actionType: 'navigate',
@@ -352,7 +351,7 @@ export const CONCIERGE_INTENTS: ConciergeIntent[] = [
     title: 'Belleza & Cuidado Personal',
     icon: 'sparkles',
     keywords: ['peluqueria', 'belleza', 'barberia', 'spa', 'maquillaje', 'perfume', 'perfumeria', 'unas', 'cabello'],
-    replyMessage: '✨ Encuentra servicios de peluquería, barbería, fragancias importadas y cuidado cosmético en Nivel Libertador y Nivel Autopista.',
+    replyMessage: 'Encuentra servicios de peluquería, barbería, fragancias importadas y cuidado cosmético en Nivel Libertador y Nivel Autopista.',
     stores: [
       {
         storeId: 'local_40',

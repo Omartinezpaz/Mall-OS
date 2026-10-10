@@ -94,6 +94,52 @@ Mall OS combina:
 
 Debe sentirse sofisticado para la administración y sencillo para un visitante casual.
 
+### 3.3 Regla Anti-Estética IA y Prohibición de Emojis (`ui-ux-pro-max`)
+
+> Basado en `ui-ux-pro-max` (Pro-Rules § Icons & Visual Elements) y en la identidad Light Luxury de Mall OS.
+
+1. **Prohibición Total de Emojis**:
+   Queda estrictamente prohibido usar emojis en:
+   - Navegación (tabs, headers, breadcrumbs)
+   - Categorías y subcategorías
+   - Nombres de productos o servicios
+   - Botones, badges, chips
+   - Mensajes del sistema y del Concierge
+   **Todos los elementos gráficos deben usar `MallOsSpriteIcon` (SVG) o `AppIcon` (vectorial).**
+
+2. **Unificación Light Luxury en Concierge**:
+   El Concierge NO es un chatbot genérico ni una ventana oscura de soporte. Es el **servicio de hospitalidad digital del mall**.
+   Comparte el 100% de la paleta oficial:
+   - Fondo: `#F8FAFC`
+   - Superficies: `#FFFFFF`
+   - Bordes: `#E2E8F0`
+   - Texto principal: `#0F172A`
+   - Texto secundario: `#64748B`
+   - Acentos: `#4F46E5` (índigo) / `#0EA5E9` (sky)
+
+3. **Cards de Catálogo Retail**:
+   Las tarjetas de productos y locales deben respetar proporciones de e-commerce de moda/retail premium:
+   - Relación de aspecto limpia y jerarquía tipográfica estricta.
+   - Insignias de marca oficiales o monogramas tipográficos refinados (evitar placeholders genéricos).
+   - Espaciado generoso (padding mínimo 14–16px, radios redondeados 12–16px).
+
+4. **Identidad Visual del Concierge**:
+   - Isotipo: componente vectorial `MallOsLogo` / monograma editorial "Mall OS Concierge".
+   - Cero avatares con emojis (`🤖`).
+   - Tono: editorial, hospitalario, retail de alta gama.
+
+### 3.4 Estándar de Burbujas de Chat y Vitrina Glassmorphic en Concierge
+1. **Burbujas Asimétricas Direccionales**:
+   - **Burbuja de Usuario**: Esquina superior derecha recta (`borderTopRightRadius: 4`), radio general `16px`, fondo azul cobalto/índigo (`#2563EB` / `#4F46E5`), pie con hora y doble check vectorial blanco (`checkmark-done` ✓✓).
+   - **Burbuja de Asistente**: Esquina superior izquierda recta (`borderTopLeftRadius: 4`), radio general `16px`, fondo blanco puro (`#FFFFFF`), borde sutil (`#E2E8F0`) y tipografía oscura (`#0F172A`).
+2. **Vitrina de Productos con Acabado Glassmorphic**:
+   - Fondo translúcido con gradiente radial y lineal multinivel.
+   - Reflejo especular diagonal translúcido (`glassShineDiagonal` blanco al 15% opacidad).
+   - Línea de bisel superior brillante (`glassTopShineLine`).
+   - Contenedor de imagen frosted-glass con bordes biselados y sombra flotante suave.
+3. **Scroll Anclado Inteligente**:
+   - Al seleccionar una categoría o sugerencia rápida, el viewport se ancla suavemente en la cabecera de la opción elegida, evitando saltos bruscos al final del chat.
+
 ---
 
 ## 4. Design Tokens
@@ -340,28 +386,39 @@ Secundarios:
 
 ---
 
-## 9. Mapa
+### 9.1 Formato Oficial Map__mobile (Brand Colors, Layout & Viewport Safe)
+El mapa móvil consolida el formato visual interactivo de alta fidelidad:
+1. **Fondo con Mesh Gradient Dinámico**: Difuminado suave en Skia con las 4 auras de marca:
+   - Esquina superior izquierda: Carmesí / Rojo Vivo (`#E11D48` / Moda)
+   - Esquina superior derecha: Verde Yummy / Esmeralda (`#10B981` / Comida & Salud)
+   - Esquina inferior derecha: Oro / Ámbar Cálido (`#D97706` / Deporte & Calzado)
+   - Centro / lateral: Azul Cobalto (`#2563EB` / Tecnología & Primario)
+2. **Sustrato Arquitectónico**: Base de plano nítida con esquinas redondeadas (`r=32`), pasillos con relleno claro y locales comerciales con bordes precisos.
+3. **Badges de Categoría con Glow Emisivo**: Insignias circulares emisoras de luz sobre locales destacados según su categoría oficial (`#E11D48` Moda, `#D97706` Deporte/Hogar, `#2563EB` Tech, `#10B981` Comida/Salud).
+4. **Buscador Flotante Superior**: Barra tipo glassmorphic con acceso rápido y botón circular de búsqueda en carmesí neón con icono de lupa.
+5. **Controles Cilíndricos Laterales**: Cápsulas flotantes a la derecha para cambio de piso (`P1 / P2`), Zoom (`+ / −`) y botón de GPS/Recentrado.
+6. **Carrusel Inferior de Ofertas Flash en Vivo**: Tarjetas horizontales de cristal con insignia de descuento, icono de local iluminado y enlace `VER RUTA →`.
+7. **Barra de Navegación Inferior (Tabs)**: Navegación de 4 pestañas con el botón central del Mapa elevado y resaltado.
+8. **Encuadre Seguro de Recorrido (Viewport Safe & North-Up)**:
+   - Durante la navegación, la cámara se calibra estrictamente en el espacio vertical visible entre el `NavigationHUD` superior y el `DestinationBar` inferior.
+   - Orientación nivelada fija (**North-Up**) sin rotaciones no deseadas para evitar que el plano se desborde o se oculte bajo las etiquetas.
+   - Locución de voz TTS activa en tiempo real al seleccionar cualquier local y en cada instrucción de ruta.
+9. **Avatar GPS con Efecto Radar y Haz de Linterna Direccional**:
+   - **Efecto Radar / Sonar**: Aura circular con degradado radial de precisión (`#2563EB` al 22%), doble anillo concéntrico de ondas de sonar (`stroke` con opacidades 25% y 35%) y halo luminoso interior.
+   - **Efecto Linterna / Headlight Beam**: Haz de luz cónico direccional que ilumina el suelo hacia el destino o rumbo de caminata. Se compone de un haz ambiental de 44° con degradado suave y un foco central concentrado de 18° de alta luminosidad que apunta directamente al local seleccionado o al siguiente punto de paso.
+   - **Beacon de Precisión**: Núcleo azul brillante con borde blanco grueso y flecha direccional integrada.
 
-Primera versión: mapa 2D/SVG controlado por el sistema.
+---
 
-Debe permitir:
-
-- Pisos.
-- Tiendas.
-- Categorías.
-- Selección de tienda.
-- Ubicación.
-- Rutas básicas.
-
-Evolución posterior:
-
-- Indoor positioning.
-- Wayfinding avanzado.
-- Accesibilidad.
-- Parking.
-- AR.
-
-No introducir complejidad física antes de validar el mapa básico.
+### 10.1 Estándar de Modo Niño (Objetivos de Estación y Light Luxury)
+1. **Tarjetas de Misión y Checklist de Objetivos**:
+   - Cada tarjeta de estación en el Mapa del Tesoro (`KidsTreasureMap`) incluye un checklist de 3 pasos:
+     1. Llegar a la tienda (`Piso / Local`)
+     2. Escanear QR físico en vitrina (`Producto destacado`)
+     3. Resolver acertijo temático (+1 ⭐)
+   - Contador en el encabezado general: `🎯 X/5 Objetivos Alcanzados`.
+2. **Tarjeta de Llegada Light Luxury (`KidsArrivalCard`)**:
+   - Sustrato blanco puro con bordes redondeados `r=24`, badge superior esmeralda `¡LLEGASTE AL LOCAL!`, micro-oferta de producto y botón directo para abrir el escáner QR.
 
 ---
 

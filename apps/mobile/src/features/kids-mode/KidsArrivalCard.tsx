@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
 import { audioManager } from '../../lib/audio-manager';
 import { GlassSurface } from '../../components/GlassSurface';
@@ -26,6 +27,37 @@ export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
   onOpenScanner,
   onReturnToTreasureMap,
 }) => {
+  const [isSpeakingArrival, setIsSpeakingArrival] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsubscribe = audioManager.subscribe((speaking) => {
+      if (!speaking) {
+        setIsSpeakingArrival(false);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleReplayArrivalAudio = () => {
+    if (isSpeakingArrival) {
+      audioManager.stop(true);
+      setIsSpeakingArrival(false);
+      return;
+    }
+    setIsSpeakingArrival(true);
+    audioManager.speak({
+      text: `¡Llegaste a ${riddle.storeName}! Tu misión es buscar ${riddle.featuredProduct.name} en el exhibidor y escanear su código QR.`,
+      priority: 'high',
+      language: 'es-VE',
+      pitch: 1.05,
+      rate: 0.95,
+      onDone: () => setIsSpeakingArrival(false),
+      onError: () => setIsSpeakingArrival(false),
+    });
+  };
+
   const handleOpenScannerWithVoice = () => {
     audioManager.speak({
       text: '¡Muy bien! Enfoca con la cámara el código QR del producto.',
@@ -38,28 +70,33 @@ export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
     onOpenScanner();
   };
 
+  const isAudioActive = isListening || isSpeakingArrival;
+
   return (
     <View style={styles.overlay}>
-      <GlassSurface
-        variant="dark"
-        intensity="strong"
-        radius="xl"
-        style={styles.card}
-      >
+      <View style={styles.card}>
         {/* Header Badge */}
         <View style={styles.headerRow}>
-          <View style={[styles.arrivalBadge, isListening && styles.listeningBadge]}>
-            <AppIcon name={isListening ? 'volume-high' : 'checkmark-circle'} size={16} color={isListening ? '#38BDF8' : '#10B981'} />
-            <Text style={[styles.arrivalBadgeText, isListening && styles.listeningBadgeText]}>
-              {isListening ? '🔊 ESCUCHANDO INSTRUCCIONES...' : '¡LLEGASTE AL LOCAL!'}
+          <TouchableOpacity
+            style={[styles.arrivalBadge, isAudioActive && styles.listeningBadge]}
+            onPress={handleReplayArrivalAudio}
+            activeOpacity={0.8}
+          >
+            <AppIcon
+              name={isAudioActive ? 'volume-high' : 'checkmark-circle'}
+              size={15}
+              color={isAudioActive ? '#2563EB' : '#059669'}
+            />
+            <Text style={[styles.arrivalBadgeText, isAudioActive && styles.listeningBadgeText]}>
+              {isAudioActive ? '🔊 ESCUCHANDO INSTRUCCIÓN' : '¡LLEGASTE AL LOCAL! 🔊'}
             </Text>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.closeBtn}
             onPress={onReturnToTreasureMap}
             activeOpacity={0.7}
           >
-            <AppIcon name="close" size={16} color="#94A3B8" />
+            <AppIcon name="close" size={16} color="#64748B" />
           </TouchableOpacity>
         </View>
 
@@ -69,18 +106,34 @@ export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
           <Text style={styles.floorSub}>{riddle.floorName} · {riddle.category}</Text>
         </View>
 
-        {/* Mission / Product Deal Box */}
+        {/* Mission / Product Deal Box with Product Image Background */}
         <View style={styles.missionBox}>
-          <View style={styles.dealHeaderRow}>
-            <View style={styles.discountPill}>
-              <Text style={styles.discountText}>{riddle.featuredProduct.discountBadge}</Text>
+          {riddle.featuredProduct.imageUrl ? (
+            <>
+              <Image
+                source={{ uri: riddle.featuredProduct.imageUrl }}
+                style={styles.missionBgImage}
+                resizeMode="cover"
+              />
+              {/* Glass Frosted Overlay: keeps image perfectly visible while guaranteeing 100% crisp readable text */}
+              <View style={styles.missionBoxOverlay} />
+            </>
+          ) : null}
+
+          <View style={styles.missionContent}>
+            <View style={styles.dealHeaderRow}>
+              <View style={styles.discountPill}>
+                <Text style={styles.discountText}>{riddle.featuredProduct.discountBadge}</Text>
+              </View>
+              <View style={styles.pricePill}>
+                <Text style={styles.priceText}>{riddle.featuredProduct.price}</Text>
+              </View>
             </View>
-            <Text style={styles.priceText}>{riddle.featuredProduct.price}</Text>
+            <Text style={styles.productName}>{riddle.featuredProduct.name}</Text>
+            <Text style={styles.missionDesc}>
+              {riddle.featuredProduct.description}
+            </Text>
           </View>
-          <Text style={styles.productName}>{riddle.featuredProduct.name}</Text>
-          <Text style={styles.missionDesc}>
-            {riddle.featuredProduct.description}
-          </Text>
         </View>
 
         {/* Action Buttons */}
@@ -102,7 +155,7 @@ export const KidsArrivalCard: React.FC<KidsArrivalCardProps> = ({
             <Text style={styles.backBtnText}>Volver al Mapa del Tesoro 🗺️</Text>
           </TouchableOpacity>
         </View>
-      </GlassSurface>
+      </View>
     </View>
   );
 };
@@ -117,13 +170,15 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: 18,
-    borderWidth: 1.5,
-    borderColor: 'rgba(56, 189, 248, 0.5)',
-    shadowColor: '#38BDF8',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 14,
-    elevation: 12,
+    shadowOpacity: 0.12,
+    shadowRadius: 16,
+    elevation: 8,
   },
   headerRow: {
     flexDirection: 'row',
@@ -134,32 +189,32 @@ const styles = StyleSheet.create({
   arrivalBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: '#A7F3D0',
     gap: 6,
   },
   listeningBadge: {
-    backgroundColor: 'rgba(56, 189, 248, 0.2)',
-    borderColor: '#38BDF8',
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
   },
   arrivalBadgeText: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#10B981',
+    color: '#059669',
     letterSpacing: 0.5,
   },
   listeningBadgeText: {
-    color: '#38BDF8',
+    color: '#2563EB',
   },
   closeBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#1E293B',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -167,90 +222,127 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   storeName: {
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 20,
     fontWeight: '800',
     fontFamily: 'SpaceGrotesk-Bold',
   },
   floorSub: {
-    color: '#94A3B8',
-    fontSize: 12,
+    color: '#64748B',
+    fontSize: 12.5,
     fontWeight: '600',
     marginTop: 2,
   },
   missionBox: {
-    backgroundColor: '#0F172A',
-    borderRadius: 14,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#334155',
+    position: 'relative',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 18,
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
     marginBottom: 16,
+    overflow: 'hidden',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  missionBgImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+  },
+  missionBoxOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.76)',
+  },
+  missionContent: {
+    padding: 14,
   },
   dealHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   discountPill: {
-    backgroundColor: '#F59E0B',
+    backgroundColor: 'rgba(254, 243, 199, 0.95)',
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
+    paddingVertical: 3,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   discountText: {
-    color: '#FFFFFF',
-    fontSize: 9,
-    fontWeight: '900',
+    color: '#D97706',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  pricePill: {
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
   },
   priceText: {
-    color: '#10B981',
+    color: '#059669',
     fontSize: 15,
     fontWeight: '900',
   },
   productName: {
-    color: '#F8FAFC',
-    fontSize: 14,
+    color: '#0F172A',
+    fontSize: 15,
     fontWeight: '800',
-    marginVertical: 2,
+    marginVertical: 3,
+    textShadowColor: 'rgba(255, 255, 255, 0.9)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   missionDesc: {
-    color: '#94A3B8',
-    fontSize: 11,
-    lineHeight: 15,
+    color: '#334155',
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600',
+    textShadowColor: 'rgba(255, 255, 255, 0.9)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   actionsContainer: {
-    gap: 8,
+    gap: 10,
   },
   scanBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#7C3AED',
-    height: 48,
-    borderRadius: 14,
+    backgroundColor: '#2563EB',
+    height: 50,
+    borderRadius: 16,
     gap: 8,
-    shadowColor: '#7C3AED',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
   },
   scanBtnText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 14.5,
     fontWeight: '800',
   },
   backBtn: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   backBtnText: {
-    color: '#94A3B8',
-    fontSize: 12,
+    color: '#475569',
+    fontSize: 12.5,
     fontWeight: '700',
   },
 });

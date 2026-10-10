@@ -89,6 +89,18 @@ export const INITIAL_LOYALTY_STATE: LoyaltyState = {
  */
 export const DEMO_SAMBIL_OFFERS: StoreOffer[] = [
   {
+    id: 'off-palacio-1',
+    storeId: 'local_8', // Palacio del Blumer
+    title: '¡Renovación de Tienda! 20% DCTO',
+    description: 'Fin de semana con 20% DCTO por apertura y muchas sorpresas.',
+    type: 'discount',
+    badge: '20% DCTO',
+    discountPercentage: 20,
+    promoCode: 'BLUMER20',
+    rewardPoints: 35,
+    requiresCheckIn: true,
+  },
+  {
     id: 'off-tijerazo-1',
     storeId: 'local_4', // Tiendas Tijerazo
     title: '30% en Departamento de Ropa',

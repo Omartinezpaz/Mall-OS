@@ -124,7 +124,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 222, "y": 187 },
         "radius": 27,
-        "color": "#DC2626"
+        "color": "#E0F2FE"
       },
       {
         "id": "pl-jardin",
@@ -132,7 +132,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 111, "y": 322 },
         "radius": 25,
-        "color": "#2563EB"
+        "color": "#DCFCE7"
       },
       {
         "id": "pl-central",
@@ -140,7 +140,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 358, "y": 322 },
         "radius": 27,
-        "color": "#EA580C"
+        "color": "#FEF3C7"
       },
       {
         "id": "pl-arte",
@@ -148,7 +148,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 470, "y": 190 },
         "radius": 26,
-        "color": "#7C3AED"
+        "color": "#EDE9FE"
       },
       {
         "id": "pl-musica",
@@ -156,7 +156,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 578, "y": 330 },
         "radius": 27,
-        "color": "#1D4ED8"
+        "color": "#E0E7FF"
       }
     ],
     "obstacles": [],
@@ -190,7 +190,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 225, "y": 130 },
         "radius": 27,
-        "color": "#DC2626"
+        "color": "#E0F2FE"
       },
       {
         "id": "pl-jardin-ac",
@@ -198,7 +198,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 108, "y": 220 },
         "radius": 25,
-        "color": "#2563EB"
+        "color": "#DCFCE7"
       },
       {
         "id": "pl-central-ac",
@@ -206,7 +206,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 358, "y": 218 },
         "radius": 27,
-        "color": "#EA580C"
+        "color": "#FEF3C7"
       },
       {
         "id": "pl-arte-ac",
@@ -214,7 +214,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 468, "y": 132 },
         "radius": 26,
-        "color": "#7C3AED"
+        "color": "#EDE9FE"
       },
       {
         "id": "pl-musica-ac",
@@ -222,7 +222,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 578, "y": 222 },
         "radius": 27,
-        "color": "#1D4ED8"
+        "color": "#E0E7FF"
       }
     ],
     "obstacles": [],
@@ -282,7 +282,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 225, "y": 130 },
         "radius": 27,
-        "color": "#DC2626"
+        "color": "#E0F2FE"
       },
       {
         "id": "pl-jardin-lib",
@@ -290,7 +290,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 108, "y": 220 },
         "radius": 25,
-        "color": "#2563EB"
+        "color": "#DCFCE7"
       },
       {
         "id": "pl-central-lib",
@@ -298,7 +298,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 358, "y": 218 },
         "radius": 27,
-        "color": "#EA580C"
+        "color": "#FEF3C7"
       },
       {
         "id": "pl-arte-lib",
@@ -306,7 +306,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 468, "y": 132 },
         "radius": 26,
-        "color": "#7C3AED"
+        "color": "#EDE9FE"
       },
       {
         "id": "pl-musica-lib",
@@ -314,7 +314,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 578, "y": 222 },
         "radius": 27,
-        "color": "#1D4ED8"
+        "color": "#E0E7FF"
       }
     ],
     "obstacles": [],
@@ -374,7 +374,7 @@ export const sambilchacaoFloors: MapFloor[] = [
         "kind": "plaza",
         "center": { "x": 358, "y": 218 },
         "radius": 34,
-        "color": "#EA580C"
+        "color": "#FEF3C7"
       }
     ],
     "obstacles": [],

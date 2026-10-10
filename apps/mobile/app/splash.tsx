@@ -11,45 +11,33 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import * as Updates from 'expo-updates';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { useAuth } from '../src/features/auth/useAuth';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const TOTAL_DURATION_MS = 6000; // 6 segundos de transición suave
-
-const LOADING_PHASES = [
-  { until: 0.25, text: 'Iniciando motor gráfico Skia 2D & CAD...' },
-  { until: 0.55, text: 'Cargando planos Mall Demo (5 niveles)...' },
-  { until: 0.85, text: 'Sincronizando 124 tiendas, rutas y vitrinas...' },
-  { until: 1.0, text: '¡Bienvenido a Mall Demo!' },
-];
 
 export default function SplashScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const progressAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const [percent, setPercent] = useState<number>(0);
-  const [statusText, setStatusText] = useState<string>(LOADING_PHASES[0]!.text);
+  const [statusText, setStatusText] = useState<string>('Comprobando actualizaciones en la nube...');
   const hasNavigated = useRef<boolean>(false);
 
-  const navigateToHome = () => {
+  const navigateToNext = () => {
     if (hasNavigated.current) return;
     hasNavigated.current = true;
-    router.replace('/(tabs)');
+    if (user) {
+      router.replace('/(tabs)');
+    } else {
+      router.replace('/login');
+    }
   };
 
   useEffect(() => {
-    // 1. Animación suave de la barra de progreso
-    Animated.timing(progressAnim, {
-      toValue: 1,
-      duration: TOTAL_DURATION_MS,
-      useNativeDriver: false,
-    }).start(({ finished }) => {
-      if (finished) {
-        navigateToHome();
-      }
-    });
-
-    // 2. Pulso sutil para el logo
+    // 1. Pulso sutil para el logo
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -65,18 +53,103 @@ export default function SplashScreen() {
       ])
     ).start();
 
-    // 3. Listener para actualizar texto y porcentaje en tiempo real
+    // 2. Listener para porcentaje en tiempo real
     const listenerId = progressAnim.addListener(({ value }) => {
       const p = Math.min(100, Math.round(value * 100));
       setPercent(p);
-
-      const currentPhase =
-        LOADING_PHASES.find((phase) => value <= phase.until) ??
-        LOADING_PHASES[LOADING_PHASES.length - 1]!;
-      setStatusText(currentPhase.text);
     });
 
+    let isCancelled = false;
+
+    // 3. Flujo inteligente: Comprobar OTA Updates -> Descargar -> Recargar o Continuar
+    async function checkAndUpdate() {
+      // Progreso inicial de arranque
+      Animated.timing(progressAnim, {
+        toValue: 0.15,
+        duration: 900,
+        useNativeDriver: false,
+      }).start();
+
+      let hasUpdate = false;
+
+      try {
+        if (Updates.isEnabled) {
+          setStatusText('Buscando actualizaciones OTA...');
+          const check = await Promise.race([
+            Updates.checkForUpdateAsync(),
+            new Promise<{ isAvailable: false }>((resolve) =>
+              setTimeout(() => resolve({ isAvailable: false }), 3500)
+            ),
+          ]);
+
+          if (check.isAvailable && !isCancelled) {
+            hasUpdate = true;
+            setStatusText('Descargando nueva versión del Mall...');
+
+            // Progreso durante la descarga de la OTA
+            Animated.timing(progressAnim, {
+              toValue: 0.85,
+              duration: 3500,
+              useNativeDriver: false,
+            }).start();
+
+            await Updates.fetchUpdateAsync();
+
+            if (!isCancelled) {
+              setStatusText('¡Actualización instalada! Reiniciando...');
+              Animated.timing(progressAnim, {
+                toValue: 1.0,
+                duration: 500,
+                useNativeDriver: false,
+              }).start(async () => {
+                await Updates.reloadAsync();
+              });
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.log('[Splash] Verificación de updates:', err);
+      }
+
+      if (isCancelled || hasUpdate) return;
+
+      // Si no hay actualizaciones pendientes, ejecutar carga normal fluida
+      setStatusText('Iniciando motor gráfico Skia 2D & CAD...');
+      Animated.timing(progressAnim, {
+        toValue: 0.45,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start(() => {
+        if (isCancelled) return;
+        setStatusText('Cargando planos Mall Demo (5 niveles)...');
+        Animated.timing(progressAnim, {
+          toValue: 0.75,
+          duration: 1000,
+          useNativeDriver: false,
+        }).start(() => {
+          if (isCancelled) return;
+          setStatusText('Sincronizando 124 tiendas, rutas y vitrinas...');
+          Animated.timing(progressAnim, {
+            toValue: 1.0,
+            duration: 900,
+            useNativeDriver: false,
+          }).start(() => {
+            if (!isCancelled) {
+              setStatusText('¡Bienvenido a Mall Demo!');
+              setTimeout(() => {
+                navigateToNext();
+              }, 250);
+            }
+          });
+        });
+      });
+    }
+
+    checkAndUpdate();
+
     return () => {
+      isCancelled = true;
       progressAnim.removeListener(listenerId);
     };
   }, []);
@@ -85,6 +158,12 @@ export default function SplashScreen() {
     inputRange: [0, 1],
     outputRange: ['0%', '100%'],
   });
+
+  const updateChannel = Updates.channel ?? 'preview';
+  const updateIdShort = Updates.updateId ? Updates.updateId.slice(0, 8) : null;
+  const versionSubtitle = updateIdShort
+    ? `Versión 1.0.0 · ${updateChannel} (${updateIdShort})`
+    : `Versión 1.0.0 · ${updateChannel}`;
 
   return (
     <View style={styles.container}>
@@ -112,7 +191,7 @@ export default function SplashScreen() {
       {/* Botón Saltar */}
       <TouchableOpacity
         style={styles.skipButton}
-        onPress={navigateToHome}
+        onPress={navigateToNext}
         activeOpacity={0.7}
       >
         <Text style={styles.skipText}>Saltar</Text>
@@ -144,7 +223,7 @@ export default function SplashScreen() {
           <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
         </View>
 
-        <Text style={styles.versionText}>Versión 1.0.0 · Mall Demo</Text>
+        <Text style={styles.versionText}>{versionSubtitle}</Text>
       </View>
     </View>
   );

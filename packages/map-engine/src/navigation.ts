@@ -98,10 +98,15 @@ function getFloorLevel(floor: MapFloor | undefined): number {
  * Genera la secuencia estructurada de instrucciones giro a giro e hitos semánticos
  * para guiar al usuario paso a paso con máxima inmersión.
  */
+export interface NavigationPlanOptions {
+  accessibleOnly?: boolean;
+}
+
 export function generateNavigationPlan(
   mall: MallMapData,
   route: RouteResult,
-  targetStoreId?: string
+  targetStoreId?: string,
+  options?: NavigationPlanOptions
 ): NavigationPlan {
   const nodeMap = new Map<string, NavNode>(mall.nodes.map((n) => [n.id, n]));
   const floorMap = new Map<string, MapFloor>(mall.floors.map((f) => [f.id, f]));
@@ -166,7 +171,8 @@ export function generateNavigationPlan(
     if (curr.floorId !== next.floorId || curr.kind === 'stairs' || curr.kind === 'elevator') {
       const isUp = nextLevel > currLevel;
       const isElevator = curr.kind === 'elevator' || next.kind === 'elevator';
-      const icon: NavInstructionIcon = isElevator
+      const isAccessible = options?.accessibleOnly || isElevator;
+      const icon: NavInstructionIcon = isAccessible
         ? isUp ? 'elevator-up' : 'elevator-down'
         : isUp ? 'stairs-up' : 'stairs-down';
 
@@ -179,7 +185,7 @@ export function generateNavigationPlan(
         primaryText: isUp
           ? `Sube al ${targetFloorName}`
           : `Baja al ${targetFloorName}`,
-        secondaryText: `Por ${isElevator ? 'ascensor' : 'escaleras mecánicas'} en ${lm}`,
+        secondaryText: `Por ${isAccessible ? 'ascensor panorámico accesible' : 'escaleras mecánicas'} en ${lm}`,
         distanceMeters: Math.max(stepDistMeters, 15),
         floorId: curr.floorId,
         targetNodeId: next.id,

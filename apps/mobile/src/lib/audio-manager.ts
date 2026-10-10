@@ -136,15 +136,27 @@ class AudioManager {
   }
 
   /**
-   * Detiene cualquier locución activa de inmediato.
+   * Detiene cualquier locución activa.
+   * Si force es false (por defecto), protege locuciones activas de alta prioridad ('high' o 'critical')
+   * evitando que el montaje/desmontaje de vistas secundarias cancele la voz de bienvenida o llegada.
    */
-  public stop(): void {
+  public stop(force: boolean = false): void {
+    if (!force && this.activeTask && (this.activeTask.priority === 'critical' || this.activeTask.priority === 'high')) {
+      return;
+    }
     this.cancelActiveTask();
     try {
       Speech.stop();
     } catch {}
     this.isSpeaking = false;
     this.notify();
+  }
+
+  /**
+   * Detiene incondicionalmente cualquier locución y cancela colas.
+   */
+  public stopAll(): void {
+    this.stop(true);
   }
 
   public getIsSpeaking(): boolean {

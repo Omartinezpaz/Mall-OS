@@ -854,6 +854,61 @@ test('buildScene oculta visionCone cuando el usuario está detenido (userHeading
   assert.strictEqual(cone, undefined, 'No debe generar visionCone si está detenido');
 });
 
+test('Modo Accesible: findRoute elige ascensor y evita escaleras entre pisos', () => {
+  const m: MallMapData = {
+    mallSlug: 'test-accessible',
+    metersPerUnit: 1,
+    floors: [
+      { id: 'f1', name: 'Piso 1', level: 1, width: 200, height: 200, areas: [], obstacles: [] },
+      { id: 'f2', name: 'Piso 2', level: 2, width: 200, height: 200, areas: [], obstacles: [] },
+    ],
+    stores: [],
+    nodes: [
+      { id: 'start', floorId: 'f1', x: 10, y: 10, kind: 'corridor', connections: ['stairs-1', 'elev-1'] },
+      // Escalera: muy cerca (distancia 5)
+      { id: 'stairs-1', floorId: 'f1', x: 15, y: 10, kind: 'stairs', connections: ['start', 'stairs-2'] },
+      { id: 'stairs-2', floorId: 'f2', x: 15, y: 10, kind: 'stairs', connections: ['stairs-1', 'goal'] },
+      // Ascensor: más lejos (distancia 40)
+      { id: 'elev-1', floorId: 'f1', x: 50, y: 10, kind: 'elevator', connections: ['start', 'elev-2'] },
+      { id: 'elev-2', floorId: 'f2', x: 50, y: 10, kind: 'elevator', connections: ['elev-1', 'goal'] },
+      { id: 'goal', floorId: 'f2', x: 70, y: 10, kind: 'corridor', connections: ['stairs-2', 'elev-2'] },
+    ],
+  };
+
+  // En modo normal, Dijkstra elige la ruta más corta (escalera)
+  const normalRoute = findRoute(m, 'start', 'goal')!;
+  assert.ok(normalRoute.nodeIds.includes('stairs-1'));
+  assert.ok(!normalRoute.nodeIds.includes('elev-1'));
+
+  // En modo accesible, Dijkstra descarta escaleras y elige obligatoriamente ascensor
+  const accessibleRoute = findRoute(m, 'start', 'goal', { accessibleOnly: true })!;
+  assert.ok(accessibleRoute.nodeIds.includes('elev-1'));
+  assert.ok(accessibleRoute.nodeIds.includes('elev-2'));
+  assert.ok(!accessibleRoute.nodeIds.includes('stairs-1'));
+  assert.ok(!accessibleRoute.nodeIds.includes('stairs-2'));
+});
+
+test('Modo Accesible: findRoute devuelve null si solo existen escaleras para llegar', () => {
+  const mOnlyStairs: MallMapData = {
+    mallSlug: 'test-stairs-only',
+    metersPerUnit: 1,
+    floors: [
+      { id: 'f1', name: 'Piso 1', level: 1, width: 200, height: 200, areas: [], obstacles: [] },
+      { id: 'f2', name: 'Piso 2', level: 2, width: 200, height: 200, areas: [], obstacles: [] },
+    ],
+    stores: [],
+    nodes: [
+      { id: 'start', floorId: 'f1', x: 10, y: 10, kind: 'corridor', connections: ['stairs-1'] },
+      { id: 'stairs-1', floorId: 'f1', x: 15, y: 10, kind: 'stairs', connections: ['start', 'stairs-2'] },
+      { id: 'stairs-2', floorId: 'f2', x: 15, y: 10, kind: 'stairs', connections: ['stairs-1', 'goal'] },
+      { id: 'goal', floorId: 'f2', x: 20, y: 10, kind: 'corridor', connections: ['stairs-2'] },
+    ],
+  };
+
+  const route = findRoute(mOnlyStairs, 'start', 'goal', { accessibleOnly: true });
+  assert.strictEqual(route, null, 'Debe devolver null si no hay camino accesible');
+});
+
 
 
 

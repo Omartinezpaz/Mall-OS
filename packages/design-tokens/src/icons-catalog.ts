@@ -141,6 +141,26 @@ export const MALLOS_ICONS = {
     group: 'category',
     path: '<path d="M14 26H34 M24 16C19 16 16 20 16 26 M32 26C32 20 29 16 24 16 M24 16V14" />',
   },
+  cafeteria: {
+    id: 'cafeteria',
+    name: 'Cafetería y Panadería',
+    category: 'Categorías',
+    color: '#92400E',
+    symbolId: 'mallos-cafeteria',
+    badgeSymbolId: 'mallos-cafeteria-badge',
+    group: 'category',
+    path: '<path d="M16 20H30V26C30 29 27 31 23 31C19 31 16 29 16 26V20Z M30 22H33C34 22 35 23 35 24C35 25 34 26 33 26H30 M14 34H32" />',
+  },
+  bebidas: {
+    id: 'bebidas',
+    name: 'Bebidas y Refrescos',
+    category: 'Categorías',
+    color: '#0284C7',
+    symbolId: 'mallos-bebidas',
+    badgeSymbolId: 'mallos-bebidas-badge',
+    group: 'category',
+    path: '<path d="M17 18H31L29 32H19L17 18Z M21 18L24 14H27 M16 22H32" />',
+  },
   libreria: {
     id: 'libreria',
     name: 'Librería y Papelería',
@@ -262,6 +282,16 @@ export const MALLOS_ICONS = {
     badgeSymbolId: 'mallos-ascensor-badge',
     group: 'mall',
     path: '<rect x="16" y="14" width="16" height="20" rx="2" /><path d="M24 14V34 M20 24L20 20L18 22 M20 20L22 22 M28 24L28 20L26 22 M28 20L30 22" />',
+  },
+  accesible: {
+    id: 'accesible',
+    name: 'Accesibilidad / Silla de Ruedas',
+    category: 'Mall',
+    color: '#0284C7',
+    symbolId: 'mallos-accesible',
+    badgeSymbolId: 'mallos-accesible-badge',
+    group: 'mall',
+    path: '<circle cx="24" cy="14" r="2.5"/><path d="M22 19H26L25 25H28L29 30M19 22C19 26 22 29 26 29C28.5 29 30.5 27.5 31.5 25" />',
   },
   banos: {
     id: 'banos',
@@ -470,10 +500,21 @@ export function normalizeMallOsIconId(rawId: string): MallOsIconId {
 
   // Alias comunes de compatibilidad
   if (clean === 'comida' || clean === 'comidas') return 'restaurantes';
+  if (clean === 'cafe' || clean === 'cafeterias') return 'cafeteria';
+  if (clean === 'bebida' || clean === 'jugos') return 'bebidas';
   if (clean === 'cuenta' || clean === 'perfil') return 'tu-cuenta';
   if (clean === 'farmacia') return 'salud';
   if (clean === 'banco') return 'finanzas';
   if (clean === 'parking-discapacitados') return 'parking';
+  if (
+    clean === 'accesibilidad' ||
+    clean === 'silla-de-ruedas' ||
+    clean === 'discapacidad' ||
+    clean === 'movilidad-reducida' ||
+    clean === 'rampa'
+  ) {
+    return 'accesible';
+  }
 
   return 'otros';
 }

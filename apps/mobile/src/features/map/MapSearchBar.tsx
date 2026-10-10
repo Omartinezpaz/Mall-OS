@@ -17,19 +17,22 @@ export interface CategoryChip {
   label: string;
   icon: MallOsIconId | string;
   categoryKeys: string[];
+  accentColor: string;
+  pastelBg: string;
 }
 
 export const SEARCH_CATEGORIES: CategoryChip[] = [
-  { id: 'all', label: 'Todos', icon: 'categorias', categoryKeys: [] },
-  { id: 'fashion', label: 'Moda', icon: 'moda', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'] },
-  { id: 'food', label: 'Comida', icon: 'restaurantes', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'] },
-  { id: 'finance', label: 'Bancos', icon: 'finanzas', categoryKeys: ['finance', 'bank', 'atm'] },
-  { id: 'pharmacy', label: 'Farmacias', icon: 'salud', categoryKeys: ['pharmacy', 'health', 'beauty'] },
-  { id: 'entertainment', label: 'Cines', icon: 'entretenimiento', categoryKeys: ['entertainment', 'cinema', 'games'] },
-  { id: 'services', label: 'Servicios', icon: 'servicios', categoryKeys: ['services', 'telecom', 'optical'] },
-  { id: 'tech', label: 'Tech', icon: 'tecnologia', categoryKeys: ['tech', 'electronics', 'computers'] },
-  { id: 'home', label: 'Hogar', icon: 'hogar', categoryKeys: ['home', 'decor', 'department_store'] },
+  { id: 'all', label: 'Todos', icon: 'categorias', categoryKeys: [], accentColor: '#E11D48', pastelBg: '#FFE4E6' }, // Rojo
+  { id: 'food', label: 'Comida', icon: 'restaurantes', categoryKeys: ['food', 'restaurant', 'cafe', 'fastfood'], accentColor: '#10B981', pastelBg: '#D1FAE5' }, // Verde Yummy
+  { id: 'fashion', label: 'Moda', icon: 'moda', categoryKeys: ['fashion', 'apparel', 'shoes', 'jewelry'], accentColor: '#E11D48', pastelBg: '#FFE4E6' }, // Rojo
+  { id: 'tech', label: 'Tech', icon: 'tecnologia', categoryKeys: ['tech', 'electronics', 'computers'], accentColor: '#2563EB', pastelBg: '#DBEAFE' }, // Azul
+  { id: 'finance', label: 'Bancos', icon: 'finanzas', categoryKeys: ['finance', 'bank', 'atm'], accentColor: '#D97706', pastelBg: '#FEF3C7' }, // Oro
+  { id: 'pharmacy', label: 'Farmacias', icon: 'salud', categoryKeys: ['pharmacy', 'health', 'beauty'], accentColor: '#10B981', pastelBg: '#D1FAE5' }, // Verde Yummy
+  { id: 'entertainment', label: 'Cines', icon: 'entretenimiento', categoryKeys: ['entertainment', 'cinema', 'games'], accentColor: '#2563EB', pastelBg: '#DBEAFE' }, // Azul
+  { id: 'home', label: 'Hogar', icon: 'hogar', categoryKeys: ['home', 'decor', 'department_store'], accentColor: '#D97706', pastelBg: '#FEF3C7' }, // Oro
+  { id: 'services', label: 'Servicios', icon: 'servicios', categoryKeys: ['services', 'telecom', 'optical'], accentColor: '#10B981', pastelBg: '#D1FAE5' }, // Verde Yummy
 ];
+
 
 interface MapSearchBarProps {
   stores: MapStore[];
@@ -96,27 +99,34 @@ export function MapSearchBar({
 
   return (
     <View style={styles.wrapper} pointerEvents="box-none">
-      {/* Input de Búsqueda Flotante */}
+      {/* Input de Búsqueda Flotante tipo Glassmorphism Cyber-Dark */}
       <View style={[styles.searchBar, isFocused && styles.searchBarFocused]}>
-        <AppIcon name="search" size={18} color="#64748B" style={styles.searchIcon} />
+        <TouchableOpacity style={styles.menuBtn} activeOpacity={0.7}>
+          <AppIcon name="home" size={18} color="#10B981" strokeWidth={2.2} />
+        </TouchableOpacity>
+
         <TextInput
           style={styles.input}
-          placeholder="Buscar tienda, banco, café o producto..."
-          placeholderTextColor="#94A3B8"
+          placeholder="¿A dónde quieres ir?"
+          placeholderTextColor="#64748B"
           value={query}
           onChangeText={setQuery}
           onFocus={() => setIsFocused(true)}
           onBlur={() => {
-            // Breve delay para permitir el click en resultados
             setTimeout(() => setIsFocused(false), 250);
           }}
           returnKeyType="search"
           autoCorrect={false}
           autoCapitalize="none"
         />
-        {query.length > 0 && (
+
+        {query.length > 0 ? (
           <TouchableOpacity onPress={handleClear} style={styles.clearBtn} activeOpacity={0.7}>
-            <AppIcon name="close" size={14} color="#64748B" strokeWidth={2.5} />
+            <AppIcon name="close" size={14} color="#94A3B8" strokeWidth={2.5} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.searchActionBtn} activeOpacity={0.85}>
+            <AppIcon name="search" size={15} color="#FFFFFF" strokeWidth={2.5} />
           </TouchableOpacity>
         )}
       </View>
@@ -137,24 +147,47 @@ export function MapSearchBar({
             return (
               <TouchableOpacity
                 key={cat.id}
-                style={[styles.chip, isSelected && styles.chipSelected]}
+                style={[
+                  styles.chip,
+                  { backgroundColor: isSelected ? cat.accentColor : '#FFFFFF' },
+                  isSelected
+                    ? { borderColor: cat.accentColor, shadowColor: cat.accentColor }
+                    : { borderColor: '#E2E8F0' },
+                ]}
                 onPress={() => {
                   onSelectCategory(cat.id === 'all' ? null : cat.id);
                 }}
                 activeOpacity={0.8}
               >
-                <MallOsSpriteIcon
-                  name={cat.icon}
-                  size={16}
-                  showCircle={false}
-                  color={isSelected ? '#FFFFFF' : '#334155'}
-                />
-                <Text style={[styles.chipLabel, isSelected && styles.chipLabelSelected]}>
+                <View
+                  style={[
+                    styles.chipIconBox,
+                    {
+                      backgroundColor: isSelected
+                        ? 'rgba(255, 255, 255, 0.25)'
+                        : cat.pastelBg,
+                    },
+                  ]}
+                >
+                  <MallOsSpriteIcon
+                    name={cat.icon}
+                    size={15}
+                    showCircle={false}
+                    color={isSelected ? '#FFFFFF' : cat.accentColor}
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.chipLabel,
+                    isSelected ? styles.chipLabelSelected : { color: '#1E293B' },
+                  ]}
+                >
                   {cat.label}
                 </Text>
               </TouchableOpacity>
             );
           })}
+
         </ScrollView>
       </View>
 
@@ -216,24 +249,47 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    shadowColor: '#000',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 24,
+    paddingLeft: 10,
+    paddingRight: 6,
+    paddingVertical: 6,
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.08,
     shadowRadius: 10,
-    elevation: 8,
-    borderWidth: 1.5,
+    elevation: 4,
+    borderWidth: 1.2,
     borderColor: '#E2E8F0',
   },
   searchBarFocused: {
-    borderColor: '#2563EB',
+    borderColor: '#E11D48',
     backgroundColor: '#FFFFFF',
+    shadowOpacity: 0.14,
   },
-  searchIcon: {
-    marginRight: 8,
+  menuBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 14,
+    backgroundColor: '#ECFDF5', // Verde pastel suave estilo Yummy
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    borderWidth: 1.2,
+    borderColor: '#A7F3D0',
+  },
+  searchActionBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 14,
+    backgroundColor: '#E11D48', // Carmesí / Rojo vivo
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#E11D48',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    elevation: 3,
   },
   input: {
     flex: 1,
@@ -244,11 +300,11 @@ const styles = StyleSheet.create({
   },
   clearBtn: {
     padding: 4,
-    marginLeft: 6,
+    marginRight: 6,
     backgroundColor: '#F1F5F9',
     borderRadius: 12,
-    width: 22,
-    height: 22,
+    width: 24,
+    height: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -267,47 +323,52 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    paddingLeft: 5,
+    paddingRight: 12,
+    paddingVertical: 5,
+    borderWidth: 1.2,
     borderColor: '#E2E8F0',
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+    gap: 6,
   },
-  chipSelected: {
-    backgroundColor: '#2563EB',
-    borderColor: '#1D4ED8',
-  },
-  chipIcon: {
-    marginRight: 5,
+  chipIconBox: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   chipLabel: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#334155',
+    color: '#1E293B',
   },
   chipLabelSelected: {
     color: '#FFFFFF',
+    fontWeight: '800',
   },
+
   dropdownContainer: {
     marginTop: 6,
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 18,
     maxHeight: 220,
-    borderWidth: 1,
+    borderWidth: 1.2,
     borderColor: '#E2E8F0',
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 10,
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    elevation: 8,
     overflow: 'hidden',
   },
+
   resultItem: {
     flexDirection: 'row',
     alignItems: 'center',

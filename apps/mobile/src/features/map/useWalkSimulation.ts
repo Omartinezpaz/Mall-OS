@@ -197,7 +197,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
 
       if (newProgress >= 0.999 || (finalPt && distToEnd < 0.5)) {
         setIsWalking(false);
-        setHeading(undefined);
+        // Preservar el heading actual de marcha para que el avatar no se voltee ni se vire al llegar a la tienda
         const arrivalPos = finalPt ?? pos;
         setPosition(arrivalPos);
         setWalkProgress(1);
@@ -256,7 +256,7 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
 
   const stopWalk = useCallback(() => {
     setIsWalking(false);
-    setHeading(undefined);
+    // Preservar heading al pausar para no desorientar al usuario ni virar el avatar
   }, []);
 
   const resetWalk = useCallback(() => {
@@ -280,7 +280,11 @@ export function useWalkSimulation(props: UseWalkSimulationProps): WalkSimulation
   const forceArrival = useCallback(() => {
     if (!activeRoute || waypoints.current.length === 0) return;
     setIsWalking(false);
-    setHeading(undefined);
+    if (waypoints.current.length >= 2) {
+      const pPrev = waypoints.current[waypoints.current.length - 2];
+      const pLast = waypoints.current[waypoints.current.length - 1];
+      setHeading(Math.atan2(pLast.y - pPrev.y, pLast.x - pPrev.x));
+    }
     const lastPt = waypoints.current[waypoints.current.length - 1];
     setPosition(lastPt);
     setWalkProgress(1);

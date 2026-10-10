@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Image,
 } from 'react-native';
 import { AppIcon } from '../../components/AppIcon';
 import {
@@ -47,12 +48,20 @@ export const KidsOnboarding: React.FC<KidsOnboardingProps> = ({ onStart, onClose
         )}
       </View>
 
-      {/* Hero Intro */}
-      <View style={styles.heroSection}>
-        <Text style={styles.heroTitle}>Búsqueda del Tesoro</Text>
-        <Text style={styles.heroSubtitle}>
-          Recorre el mall, resuelve 5 acertijos interactivos y gana premios reales al instante.
-        </Text>
+      {/* Hero Intro with Treasure Map Graphic Banner */}
+      <View style={styles.heroBannerCard}>
+        <Image
+          source={require('../../../assets/kids/mapa_del_tesoro.jpg')}
+          style={styles.heroBgImage}
+          resizeMode="cover"
+        />
+        <View style={styles.heroOverlay} />
+        <View style={styles.heroContent}>
+          <Text style={styles.heroTitle}>Búsqueda del Tesoro</Text>
+          <Text style={styles.heroSubtitle}>
+            Recorre el mall, resuelve 5 acertijos interactivos y gana premios reales al instante.
+          </Text>
+        </View>
       </View>
 
       {/* Selector de Rango de Edad */}
@@ -196,20 +205,50 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroSection: {
+  heroBannerCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    position: 'relative',
     marginBottom: 20,
+    borderWidth: 1.5,
+    borderColor: '#FDE68A',
+    shadowColor: '#F59E0B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 4,
+    minHeight: 110,
+  },
+  heroBgImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+  },
+  heroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(15, 23, 42, 0.12)',
+  },
+  heroContent: {
+    padding: 16,
+    gap: 4,
   },
   heroTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: '#0F172A',
-    fontFamily: 'SpaceGrotesk-Bold',
-    marginBottom: 6,
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
+    textShadowColor: 'rgba(0, 0, 0, 0.95)',
+    textShadowOffset: { width: 0, height: 1.5 },
+    textShadowRadius: 6,
   },
   heroSubtitle: {
-    fontSize: 13,
-    color: '#64748B',
-    lineHeight: 18,
+    fontSize: 12.5,
+    color: '#FFFFFF',
+    lineHeight: 17,
+    fontWeight: '700',
+    textShadowColor: 'rgba(0, 0, 0, 0.95)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 5,
   },
   sectionLabel: {
     fontSize: 13,

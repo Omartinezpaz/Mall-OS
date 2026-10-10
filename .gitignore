@@ -43,3 +43,5 @@ config_output.txt
 *.jpg
 !apps/mobile/assets/**
 !apps/landing/public/**
+creacion/
+capa_del mapa-nivel autopista.png

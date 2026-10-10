@@ -5,3 +5,4 @@ export * from './MallOsIllustrations';
 export * from './MallOsSpriteIcon';
 export * from './GlassSurface';
 export * from './AppIcon';
+export * from './GoogleLogo';

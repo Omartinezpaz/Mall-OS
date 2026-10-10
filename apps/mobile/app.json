@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0A0F1D"
+      "backgroundColor": "#0A369D"
     },
     "ios": {
       "supportsTablet": false,
@@ -20,7 +20,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0A0F1D"
+        "backgroundColor": "#0A369D"
       },
       "package": "com.mallos.app"
     },
@@ -42,7 +42,7 @@
     "updates": {
       "url": "https://u.expo.dev/15776f99-b12a-45bb-85cd-5fca8a4a5c4a",
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 5000
+      "fallbackToCacheTimeout": 10000
     }
   }
 }

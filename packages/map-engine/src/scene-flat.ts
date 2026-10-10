@@ -55,6 +55,8 @@ export interface FlatSceneOptions {
   labels?: 'auto' | 'all' | 'none';
   /** Ofertas y promociones activas para renderizar en los locales (Modo 2). */
   offers?: StoreOffer[];
+  /** Modo accesible global: destaca ascensores y baños accesibles adaptados */
+  accessibleOnly?: boolean;
 }
 
 // ============================================================================
@@ -92,12 +94,31 @@ export interface FlatPlaza {
   label: string;
 }
 
+export interface FlatRouteSegment {
+  from: Point;
+  to: Point;
+  angle: number;
+  length: number;
+  isImmediate: boolean;
+}
+
+export interface FlatChevron {
+  x: number;
+  y: number;
+  angle: number;
+  isImmediate: boolean;
+}
+
 export interface FlatRoute {
   kind: 'route';
   /** Puntos de la ruta en coords del plano. */
   points: Point[];
   /** Segmentos con opacidad diferenciada (inmediato vs resto). */
   immediatePointCount: number;
+  /** Segmentos descompuestos con ángulo y longitud */
+  segments?: FlatRouteSegment[];
+  /** Posiciones y ángulos para dibujar chevrons direccionales */
+  chevrons?: FlatChevron[];
 }
 
 export interface FlatUserPin {
@@ -126,6 +147,7 @@ export interface FlatDestinationPin {
   x: number;
   y: number;
   storeId: string;
+  category?: string;
 }
 
 export interface FlatLabel {
@@ -153,6 +175,35 @@ export interface FlatZone {
   cardinal?: 'north' | 'south' | 'east' | 'west' | 'center';
 }
 
+export interface FlatProp {
+  kind: 'prop';
+  id: string;
+  propKind: 'bench' | 'planter' | 'tree';
+  x: number;
+  y: number;
+  w?: number;
+  h?: number;
+  angle?: number;
+}
+
+export interface FlatPoi {
+  kind: 'poi';
+  id: string;
+  poiKind: 'wc' | 'atm' | 'info' | 'escalator' | 'elevator';
+  x: number;
+  y: number;
+  label?: string;
+}
+
+export interface FlatPedestrian {
+  kind: 'pedestrian';
+  id: string;
+  x: number;
+  y: number;
+  heading?: number;
+  color?: string;
+}
+
 export interface FlatOfferBadge {
   kind: 'offerBadge';
   storeId: string;
@@ -174,7 +225,10 @@ export type FlatSceneItem =
   | FlatUserTrail
   | FlatDestinationPin
   | FlatLabel
-  | FlatOfferBadge;
+  | FlatOfferBadge
+  | FlatProp
+  | FlatPoi
+  | FlatPedestrian;
 
 export interface FlatScene {
   items: FlatSceneItem[];
@@ -205,14 +259,14 @@ const MAX_VIEWBOX_RADIUS_UNITS = 400;
 /** Distancia mínima entre etiquetas para evitar solapamiento (en unidades del plano). */
 const LABEL_MIN_DISTANCE_UNITS = 34;
 
-/** Colores base del modo guía de alto contraste. */
+/** Colores base del modo guía de alto contraste y estilo Apple Maps limpio. */
 const FLAT_COLORS = {
-  background: '#F1F5F9',
+  background: '#F8FAFC',
   corridor: '#FFFFFF',
-  corridorStroke: '#CBD5E1',
-  storeFill: '#FFFFFF',
-  storeStroke: '#94A3B8',
-  storeDimmed: '#F8FAFC',
+  corridorStroke: '#E2E8F0',
+  storeFill: '#F8FAFC',
+  storeStroke: '#CBD5E1',
+  storeDimmed: '#F1F5F9',
   destinationFill: '#FEF3C7',
   destinationStroke: '#F59E0B',
   routePrimary: '#2563EB',
@@ -316,23 +370,59 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
   const floor = map.floors.find((f) => f.id === opts.floorId);
   if (!floor) throw new Error(`Piso inexistente: ${opts.floorId}`);
 
-  // --- 1. Calcular viewport ---
-  const center: Point = opts.viewport?.center
-    ?? opts.userPosition
-    ?? { x: floor.width / 2, y: floor.height / 2 };
+  // --- 1. Calcular Bounding Box real del plano completo del piso ---
+  let minX = 0;
+  let minY = 0;
+  let maxX = floor.width;
+  let maxY = floor.height;
 
-  const defaultRadius = Math.max(floor.width, floor.height) / 2;
-  const radius = Math.min(
-    opts.viewport?.radius ?? defaultRadius,
-    MAX_VIEWBOX_RADIUS_UNITS,
-  );
-  const viewBox: Rect = {
-    x: center.x - radius,
-    y: center.y - radius,
-    w: radius * 2,
-    h: radius * 2,
-  };
-  const focusBox = expandRect(viewBox, radius * 1.5); // margen generoso para renderizado consistente de locales
+  const floorStores = map.stores.filter((s) => s.floorId === opts.floorId);
+  if (floorStores.length > 0) {
+    let sMinX = Infinity, sMinY = Infinity, sMaxX = -Infinity, sMaxY = -Infinity;
+    for (const s of floorStores) {
+      const b = storeBounds(s);
+      if (b.x < sMinX) sMinX = b.x;
+      if (b.y < sMinY) sMinY = b.y;
+      if (b.x + b.w > sMaxX) sMaxX = b.x + b.w;
+      if (b.y + b.h > sMaxY) sMaxY = b.y + b.h;
+    }
+    for (const a of floor.areas) {
+      if (a.polygon) {
+        for (const p of a.polygon) {
+          if (p.x < sMinX) sMinX = p.x;
+          if (p.y < sMinY) sMinY = p.y;
+          if (p.x > sMaxX) sMaxX = p.x;
+          if (p.y > sMaxY) sMaxY = p.y;
+        }
+      }
+    }
+    if (sMinX < sMaxX && sMinY < sMaxY) {
+      minX = sMinX;
+      minY = sMinY;
+      maxX = sMaxX;
+      maxY = sMaxY;
+    }
+  }
+
+  let viewBox: Rect;
+  if (opts.viewport) {
+    const radius = Math.min(opts.viewport.radius, 400);
+    viewBox = {
+      x: opts.viewport.center.x - radius,
+      y: opts.viewport.center.y - radius,
+      w: radius * 2,
+      h: radius * 2,
+    };
+  } else {
+    const PADDING_UNITS = 18;
+    viewBox = {
+      x: minX - PADDING_UNITS,
+      y: minY - PADDING_UNITS,
+      w: (maxX - minX) + PADDING_UNITS * 2,
+      h: (maxY - minY) + PADDING_UNITS * 2,
+    };
+  }
+  const focusBox = expandRect(viewBox, 18);
 
   // --- 2. Culling de locales ---
   const stores = map.stores.filter((s) => s.floorId === opts.floorId);
@@ -398,7 +488,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
         ];
 
     let fill = colors.fill || FLAT_COLORS.storeFill;
-    let stroke = colors.ink || FLAT_COLORS.storeStroke;
+    let stroke = colors.stroke || FLAT_COLORS.storeStroke;
 
     if (isDestination) {
       fill = FLAT_COLORS.destinationFill;
@@ -471,10 +561,61 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
         if (accum >= IMMEDIATE_DISTANCE_UNITS) break;
       }
 
+      // Calcular segmentos y chevrons direccionales (flechas)
+      const segments: FlatRouteSegment[] = [];
+      const chevrons: FlatChevron[] = [];
+      const CHEVRON_INTERVAL = 35; // Distancia ideal entre chevrons
+      let distSinceLastChevron = CHEVRON_INTERVAL * 0.4;
+
+      for (let i = 1; i < routePoints.length; i++) {
+        const p1 = routePoints[i - 1]!;
+        const p2 = routePoints[i]!;
+        const segLen = distance(p1, p2);
+        if (segLen <= 0.001) continue;
+
+        const ang = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        const isImmediate = i < immediateCount;
+
+        segments.push({
+          from: p1,
+          to: p2,
+          angle: ang,
+          length: segLen,
+          isImmediate,
+        });
+
+        // Distribuir chevrons a lo largo del segmento
+        let progress = CHEVRON_INTERVAL - distSinceLastChevron;
+        while (progress <= segLen) {
+          const t = progress / segLen;
+          chevrons.push({
+            x: p1.x + (p2.x - p1.x) * t,
+            y: p1.y + (p2.y - p1.y) * t,
+            angle: ang,
+            isImmediate,
+          });
+          progress += CHEVRON_INTERVAL;
+        }
+        distSinceLastChevron = segLen - (progress - CHEVRON_INTERVAL);
+      }
+
+      // Garantizar al menos un chevron en el primer segmento si no se generó por longitud
+      if (chevrons.length === 0 && segments.length > 0) {
+        const first = segments[0]!;
+        chevrons.push({
+          x: (first.from.x + first.to.x) / 2,
+          y: (first.from.y + first.to.y) / 2,
+          angle: first.angle,
+          isImmediate: true,
+        });
+      }
+
       items.push({
         kind: 'route',
         points: routePoints,
         immediatePointCount: immediateCount,
+        segments,
+        chevrons,
       });
     }
   }
@@ -546,6 +687,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
       x: c.x,
       y: c.y,
       storeId: destination.id,
+      category: destination.category,
     });
   }
 
@@ -704,12 +846,94 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     }
   }
 
+  // --- 10. Mobiliario arquitectónico: Bancos (asientos) y Jardineras (plantas) en Plazas ---
+  for (const p of plazas) {
+    const angles = [Math.PI / 4, (3 * Math.PI) / 4, (5 * Math.PI) / 4, (7 * Math.PI) / 4];
+    for (let i = 0; i < angles.length; i++) {
+      const a = angles[i]!;
+      // Jardineras en las diagonales exteriores
+      const px = p.center!.x + Math.cos(a) * (p.radius! * 1.08);
+      const py = p.center!.y + Math.sin(a) * (p.radius! * 1.08);
+      items.push({
+        kind: 'prop',
+        id: `planter-${p.id}-${i}`,
+        propKind: 'planter',
+        x: px,
+        y: py,
+      });
+
+      // Bancos/asientos en los puntos cardinales interiores
+      const cardAngle = (i * Math.PI) / 2;
+      const bx = p.center!.x + Math.cos(cardAngle) * (p.radius! * 0.78);
+      const by = p.center!.y + Math.sin(cardAngle) * (p.radius! * 0.78);
+      items.push({
+        kind: 'prop',
+        id: `bench-${p.id}-${i}`,
+        propKind: 'bench',
+        x: bx,
+        y: by,
+        angle: cardAngle + Math.PI / 2,
+      });
+    }
+  }
+
+  // --- 11. Puntos de Interés / Servicios: Símbolos de Baños (WC) y Ascensores ---
+  const isAccessible = opts.accessibleOnly ?? false;
+  const floorWcs = [
+    { id: 'poi-wc-1', poiKind: 'wc' as const, x: 200, y: 78, label: isAccessible ? 'WC Accesible' : 'Baños' },
+    { id: 'poi-wc-2', poiKind: 'wc' as const, x: 495, y: 78, label: isAccessible ? 'WC Accesible' : 'Baños' },
+    { id: 'poi-wc-3', poiKind: 'wc' as const, x: 358, y: 395, label: isAccessible ? 'WC Accesible' : 'Baños' },
+    { id: 'poi-wc-4', poiKind: 'wc' as const, x: 630, y: 320, label: isAccessible ? 'WC Accesible' : 'Baños' },
+  ];
+  for (const wc of floorWcs) {
+    items.push({
+      kind: 'poi',
+      ...wc,
+    });
+  }
+
+  if (isAccessible) {
+    const floorElevs = [
+      { id: 'poi-elev-1', poiKind: 'elevator' as const, x: 352, y: 248, label: 'Ascensor' },
+      { id: 'poi-elev-2', poiKind: 'elevator' as const, x: 74, y: 248, label: 'Ascensor' },
+      { id: 'poi-elev-3', poiKind: 'elevator' as const, x: 586, y: 248, label: 'Ascensor' },
+    ];
+    for (const el of floorElevs) {
+      items.push({
+        kind: 'poi',
+        ...el,
+      });
+    }
+  }
+
+  // --- 12. Personas / Siluetas de Peatones en Pasillos ---
+  const corridorPeds = [
+    { id: 'ped-1', x: 165, y: 265, heading: 0.1, color: '#3B82F6' },
+    { id: 'ped-2', x: 195, y: 245, heading: -0.2, color: '#EC4899' },
+    { id: 'ped-3', x: 260, y: 250, heading: 0.05, color: '#10B981' },
+    { id: 'ped-4', x: 310, y: 260, heading: -0.1, color: '#6366F1' },
+    { id: 'ped-5', x: 400, y: 255, heading: 0.2, color: '#F59E0B' },
+    { id: 'ped-6', x: 440, y: 245, heading: -0.3, color: '#8B5CF6' },
+    { id: 'ped-7', x: 520, y: 265, heading: 0.15, color: '#14B8A6' },
+    { id: 'ped-8', x: 550, y: 250, heading: -0.1, color: '#F43F5E' },
+    { id: 'ped-9', x: 230, y: 322, heading: 0, color: '#3B82F6' },
+    { id: 'ped-10', x: 285, y: 322, heading: 3.14, color: '#64748B' },
+    { id: 'ped-11', x: 420, y: 322, heading: 0, color: '#10B981' },
+    { id: 'ped-12', x: 500, y: 325, heading: 3.14, color: '#F59E0B' },
+  ];
+  for (const ped of corridorPeds) {
+    items.push({
+      kind: 'pedestrian',
+      ...ped,
+    });
+  }
+
   return {
     items,
     viewBox,
     meta: {
       visibleStoreCount: visibleStores.length,
-      viewportRadius: radius,
+      viewportRadius: Math.max(viewBox.w, viewBox.h) / 2,
       northAngle: floor.orientation?.northAngle,
     },
   };

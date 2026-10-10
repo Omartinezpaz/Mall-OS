@@ -25,6 +25,8 @@ export interface FloorItem {
   level: number;
   icon: MallOsIconId | string;
   storeCount: number;
+  accentColor: string;
+  pastelBg: string;
 }
 
 export const SAMBIL_FLOORS: FloorItem[] = [
@@ -36,6 +38,8 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     level: 5,
     icon: 'entretenimiento',
     storeCount: 28,
+    accentColor: '#2563EB', // Azul Cobalto
+    pastelBg: '#DBEAFE',
   },
   {
     id: LEVEL_FERIA,
@@ -45,6 +49,8 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     level: 4,
     icon: 'restaurantes',
     storeCount: 46,
+    accentColor: '#10B981', // Verde Yummy
+    pastelBg: '#D1FAE5',
   },
   {
     id: LEVEL_LIBERTADOR,
@@ -54,6 +60,8 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     level: 3,
     icon: 'moda',
     storeCount: 74,
+    accentColor: '#E11D48', // Rojo Vivo / Carmesí
+    pastelBg: '#FFE4E6',
   },
   {
     id: LEVEL_ACUARIO,
@@ -63,6 +71,8 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     level: 2,
     icon: 'tecnologia',
     storeCount: 82,
+    accentColor: '#D97706', // Oro Cálido
+    pastelBg: '#FEF3C7',
   },
   {
     id: LEVEL_AUTOPISTA,
@@ -72,8 +82,11 @@ export const SAMBIL_FLOORS: FloorItem[] = [
     level: 1,
     icon: 'otros',
     storeCount: 108,
+    accentColor: '#2563EB', // Azul Cobalto
+    pastelBg: '#DBEAFE',
   },
 ];
+
 
 interface VerticalFloorSelectorProps {
   selectedFloorId: string;
@@ -155,7 +168,11 @@ export function VerticalFloorSelector({
                         key={floor.id}
                         style={[
                           styles.floorCard,
-                          isSelected && styles.floorCardSelected,
+                          isSelected && {
+                            backgroundColor: floor.pastelBg,
+                            borderColor: floor.accentColor,
+                            borderWidth: 1.8,
+                          },
                         ]}
                         onPress={() => {
                           onSelectFloor(floor.id);
@@ -167,14 +184,14 @@ export function VerticalFloorSelector({
                           <View
                             style={[
                               styles.floorIconBox,
-                              isSelected && styles.floorIconBoxSelected,
+                              { backgroundColor: isSelected ? floor.accentColor : floor.pastelBg },
                             ]}
                           >
                             <MallOsSpriteIcon
                               name={floor.icon}
                               size={18}
                               showCircle={false}
-                              color={isSelected ? '#FFFFFF' : '#2563EB'}
+                              color={isSelected ? '#FFFFFF' : floor.accentColor}
                             />
                           </View>
                           <View style={styles.floorTextInfo}>
@@ -182,7 +199,7 @@ export function VerticalFloorSelector({
                               <Text
                                 style={[
                                   styles.floorName,
-                                  isSelected && styles.floorNameSelected,
+                                  isSelected && { color: floor.accentColor, fontWeight: '900' },
                                 ]}
                               >
                                 {floor.shortLabel} · {floor.label}
@@ -205,13 +222,14 @@ export function VerticalFloorSelector({
                         </View>
 
                         {isSelected && (
-                          <View style={styles.checkCircle}>
-                            <AppIcon name="checkmark" size={15} color="#FFFFFF" />
+                          <View style={[styles.checkCircle, { backgroundColor: floor.accentColor }]}>
+                            <AppIcon name="checkmark" size={15} color="#FFFFFF" strokeWidth={3} />
                           </View>
                         )}
                       </TouchableOpacity>
                     );
                   })}
+
                 </View>
               </View>
             </TouchableWithoutFeedback>
@@ -226,19 +244,19 @@ const styles = StyleSheet.create({
   triggerPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0F172A',
+    backgroundColor: '#FFFFFF',
     borderRadius: 22,
     paddingLeft: 4,
     paddingRight: 10,
     paddingVertical: 4,
     gap: 6,
-    borderWidth: 1.5,
-    borderColor: '#334155',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 6,
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 3,
     position: 'relative',
   },
   badgeCircle: {
@@ -255,7 +273,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   floorPillLabel: {
-    color: '#F8FAFC',
+    color: '#0F172A',
     fontSize: 12,
     fontWeight: '800',
     maxWidth: 90,
@@ -269,28 +287,29 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#10B981',
     borderWidth: 1.5,
-    borderColor: '#0F172A',
+    borderColor: '#FFFFFF',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'flex-end',
   },
   sheetContainer: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 26,
     borderTopRightRadius: 26,
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 36,
     borderWidth: 1,
-    borderColor: '#334155',
-    shadowColor: '#000',
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: -6 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.12,
     shadowRadius: 16,
     elevation: 12,
   },
+
   dragHandle: {
     width: 40,
     height: 4,
@@ -306,13 +325,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sheetTitle: {
-    color: '#F8FAFC',
+    color: '#0F172A',
     fontSize: 18,
     fontWeight: '900',
     letterSpacing: -0.3,
   },
   sheetSubtitle: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 12,
     marginTop: 2,
   },
@@ -320,7 +339,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -331,14 +350,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#1E293B',
-    borderRadius: 16,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 18,
     padding: 12,
-    borderWidth: 1.5,
-    borderColor: '#334155',
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
   },
   floorCardSelected: {
-    backgroundColor: 'rgba(37, 99, 235, 0.15)',
+    backgroundColor: '#EFF6FF',
     borderColor: '#2563EB',
   },
   floorCardLeft: {
@@ -351,7 +370,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: 'rgba(37, 99, 235, 0.12)',
+    backgroundColor: '#DBEAFE',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -367,37 +386,41 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   floorName: {
-    color: '#F8FAFC',
+    color: '#0F172A',
     fontSize: 14,
     fontWeight: '800',
   },
   floorNameSelected: {
-    color: '#38BDF8',
+    color: '#2563EB',
   },
   userBadge: {
-    backgroundColor: '#065F46',
-    paddingHorizontal: 6,
-    paddingVertical: 1.5,
-    borderRadius: 5,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
   },
   userBadgeText: {
-    color: '#34D399',
+    color: '#059669',
     fontSize: 9,
     fontWeight: '800',
   },
   destBadge: {
-    backgroundColor: '#7C2D12',
-    paddingHorizontal: 6,
-    paddingVertical: 1.5,
-    borderRadius: 5,
+    backgroundColor: '#FFFBEB',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   destBadgeText: {
-    color: '#FB923C',
+    color: '#D97706',
     fontSize: 9,
     fontWeight: '800',
   },
   floorSubtitle: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 11,
     marginTop: 2,
   },
@@ -410,3 +433,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

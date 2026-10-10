@@ -36,6 +36,22 @@ export type AppIconName =
   | 'add'
   | 'remove'
   | 'eye'
+  | 'refresh'
+  | 'notifications'
+  | 'bell'
+  | 'person'
+  | 'profile'
+  | 'call'
+  | 'phone'
+  | 'attach'
+  | 'paperclip'
+  | 'external-link'
+  | 'share'
+  | 'send'
+  | 'trash'
+  | 'pricetag'
+  | 'tag'
+  | 'compass'
   | 'home';
 
 interface AppIconProps {
@@ -59,6 +75,14 @@ export function AppIcon({
         return (
           <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <Polyline points="20 6 9 17 4 12" />
+          </G>
+        );
+
+      case 'checkmark-done':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Polyline points="17 7 8 16 3 11" />
+            <Polyline points="21 7 12 16 9.5 13.5" />
           </G>
         );
 
@@ -347,6 +371,96 @@ export function AppIcon({
           <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
             <Path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <Circle cx="12" cy="12" r="3" />
+          </G>
+        );
+
+      case 'refresh':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M23 4v6h-6" />
+            <Path d="M1 20v-6h6" />
+            <Path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+          </G>
+        );
+
+      case 'notifications':
+      case 'bell':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <Path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </G>
+        );
+
+      case 'person':
+      case 'profile':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <Circle cx="12" cy="7" r="4" />
+          </G>
+        );
+
+      case 'call':
+      case 'phone':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+          </G>
+        );
+
+      case 'attach':
+      case 'paperclip':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+          </G>
+        );
+
+      case 'external-link':
+      case 'share':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <Polyline points="15 3 21 3 21 9" />
+            <Line x1="10" y1="14" x2="21" y2="3" />
+          </G>
+        );
+
+      case 'send':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Line x1="22" y1="2" x2="11" y2="13" />
+            <Polygon points="22 2 15 22 11 13 2 9 22 2" fill={color} opacity={0.2} />
+            <Polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </G>
+        );
+
+      case 'trash':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Polyline points="3 6 5 6 21 6" />
+            <Path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <Line x1="10" y1="11" x2="10" y2="17" />
+            <Line x1="14" y1="11" x2="14" y2="17" />
+          </G>
+        );
+
+      case 'pricetag':
+      case 'tag':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            <Circle cx="7" cy="7" r="1.5" />
+          </G>
+        );
+
+      case 'compass':
+        return (
+          <G stroke={color} strokeWidth={strokeWidth} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <Circle cx="12" cy="12" r="10" />
+            <Polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill={color} opacity={0.3} />
+            <Polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
           </G>
         );
 

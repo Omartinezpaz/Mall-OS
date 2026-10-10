@@ -89,8 +89,18 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
   }, [calcProgress, progressAnim]);
 
   // Manejo de Locución TTS con audioManager coordinado
+  const lastSpokenStepIndexRef = useRef<number | null>(null);
+  const prevVoiceEnabledRef = useRef<boolean>(voiceEnabled);
+
   useEffect(() => {
-    if (voiceEnabled && currentStep && isWalking) {
+    // Si el usuario desactiva la voz explícitamente, detener locución de pasos
+    if (prevVoiceEnabledRef.current && !voiceEnabled) {
+      audioManager.stop();
+    }
+    prevVoiceEnabledRef.current = voiceEnabled;
+
+    if (voiceEnabled && currentStep && lastSpokenStepIndexRef.current !== activeStepIndex) {
+      lastSpokenStepIndexRef.current = activeStepIndex;
       audioManager.speak({
         text: currentStep.primaryText,
         priority: 'normal',
@@ -98,40 +108,53 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         pitch: 1.0,
         rate: 0.95,
       });
-    } else if (!voiceEnabled) {
-      audioManager.stop();
     }
-  }, [activeStepIndex, voiceEnabled, currentStep, isWalking]);
-
-  useEffect(() => {
-    return () => {
-      audioManager.stop();
-    };
-  }, []);
+  }, [activeStepIndex, voiceEnabled, currentStep]);
 
   if (!currentStep) return null;
 
-  const isArrival = currentStep.icon === 'arrival';
+  const isArrival = currentStep.icon === 'arrival' || remainingMeters <= 5;
   const handleExit = onCancel ?? onExitNavigation;
+
+  if (isArrival) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.arrivalBadgeCard}>
+          <View style={styles.arrivalCheckCircle}>
+            <AppIcon name="checkmark" size={14} color="#10B981" strokeWidth={3.5} />
+          </View>
+          <Text style={styles.arrivalBadgeText}>¡DESTINO ALCANZADO!</Text>
+          {handleExit && (
+            <TouchableOpacity
+              style={styles.arrivalCloseBtn}
+              onPress={() => {
+                audioManager.stop(true);
+                handleExit();
+              }}
+              activeOpacity={0.7}
+            >
+              <AppIcon name="close" size={14} color="#FFFFFF" strokeWidth={2.5} />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <GlassSurface variant="dark" intensity="strong" radius="xl" style={styles.topCard}>
-        {/* Icono de Giro / Hito */}
-        <View
-          style={[
-            styles.iconCircle,
-            isArrival && styles.iconCircleArrival,
-          ]}
-        >
+      <View style={styles.whiteNavCard}>
+        {/* Icono de Giro / Maniobra Azul */}
+        <View style={styles.turnIconBox}>
           <AppIcon
-            name={ICON_MAP[currentStep.icon] ?? 'arrow-up'}
-            size={18}
-            color={isArrival ? '#10B981' : '#38BDF8'}
+            name={ICON_MAP[currentStep.icon] ?? 'arrow-forward'}
+            size={22}
+            color="#2563EB"
+            strokeWidth={2.8}
           />
         </View>
 
-        {/* Instrucción de Navegación */}
+        {/* Instrucción de Navegación Clara y Prominente */}
         <View style={styles.instructionContainer}>
           <Text style={styles.primaryInstruction} numberOfLines={1}>
             {currentStep.primaryText}
@@ -145,14 +168,19 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
         {onVoiceToggle && (
           <TouchableOpacity
             style={styles.actionBtn}
-            onPress={onVoiceToggle}
+            onPress={() => {
+              if (voiceEnabled) {
+                audioManager.stop(true);
+              }
+              onVoiceToggle();
+            }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             activeOpacity={0.7}
           >
             <AppIcon
               name={voiceEnabled ? 'volume-high' : 'volume-mute'}
-              size={16}
-              color={voiceEnabled ? '#38BDF8' : '#94A3B8'}
+              size={17}
+              color={voiceEnabled ? '#2563EB' : '#94A3B8'}
             />
           </TouchableOpacity>
         )}
@@ -162,19 +190,18 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
           <TouchableOpacity
             style={[styles.actionBtn, styles.exitBtn]}
             onPress={() => {
-              audioManager.stop();
+              audioManager.stop(true);
               handleExit();
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             activeOpacity={0.7}
           >
-            <AppIcon name="close" size={16} color="#EF4444" strokeWidth={2.5} />
+            <AppIcon name="close" size={15} color="#64748B" strokeWidth={2.2} />
           </TouchableOpacity>
         )}
-      </GlassSurface>
+      </View>
 
-
-      {/* Barra de progreso integrada */}
+      {/* Barra de progreso integrada sutil */}
       <View style={styles.progressTrack}>
         <Animated.View
           style={[
@@ -195,75 +222,114 @@ export const NavigationHUD: React.FC<NavigationHUDProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    paddingHorizontal: 14,
   },
-  topCard: {
+  // 1. Tarjeta Blanca Turn-by-Turn GPS
+  whiteNavCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    shadowColor: '#000',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1.2,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.12,
     shadowRadius: 10,
     elevation: 8,
+    gap: 12,
   },
-  iconCircle: {
+  turnIconBox: {
     width: 38,
     height: 38,
-    borderRadius: 19,
-    backgroundColor: '#1E293B',
+    borderRadius: 14,
+    backgroundColor: '#EFF6FF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: '#475569',
-  },
-  iconCircleArrival: {
-    backgroundColor: 'rgba(6, 95, 70, 0.4)',
-    borderColor: '#10B981',
   },
   instructionContainer: {
     flex: 1,
   },
   primaryInstruction: {
-    color: '#F8FAFC',
-    fontSize: 14,
+    color: '#0F172A',
+    fontSize: 15,
     fontWeight: '800',
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   secondaryInstruction: {
-    color: '#94A3B8',
-    fontSize: 11,
+    color: '#64748B',
+    fontSize: 11.5,
     fontWeight: '600',
     marginTop: 2,
   },
   actionBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#1E293B',
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#F8FAFC',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 6,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#E2E8F0',
   },
   exitBtn: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
-    borderColor: 'rgba(239, 68, 68, 0.3)',
+    backgroundColor: '#F1F5F9',
   },
   progressTrack: {
-    height: 3,
-    backgroundColor: 'rgba(51, 65, 85, 0.5)',
-    borderRadius: 1.5,
+    height: 3.5,
+    backgroundColor: 'rgba(226, 232, 240, 0.8)',
+    borderRadius: 2,
     overflow: 'hidden',
     marginTop: 4,
-    marginHorizontal: 8,
+    marginHorizontal: 10,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#38BDF8',
-    borderRadius: 1.5,
+    backgroundColor: '#2563EB',
+    borderRadius: 2,
+  },
+
+  // 2. Cápsula Verde Esmeralda de Llegada
+  arrivalBadgeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#10B981',
+    borderRadius: 24,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 8,
+    gap: 10,
+  },
+  arrivalCheckCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arrivalBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 13.5,
+    fontWeight: '900',
+    letterSpacing: 0.6,
+  },
+  arrivalCloseBtn: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 4,
   },
 });
 

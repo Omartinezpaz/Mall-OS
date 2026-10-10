@@ -125,6 +125,8 @@ export const storesSambilAcuario: MapStore[] = [
     h: 45,
     height: 12,
     doorNodeId: 'door-nike',
+    slug: 'nike',
+    aliases: ['nike', 'st_pb_02', 'nike_store', 'nike-store'],
     polygon: [
       { x: 597, y: 265 },
       { x: 650, y: 265 },

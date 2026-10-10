@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { AppIcon } from '../../components/AppIcon';
+import { audioManager } from '../../lib/audio-manager';
 import {
   type KidsRiddle as KidsRiddleType,
   type AgeGroup,
@@ -31,8 +32,43 @@ export const KidsRiddle: React.FC<KidsRiddleProps> = ({
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [showHint, setShowHint] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<{ message: string; isError: boolean } | null>(null);
+  const [isSpeakingRiddle, setIsSpeakingRiddle] = useState<boolean>(false);
 
   const config = AGE_GROUP_CONFIG[ageGroup];
+
+  useEffect(() => {
+    const unsubscribe = audioManager.subscribe((speaking) => {
+      if (!speaking) {
+        setIsSpeakingRiddle(false);
+      }
+    });
+    return () => {
+      unsubscribe();
+      audioManager.stop();
+    };
+  }, []);
+
+  const handleSpeakRiddle = () => {
+    if (isSpeakingRiddle) {
+      audioManager.stop(true);
+      setIsSpeakingRiddle(false);
+      return;
+    }
+
+    const optionsText = riddle.options.map((opt, i) => `Opción ${i + 1}: ${opt.label}`).join('. ');
+    const fullText = `Acertijo de ${riddle.storeName}. ${riddle.prompt}. ${showHint ? `Pista: ${riddle.hint}. ` : ''}Las opciones son: ${optionsText}`;
+
+    setIsSpeakingRiddle(true);
+    audioManager.speak({
+      text: fullText,
+      priority: 'high',
+      language: 'es-VE',
+      pitch: 1.05,
+      rate: 0.95,
+      onDone: () => setIsSpeakingRiddle(false),
+      onError: () => setIsSpeakingRiddle(false),
+    });
+  };
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOptionId(optionId);
@@ -108,6 +144,20 @@ export const KidsRiddle: React.FC<KidsRiddleProps> = ({
             <Text style={styles.questionTagText}>ACERTIJO</Text>
           </View>
           <Text style={styles.badgeTitle}>{riddle.badge}</Text>
+
+          {/* Audio Speaker Button for Question */}
+          <TouchableOpacity
+            style={[styles.riddleSpeakerBtn, isSpeakingRiddle && styles.riddleSpeakerBtnActive]}
+            onPress={handleSpeakRiddle}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <AppIcon
+              name={isSpeakingRiddle ? "volume-high" : "volume-medium"}
+              size={15}
+              color={isSpeakingRiddle ? "#2563EB" : "#64748B"}
+            />
+          </TouchableOpacity>
         </View>
         <Text style={styles.promptText}>{riddle.prompt}</Text>
 
@@ -410,5 +460,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#1E293B',
+  },
+  riddleSpeakerBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginLeft: 'auto',
+  },
+  riddleSpeakerBtnActive: {
+    backgroundColor: '#DBEAFE',
+    borderColor: '#93C5FD',
   },
 });

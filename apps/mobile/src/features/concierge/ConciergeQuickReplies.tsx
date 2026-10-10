@@ -32,7 +32,7 @@ export const ConciergeQuickReplies: React.FC<ConciergeQuickRepliesProps> = ({
             onPress={() => onSelectReply(item.query)}
             activeOpacity={0.75}
           >
-            <AppIcon name={item.icon} size={13} color="#38BDF8" />
+            <AppIcon name={item.icon} size={13} color="#4F46E5" />
             <Text style={styles.chipText}>{item.label}</Text>
           </TouchableOpacity>
         ))}
@@ -44,8 +44,9 @@ export const ConciergeQuickReplies: React.FC<ConciergeQuickRepliesProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 8,
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(148, 163, 184, 0.1)',
+    borderTopColor: '#E2E8F0',
   },
   scrollContent: {
     paddingHorizontal: 14,
@@ -55,16 +56,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(30, 41, 59, 0.8)',
+    backgroundColor: '#F8FAFC',
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(56, 189, 248, 0.3)',
+    borderColor: '#E2E8F0',
   },
   chipText: {
-    color: '#E2E8F0',
+    color: '#334155',
     fontSize: 12,
     fontWeight: '600',
   },
 });
+

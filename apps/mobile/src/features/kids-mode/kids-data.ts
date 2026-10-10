@@ -14,6 +14,7 @@ export interface KidsProductDeal {
   discountBadge: string;
   qrCodeTag: string;
   description: string;
+  imageUrl?: string;
 }
 
 export interface KidsRiddle {
@@ -32,6 +33,7 @@ export interface KidsRiddle {
   badge: string;
   sponsorName: string;
   featuredProduct: KidsProductDeal;
+  storeImageUrl?: string;
 }
 
 export interface KidsPrize {
@@ -120,6 +122,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_cat',
       badge: 'Peluche Mágico',
       sponsorName: 'Tijerazo Kids',
+      storeImageUrl: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Llavero de Peluche Animalitos',
         price: '$2.00',
@@ -127,6 +130,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'PROMO $2',
         qrCodeTag: 'QR-TIJERAZO-KIDS',
         description: 'Ubica el stand de peluches en la entrada y escanea el QR en la etiqueta.',
+        imageUrl: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -149,6 +153,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_med',
       badge: 'Super Guardián',
       sponsorName: 'Farmatodo Baby',
+      storeImageUrl: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Gomitas de Frutas / Curitas Divertidas',
         price: '$1.50',
@@ -156,6 +161,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'OFERTA $1.50',
         qrCodeTag: 'QR-FARMATODO-KIDS',
         description: 'Escanea el QR en el mostrador infantil de caramelos y vitaminas.',
+        imageUrl: 'https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -178,6 +184,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_choc',
       badge: 'Chef Dulcero',
       sponsorName: 'McCafé',
+      storeImageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Mini Donita Glaseada / Conito',
         price: '$1.00',
@@ -185,6 +192,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'SOLO $1',
         qrCodeTag: 'QR-MCCAFE-KIDS',
         description: 'Escanea el sticker QR en el mostrador de postres McCafé.',
+        imageUrl: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -207,6 +215,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_croc',
       badge: 'Amigo Cocodrilo',
       sponsorName: 'Crocs Kids',
+      storeImageUrl: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Pin Jibbitz Infantil Coleccionable',
         price: '$3.00',
@@ -214,6 +223,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: '40% OFF',
         qrCodeTag: 'QR-CROCS-KIDS',
         description: 'Encuentra el expositor de pins decorativos y escanea el código.',
+        imageUrl: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -236,6 +246,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_lionking',
       badge: 'Estrella de Cine',
       sponsorName: 'Cines Unidos Kids',
+      storeImageUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Vaso Infantil Coleccionable con Cotufas',
         price: '$3.50',
@@ -243,6 +254,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'COMBO KIDS',
         qrCodeTag: 'QR-CINES-KIDS',
         description: 'Escanea el QR en la caramelería de Cines Unidos para desbloquear.',
+        imageUrl: 'https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=800&auto=format&fit=crop&q=80',
       },
     },
   ],
@@ -267,6 +279,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_8',
       badge: 'Criptógrafo',
       sponsorName: 'Skechers Sambil',
+      storeImageUrl: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Par de Medias Deportivas Skechers Pro',
         price: '$3.00',
@@ -274,6 +287,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: '50% OFF',
         qrCodeTag: 'QR-SKECHERS-TEEN',
         description: 'Escanea el QR en el exhibidor de accesorios y calcetines.',
+        imageUrl: 'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -296,6 +310,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_hoodie',
       badge: 'Estilo Urbano',
       sponsorName: 'Bershka Style',
+      storeImageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Pack de Stickers / Accesorio de Cabello',
         price: '$2.50',
@@ -303,6 +318,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'TREND $2.50',
         qrCodeTag: 'QR-BERSHKA-TEEN',
         description: 'Escanea el QR en la zona de cajas o accesorios de Bershka.',
+        imageUrl: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -325,6 +341,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_denim',
       badge: 'Experto Denim',
       sponsorName: 'Pull&Bear',
+      storeImageUrl: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Llavero Metálico Streetwear',
         price: '$2.00',
@@ -332,6 +349,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'DESCUENTO',
         qrCodeTag: 'QR-PULLBEAR-TEEN',
         description: 'Escanea el QR en la mesa de novedades de Pull&Bear.',
+        imageUrl: 'https://images.unsplash.com/photo-1622434641406-a158123450f9?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -354,6 +372,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_vanilla',
       badge: 'Alquimista de Aromas',
       sponsorName: 'Bath & Body Works',
+      storeImageUrl: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Gel Antibacterial PocketBac Aromático',
         price: '$2.00',
@@ -361,6 +380,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'POCKETBAC $2',
         qrCodeTag: 'QR-BATHBODY-TEEN',
         description: 'Escanea el QR junto a la torre de geles PocketBac.',
+        imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -383,6 +403,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_italy',
       badge: 'Capitán Calcio',
       sponsorName: 'Juventus Official',
+      storeImageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Muñequera Deportiva Oficial Juventus',
         price: '$4.00',
@@ -390,6 +411,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'FAN DEAL',
         qrCodeTag: 'QR-JUVENTUS-TEEN',
         description: 'Escanea el código QR en la vitrina de balones y accesorios.',
+        imageUrl: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&auto=format&fit=crop&q=80',
       },
     },
   ],
@@ -414,6 +436,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_sol',
       badge: 'Oído Musical',
       sponsorName: 'Stradivarius VIP',
+      storeImageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Set de Scrunchies / Accesorios Minimal',
         price: '$3.00',
@@ -421,6 +444,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'MUST-HAVE',
         qrCodeTag: 'QR-STRADIVARIUS-YNG',
         description: 'Escanea el QR en la zona de joyería y complementos.',
+        imageUrl: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -443,6 +467,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_drop',
       badge: 'Sneakerhead',
       sponsorName: 'Sportland Pro',
+      storeImageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Cordones Reflectivos Sneaker Pro',
         price: '$2.50',
@@ -450,6 +475,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: '50% OFF',
         qrCodeTag: 'QR-SPORTLAND-YNG',
         description: 'Escanea el QR en la barra de cuidado y limpieza de zapatillas.',
+        imageUrl: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -472,6 +498,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_nfc',
       badge: 'Fintech Master',
       sponsorName: 'BNC Digital',
+      storeImageUrl: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Funda Antirrobo RFID para Tarjetas BNC',
         price: '$1.00',
@@ -479,6 +506,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'SEGURIDAD $1',
         qrCodeTag: 'QR-BNC-YNG',
         description: 'Escanea el QR en el tótem digital de atención al cliente BNC.',
+        imageUrl: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -501,6 +529,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_hyal',
       badge: 'Skincare Guru',
       sponsorName: 'Farmatodo Derma',
+      storeImageUrl: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Mascarilla Facial Hidratante de Tela',
         price: '$1.50',
@@ -508,6 +537,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: '2x1 PROMO',
         qrCodeTag: 'QR-FARMATODO-DERMA',
         description: 'Escanea el QR en el pasillo de cosmética y cuidado facial.',
+        imageUrl: 'https://images.unsplash.com/photo-1567928815104-b637ef2a397f?w=800&auto=format&fit=crop&q=80',
       },
     },
     {
@@ -518,7 +548,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       floorName: 'Nivel Diversión',
       category: 'Cine & Entretenimiento',
       ageGroup: 'young',
-      prompt: '¿Qué tecnología de proyección cinematográfica ofrece pantallas de hasta 6 pisos de altura con sonido envolvente láser?',
+      prompt: '¿Qué tecnología de projection cinematográfica ofrece pantallas de hasta 6 pisos de altura con sonido envolvente láser?',
       hint: 'Pista: Cuatro letras legendarias: Image MAXimum 🎬',
       explanation: '¡Completaste el Reto Urbano! IMAX redefine la experiencia inmersiva.',
       options: [
@@ -530,6 +560,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
       correctOptionId: 'opt_imax',
       badge: 'Cinéfilo Pro',
       sponsorName: 'Cines Unidos VIP',
+      storeImageUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop&q=80',
       featuredProduct: {
         name: 'Refresco Mediano + Topping de Caramelo',
         price: '$2.50',
@@ -537,6 +568,7 @@ export const KIDS_RIDDLES: Record<AgeGroup, KidsRiddle[]> = {
         discountBadge: 'IMAX SPECIAL',
         qrCodeTag: 'QR-CINES-IMAX',
         description: 'Escanea el QR en el mostrador VIP de Cines Unidos.',
+        imageUrl: 'https://images.unsplash.com/photo-1513106580091-1d82408b8cd6?w=800&auto=format&fit=crop&q=80',
       },
     },
   ],

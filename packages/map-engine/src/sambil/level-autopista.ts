@@ -55,7 +55,7 @@ export const propsSambilAutopista: MapProp[] = [
 export const storesSambilAutopista: MapStore[] = [
   {
     id: "local_1", name: "Liah Spa", category: "beauty", floorId: LEVEL_AUTOPISTA, height: 13,
-    x: 34, y: 397, w: 36, h: 21, doorNodeId: "node-64",
+    x: 34, y: 397, w: 36, h: 21, doorNodeId: "node-64", slug: "liah_spa", aliases: ["liah_spa", "liah", "liah-spa"],
     polygon: [{ x: 35, y: 397 }, { x: 50, y: 397 }, { x: 64, y: 397 }, { x: 70, y: 404 }, { x: 67, y: 404 }, { x: 67, y: 418 }, { x: 34, y: 418 }],
     labelPos: { x: 55, y: 405 }
   },
@@ -97,19 +97,19 @@ export const storesSambilAutopista: MapStore[] = [
   },
   {
     id: "local_8", name: "Palacio del Blumer", category: "beauty", floorId: LEVEL_AUTOPISTA, height: 13,
-    x: 103, y: 204, w: 51, h: 38, doorNodeId: "node-74",
+    x: 103, y: 204, w: 51, h: 38, doorNodeId: "node-74", slug: "palacio_del_blumer", aliases: ["palacio_del_blumer", "palacio-del-blumer", "palacio_blumer"],
     polygon: [{ x: 103, y: 204 }, { x: 131, y: 204 }, { x: 154, y: 228 }, { x: 150, y: 232 }, { x: 146, y: 237 }, { x: 142, y: 242 }, { x: 140, y: 240 }],
     labelPos: { x: 138, y: 227 }
   },
   {
     id: "local_9", name: "Bath & Body Works", category: "beauty", floorId: LEVEL_AUTOPISTA, height: 13,
-    x: 60, y: 203, w: 82, h: 71, doorNodeId: "node-73", slug: "bath_body", aliases: ["bath_body", "bath_and_body_works"],
+    x: 60, y: 203, w: 82, h: 71, doorNodeId: "node-73", slug: "bath_body", aliases: ["bath_body", "bath_and_body_works", "bath_body_works", "bath-body-works", "bbw"],
     polygon: [{ x: 121, y: 274 }, { x: 65, y: 216 }, { x: 60, y: 216 }, { x: 61, y: 203 }, { x: 103, y: 204 }, { x: 142, y: 242 }, { x: 133, y: 254 }, { x: 127, y: 263 }],
     labelPos: { x: 102, y: 234 }
   },
   {
     id: "local_10", name: "Sansa", category: "fashion", floorId: LEVEL_AUTOPISTA, height: 13,
-    x: 35, y: 378, w: 36, h: 19, doorNodeId: "node-64",
+    x: 35, y: 378, w: 36, h: 19, doorNodeId: "node-64", slug: "sansa", aliases: ["sansa"],
     polygon: [{ x: 35, y: 397 }, { x: 37, y: 378 }, { x: 62, y: 379 }, { x: 71, y: 388 }, { x: 64, y: 397 }],
     labelPos: { x: 54, y: 388 }
   },
@@ -709,7 +709,7 @@ export const storesSambilAutopista: MapStore[] = [
   },
   {
     id: "local_110", name: "Banco Nacional de Credito", category: "finance", floorId: LEVEL_AUTOPISTA, height: 13,
-    x: 482, y: 125, w: 34, h: 44, doorNodeId: "node-91", slug: "bnc", aliases: ["bnc", "banco_nacional_de_credito"],
+    x: 482, y: 125, w: 34, h: 44, doorNodeId: "node-91", slug: "bnc", aliases: ["bnc", "banco_nacional_de_credito", "local_bnc"],
     polygon: [{ x: 485, y: 125 }, { x: 510, y: 136 }, { x: 507, y: 142 }, { x: 516, y: 147 }, { x: 492, y: 169 }, { x: 489, y: 167 }, { x: 487, y: 165 }, { x: 484, y: 163 }, { x: 482, y: 162 }, { x: 486, y: 149 }],
     labelPos: { x: 494, y: 153 }
   },

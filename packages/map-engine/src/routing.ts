@@ -14,6 +14,14 @@ export interface RouteResult {
   walkingMinutes: number;
 }
 
+export interface RouteOptions {
+  /**
+   * Si es true, descarta escaleras (mecánicas o fijas),
+   * prioriza ascensores y rampas, garantizando accesibilidad 100%.
+   */
+  accessibleOnly?: boolean;
+}
+
 interface Edge {
   to: string;
   cost: number;
@@ -38,15 +46,32 @@ export function listEdges(map: MallMapData): Array<[NavNode, NavNode]> {
 }
 
 /** Coste de la arista a–b en unidades del plano. */
-export function edgeCost(map: MallMapData, a: NavNode, b: NavNode): number {
-  if (a.floorId !== b.floorId) return VERTICAL_COST_METERS / map.metersPerUnit;
+export function edgeCost(map: MallMapData, a: NavNode, b: NavNode, options?: RouteOptions): number {
+  if (options?.accessibleOnly) {
+    // Modo Accesible: prohíbe escaleras mecánicas o fijas
+    if (a.kind === 'stairs' || b.kind === 'stairs') {
+      return 1e7;
+    }
+  }
+
+  if (a.floorId !== b.floorId) {
+    if (options?.accessibleOnly) {
+      // En modo accesible solo se transita entre pisos por ascensor
+      if (a.kind === 'elevator' || b.kind === 'elevator') {
+        return VERTICAL_COST_METERS / map.metersPerUnit;
+      }
+      return 1e7;
+    }
+    return VERTICAL_COST_METERS / map.metersPerUnit;
+  }
   return distance(a, b);
 }
 
-function buildAdjacency(map: MallMapData): Map<string, Edge[]> {
+function buildAdjacency(map: MallMapData, options?: RouteOptions): Map<string, Edge[]> {
   const adj = new Map<string, Edge[]>(map.nodes.map((n) => [n.id, []] as const));
   for (const [a, b] of listEdges(map)) {
-    const cost = edgeCost(map, a, b);
+    const cost = edgeCost(map, a, b, options);
+    if (cost >= 1e6) continue; // Descartar aristas inaccesibles
     adj.get(a.id)?.push({ to: b.id, cost });
     adj.get(b.id)?.push({ to: a.id, cost });
   }
@@ -58,8 +83,13 @@ function buildAdjacency(map: MallMapData): Map<string, Edge[]> {
  * O(n²): suficiente para un mall (cientos de nodos). Si crece, cambiar por montículo.
  * Devuelve null si algún nodo no existe o no hay camino.
  */
-export function findRoute(map: MallMapData, fromNodeId: string, toNodeId: string): RouteResult | null {
-  const adj = buildAdjacency(map);
+export function findRoute(
+  map: MallMapData,
+  fromNodeId: string,
+  toNodeId: string,
+  options?: RouteOptions
+): RouteResult | null {
+  const adj = buildAdjacency(map, options);
   if (!adj.has(fromNodeId) || !adj.has(toNodeId)) return null;
 
   const dist = new Map<string, number>([[fromNodeId, 0]]);
@@ -97,6 +127,8 @@ export function findRoute(map: MallMapData, fromNodeId: string, toNodeId: string
   }
 
   const distanceUnits = dist.get(toNodeId) ?? 0;
+  if (distanceUnits >= 1e6) return null; // No hay ruta sin infringir restricciones
+
   const distanceMeters = distanceUnits * map.metersPerUnit;
   return {
     nodeIds,
@@ -107,9 +139,14 @@ export function findRoute(map: MallMapData, fromNodeId: string, toNodeId: string
 }
 
 /** Ruta desde un nodo hasta la puerta de un local. Admite id exacto, slug canónico o alias. */
-export function findRouteToStore(map: MallMapData, fromNodeId: string, storeIdOrSlug: string): RouteResult | null {
+export function findRouteToStore(
+  map: MallMapData,
+  fromNodeId: string,
+  storeIdOrSlug: string,
+  options?: RouteOptions
+): RouteResult | null {
   const store = map.stores.find((s) => s.id === storeIdOrSlug || s.slug === storeIdOrSlug || s.aliases?.includes(storeIdOrSlug));
-  return store ? findRoute(map, fromNodeId, store.doorNodeId) : null;
+  return store ? findRoute(map, fromNodeId, store.doorNodeId, options) : null;
 }
 
 /** Encuentra el nodo más cercano en un piso dado, opcionalmente filtrando por tipos de nodo. */

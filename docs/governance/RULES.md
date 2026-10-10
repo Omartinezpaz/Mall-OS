@@ -40,6 +40,7 @@
 - Acceso anónimo: directorio y ofertas visibles sin login; pedir registro solo al activar cupón.
 - Rendimiento: pensado para Android gama media/baja. Listas virtualizadas, imágenes optimizadas, sin librerías pesadas sin justificación.
 - Sin precios de productos en pantalla (solo porcentajes/beneficios).
+- **Diseño profesional (no bachillerato/infantil / anti-estética IA):** Cumplimiento estricto de `DESIGN.md` § 3.3 y `ui-ux-pro-max`. PROHIBIDO el uso de emojis en navegación, categorías, productos, botones o mensajes del sistema. Usar exclusivamente `MallOsSpriteIcon` (SVG), `AppIcon` (vectorial), logotipos oficiales de marca (SVG/PNG) o insignias monograma tipográficas vectoriales de alta fidelidad. Toda la app (incluido el Concierge) mantiene la paleta **Light Luxury** (`#F8FAFC`, `#FFFFFF`, `#0F172A`, `#4F46E5`). Prohibidos los fondos oscuros lúgubres genéricos.
 - Textos en español; strings centralizados (preparar i18n).
 - Solo ubicación "mientras se usa la app". Prohibida la ubicación en segundo plano en el piloto.
 
@@ -52,6 +53,7 @@
 - Proveedor detrás de una interfaz propia (`AiProvider`) para poder cambiarlo.
 - Tool calling con esquemas Zod: `searchStores`, `searchOffers`, `getStoreInfo`, `getEvents`. Sin herramientas que muten datos en el piloto.
 - Respuestas ancladas a datos del mall. Si no hay dato: decir que no lo sabe. Límite de tokens que no corte respuestas útiles.
+- **Identidad de hospitalidad digital:** Concierge estilizado con tokens Light Luxury y logo vectorial `MallOsLogo`. Cero avatares o mensajes con emojis.
 
 ## 8. Calidad — Definition of Done
 Una tarea está terminada solo si:

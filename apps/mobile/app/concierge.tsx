@@ -5,12 +5,12 @@ import { ConciergeScreen } from '../src/features/concierge/ConciergeScreen';
 
 export default function ConciergeRoute() {
   const insets = useSafeAreaInsets();
-  const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 20);
+  const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 0);
 
   return (
-    <View style={[styles.container, { paddingTop: topSafe }]}>
-      <StatusBar barStyle="light-content" backgroundColor="#090D16" />
-      <ConciergeScreen />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#070C18" />
+      <ConciergeScreen topInset={topSafe} />
     </View>
   );
 }
@@ -18,6 +18,6 @@ export default function ConciergeRoute() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: '#070C18',
   },
 });
