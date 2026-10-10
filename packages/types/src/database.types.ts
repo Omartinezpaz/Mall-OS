@@ -263,12 +263,287 @@ export interface Database {
           store_id: string | null;
           title: string;
           description: string | null;
+          location_zone: string | null;
           image_url: string | null;
           starts_at: string;
           ends_at: string;
           status: 'draft' | 'published';
           created_at: string;
           updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          mall_id: string;
+          store_id?: string | null;
+          title: string;
+          description?: string | null;
+          location_zone?: string | null;
+          image_url?: string | null;
+          starts_at: string;
+          ends_at: string;
+          status?: 'draft' | 'published';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          mall_id?: string;
+          store_id?: string | null;
+          title?: string;
+          description?: string | null;
+          location_zone?: string | null;
+          image_url?: string | null;
+          starts_at?: string;
+          ends_at?: string;
+          status?: 'draft' | 'published';
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      products: {
+        Row: {
+          id: string;
+          mall_id: string;
+          store_id: string;
+          name: string;
+          slug: string;
+          description: string | null;
+          price_min: number;
+          price_max: number;
+          image_url: string | null;
+          images_json: Json;
+          sizes_json: Json;
+          colors_json: Json;
+          tags_json: Json;
+          is_active: boolean;
+          is_featured: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          mall_id: string;
+          store_id: string;
+          name: string;
+          slug: string;
+          description?: string | null;
+          price_min: number;
+          price_max: number;
+          image_url?: string | null;
+          images_json?: Json;
+          sizes_json?: Json;
+          colors_json?: Json;
+          tags_json?: Json;
+          is_active?: boolean;
+          is_featured?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          mall_id?: string;
+          store_id?: string;
+          name?: string;
+          slug?: string;
+          description?: string | null;
+          price_min?: number;
+          price_max?: number;
+          image_url?: string | null;
+          images_json?: Json;
+          sizes_json?: Json;
+          colors_json?: Json;
+          tags_json?: Json;
+          is_active?: boolean;
+          is_featured?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      contests: {
+        Row: {
+          id: string;
+          mall_id: string;
+          store_id: string | null;
+          title: string;
+          description: string;
+          prize: string;
+          terms: string | null;
+          image_url: string | null;
+          starts_at: string;
+          ends_at: string;
+          status: 'draft' | 'active' | 'ended' | 'cancelled';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          mall_id: string;
+          store_id?: string | null;
+          title: string;
+          description: string;
+          prize: string;
+          terms?: string | null;
+          image_url?: string | null;
+          starts_at: string;
+          ends_at: string;
+          status?: 'draft' | 'active' | 'ended' | 'cancelled';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          mall_id?: string;
+          store_id?: string | null;
+          title?: string;
+          description?: string | null;
+          prize?: string;
+          terms?: string | null;
+          image_url?: string | null;
+          starts_at?: string;
+          ends_at?: string;
+          status?: 'draft' | 'active' | 'ended' | 'cancelled';
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      concierge_notifications: {
+        Row: {
+          id: string;
+          mall_id: string;
+          store_id: string | null;
+          title: string;
+          message_body: string;
+          target_audience: string;
+          scheduled_at: string;
+          sent_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          mall_id: string;
+          store_id?: string | null;
+          title: string;
+          message_body: string;
+          target_audience?: string;
+          scheduled_at?: string;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          mall_id?: string;
+          store_id?: string | null;
+          title?: string;
+          message_body?: string;
+          target_audience?: string;
+          scheduled_at?: string;
+          sent_at?: string | null;
+          created_at?: string;
+        };
+      };
+      audit_log: {
+        Row: {
+          id: string;
+          actor_id: string | null;
+          actor_role: string;
+          action: string;
+          target_type: string;
+          target_id: string | null;
+          mall_id: string | null;
+          metadata: Json;
+          ip_address: string | null;
+          user_agent: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          actor_id?: string | null;
+          actor_role: string;
+          action: string;
+          target_type: string;
+          target_id?: string | null;
+          mall_id?: string | null;
+          metadata?: Json;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          actor_id?: string | null;
+          actor_role?: string;
+          action?: string;
+          target_type?: string;
+          target_id?: string | null;
+          mall_id?: string | null;
+          metadata?: Json;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+      };
+      invitations: {
+        Row: {
+          id: string;
+          email: string;
+          role: 'store_manager' | 'mall_admin';
+          mall_id: string;
+          store_id: string | null;
+          invited_by: string | null;
+          token: string;
+          expires_at: string;
+          accepted_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          role: 'store_manager' | 'mall_admin';
+          mall_id: string;
+          store_id?: string | null;
+          invited_by?: string | null;
+          token: string;
+          expires_at: string;
+          accepted_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          role?: 'store_manager' | 'mall_admin';
+          mall_id?: string;
+          store_id?: string | null;
+          invited_by?: string | null;
+          token?: string;
+          expires_at?: string;
+          accepted_at?: string | null;
+          created_at?: string;
+        };
+      };
+      mall_settings: {
+        Row: {
+          mall_id: string;
+          features_json: Json;
+          branding_json: Json;
+          contact_json: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          mall_id: string;
+          features_json?: Json;
+          branding_json?: Json;
+          contact_json?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          mall_id?: string;
+          features_json?: Json;
+          branding_json?: Json;
+          contact_json?: Json;
+          created_at?: string;
+          updated_at?: string;
         };
       };
       analytics_events: {

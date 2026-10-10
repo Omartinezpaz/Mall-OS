@@ -9,6 +9,12 @@ export type CouponRedemption = Database['public']['Tables']['coupon_redemptions'
 export type Event = Database['public']['Tables']['events']['Row'];
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type Membership = Database['public']['Tables']['memberships']['Row'];
+export type Product = Database['public']['Tables']['products']['Row'];
+export type Contest = Database['public']['Tables']['contests']['Row'];
+export type ConciergeNotification = Database['public']['Tables']['concierge_notifications']['Row'];
+export type AuditLog = Database['public']['Tables']['audit_log']['Row'];
+export type Invitation = Database['public']['Tables']['invitations']['Row'];
+export type MallSettings = Database['public']['Tables']['mall_settings']['Row'];
 
 export interface ActivatedCouponResult {
   coupon_id: string;

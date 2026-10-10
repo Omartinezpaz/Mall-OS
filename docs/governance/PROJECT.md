@@ -4,10 +4,14 @@
 > Última actualización: 2026-09-29
 
 ## 1. Qué es
-Plataforma digital multi-mall tipo "Sistema Operativo de Centros Comerciales" estructurada en **3 capas clave**:
-1. **Capa 1 — App Móvil del Visitante (`apps/mobile`):** Experiencia inmersiva en Expo/React Native con mapa 2.5D, navegación Turn-by-Turn, Concierge IA, Modo Niño y vitrina de ofertas offline-first.
-2. **Capa 2 — Portal Web del Gerente de Tienda (`apps/admin` con rol `tenant`):** Perfil de tienda, vitrina digital de productos/novedades (sin precios absolutos), gestión de ofertas locales y validación atómica de canjes QR.
-3. **Capa 3 — Back-office Web de la Administración del Mall (`apps/admin` con rol `mall_admin`):** Directorio comercial, moderación/aprobación de ofertas, gestión de categorías y dashboard ejecutivo del funnel (visitas, búsquedas, canjes y ROI).
+Suite empresarial de centros comerciales tipo "Sistema Operativo de Centros Comerciales" estructurada en una arquitectura de **Doble Repositorio B2B** conectada a un núcleo compartido en Supabase Cloud:
+1. **Repo 1 (`mall-os` · Mobile):** App de visitantes en Expo/React Native con motor isométrico 2.5D en GPU Skia, navegación Turn-by-Turn, Concierge IA, Modo Niño, fidelización y **onboarding ultra-rápido con Google OAuth 1-tap** para adquisición masiva de shoppers (visión de superar la base de usuarios de apps líderes como Ridery y Yummy).
+2. **Repo 2 (`mall-os-portals` · Web Desktop B2B):** Plataforma web corporativa en Next.js 14 App Router orientada al trabajo de oficina de retail con ratón, teclado y pantallas de 24":
+   - **Store OS (`/store`):** CRUD de catálogo de alta conversión (`price_min`, `price_max`, `sizes_json`, `colors_json`), ofertas y validador rápido de canjes QR.
+   - **Mall Executive OS (`/admin`):** Gestión multi-tienda, auditoría, agenda de eventos, concursos y emisor de avisos del Concierge.
+   - **Mall OS Platform Admin (`/root`):** Panel interno para creación de malls, administración de suscripciones, métricas y soporte.
+   - **Seguridad B2B estricta:** Email corporativo, contraseña compleja, 2FA/Magic Link e invitaciones firmadas, con **Pitch Mode Switcher blindado por `NEXT_PUBLIC_DEMO_MODE=true`**.
+3. **Backend Cloud (`bgncghyhyosugfnraoqm.supabase.co`):** Esquema aditivo y no destructivo con Postgres RLS multi-tenant por `mall_id` y `store_id`, storage de fotos de catálogo y generador de tipos compartido.
 
 ## 2. Prototipo Insignia y Piloto Comercial
 - **Prototipo Activo:** Sambil Chacao (Caracas, Venezuela) — Plano esquemático ilustrativo 2.5D (4 niveles, plazas icónicas, tiendas ancla) como prototipo avanzado de venta y demostración comercial de alta fidelidad.
@@ -26,20 +30,39 @@ Plataforma digital multi-mall tipo "Sistema Operativo de Centros Comerciales" es
 Funnel a medir: visita → registro → cupón activado → cupón canjeado. No prometer atribución de ventas (sin integración POS no se puede medir).
 
 ## 3. Alcance de la Plataforma
-**1. App Visitante (Expo, Android-first):** Selección de mall, directorio, mapa 2.5D Skia por piso, búsqueda, vitrinas de tiendas, ofertas, cupón QR, tarjeta de fidelidad, Concierge IA, Modo Niño gamificado y acceso anónimo.
-**2. Web Gerente de Tienda (`apps/admin` - Tenant):** Login, perfil del local, vitrina digital de novedades/productos destacados (fotos, descripciones y beneficios; sin gestión de stock SKU ni pasarela de pago), creación de ofertas (pendientes de aprobación), escáner/código de validación y métricas de su tienda.
-**3. Web Back-office Mall (`apps/admin` - Mall Admin):** Gestión de locales, moderación de promociones, categorías, accesibilidad, configuración del mall y dashboard ejecutivo de métricas globales.
-**4. Landing Page (`apps/landing`):** Pitch B2B, descarga de APK, términos y privacidad.
+**1. App Visitante (Expo, Android-first):**
+- Selección de mall, directorio de tiendas, mapa 2.5D Skia por piso con navegación Turn-by-Turn.
+- **Catálogo y Fichas de Productos de Alta Conversión (>75% decisión de compra):** Fotos, nombre, descripción, rangos de precio referenciales (`price_min`, `price_max`), tallas (`sizes_json`) y colores (`colors_json`) para consulta y búsqueda semántica.
+- **Concierge IA & Centro de Notificaciones:** Asistente conversacional con búsqueda de tiendas y productos por talla/color/presupuesto, emisor de alertas proactivas, eventos del día y promociones relámpago.
+- **Eventos y Concursos del Mall:** Agenda de conciertos, firmas, desfiles y dinámicas comerciales en plazas.
+- Modo Niño (Exploradores del Mall), vitrina de ofertas, cupón QR y acceso anónimo.
+
+**2. Web Gerente de Tienda (Portal de Escritorio Locatario):**
+- Acceso de escritorio para equipos de retail y mercadeo de tienda.
+- Perfil de local, horarios y banners oficiales.
+- **CRUD de Catálogo de Productos:** Carga de artículos con rangos de precio (`price_min`, `price_max`), tallas, colores, fotos y tags para visibilidad en el buscador del Concierge.
+- Creación de ofertas y promociones flash (sujetas a aprobación del mall).
+- Escáner y formulario de validación atómica de canje de cupones.
+- Dashboard de tienda: visitas, productos más consultados y cupones canjeados.
+
+**3. Web Back-office Mall (Panel Ejecutivo de Consorcio):**
+- Gestión centralizada multi-tienda y multi-mall para consorcios comerciales (Sambil, La Cascada, etc.).
+- Directorio de locales, categorías y asignación de niveles/zonas.
+- Moderación y aprobación de campañas y ofertas locales.
+- **Gestor de Eventos y Concursos:** Programación de activaciones en plazas y dinámicas de fidelización.
+- **Emisión de Avisos del Concierge:** Segmentación y programación de notificaciones proactivas para visitantes.
+- Dashboard ejecutivo de ROI: flujos peatonales, funnel de conversión, tiendas más consultadas y canjes.
+
+**4. Landing Page (`apps/landing`):** Pitch B2B para consorcios, descarga de APK, términos y privacidad.
 
 ## 4. Fuera de alcance (Future Mall OS)
-E-commerce transaccional completo (carritos de compra, inventario SKU con tallas/colores, pagos en app), Live Shopping, red social abierta, realidad aumentada (AR), beacons físicos, delivery, integración directa con POS/ERP, versión iOS (hasta resolver cuenta Apple desde Venezuela), geolocalización invasiva en segundo plano, y precios de productos en pantalla (se muestran beneficios y descuentos porcentuales).
+Pasarelas de pago y carritos de compra e-commerce directo en app (el pago se hace físicamente en el local comercial), Live Shopping, red social abierta, realidad aumentada (AR), beacons físicos, delivery, integración directa con POS/ERP, y geolocalización invasiva en segundo plano.
 
 ## 5. Restricciones del contexto (Venezuela)
-- Conectividad intermitente → **offline-first**.
+- Conectividad intermitente → **offline-first** para la navegación y mapas del visitante.
 - Predomina Android de gama media/baja → rendimiento y tamaño de APK importan.
-- Cadenas (McDonald's, supermercado) probablemente NO pueden publicar ofertas: entran como fichas del directorio.
-- Sin pagos en la app. Sin Stripe/Mercado Pago.
-- Moneda: no mostrar precios; solo porcentajes/beneficios. Guardar `currency` por mall.
+- Precios de productos gestionados mediante **rangos referenciales (`price_min`, `price_max`)** para no desfasar precios ante ajustes cambiarios y no requerir integración compleja a POS.
+- Sin pagos directos en la app. Sin Stripe/Mercado Pago en el piloto. Moneda guardada por mall (`USD` / `VES`).
 
 ## 6. Stack
 | Capa | Tecnología |

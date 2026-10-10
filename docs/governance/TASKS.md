@@ -86,13 +86,16 @@
 | T-603 | Catálogo de Vitrinas Digitales HUD de Sambil Chacao | DONE | Vitrinas para ZARA (2.500 m²), Tijerazo, Mango Bajito (2.136 m²), Nike, Miniso, Samsung, Bonsai Sushi, Anfiteatro VIP |
 | T-604 | Selector de 4 niveles en App Móvil (`apps/mobile/app/(tabs)/mapa.tsx`) | DONE | Switcher interactivo de pisos (L1 Autopista, L2 Acuario, L3 Libertador, L4 Diversión) con recálculo dinámico |
 | T-605 | Suite de pruebas unitarias automatizadas del motor para 4 niveles | DONE | 46 pruebas en `packages/map-engine` pasando al 100% |
-## Sprint 7 — Suite de Dashboards Web para Pitch Comercial (`apps/admin`)
+## Sprint 7 — Suite B2B de Doble Repositorio, Portales Web y Catálogo de Conversión
 
 | ID | Tarea | Estado | Aceptación |
 |---|---|---|---|
-| T-701 | Portal Gerente de Tienda (`apps/admin/app/(tenant)`) | TODO | Perfil de tienda, vitrina digital de productos destacados, gestión de ofertas locales y formulario de canje |
-| T-702 | Portal Back-office Mall (`apps/admin/app/(mall)`) | TODO | Directorio comercial, moderación de ofertas en cola y dashboard ejecutivo con gráficos de funnel y tiendas top |
-| T-703 | Switcher de Roles y Modo Pitch (`apps/admin`) | TODO | Acceso rápido a perfiles de demostración (Gerente Zara / Admin Mall) para presentación ejecutiva en vivo |
+| T-701 | Migración Supabase Aditiva: `products`, `events`, `contests`, `notifications`, `audit_log`, `invitations`, `mall_settings` | DONE | 20261010100000_products_events_contests.sql creada con RLS multi-tenant, FKs compuestas, tipos en `@mallos/types` y Zod en `@mallos/validators` |
+| T-702 | Inicialización del Repositorio B2B `mall-os-portals` | DOING | Creación del proyecto Next.js 14 App Router con Tailwind CSS, shadcn/ui, `@supabase/ssr` y cliente TypeScript |
+| T-703 | Seguridad B2B y Blindaje de Pitch Mode Switcher | TODO | Login corporativo seguro (email/password/2FA) + Switcher de demo restringido a `NEXT_PUBLIC_DEMO_MODE=true` con banner de advertencia |
+| T-704 | Store OS Desktop (`/store`): Perfil y CRUD de Catálogo | TODO | Gestión de tienda y formulario de productos con rangos referenciales (`price_min`, `price_max`), tags de tallas, colores y fotos |
+| T-705 | Mall Executive OS (`/admin`) y Super Admin (`/root`) | TODO | Directorio comercial multi-tienda, módulo de eventos/concursos, emisor de avisos del Conserje y visor de `audit_log` |
+| T-706 | Integración Mobile (`mall-os`): Vitrina y Búsqueda en Conserje | TODO | App móvil consume catálogo en vivo desde Supabase y el Conserje responde a consultas de tallas, colores y rangos |
 
 ## Bloqueos y notas
 <!-- Anotar aquí lo que frene una tarea: fecha | tarea | motivo | quién desbloquea -->
