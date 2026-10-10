@@ -174,13 +174,13 @@ export default function SplashScreen() {
         <Svg width={SCREEN_WIDTH} height={SCREEN_WIDTH * 1.5} viewBox="0 0 400 600">
           <Defs>
             <RadialGradient id="splashGlow" cx="50%" cy="40%" r="55%">
-              <Stop offset="0%" stopColor="#1E3A8A" stopOpacity="0.45" />
-              <Stop offset="50%" stopColor="#0F172A" stopOpacity="0.2" />
-              <Stop offset="100%" stopColor="#070C1A" stopOpacity="0" />
+              <Stop offset="0%" stopColor="#38BDF8" stopOpacity="0.45" />
+              <Stop offset="50%" stopColor="#1D4ED8" stopOpacity="0.25" />
+              <Stop offset="100%" stopColor="#0B52BA" stopOpacity="0" />
             </RadialGradient>
             <RadialGradient id="emeraldGlow" cx="65%" cy="35%" r="35%">
-              <Stop offset="0%" stopColor="#059669" stopOpacity="0.25" />
-              <Stop offset="100%" stopColor="#070C1A" stopOpacity="0" />
+              <Stop offset="0%" stopColor="#60A5FA" stopOpacity="0.35" />
+              <Stop offset="100%" stopColor="#0B52BA" stopOpacity="0" />
             </RadialGradient>
           </Defs>
           <Circle cx="200" cy="240" r="220" fill="url(#splashGlow)" />
@@ -232,7 +232,7 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#070C1A',
+    backgroundColor: '#0B52BA',
     justifyContent: 'space-between',
     alignItems: 'center',
     position: 'relative',

@@ -9,8 +9,8 @@
     "scheme": "mallos",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0A369D"
+      "resizeMode": "cover",
+      "backgroundColor": "#0B52BA"
     },
     "ios": {
       "supportsTablet": false,
@@ -20,7 +20,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0A369D"
+        "backgroundColor": "#0B52BA"
       },
       "package": "com.mallos.app"
     },

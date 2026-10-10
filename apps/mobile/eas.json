@@ -10,6 +10,10 @@
       "channel": "development",
       "node": "22.20.0",
       "pnpm": "9.9.0",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://bgncghyhyosugfnraoqm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_aFcWDnyP9OSoSEb5DVrIfA_MNcqrp-y"
+      },
       "android": {
         "buildType": "apk"
       }
@@ -19,6 +23,10 @@
       "channel": "preview",
       "node": "22.20.0",
       "pnpm": "9.9.0",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://bgncghyhyosugfnraoqm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_aFcWDnyP9OSoSEb5DVrIfA_MNcqrp-y"
+      },
       "android": {
         "buildType": "apk"
       }
@@ -28,6 +36,10 @@
       "channel": "production",
       "node": "22.20.0",
       "pnpm": "9.9.0",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://bgncghyhyosugfnraoqm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_aFcWDnyP9OSoSEb5DVrIfA_MNcqrp-y"
+      },
       "android": {
         "buildType": "apk"
       }
