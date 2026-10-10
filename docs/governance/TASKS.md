@@ -93,8 +93,8 @@
 | T-701 | Migración Supabase Aditiva: `products`, `events`, `contests`, `notifications`, `audit_log`, `invitations`, `mall_settings` | DONE | 20261010100000_products_events_contests.sql creada con RLS multi-tenant, FKs compuestas, tipos en `@mallos/types` y Zod en `@mallos/validators` |
 | T-702 | Inicialización del Repositorio B2B `mall-os-web-portals` | DONE | Repositorio creado en `D:\mall-os-web-portals` con Next.js 14.2, Tailwind, `@supabase/ssr`, TypeScript, pnpm y 0 errores de build |
 | T-703 | Seguridad B2B y Blindaje de Pitch Mode Switcher | DONE | Login corporativo seguro + PitchModeSwitcher blindado por `NEXT_PUBLIC_DEMO_MODE=true` con banner rojo de advertencia |
-| T-704 | Store OS Desktop (`/store`): Perfil y CRUD de Catálogo | DOING | Formulario interactivo de productos con rangos referenciales (`price_min`, `price_max`), tallas, colores y fotos para certeza >75% |
-| T-705 | Mall Executive OS (`/admin`) y Super Admin (`/root`) | TODO | Directorio comercial multi-tienda, módulo de eventos/concursos, emisor de avisos del Conserje y visor de `audit_log` |
+| T-704 | Store OS Desktop (`/store`): Catálogo D-086 y Validador POS | DONE | Catálogo con fotos por color (D-086), CRUD de rangos, validador de cupones QR/código en caja y queries a Supabase con fallback |
+| T-705 | Mall Executive OS (`/mall` y `/admin`): Dashboards en Vivo y Eventos | DOING | Consola ejecutiva con 4 KPIs en vivo conectados a Supabase, directorio comercial, eventos y concursos |
 | T-706 | Integración Mobile (`mall-os`): Vitrina y Búsqueda en Conserje | TODO | App móvil consume catálogo en vivo desde Supabase y el Conserje responde a consultas de tallas, colores y rangos |
 
 ## Bloqueos y notas
