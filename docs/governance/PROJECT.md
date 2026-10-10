@@ -4,14 +4,16 @@
 > Última actualización: 2026-09-29
 
 ## 1. Qué es
-Plataforma digital multi-mall que conecta **shoppers**, **tenants (locales)** y **administración del mall**.
-Una sola app móvil para todos los malls. Cada mall es una instancia: "Mall OS Los Nuevos Teques", "Mall OS El Recreo", etc.
+Plataforma digital multi-mall tipo "Sistema Operativo de Centros Comerciales" estructurada en **3 capas clave**:
+1. **Capa 1 — App Móvil del Visitante (`apps/mobile`):** Experiencia inmersiva en Expo/React Native con mapa 2.5D, navegación Turn-by-Turn, Concierge IA, Modo Niño y vitrina de ofertas offline-first.
+2. **Capa 2 — Portal Web del Gerente de Tienda (`apps/admin` con rol `tenant`):** Perfil de tienda, vitrina digital de productos/novedades (sin precios absolutos), gestión de ofertas locales y validación atómica de canjes QR.
+3. **Capa 3 — Back-office Web de la Administración del Mall (`apps/admin` con rol `mall_admin`):** Directorio comercial, moderación/aprobación de ofertas, gestión de categorías y dashboard ejecutivo del funnel (visitas, búsquedas, canjes y ROI).
 
 ## 2. Prototipo Insignia y Piloto Comercial
 - **Prototipo Activo:** Sambil Chacao (Caracas, Venezuela) — Plano esquemático ilustrativo 2.5D (4 niveles, plazas icónicas, tiendas ancla) como prototipo avanzado de venta y demostración comercial de alta fidelidad.
+- **Pipeline Comercial Principal:** Grupo La Cascada (Maturín / Hoteles y Malls) — Propuesta de plataforma integral (App Visitante + Dashboard Tienda + Dashboard Mall) orientada a pitch ejecutivo.
 - **Mall Piloto Original (Congelado):** Centro Comercial Los Nuevos Teques — En pausa ante falta de planos e insumos de la junta.
-- **Pipeline / Oportunidad Abierta:** Grupo La Cascada (Hotel, Maturín) — Oportunidad abierta; sin desarrollo específico hasta recibir requisitos formales y planos arquitectónicos.
-- **Precio / Modelo Comercial:** Prototipo demostrativo orientado a venta B2B para juntas directivas y administraciones de centros comerciales.
+- **Precio / Modelo Comercial:** Venta B2B de suscripción a centros comerciales y complejos mixtos (hoteles/malls).
 
 ### Métricas de Éxito del Prototipo Comercial
 | Métrica | Meta inicial |
@@ -20,16 +22,17 @@ Una sola app móvil para todos los malls. Cada mall es una instancia: "Mall OS L
 | Vitrina Offline | 100% operable sin conexión a internet |
 | Fidelidad de Marca | Cumplimiento 80/15/5 y 0 precios en USD |
 | Validación de Canje | Flujo atómico demostrable (`activate_coupon` / `redeem_coupon`) |
+| Suite de Dashboards | Portal Tenant y Portal Mall navegables en alta fidelidad |
 Funnel a medir: visita → registro → cupón activado → cupón canjeado. No prometer atribución de ventas (sin integración POS no se puede medir).
 
-## 3. Alcance del piloto (CONGELADO)
-**Shopper (app Expo, Android-first):** selección de mall, directorio, mapa SVG por piso, ofertas, cupón QR, tarjeta de sellos (hipótesis a validar), Concierge IA, acceso anónimo (registro solo al activar cupón).
-**Tenant (Admin web):** login, perfil del local, crear oferta, validar canje (cámara o código), ver redenciones.
-**Mall (Admin web):** gestión de locales, dashboard del funnel.
-**Landing:** venta B2B, aviso de privacidad, términos.
+## 3. Alcance de la Plataforma
+**1. App Visitante (Expo, Android-first):** Selección de mall, directorio, mapa 2.5D Skia por piso, búsqueda, vitrinas de tiendas, ofertas, cupón QR, tarjeta de fidelidad, Concierge IA, Modo Niño gamificado y acceso anónimo.
+**2. Web Gerente de Tienda (`apps/admin` - Tenant):** Login, perfil del local, vitrina digital de novedades/productos destacados (fotos, descripciones y beneficios; sin gestión de stock SKU ni pasarela de pago), creación de ofertas (pendientes de aprobación), escáner/código de validación y métricas de su tienda.
+**3. Web Back-office Mall (`apps/admin` - Mall Admin):** Gestión de locales, moderación de promociones, categorías, accesibilidad, configuración del mall y dashboard ejecutivo de métricas globales.
+**4. Landing Page (`apps/landing`):** Pitch B2B, descarga de APK, términos y privacidad.
 
 ## 4. Fuera de alcance (Future Mall OS)
-Modo Niño, Live Shopping, red social, AR, "encuentra a tus amigos", beacons, pagos en app, reservas, delivery, valet, EV, integración POS/CRM, iOS, geolocalización en segundo plano, precios de productos en pantalla.
+E-commerce transaccional completo (carritos de compra, inventario SKU con tallas/colores, pagos en app), Live Shopping, red social abierta, realidad aumentada (AR), beacons físicos, delivery, integración directa con POS/ERP, versión iOS (hasta resolver cuenta Apple desde Venezuela), geolocalización invasiva en segundo plano, y precios de productos en pantalla (se muestran beneficios y descuentos porcentuales).
 
 ## 5. Restricciones del contexto (Venezuela)
 - Conectividad intermitente → **offline-first**.

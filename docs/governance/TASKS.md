@@ -86,7 +86,14 @@
 | T-603 | Catálogo de Vitrinas Digitales HUD de Sambil Chacao | DONE | Vitrinas para ZARA (2.500 m²), Tijerazo, Mango Bajito (2.136 m²), Nike, Miniso, Samsung, Bonsai Sushi, Anfiteatro VIP |
 | T-604 | Selector de 4 niveles en App Móvil (`apps/mobile/app/(tabs)/mapa.tsx`) | DONE | Switcher interactivo de pisos (L1 Autopista, L2 Acuario, L3 Libertador, L4 Diversión) con recálculo dinámico |
 | T-605 | Suite de pruebas unitarias automatizadas del motor para 4 niveles | DONE | 46 pruebas en `packages/map-engine` pasando al 100% |
-| T-606 | Preparación de arquitectura multi-venue para Hotel La Cascada (Maturín) | TODO | Modelado de mapa de hotel/resort (Habitaciones, Restaurantes, Piscinas, Salones) vía `venue_id` |
+## Sprint 7 — Suite de Dashboards Web para Pitch Comercial (`apps/admin`)
+
+| ID | Tarea | Estado | Aceptación |
+|---|---|---|---|
+| T-701 | Portal Gerente de Tienda (`apps/admin/app/(tenant)`) | TODO | Perfil de tienda, vitrina digital de productos destacados, gestión de ofertas locales y formulario de canje |
+| T-702 | Portal Back-office Mall (`apps/admin/app/(mall)`) | TODO | Directorio comercial, moderación de ofertas en cola y dashboard ejecutivo con gráficos de funnel y tiendas top |
+| T-703 | Switcher de Roles y Modo Pitch (`apps/admin`) | TODO | Acceso rápido a perfiles de demostración (Gerente Zara / Admin Mall) para presentación ejecutiva en vivo |
 
 ## Bloqueos y notas
 <!-- Anotar aquí lo que frene una tarea: fecha | tarea | motivo | quién desbloquea -->
+

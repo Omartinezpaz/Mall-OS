@@ -31,18 +31,27 @@
 - Tarjeta de sellos si la junta/locales la validan (D-013).
 **Gate 3:** flujo completo probado con 3 locales reales: crear oferta → activar → canjear → ver en dashboard. Sin doble canje ni carrera en pruebas de concurrencia.
 
-## Fase 4 — Concierge y dashboard (S5–S6)
+## Fase 4 — Concierge y Dashboards (`apps/admin`) (S5–S6)
 - Edge Function `concierge` con tool calling y contexto armado en servidor.
-- Dashboard del mall: funnel (registro → activado → canjeado), locales activos.
-- Landing con aviso de privacidad y términos.
-**Gate 4:** Concierge responde solo con datos reales del mall; funnel visible.
+- Portal Gerente de Tienda (`apps/admin/app/(tenant)`): perfil, vitrina digital, creación de ofertas y canje de cupones.
+- Portal Back-office Mall (`apps/admin/app/(mall)`): directorio, aprobación de ofertas y dashboard ejecutivo del funnel.
+- Landing page oficial (`apps/landing`) con aviso de privacidad y términos.
+**Gate 4:** Concierge responde solo con datos reales del mall; dashboards de tienda y de mall 100% navegables.
 
-## Fase 5 — Lanzamiento del piloto (S6–S7)
+## Fase 5 — Pitch Comercial y Validación de Plataforma (S6–S7)
+- Pitch ejecutivo para juntas directivas y cadenas (Grupo La Cascada / Sambil):
+  - Demostración de App Móvil nativa en Android (Mapa 2.5D, vitrinas, canje, modo niño y concierge).
+  - Demostración en vivo de Web Gerente de Tienda (portal locatario).
+  - Demostración en vivo de Web Administración del Mall (panel ejecutivo de ROI y flujos).
+- Carta de intención / acuerdo de piloto comercial con los 5-10 primeros comercios.
+- Capacitación de 10 min a cada local aliado.
+**Gate 5:** Demostración integral de 3 capas aprobada por junta directiva; firma de acuerdo piloto.
+
+## Fase 6 — Despliegue Piloto y Operación (S7–S8)
 - Activación con QR en accesos, mesas y cajas de locales aliados; incentivo de bienvenida.
-- Capacitación de 10 min a cada local.
-- Canal de soporte definido.
-**Gate 5 (día 30, 60, 90):** revisión de métricas vs PROJECT.md §2 con la junta.
+- Canal de soporte y telemetría en producción.
+- Revisión de métricas de funnel a 30, 60 y 90 días vs PROJECT.md §2.
 
 ## Después del piloto (no comprometido)
-Si las métricas se cumplen: propuesta de contrato, segundo mall, iOS, Play Store, notificaciones push, ledger de puntos, publicidad de tenants.
-Mucho más adelante: beacons, POS, reservas, live, social, AR, modo niño.
+Si las métricas se cumplen: propuesta de contrato anual, segundo mall/hotel de la cadena, iOS (al habilitar cuenta Apple), Google Play Store, notificaciones push automáticas, ledger de puntos extendido y publicidad programática para tenants.
+Mucho más adelante: beacons BLE, integración directa con POS/ERP, reservas de restaurantes, live shopping.
