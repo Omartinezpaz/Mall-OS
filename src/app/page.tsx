@@ -22,12 +22,25 @@ import {
   Compass,
   Radio,
   Clock,
-  Award
+  Award,
+  TrendingUp,
+  Users,
+  BarChart3,
+  Check,
+  DollarSign,
+  Target
 } from 'lucide-react';
 
 export default function HomePage() {
   const [demoRequested, setDemoRequested] = useState(false);
   const [demoForm, setDemoForm] = useState({ name: '', mall: '', email: '', phone: '' });
+  const [simulatedStores, setSimulatedStores] = useState(450);
+  const [adoptionPercent, setAdoptionPercent] = useState(60);
+
+  const payingStores = Math.round((simulatedStores * adoptionPercent) / 100);
+  const freeStores = simulatedStores - payingStores;
+  const monthlyRevenue = payingStores * 15;
+  const annualRevenue = monthlyRevenue * 12;
 
   const handleDemoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +77,7 @@ export default function HomePage() {
             <a href="#conserje" className="hover:text-indigo-600 transition-colors">Conserje IA</a>
             <a href="#modo-nino" className="hover:text-indigo-600 transition-colors">Modo Niño</a>
             <a href="#store-os" className="hover:text-indigo-600 transition-colors">Store OS</a>
+            <a href="#planes" className="hover:text-indigo-600 transition-colors font-bold text-indigo-600">Planes & Alianzas</a>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -401,7 +415,384 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 7. FORMULARIO EJECUTIVO / CONTACTO PARA PILOTO                            */}
+      {/* 7. MODELO DE NEGOCIO Y PLANES COMERCIALES (D-087)                        */}
+      {/* ========================================================================= */}
+      <section id="planes" className="py-24 px-6 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold uppercase tracking-wider">
+              <TrendingUp className="w-3.5 h-3.5 text-indigo-600" />
+              Modelo B2B2C Mixto · Estrategia de Adopción Año 1
+            </div>
+
+            <h2 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+              Precios y Alianzas para Conquistar el Centro Comercial
+            </h2>
+
+            <p className="text-base text-slate-600 leading-relaxed">
+              La prioridad del primer año no es exprimir a los locatarios, sino derribar las barreras de entrada: el mall adopta la plataforma como socio estratégico, el 100% de las tiendas tiene presencia gratuita y las tiendas activas monetizan con herramientas comerciales por solo $15 al mes.
+            </p>
+          </div>
+
+          {/* Grilla de 3 Planes */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            {/* Plan 1: Mall Institucional */}
+            <div className="rounded-3xl bg-white p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-700 uppercase tracking-wider">
+                    Cliente Principal
+                  </span>
+                  <Building2 className="w-5 h-5 text-slate-500" />
+                </div>
+                <h3 className="text-xl font-black text-slate-900">Plan Institucional Mall</h3>
+                <p className="text-xs text-slate-500 mt-1 mb-6">Para juntas de condominio y administraciones comerciales.</p>
+
+                <div className="mb-6 pb-6 border-b border-slate-100">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-slate-900">$0</span>
+                    <span className="text-xs font-bold text-indigo-600 uppercase">durante el piloto</span>
+                  </div>
+                  <span className="text-[11px] text-slate-400 block mt-1">Piloto limitado a 30–60 días según alcance acordado</span>
+                </div>
+
+                <ul className="space-y-3 text-xs text-slate-600">
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Directorio general del centro comercial 100% digitalizado.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Plano arquitectónico 2.5D interactivo por niveles y pasillos.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Acceso al panel ejecutivo con medición de afluencia y rutas.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Coordinación comercial con locatarios y soporte en campo.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Tarifa institucional negociada post-piloto según escala.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="pt-8">
+                <a
+                  href="#contacto"
+                  className="w-full py-3 px-4 rounded-xl border border-slate-300 hover:border-slate-400 text-slate-800 text-xs font-bold block text-center transition-colors"
+                >
+                  Solicitar Piloto para Mall
+                </a>
+              </div>
+            </div>
+
+            {/* Plan 2: Básico Locatario */}
+            <div className="rounded-3xl bg-white p-8 border border-slate-200 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-700 uppercase tracking-wider">
+                    Presencia Permanente
+                  </span>
+                  <Store className="w-5 h-5 text-emerald-600" />
+                </div>
+                <h3 className="text-xl font-black text-slate-900">Directorio Básico Tienda</h3>
+                <p className="text-xs text-slate-500 mt-1 mb-6">Para todos los locales físicos del centro comercial.</p>
+
+                <div className="mb-6 pb-6 border-b border-slate-100">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-slate-900">$0</span>
+                    <span className="text-xs font-bold text-slate-500">/ mes</span>
+                  </div>
+                  <span className="text-[11px] text-emerald-600 font-bold block mt-1">Gratis para siempre · Cero barreras de entrada</span>
+                </div>
+
+                <ul className="space-y-3 text-xs text-slate-600">
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Ficha con nombre, logo, número de local y piso.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Categoría comercial y horarios de atención al público.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Ubicación exacta y ruteo Turn-by-Turn en el plano 2.5D.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Garantiza que el visitante nunca encuentre locales vacíos en el mapa.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="pt-8">
+                <a
+                  href="https://mall-os-web-portal.vercel.app/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 rounded-xl border border-slate-300 hover:border-slate-400 text-slate-800 text-xs font-bold block text-center transition-colors"
+                >
+                  Registrar Ficha Gratuita
+                </a>
+              </div>
+            </div>
+
+            {/* Plan 3: Comercial de Lanzamiento (Tiendas Fundadoras) */}
+            <div className="rounded-3xl bg-slate-900 text-white p-8 border-2 border-indigo-500 shadow-2xl relative flex flex-col justify-between">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-[10px] font-black uppercase tracking-wider shadow-lg">
+                Oferta Lanzamiento Tiendas Fundadoras
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-indigo-950 text-indigo-300 border border-indigo-700 uppercase tracking-wider">
+                    Herramienta de Ventas
+                  </span>
+                  <ShoppingBag className="w-5 h-5 text-indigo-400" />
+                </div>
+                <h3 className="text-xl font-black text-white">Plan Comercial Store OS</h3>
+                <p className="text-xs text-slate-300 mt-1 mb-6">Para tiendas que desean impulsar ventas y fidelizar compradores.</p>
+
+                <div className="mb-6 pb-6 border-b border-slate-800">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-white">$15</span>
+                    <span className="text-xs font-bold text-slate-400">/ mes</span>
+                  </div>
+                  <span className="text-[11px] text-indigo-400 font-bold block mt-1">Precio introductorio para locatarios fundadores</span>
+                </div>
+
+                <ul className="space-y-3 text-xs text-slate-200">
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                    <span><strong>Catálogo Dinámico por Color (D-086):</strong> fotos reales por variante (+75% conversión).</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                    <span><strong>Promociones y Cupones:</strong> activación de ofertas con candado anti-fraude en caja.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                    <span><strong>Store OS Autónomo:</strong> gestión total de inventario y stock desde cualquier navegador.</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                    <span><strong>Estadísticas de Tienda:</strong> visualizaciones de productos, búsquedas y canjes.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="pt-8">
+                <a
+                  href="https://mall-os-web-portal.vercel.app/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold block text-center transition-all shadow-lg shadow-indigo-600/30"
+                >
+                  Activar Plan Comercial ($15/mes)
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Banner de Campañas Patrocinadas y Fondo de Mercadeo */}
+          <div className="rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-900 p-8 text-white border border-indigo-700/50 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl text-left">
+              <span className="px-3 py-1 rounded-full text-[10px] font-black bg-indigo-800/80 text-indigo-200 uppercase tracking-wider">
+                Ingresos Compartidos
+              </span>
+              <h4 className="text-xl sm:text-2xl font-black">Campañas Patrocinadas & Fondo de Activación Comercial</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Las marcas pueden pautar banners destacados y promociones especiales. En lugar de complicar la contabilidad con comisiones fijas, se crea un <strong>fondo de mercadeo conjunto</strong> que reinvierte en actividades para atraer visitantes al centro comercial.
+              </p>
+            </div>
+            <div className="shrink-0">
+              <a
+                href="#contacto"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-indigo-950 font-bold text-xs hover:bg-slate-100 transition-colors shadow-lg"
+              >
+                <span>Consultar Opciones de Pauta</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+
+          {/* ===================================================================== */}
+          {/* SIMULADOR INTERACTIVO DE FACTURACIÓN (EJEMPLO 450 LOCALES)            */}
+          {/* ===================================================================== */}
+          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200 shadow-md space-y-8">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-extrabold uppercase tracking-wider mb-2">
+                <BarChart3 className="w-3.5 h-3.5 text-emerald-600" />
+                Simulador de Escala Comercial
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-black text-slate-900">
+                ¿Qué Significa Esto en un Centro Comercial Real?
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Ajuste los controles para proyectar la facturación mensual y anual según el número de locales y la tasa de adopción del plan comercial de $15/mes.
+              </p>
+            </div>
+
+            {/* Controles de Simulación */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-6 border-b border-slate-100">
+              <div>
+                <div className="flex justify-between text-xs font-bold text-slate-700 mb-2">
+                  <span>Total de Locales del Centro Comercial:</span>
+                  <span className="text-indigo-600 font-extrabold">{simulatedStores} locales</span>
+                </div>
+                <input
+                  type="range"
+                  min="50"
+                  max="700"
+                  step="10"
+                  value={simulatedStores}
+                  onChange={(e) => setSimulatedStores(Number(e.target.value))}
+                  className="w-full accent-indigo-600 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                  <span>50 locales (Mall Express)</span>
+                  <span>450 (Sambil Chacao)</span>
+                  <span>700 (Gran Escala)</span>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-bold text-slate-700 mb-2">
+                  <span>Adopción Plan Comercial ($15/mes):</span>
+                  <span className="text-emerald-600 font-extrabold">{adoptionPercent}% de locales</span>
+                </div>
+                <input
+                  type="range"
+                  min="10"
+                  max="90"
+                  step="5"
+                  value={adoptionPercent}
+                  onChange={(e) => setAdoptionPercent(Number(e.target.value))}
+                  className="w-full accent-emerald-600 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                  <span>10% (Inicio)</span>
+                  <span>60% (Objetivo Año 1)</span>
+                  <span>90% (Madurez)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Resultados del Simulador */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+              <div className="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-100">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700 block mb-1">
+                  Tiendas de Pago ($15)
+                </span>
+                <span className="text-3xl sm:text-4xl font-black text-indigo-900">{payingStores}</span>
+                <span className="text-[10px] text-indigo-600 block mt-1">Con catálogo y ofertas activas</span>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-100/70 border border-slate-200">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block mb-1">
+                  Tiendas Gratuitas ($0)
+                </span>
+                <span className="text-3xl sm:text-4xl font-black text-slate-800">{freeStores}</span>
+                <span className="text-[10px] text-slate-500 block mt-1">Directorio 100% completo</span>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-100">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 block mb-1">
+                  Facturación Mensual
+                </span>
+                <span className="text-3xl sm:text-4xl font-black text-emerald-900">
+                  ${monthlyRevenue.toLocaleString('en-US')}
+                </span>
+                <span className="text-[10px] text-emerald-600 block mt-1">Ingreso recurrente por tiendas</span>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-900 text-white border border-slate-800">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  Facturación Anualizada
+                </span>
+                <span className="text-3xl sm:text-4xl font-black text-white">
+                  ${annualRevenue.toLocaleString('en-US')}
+                </span>
+                <span className="text-[10px] text-indigo-400 block mt-1">Sin contar pauta ni licencias</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ===================================================================== */}
+          {/* LAS 5 MÉTRICAS CLAVE DEL AÑO 1                                        */}
+          {/* ===================================================================== */}
+          <div className="space-y-6">
+            <div className="text-center max-w-xl mx-auto">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900">
+                Las 5 Métricas de Éxito Durante el Primer Año
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                No medimos el éxito únicamente por la facturación inmediata, sino por la adopción y salud de la plataforma.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-black flex items-center justify-center text-xs">
+                  1
+                </div>
+                <h4 className="text-sm font-black text-slate-900">Cobertura</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  % de locales del mall con ficha completa, horarios y ubicación en mapa.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-black flex items-center justify-center text-xs">
+                  2
+                </div>
+                <h4 className="text-sm font-black text-slate-900">Adopción</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  % de gerentes y encargados que utilizan Store OS activamente cada mes.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-black flex items-center justify-center text-xs">
+                  3
+                </div>
+                <h4 className="text-sm font-black text-slate-900">Actividad</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Búsquedas de visitantes, vistas a fichas de productos y rutas solicitadas.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-black flex items-center justify-center text-xs">
+                  4
+                </div>
+                <h4 className="text-sm font-black text-slate-900">Conversión</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Promociones consultadas en la app y cupones canjeados físicamente en caja.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 font-black flex items-center justify-center text-xs">
+                  5
+                </div>
+                <h4 className="text-sm font-black text-slate-900">Retención</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  % de tiendas que continúan utilizando y renovando su plan mes a mes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 8. FORMULARIO EJECUTIVO / CONTACTO PARA PILOTO                            */}
       {/* ========================================================================= */}
       <section id="contacto" className="py-24 px-6 max-w-4xl mx-auto">
         <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-14 shadow-2xl relative overflow-hidden">
