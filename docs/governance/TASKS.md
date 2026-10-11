@@ -94,8 +94,8 @@
 | T-702 | Inicialización del Repositorio B2B `mall-os-web-portals` | DONE | Repositorio creado en `D:\mall-os-web-portals` con Next.js 14.2, Tailwind, `@supabase/ssr`, TypeScript, pnpm y 0 errores de build |
 | T-703 | Seguridad B2B y Blindaje de Pitch Mode Switcher | DONE | Login corporativo seguro + PitchModeSwitcher blindado por `NEXT_PUBLIC_DEMO_MODE=true` con banner rojo de advertencia |
 | T-704 | Store OS Desktop (`/store`): Catálogo D-086 y Validador POS | DONE | Catálogo con fotos por color (D-086), CRUD de rangos, validador de cupones QR/código en caja y queries a Supabase con fallback |
-| T-705 | Mall Executive OS (`/mall` y `/admin`): Dashboards en Vivo y Eventos | DOING | Consola ejecutiva con 4 KPIs en vivo conectados a Supabase, directorio comercial, eventos y concursos |
-| T-706 | Integración Mobile (`mall-os`): Vitrina y Búsqueda en Conserje | TODO | App móvil consume catálogo en vivo desde Supabase y el Conserje responde a consultas de tallas, colores y rangos |
+| T-705 | Mall Executive OS (`/mall`): Dashboards en Vivo, Directorio, Eventos, Sorteos y Conserje | DONE | Consola ejecutiva con 4 KPIs en vivo conectados a Supabase, directorio comercial con invitación de inquilinos, agenda de eventos, sorteos y emisor push de Conserje IA |
+| T-706 | Integración Mobile (`mall-os`): Vitrina y Búsqueda en Conserje | DOING | App móvil consume catálogo en vivo desde Supabase y el Conserje responde a consultas de tallas, colores y rangos |
 
 ## Bloqueos y notas
 <!-- Anotar aquí lo que frene una tarea: fecha | tarea | motivo | quién desbloquea -->

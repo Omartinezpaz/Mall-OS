@@ -355,7 +355,7 @@ on conflict (id) do nothing;
 -- 4.4. Catálogo de Productos con Galería de Fotos por Color (D-086)
 insert into public.products (id, mall_id, store_id, name, slug, description, price_min, price_max, image_url, sizes_json, colors_json, tags_json, is_active, is_featured) values
   -- ZARA (4 productos)
-  ('p0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
+  ('d0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
    'Blazer Entallado Lino', 'blazer-entallado-lino', 'Blazer estructurado en mezcla de lino transpirable, solapas de muesca y forro satinado.', 45.00, 55.00,
    'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80',
    '["S","M","L","XL"]'::jsonb,
@@ -365,7 +365,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Formal","Verano","Premium"]'::jsonb, true, true),
 
-  ('p0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
+  ('d0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
    'Vestido Midi Plisado', 'vestido-midi-plisado', 'Falda plisada soleil con caída ligera y cinturón elástico desmontable.', 48.00, 60.00,
    'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&q=80',
    '["XS","S","M"]'::jsonb,
@@ -375,7 +375,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Coctel","Elegante"]'::jsonb, true, true),
 
-  ('p0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
+  ('d0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
    'Camisa Oxford Popelín', 'camisa-oxford-popelin', 'Camisa básica de corte regular en 100% algodón hilado peinado.', 32.00, 38.00,
    'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&q=80',
    '["S","M","L","XL","XXL"]'::jsonb,
@@ -385,7 +385,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Casual","Oficina"]'::jsonb, true, false),
 
-  ('p0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
+  ('d0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
    'Pantalón Slim Cropped', 'pantalon-slim-cropped', 'Pantalón tobillero con pinzas delanteras y tejido elástico confort.', 39.00, 46.00,
    'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&q=80',
    '["38","40","42","44"]'::jsonb,
@@ -396,7 +396,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    '["Formal","Slim"]'::jsonb, true, false),
 
   -- Bershka (3 productos)
-  ('p0000000-0000-0000-0000-000000000005', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000002',
+  ('d0000000-0000-0000-0000-000000000005', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000002',
    'Pantalón Cargo Baggy Street', 'cargo-baggy-street', 'Pantalón multiebolsillos tiro medio con caída ancha estilo Y2K.', 34.00, 42.00,
    'https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=800&q=80',
    '["34","36","38","40"]'::jsonb,
@@ -406,7 +406,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Streetwear","Urbano"]'::jsonb, true, true),
 
-  ('p0000000-0000-0000-0000-000000000006', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000002',
+  ('d0000000-0000-0000-0000-000000000006', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000002',
    'Hoodie Oversize Gráfico', 'hoodie-oversize-grafico', 'Sudadera con capucha y felpa interior cálida, estampado tipográfico.', 28.00, 35.00,
    'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80',
    '["S","M","L"]'::jsonb,
@@ -416,7 +416,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Hoodie","Invierno"]'::jsonb, true, false),
 
-  ('p0000000-0000-0000-0000-000000000007', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000002',
+  ('d0000000-0000-0000-0000-000000000007', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000002',
    'Top Ribbed Halter', 'top-ribbed-halter', 'Top acanalado sin mangas con cuello halter estilizado.', 15.00, 20.00,
    'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&q=80',
    '["XS","S","M"]'::jsonb,
@@ -427,7 +427,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    '["Verano","Básico"]'::jsonb, true, false),
 
   -- Tijerazo (3 productos)
-  ('p0000000-0000-0000-0000-000000000008', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
+  ('d0000000-0000-0000-0000-000000000008', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
    'Vaqueros Denim Clásicos', 'vaqueros-denim-clasicos', 'Jeans de mezclilla 100% algodón con costuras reforzadas.', 22.00, 28.00,
    'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&q=80',
    '["30","32","34","36","38"]'::jsonb,
@@ -437,7 +437,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Denim","Oferta"]'::jsonb, true, true),
 
-  ('p0000000-0000-0000-0000-000000000009', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
+  ('d0000000-0000-0000-0000-000000000009', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
    'Juego de Sábanas 300 Hilos', 'juego-sabanas-300-hilos', 'Sábanas tacto seda hipoalergénicas para cama matrimonial y king.', 25.00, 32.00,
    'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=800&q=80',
    '["Matrimonial","Queen","King"]'::jsonb,
@@ -447,7 +447,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Hogar","Confort"]'::jsonb, true, false),
 
-  ('p0000000-0000-0000-0000-000000000010', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
+  ('d0000000-0000-0000-0000-000000000010', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
    'Edredón Plumón Reversible', 'edredon-plumon-reversible', 'Relleno de microfibra de alta retención térmica capitoneado.', 35.00, 45.00,
    'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&q=80',
    '["Matrimonial","King"]'::jsonb,
@@ -458,7 +458,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    '["Dormitorio","Ahorro"]'::jsonb, true, false),
 
   -- Samsung (3 productos)
-  ('p0000000-0000-0000-0000-000000000011', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
+  ('d0000000-0000-0000-0000-000000000011', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
    'Galaxy S24 Ultra 256GB', 'galaxy-s24-ultra', 'Pantalla Dynamic AMOLED 2X, procesador Snapdragon 8 Gen 3 y Galaxy AI.', 1150.00, 1250.00,
    'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&q=80',
    '["256GB","512GB"]'::jsonb,
@@ -468,7 +468,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Smartphone","Galaxy AI","Flagship"]'::jsonb, true, true),
 
-  ('p0000000-0000-0000-0000-000000000012', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
+  ('d0000000-0000-0000-0000-000000000012', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
    'Galaxy Z Flip 5 5G', 'galaxy-z-flip-5', 'Diseño plegable compacto con Flex Window de 3.4 pulgadas.', 780.00, 850.00,
    'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&q=80',
    '["256GB","512GB"]'::jsonb,
@@ -478,7 +478,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Plegable","Diseño"]'::jsonb, true, false),
 
-  ('p0000000-0000-0000-0000-000000000013', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
+  ('d0000000-0000-0000-0000-000000000013', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
    'Galaxy Buds FE Pro', 'galaxy-buds-fe', 'Cancelación activa de ruido (ANC), graves enriquecidos y batería de 30 horas.', 90.00, 110.00,
    'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&q=80',
    '["Estándar"]'::jsonb,
@@ -489,7 +489,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    '["Audio","Wireless","ANC"]'::jsonb, true, false),
 
   -- McCafé (2 productos)
-  ('p0000000-0000-0000-0000-000000000014', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000005',
+  ('d0000000-0000-0000-0000-000000000014', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000005',
    'Combo Espresso Doble + Croissant', 'combo-espresso-croissant', 'Espresso de grano arábica venezolano tostado medio con croissant de mantequilla hojaldrado.', 4.50, 6.00,
    'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=800&q=80',
    '["Normal","Grande"]'::jsonb,
@@ -498,7 +498,7 @@ insert into public.products (id, mall_id, store_id, name, slug, description, pri
    ]'::jsonb,
    '["Café","Desayuno","Merienda"]'::jsonb, true, true),
 
-  ('p0000000-0000-0000-0000-000000000015', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000005',
+  ('d0000000-0000-0000-0000-000000000015', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000005',
    'Frappé Caramelo & Nuez', 'frappe-caramelo-nuez', 'Bebida helada cremosa batida con sirope de caramelo, topping de crema y trocitos de nuez tostada.', 5.00, 6.50,
    'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=800&q=80',
    '["Mediano (16oz)","Grande (24oz)"]'::jsonb,
@@ -528,12 +528,12 @@ insert into public.events (id, mall_id, store_id, title, description, image_url,
 on conflict (id) do nothing;
 
 insert into public.contests (id, mall_id, store_id, title, description, prize, terms, starts_at, ends_at, status) values
-  ('t0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
+  ('f0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
    'Gran Sorteo Verano ZARA Sambil', 'Registra tu visita en la app y participa por un certificado de compra para renovar tu armario completo.',
    'Certificado de $200 en ZARA Sambil Chacao', 'Válido para compras en tienda física. Anuncio del ganador vía Conserje IA el 30 del mes.',
    now() - interval '1 day', now() + interval '20 days', 'active'),
 
-  ('t0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
+  ('f0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000004',
    'Desafío Samsung Galaxy Play', 'Demuestra tu habilidad en el circuito de fotografía nocturna en Plaza La Fuente y gana los nuevos audífonos.',
    'Unos Galaxy Buds FE Pro inalámbricos', 'Abierto a todos los visitantes con la app instalada.',
    now() - interval '3 days', now() + interval '15 days', 'active')
@@ -542,26 +542,26 @@ on conflict (id) do nothing;
 
 -- 4.6. Ofertas Activas y Cupones de Demostración para el Validador de Caja
 insert into public.offers (id, mall_id, store_id, title, description, benefit_label, starts_at, ends_at, total_coupons, per_user_limit, activated_count, redeemed_count, status) values
-  ('o0000000-0000-0000-0000-000000000010', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
+  ('d1000000-0000-0000-0000-000000000010', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000001',
    'Especial de Temporada: Colección Lino', 'Obtén 20% de descuento directo en cualquier blazer o prenda de lino seleccionada.',
    '-20% OFF en Lino', now() - interval '2 days', now() + interval '15 days', 100, 1, 14, 5, 'active'),
 
-  ('o0000000-0000-0000-0000-000000000011', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
+  ('d1000000-0000-0000-0000-000000000011', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000003',
    'Gran Liquidación Hogar Tijerazo', 'Descuento flash en edredones y sábanas de 300 hilos presentando tu cupón digital en caja.',
    '-30% OFF Hogar', now() - interval '1 day', now() + interval '10 days', 80, 1, 26, 12, 'active'),
 
-  ('o0000000-0000-0000-0000-000000000012', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000005',
+  ('d1000000-0000-0000-0000-000000000012', 'a0000000-0000-0000-0000-000000000002', 'b0000000-0000-0000-0000-000000000005',
    '2x1 en Cappuccino Italiano McCafé', 'Compra un café mediano o grande y recibe el segundo completamente gratis.',
    '2x1 Hoy', now() - interval '3 days', now() + interval '14 days', 150, 1, 45, 28, 'active')
 on conflict (id) do nothing;
 
 -- Cupones activos para probar el Validador de Tienda en vivo
 insert into public.coupons (id, mall_id, offer_id, code, status, activated_at, expires_at) values
-  ('k0000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'o0000000-0000-0000-0000-000000000010', 'ZARA-2026', 'active', now() - interval '2 hours', now() + interval '24 hours'),
-  ('k0000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000002', 'o0000000-0000-0000-0000-000000000011', 'TIJE-HOGR', 'active', now() - interval '1 hour', now() + interval '24 hours'),
-  ('k0000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000002', 'o0000000-0000-0000-0000-000000000012', 'CAFE-2X1S', 'active', now() - interval '30 mins', now() + interval '24 hours'),
+  ('d2000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000002', 'd1000000-0000-0000-0000-000000000010', 'ZARA-2026', 'active', now() - interval '2 hours', now() + interval '24 hours'),
+  ('d2000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000002', 'd1000000-0000-0000-0000-000000000011', 'TIJE-HOGR', 'active', now() - interval '1 hour', now() + interval '24 hours'),
+  ('d2000000-0000-0000-0000-000000000003', 'a0000000-0000-0000-0000-000000000002', 'd1000000-0000-0000-0000-000000000012', 'CAFE-2X1S', 'active', now() - interval '30 mins', now() + interval '24 hours'),
   -- Cupón ya canjeado para probar validación negativa (ya usado)
-  ('k0000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000002', 'o0000000-0000-0000-0000-000000000010', 'ZARA-USAD', 'redeemed', now() - interval '3 hours', now() + interval '21 hours')
+  ('d2000000-0000-0000-0000-000000000004', 'a0000000-0000-0000-0000-000000000002', 'd1000000-0000-0000-0000-000000000010', 'ZARA-USAD', 'redeemed', now() - interval '3 hours', now() + interval '21 hours')
 on conflict (id) do nothing;
 
 
