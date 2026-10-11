@@ -8,7 +8,9 @@
     "android": "expo run:android",
     "typecheck": "tsc --noEmit",
     "lint": "eslint app src --ext .ts,.tsx",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "ota": "eas update --branch preview",
+    "ota:prod": "eas update --branch production"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",

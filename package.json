@@ -9,6 +9,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "ota": "pnpm --filter @mallos/mobile ota",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,js}\""
   },
   "devDependencies": {
