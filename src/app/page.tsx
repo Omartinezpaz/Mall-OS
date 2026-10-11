@@ -31,11 +31,47 @@ import {
   Target
 } from 'lucide-react';
 
+const showcaseVideos = [
+  {
+    id: 'video-1',
+    src: '/assets/videos/video-1.mp4',
+    title: 'Recorrido y Navegación Turn-by-Turn',
+    category: 'Navegación 2.5D en Piso',
+    desc: 'El comprador sigue la ruta interactiva en su móvil hacia la tienda elegida, atravesando pasillos y niveles sin perderse.',
+    badge: 'Navegación Indoor'
+  },
+  {
+    id: 'video-2',
+    src: '/assets/videos/video-2.mp4',
+    title: 'Catálogo Visual Dinámico por Color (D-086)',
+    category: 'Store OS & Catálogo',
+    desc: 'Exploración de prendas y productos con fotos reales por cada variante de color antes de llegar al local.',
+    badge: 'Certeza >75%'
+  },
+  {
+    id: 'video-3',
+    src: '/assets/videos/video-3.mp4',
+    title: 'Dinámica Familiar y Búsqueda del Tesoro',
+    category: 'Modo Niño Gamificado',
+    desc: 'Familias interactuando con las dinámicas lúdicas y escaneando cofres en vitrinas comerciales para desbloquear premios.',
+    badge: 'Permanencia +42 min'
+  },
+  {
+    id: 'video-4',
+    src: '/assets/videos/video-4.mp4',
+    title: 'Validación de Cupones en Caja en 3 Segundos',
+    category: 'Punto de Venta POS',
+    desc: 'Canje seguro de cupones y promociones con candado atómico anti-fraude directamente en el mostrador.',
+    badge: 'Caja Anti-Fraude'
+  }
+];
+
 export default function HomePage() {
   const [demoRequested, setDemoRequested] = useState(false);
   const [demoForm, setDemoForm] = useState({ name: '', mall: '', email: '', phone: '' });
   const [simulatedStores, setSimulatedStores] = useState(450);
   const [adoptionPercent, setAdoptionPercent] = useState(60);
+  const [selectedVideoIdx, setSelectedVideoIdx] = useState(0);
 
   const payingStores = Math.round((simulatedStores * adoptionPercent) / 100);
   const freeStores = simulatedStores - payingStores;
@@ -73,11 +109,12 @@ export default function HomePage() {
 
           <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-600">
             <a href="#soluciones" className="hover:text-indigo-600 transition-colors">Ecosistema</a>
+            <a href="#videos" className="hover:text-indigo-600 transition-colors font-bold text-indigo-600">Videos en Vivo</a>
             <a href="#mapa-25d" className="hover:text-indigo-600 transition-colors">Plano 2.5D</a>
             <a href="#conserje" className="hover:text-indigo-600 transition-colors">Conserje IA</a>
             <a href="#modo-nino" className="hover:text-indigo-600 transition-colors">Modo Niño</a>
             <a href="#store-os" className="hover:text-indigo-600 transition-colors">Store OS</a>
-            <a href="#planes" className="hover:text-indigo-600 transition-colors font-bold text-indigo-600">Planes & Alianzas</a>
+            <a href="#planes" className="hover:text-indigo-600 transition-colors font-bold text-slate-900">Planes</a>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -162,22 +199,25 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Columna Derecha: Smartphone 3D con Plano y Routing */}
+            {/* Columna Derecha: Smartphone 3D con Video en Vivo y Routing */}
             <div className="lg:col-span-5 relative">
               <div className="relative mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-slate-900/10 bg-slate-950 group">
-                <img
-                  src="/assets/images/feature-4.jpg"
-                  alt="Navegación 3D Indoor Mall OS"
-                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+                <video
+                  src="/assets/videos/video-1.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700 aspect-[9/16] sm:aspect-[4/5]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent flex items-end p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent flex items-end p-6 pointer-events-none">
                   <div className="text-white space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/80 text-white backdrop-blur">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/90 text-white backdrop-blur">
                       <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
-                      Ruta en Tiempo Real
+                      Demostración en Video en Vivo
                     </span>
-                    <h3 className="text-lg font-black leading-tight">Navegación Turn-by-Turn 2.5D</h3>
-                    <p className="text-xs text-slate-300">Guía precisa a puerta de tienda sin requerir señal GPS.</p>
+                    <h3 className="text-lg font-black leading-tight">Experiencia Shopper en Piso</h3>
+                    <p className="text-xs text-slate-300">Navegación fluida y descubrimiento de tiendas en tiempo real.</p>
                   </div>
                 </div>
               </div>
@@ -191,6 +231,135 @@ export default function HomePage() {
                   <div className="text-xs font-black text-slate-900">Sambil Chacao Ready</div>
                   <div className="text-[11px] text-slate-500">Mapeo de 4 niveles completo</div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 2.5 VIDEOTECA DEMOSTRATIVA: MALL OS EN ACCIÓN (4 VIDEOS OFICIALES)        */}
+      {/* ========================================================================= */}
+      <section id="videos" className="py-24 px-6 bg-slate-950 text-white border-y border-slate-800">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+              <Play className="w-3.5 h-3.5 text-indigo-400 fill-indigo-400" />
+              Recursos Audiovisuales Oficiales de Mall OS
+            </div>
+
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+              Mall OS en Acción: La Experiencia Completa en Video
+            </h2>
+
+            <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+              Explore los 4 pilares operativos grabados en entornos reales: navegación indoor, catálogo visual dinámico con fotos por color (D-086), dinamización familiar con Modo Niño y cobro instantáneo en caja.
+            </p>
+          </div>
+
+          {/* Selector de los 4 Videos (Tabs Interactivos) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {showcaseVideos.map((vid, idx) => {
+              const isSelected = selectedVideoIdx === idx;
+              return (
+                <button
+                  key={vid.id}
+                  onClick={() => setSelectedVideoIdx(idx)}
+                  className={`text-left p-5 rounded-2xl border transition-all relative overflow-hidden flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-indigo-600/20 border-indigo-500 shadow-xl shadow-indigo-600/20 ring-2 ring-indigo-500/50'
+                      : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span
+                        className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                          isSelected
+                            ? 'bg-indigo-500 text-white'
+                            : 'bg-slate-800 text-slate-400'
+                        }`}
+                      >
+                        Clip {idx + 1} · {vid.badge}
+                      </span>
+                      <Play
+                        className={`w-4 h-4 ${
+                          isSelected
+                            ? 'text-indigo-400 fill-indigo-400'
+                            : 'text-slate-600'
+                        }`}
+                      />
+                    </div>
+                    <h3 className="font-bold text-sm text-white leading-snug mb-1">
+                      {vid.title}
+                    </h3>
+                    <p className="text-[11px] text-slate-400 line-clamp-2">
+                      {vid.desc}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="text-slate-500">{vid.category}</span>
+                    <span
+                      className={`font-bold ${
+                        isSelected ? 'text-indigo-400' : 'text-slate-600'
+                      }`}
+                    >
+                      {isSelected ? 'Reproduciendo' : 'Ver video'}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Gran Pantalla Cinematográfica */}
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-slate-800 bg-slate-900">
+            <div className="aspect-video w-full max-h-[640px] bg-black flex items-center justify-center relative">
+              <video
+                key={showcaseVideos[selectedVideoIdx].id}
+                src={showcaseVideos[selectedVideoIdx].src}
+                controls
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-contain"
+              />
+
+              <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-slate-700 text-white flex items-center gap-2 text-xs font-bold pointer-events-none">
+                <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                <span>{showcaseVideos[selectedVideoIdx].title}</span>
+              </div>
+            </div>
+
+            {/* Ficha explicativa debajo del video */}
+            <div className="p-6 sm:p-8 bg-slate-900/95 border-t border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                    {showcaseVideos[selectedVideoIdx].badge}
+                  </span>
+                  <span className="text-xs text-slate-400 font-medium">
+                    {showcaseVideos[selectedVideoIdx].category}
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white">
+                  {showcaseVideos[selectedVideoIdx].title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
+                  {showcaseVideos[selectedVideoIdx].desc}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <a
+                  href="#contacto"
+                  className="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2"
+                >
+                  <span>Solicitar Demo en Vivo</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </a>
               </div>
             </div>
           </div>
@@ -358,13 +527,20 @@ export default function HomePage() {
       {/* ========================================================================= */}
       <section id="store-os" className="py-24 px-6 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Banner Explora el Mall */}
-          <div className="lg:col-span-6 rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
-            <img
-              src="/assets/images/feature-1.jpg"
-              alt="Explora el Mall en la palma de tu mano"
+          {/* Video en Vivo de Validación POS en Tienda */}
+          <div className="lg:col-span-6 rounded-3xl overflow-hidden shadow-2xl border border-slate-200 bg-slate-950 relative">
+            <video
+              src="/assets/videos/video-4.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
               className="w-full h-auto object-cover"
             />
+            <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700/60 text-white flex items-center gap-2 text-xs font-bold pointer-events-none">
+              <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span>Operación en Caja en 3 Segundos</span>
+            </div>
           </div>
 
           <div className="lg:col-span-6 space-y-6">
