@@ -437,8 +437,8 @@ export default function HomeScreen() {
           style={[
             styles.heroHeaderBackground,
             {
-              paddingTop: topSafe + 8,
-              height: Math.round(windowWidth * 0.65) + topSafe,
+              paddingTop: topSafe + 6,
+              height: Math.round(windowWidth * 0.75),
             },
           ]}
         >
