@@ -431,27 +431,9 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* ========================================================= */}
-        {/* HERO HEADER: La imagen del mall cubre completamente la parte superior */}
+        {/* CABECERA PRINCIPAL: Identidad Mall OS + Buscador Integrado */}
         {/* ========================================================= */}
-        <View
-          style={[
-            styles.heroHeaderBackground,
-            {
-              paddingTop: topSafe + 8,
-              minHeight: Math.max(285, windowWidth * 0.72),
-            },
-          ]}
-        >
-          {/* Foto del mall en pantalla completa en toda la cabecera superior sin zoom excesivo */}
-          <Image
-            source={activeHeroImage}
-            style={[StyleSheet.absoluteFillObject, { width: '100%', height: '100%' }]}
-            resizeMode="cover"
-          />
-
-          {/* Overlay sutil para protección visual y alto contraste */}
-          <View style={styles.heroDarkOverlay} />
-
+        <View style={[styles.topHeaderContainer, { paddingTop: topSafe + 8 }]}>
           {/* Fila superior: Logo DEMO MALL OS + Notificaciones + Perfil */}
           <View style={styles.topBar}>
             <TouchableOpacity
@@ -496,9 +478,6 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Espacio para visualización limpia de la arquitectura del mall */}
-          <View style={styles.heroVisualSpacer} />
-
           {/* Buscador Integrado estilo Cápsula */}
           <TouchableOpacity
             style={styles.searchBar}
@@ -508,22 +487,39 @@ export default function HomeScreen() {
             <AppIcon name="search" size={19} color="#64748B" />
             <Text style={styles.searchPlaceholder}>Buscar un local, producto o marca...</Text>
           </TouchableOpacity>
-
-          {/* Puntos de Paginación del Slaider de Fotos del Mall */}
-          <View style={styles.promoDotsRow}>
-            {MALL_HERO_IMAGES.map((_, idx) => (
-              <View
-                key={`slide-dot-${idx}`}
-                style={idx === heroSlideIdx ? styles.dotActive : styles.dotInactive}
-              />
-            ))}
-          </View>
         </View>
 
         {/* ========================================================= */}
-        {/* CUERPO PRINCIPAL: Biselado invertido + Acceso rápido + Módulos */}
+        {/* CUERPO PRINCIPAL: Cuadro de Fotos del Mall + Acceso rápido + Módulos */}
         {/* ========================================================= */}
         <View style={styles.bodyContainer}>
+          {/* EL CUADRO HERO DEL MALL: Proporción 4:3 exacta, 100% visible, sin zoom ni recortes */}
+          <View style={styles.mallHeroCard}>
+            <Image
+              source={activeHeroImage}
+              style={StyleSheet.absoluteFillObject}
+              resizeMode="cover"
+            />
+
+            {/* Degradado sutil inferior para legibilidad de los badges */}
+            <View style={styles.mallHeroDarkGradient} />
+
+            {/* Insignia de Ubicación Oficial */}
+            <View style={styles.mallHeroLocationBadge}>
+              <AppIcon name="location" size={12} color="#38BDF8" />
+              <Text style={styles.mallHeroLocationText}>Sambil Chacao · Caracas</Text>
+            </View>
+
+            {/* Puntos de Paginación en Cápsula de Cristal */}
+            <View style={styles.mallHeroDotsPill}>
+              {MALL_HERO_IMAGES.map((_, idx) => (
+                <View
+                  key={`slide-dot-${idx}`}
+                  style={idx === heroSlideIdx ? styles.dotActive : styles.dotInactive}
+                />
+              ))}
+            </View>
+          </View>
           {/* Barra de Acciones Rápidas (Chips de acceso directo) */}
           <View style={styles.quickActionsBar}>
             <TouchableOpacity
@@ -1047,29 +1043,82 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 40,
   },
-  heroHeaderBackground: {
+  topHeaderContainer: {
     width: '100%',
     paddingHorizontal: 16,
     paddingBottom: 16,
-    minHeight: 285,
-    position: 'relative',
-    overflow: 'hidden',
     backgroundColor: '#0F172A',
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  heroDarkOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(15, 23, 42, 0.32)',
+  mallHeroCard: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    borderRadius: 22,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#0F172A',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 4,
+    marginBottom: 4,
   },
-  heroVisualSpacer: {
-    height: 84,
+  mallHeroDarkGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+  },
+  mallHeroLocationBadge: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  mallHeroLocationText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.2,
+  },
+  mallHeroDotsPill: {
+    position: 'absolute',
+    bottom: 12,
+    right: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   brandRow: {
     flexDirection: 'row',
@@ -1149,7 +1198,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 8,
     elevation: 4,
-    marginBottom: 14,
+    marginBottom: 4,
   },
   searchPlaceholder: {
     color: '#64748B',
