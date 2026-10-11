@@ -434,12 +434,18 @@ export default function HomeScreen() {
         {/* HERO HEADER: La imagen del mall cubre completamente la parte superior */}
         {/* ========================================================= */}
         <View
-          style={[styles.heroHeaderBackground, { paddingTop: topSafe + 8 }]}
+          style={[
+            styles.heroHeaderBackground,
+            {
+              paddingTop: topSafe + 8,
+              minHeight: Math.max(285, windowWidth * 0.72),
+            },
+          ]}
         >
-          {/* Foto del mall en pantalla completa en toda la cabecera superior */}
+          {/* Foto del mall en pantalla completa en toda la cabecera superior sin zoom excesivo */}
           <Image
             source={activeHeroImage}
-            style={StyleSheet.absoluteFillObject}
+            style={[StyleSheet.absoluteFillObject, { width: '100%', height: '100%' }]}
             resizeMode="cover"
           />
 
@@ -1045,7 +1051,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 16,
     paddingBottom: 16,
-    minHeight: 235,
+    minHeight: 285,
     position: 'relative',
     overflow: 'hidden',
     backgroundColor: '#0F172A',
@@ -1054,10 +1060,10 @@ const styles = StyleSheet.create({
   },
   heroDarkOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(15, 23, 42, 0.35)',
+    backgroundColor: 'rgba(15, 23, 42, 0.32)',
   },
   heroVisualSpacer: {
-    height: 32,
+    height: 84,
   },
   topBar: {
     flexDirection: 'row',
