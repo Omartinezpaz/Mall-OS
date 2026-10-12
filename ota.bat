@@ -17,6 +17,7 @@ echo   Mensaje: %MSG%
 echo ========================================================
 echo.
 
+set NODE_OPTIONS=--max-old-space-size=4096
 call npx eas-cli update --branch preview --message "%MSG%"
 
 if %ERRORLEVEL% EQU 0 (

@@ -32,10 +32,10 @@ import {
 
 // Slaider automático de fotos reales del mall (visual continuo, sin enlaces ni textos)
 const MALL_HERO_IMAGES = [
-  require('../../assets/home/mall_slide_2.jpg'),
-  require('../../assets/home/mall_slide_3.jpg'),
-  require('../../assets/home/mall_slide_4.png'),
-  require('../../assets/home/mall_slide_5.png'),
+  require('../../assets/home/sambil_fachada.jpg'),
+  require('../../assets/home/sambil_atrium_hero.jpg'),
+  require('../../assets/home/sambil_hallway.jpg'),
+  require('../../assets/home/sambil_skylight.jpg'),
 ];
 
 const SAMBIL_LEVELS: Array<{

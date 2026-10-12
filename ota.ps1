@@ -17,6 +17,7 @@ Write-Host "📦 Mensaje: $Message`n" -ForegroundColor Yellow
 
 Set-Location "D:\OS-A MALL\apps\mobile"
 
+$env:NODE_OPTIONS = "--max-old-space-size=4096"
 npx eas-cli update --branch preview --message "$Message"
 
 if ($LASTEXITCODE -eq 0) {
