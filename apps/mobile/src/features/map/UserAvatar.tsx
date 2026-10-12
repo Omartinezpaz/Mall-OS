@@ -9,13 +9,17 @@ interface Props {
 }
 
 export const UserAvatar: React.FC<Props> = ({ item, pulse }) => {
-  // Radio pulsante con respiración suave (0.8 Hz)
-  const radius = useDerivedValue(
-    () => item.radius + 1.8 * Math.sin(pulse.value * Math.PI * 2)
-  );
-  const haloRadius = useDerivedValue(
-    () => item.radius * 2.2 + 3.5 * Math.sin(pulse.value * Math.PI * 2)
-  );
+  // Radio pulsante con respiración suave (0.8 Hz) protegido contra NaN / undefined
+  const radius = useDerivedValue(() => {
+    const baseR = Number.isFinite(item?.radius) ? item.radius : 4;
+    const p = Number.isFinite(pulse?.value) ? pulse.value : 0;
+    return baseR + 1.8 * Math.sin(p * Math.PI * 2);
+  });
+  const haloRadius = useDerivedValue(() => {
+    const baseR = Number.isFinite(item?.radius) ? item.radius : 4;
+    const p = Number.isFinite(pulse?.value) ? pulse.value : 0;
+    return baseR * 2.2 + 3.5 * Math.sin(p * Math.PI * 2);
+  });
 
   return (
     <Group>

@@ -30,6 +30,7 @@ import {
   useSharedValue,
   useDerivedValue,
   withSpring,
+  cancelAnimation,
   type SharedValue,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -623,7 +624,15 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
   const hasInitialized = useRef<boolean>(false);
   const prevIsNavigatingRef = useRef<boolean>(false);
 
-
+  // Cancelar animaciones activas al desmontar para evitar que Reanimated intente actualizar nodos Skia ya destruidos (previene SIGSEGV nativo)
+  useEffect(() => {
+    return () => {
+      cancelAnimation(cameraX);
+      cancelAnimation(cameraY);
+      cancelAnimation(zoom);
+      cancelAnimation(manualRotation);
+    };
+  }, [cameraX, cameraY, zoom, manualRotation]);
 
   // Centrado inicial solo si no se encuentra en navegación activa
   useEffect(() => {
@@ -715,10 +724,8 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
     zoom,
   ]);
 
-  // 6. Ángulo de rotación del mapa (mantiene orientación nivelada sin romper límites)
-  const rotationAngle = useDerivedValue(() => {
-    return 0; // Fijo nivelado para evitar desbordes y cortes bajo las etiquetas
-  });
+  // 6. Ángulo de rotación del mapa (fijo en 0 nivelado para estabilidad arquitectónica)
+  const rotationAngle = 0;
 
   // 7. PanResponder para paneo multitáctil, zoom, rotación y tap detection
   const panResponder = useMemo(
@@ -760,7 +767,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
               let deltaAngle = currentAngle - lastPinchAngle.current;
               // Normalizar salto angular
               if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
-              if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
+              if (deltaAngle < -Math.PI) deltaAngle -= 2 * Math.PI;
               manualRotation.value = manualRotation.value + deltaAngle;
             }
             lastPinchDist.current = dist;
@@ -769,7 +776,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             // Paneo con 1 dedo: desrotar el desplazamiento de pantalla para mover el mapa 1:1 con el dedo
             lastPinchDist.current = null;
             lastPinchAngle.current = null;
-            const rot = rotationAngle.value;
+            const rot = rotationAngle;
             const cos = Math.cos(-rot);
             const sin = Math.sin(-rot);
             const rotatedDx = gestureState.dx * cos - gestureState.dy * sin;
@@ -790,7 +797,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             const touchY = evt.nativeEvent.locationY;
             const cx = screenWidth / 2;
             const cy = screenHeight / 2;
-            const rot = rotationAngle.value;
+            const rot = rotationAngle;
             const cos = Math.cos(-rot);
             const sin = Math.sin(-rot);
 
@@ -818,17 +825,18 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
     [cameraX, cameraY, zoom, manualRotation, rotationAngle, baseScale, screenWidth, screenHeight, scene.items, onStorePress, isFollowingUser]
   );
 
-  // Matriz de transformación 2D combinada (con rotación alrededor del centro de pantalla)
-  const transform = useDerivedValue(() => [
-    { translateX: screenWidth / 2 },
-    { translateY: screenHeight / 2 },
-    { rotate: rotationAngle.value },
-    { translateX: -screenWidth / 2 },
-    { translateY: -screenHeight / 2 },
-    { translateX: cameraX.value },
-    { translateY: cameraY.value },
-    { scale: baseScale * zoom.value },
-  ]);
+  // Matriz de transformación 2D combinada (con protección total contra NaN / undefined en C++ Skia)
+  const transform = useDerivedValue(() => {
+    const cx = Number.isFinite(cameraX.value) ? cameraX.value : (Number.isFinite(initialOffsetX) ? initialOffsetX : 0);
+    const cy = Number.isFinite(cameraY.value) ? cameraY.value : (Number.isFinite(initialOffsetY) ? initialOffsetY : 0);
+    const z = Number.isFinite(zoom.value) && zoom.value > 0 ? zoom.value : 1.0;
+    const bs = Number.isFinite(baseScale) && baseScale > 0 ? baseScale : 1.0;
+    return [
+      { translateX: cx },
+      { translateY: cy },
+      { scale: bs * z },
+    ];
+  });
 
   // 8. Reset de rotación al Norte
   const handleResetNorth = useCallback(() => {
@@ -895,7 +903,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
     ? (-userHeading - Math.PI / 2)
     : 0;
   const compassNeedleDeg = (currentRotation * 180) / Math.PI - northAngleDeg;
-  const currentScale = baseScale * zoom.value;
+  const currentScale = Math.max(0.01, (Number.isFinite(baseScale) ? baseScale : 1) * (Number.isFinite(zoom.value) && zoom.value > 0 ? zoom.value : 1));
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
@@ -1606,7 +1614,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                       path={c.path}
                       color="#1E40AF"
                       style="stroke"
-                      strokeWidth={0.6 / (baseScale * zoom.value)}
+                      strokeWidth={0.6 / currentScale}
                     />
                     {/* Relleno blanco nítido */}
                     <Path
@@ -1629,7 +1637,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                   path={seg.path}
                   color="#60A5FA"
                   style="stroke"
-                  strokeWidth={4 / (baseScale * zoom.value)}
+                  strokeWidth={4 / currentScale}
                   strokeCap="round"
                   strokeJoin="round"
                   opacity={seg.opacity}
@@ -1640,7 +1648,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 5.5: Badges de Ofertas Comerciales (Elegantes pins Apple Maps con halo suave) */}
           {compiled.offerBadges.map((ob, i) => {
-            const currentScale = baseScale * zoom.value;
             const haloR = 12 / currentScale;
             const pinR = 6.5 / currentScale;
             const dotR = 2.2 / currentScale;
