@@ -197,7 +197,7 @@ export default function SplashScreen() {
         <Text style={styles.skipText}>Saltar</Text>
       </TouchableOpacity>
 
-      {/* Contenido Central: Logo Oficial y Marca */}
+      {/* Contenido Central: Logo Oficial Maestro (sin textos redundantes) */}
       <View style={styles.centerContainer}>
         <Animated.View style={[styles.logoWrapper, { transform: [{ scale: pulseAnim }] }]}>
           <Image
@@ -206,9 +206,6 @@ export default function SplashScreen() {
             resizeMode="contain"
           />
         </Animated.View>
-
-        <Text style={styles.brandTitle}>Mall OS</Text>
-        <Text style={styles.brandTagline}>The Digital Layer of the Mall</Text>
       </View>
 
       {/* Barra de Carga Inferior */}
@@ -263,7 +260,7 @@ const styles = StyleSheet.create({
   centerContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -40,
+    marginTop: -20,
   },
   logoWrapper: {
     shadowColor: '#38BDF8',
@@ -271,26 +268,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 24,
     elevation: 10,
-    borderRadius: 28,
+    borderRadius: 30,
   },
   officialLogo: {
-    width: 110,
-    height: 110,
-    borderRadius: 28,
-  },
-  brandTitle: {
-    color: '#FFFFFF',
-    fontSize: 40,
-    fontWeight: '900',
-    letterSpacing: -0.8,
-    marginTop: 20,
-  },
-  brandTagline: {
-    color: '#94A3B8',
-    fontSize: 14,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    marginTop: 6,
+    width: 124,
+    height: 124,
+    borderRadius: 30,
   },
   bottomLoadingContainer: {
     width: SCREEN_WIDTH - 48,
