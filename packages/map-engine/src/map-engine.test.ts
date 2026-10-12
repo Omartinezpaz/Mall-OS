@@ -24,6 +24,7 @@ import {
   unproject,
   DEFAULT_ISO,
   extrudePolygon,
+  extrudeFlatPolygon,
   projectBounds,
   generateMallQualityReport,
   generateNavigationPlan,
@@ -779,6 +780,25 @@ test('extrudePolygon genera caras de techo, base, paredes visibles e iluminació
   assert.strictEqual(extruded.base.length, 5);
   assert.ok(extruded.walls.length > 0);
   assert.ok(extruded.labelPos.x !== 0 && extruded.labelPos.y !== 0);
+});
+
+test('extrudeFlatPolygon genera extrusión 2.5D cenital con paredes sombreadas hacia el sur', () => {
+  const polygon = [
+    { x: 10, y: 10 },
+    { x: 50, y: 10 },
+    { x: 50, y: 40 },
+    { x: 10, y: 40 },
+  ];
+  const extruded = extrudeFlatPolygon(polygon, { height: 4 });
+  assert.strictEqual(extruded.roof.length, 4);
+  assert.strictEqual(extruded.base.length, 4);
+  assert.ok(extruded.walls.length > 0);
+
+  // La pared sur (hacia el pasillo) debe existir y tener faceType 'south'
+  const southWall = extruded.walls.find((w) => w.faceType === 'south');
+  assert.ok(southWall, 'Debe generar pared frontal sur');
+  assert.strictEqual(southWall?.points.length, 4);
+  assert.ok(southWall?.shadeFactor < 0.6, 'La pared sur debe tener sombra marcada');
 });
 
 test('projectBounds calcula límites exactos para auto-fit', () => {

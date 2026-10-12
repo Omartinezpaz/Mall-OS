@@ -1012,34 +1012,54 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             />
           ))}
 
-          {/* Capa 3: Locales comerciales con Glow y Realce de Tienda Destino */}
+          {/* Capa 3: Locales comerciales con Extrusión 2.5D de Polígonos (Paredes Sombreadas hacia Pasillos y Techo) */}
           {compiled.stores.map((s) => {
             const currentScale = baseScale * zoom.value;
             const isTarget = s.id === selectedStoreId || s.isDestination;
             return (
               <React.Fragment key={s.id}>
-                {/* Glow exterior radiante en la tienda destino */}
+                {/* 1. Caras de pared extruidas 2.5D con relieve y sombreado direccional */}
+                {s.walls.map((w, wIdx) => (
+                  <React.Fragment key={`wall-${s.id}-${wIdx}`}>
+                    <Path
+                      path={w.path}
+                      color={isTarget ? w.fill : (s.isVisible ? w.fill : '#E2E8F0')}
+                      style="fill"
+                      opacity={s.isVisible ? 1 : 0.3}
+                    />
+                    <Path
+                      path={w.path}
+                      color={isTarget ? w.stroke : (s.isVisible ? w.stroke : '#CBD5E1')}
+                      style="stroke"
+                      strokeWidth={0.6 / currentScale}
+                      opacity={s.isVisible ? 0.85 : 0.25}
+                    />
+                  </React.Fragment>
+                ))}
+
+                {/* 2. Glow exterior radiante en la tienda destino */}
                 {isTarget && (
                   <Path
-                    path={s.path}
+                    path={s.roofPath}
                     color="rgba(37, 99, 235, 0.28)"
                     style="stroke"
                     strokeWidth={8 / currentScale}
                   />
                 )}
-                {/* Relleno del local */}
+
+                {/* 3. Techo del local (cara superior con su color de categoría o resaltado) */}
                 <Path
-                  path={s.path}
+                  path={s.roofPath}
                   color={isTarget ? '#EFF6FF' : s.fill}
                   style="fill"
                   opacity={s.isVisible ? 1 : 0.25}
                 />
-                {/* Contorno del local */}
+                {/* 4. Contorno arquitectónico del techo */}
                 <Path
-                  path={s.path}
+                  path={s.roofPath}
                   color={isTarget ? '#2563EB' : s.stroke}
                   style="stroke"
-                  strokeWidth={isTarget ? 2.6 / currentScale : 0.75 / currentScale}
+                  strokeWidth={isTarget ? 2.6 / currentScale : 0.85 / currentScale}
                   opacity={s.isVisible ? 1 : 0.35}
                 />
               </React.Fragment>

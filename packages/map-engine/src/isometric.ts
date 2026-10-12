@@ -175,3 +175,129 @@ export const ELEMENT_HEIGHTS = {
   fountain: 5,
   bench: 2,
 } as const;
+
+export interface ExtrudedFlatWall {
+  points: [Point, Point, Point, Point];
+  edgeIndex: number;
+  faceType: 'south' | 'east' | 'west';
+  shadeFactor: number;
+}
+
+export interface ExtrudedFlatPolygonResult {
+  roof: Point[];
+  base: Point[];
+  walls: ExtrudedFlatWall[];
+}
+
+export interface ExtrudeFlatOptions {
+  /** Altura aparente de la extrusión 2.5D en unidades del plano (default: 3.8) */
+  height?: number;
+  /** Desplazamiento horizontal relativo por ángulo oblicuo (default: 0.15 * height) */
+  dx?: number;
+  /** Desplazamiento vertical de la base respecto al techo (default: 0.98 * height) */
+  dy?: number;
+}
+
+/**
+ * Extruye un polígono 2D a una proyección arquitectónica 2.5D (cenital oblicua).
+ * Calcula el techo, la base y las paredes visibles con sombreado según la normal.
+ */
+export function extrudeFlatPolygon(
+  polygon: Point[],
+  opts?: ExtrudeFlatOptions
+): ExtrudedFlatPolygonResult {
+  if (!polygon || polygon.length < 3) {
+    return { roof: polygon ?? [], base: polygon ?? [], walls: [] };
+  }
+
+  // 1. Filtrar puntos duplicados consecutivos
+  const cleaned: Point[] = [];
+  for (let i = 0; i < polygon.length; i++) {
+    const cur = polygon[i]!;
+    const prev = cleaned[cleaned.length - 1];
+    if (!prev || Math.hypot(cur.x - prev.x, cur.y - prev.y) > 0.05) {
+      cleaned.push(cur);
+    }
+  }
+  // Si el último coincide con el primero, quitarlo para trabajar como anillo simple
+  if (
+    cleaned.length > 2 &&
+    Math.hypot(
+      cleaned[0]!.x - cleaned[cleaned.length - 1]!.x,
+      cleaned[0]!.y - cleaned[cleaned.length - 1]!.y
+    ) <= 0.05
+  ) {
+    cleaned.pop();
+  }
+
+  const n = cleaned.length;
+  if (n < 3) {
+    return { roof: polygon, base: polygon, walls: [] };
+  }
+
+  // 2. Comprobar si el orden es horario (CW) o antihorario (CCW)
+  let area = 0;
+  for (let i = 0; i < n; i++) {
+    const next = (i + 1) % n;
+    area += cleaned[i]!.x * cleaned[next]!.y - cleaned[next]!.x * cleaned[i]!.y;
+  }
+  // En coordenadas de pantalla (Y hacia abajo), area > 0 es CW. Si es < 0, invertimos a CW.
+  const pts = area < 0 ? [...cleaned].reverse() : [...cleaned];
+
+  const height = opts?.height ?? 3.8;
+  const dx = opts?.dx ?? height * 0.15;
+  const dy = opts?.dy ?? height * 0.98;
+
+  const roof: Point[] = pts.map((p) => ({ x: p.x, y: p.y }));
+  const base: Point[] = pts.map((p) => ({ x: p.x + dx, y: p.y + dy }));
+  const walls: ExtrudedFlatWall[] = [];
+
+  for (let i = 0; i < n; i++) {
+    const nextIdx = (i + 1) % n;
+    const pTop1 = roof[i]!;
+    const pTop2 = roof[nextIdx]!;
+    const pBase2 = base[nextIdx]!;
+    const pBase1 = base[i]!;
+
+    const ex = pTop2.x - pTop1.x;
+    const ey = pTop2.y - pTop1.y;
+    const len = Math.hypot(ex, ey);
+    if (len < 0.15) continue;
+
+    // Normal exterior (en polígono CW con Y abajo: normal exterior es (ey/len, -ex/len))
+    const nx = ey / len;
+    const ny = -ex / len;
+
+    // Dot product con la dirección de proyección (dx, dy)
+    // Si la pared exterior mira hacia la dirección de proyección, es visible al observador
+    const dot = nx * dx + ny * dy;
+    if (dot > 0.001) {
+      let faceType: 'south' | 'east' | 'west' = 'south';
+      let shadeFactor = 0.40;
+
+      if (ny > 0.35) {
+        // Mira hacia el sur (frontal inferior)
+        faceType = 'south';
+        shadeFactor = 0.45;
+      } else if (nx > 0.35) {
+        // Mira hacia el este (lateral derecho)
+        faceType = 'east';
+        shadeFactor = 0.60;
+      } else {
+        // Mira hacia el oeste u oblicuo
+        faceType = 'west';
+        shadeFactor = 0.75;
+      }
+
+      walls.push({
+        points: [pTop1, pTop2, pBase2, pBase1],
+        edgeIndex: i,
+        faceType,
+        shadeFactor,
+      });
+    }
+  }
+
+  return { roof, base, walls };
+}
+

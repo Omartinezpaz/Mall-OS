@@ -18,6 +18,7 @@ import type {
   Point,
   Rect,
 } from '@mallos/map-engine';
+import { extrudeFlatPolygon } from '@mallos/map-engine';
 
 export interface CompiledFlatCorridor {
   id: string;
@@ -25,9 +26,17 @@ export interface CompiledFlatCorridor {
   fill: string;
 }
 
+export interface CompiledExtrudedWall {
+  path: SkPath;
+  fill: string;
+  stroke: string;
+}
+
 export interface CompiledFlatStore {
   id: string;
   path: SkPath;
+  roofPath: SkPath;
+  walls: CompiledExtrudedWall[];
   fill: string;
   stroke: string;
   isDestination: boolean;
@@ -169,9 +178,58 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
       case 'store': {
         const path = pointsToSkPath(item.points, true);
         if (path) {
+          const extruded = extrudeFlatPolygon(item.points, { height: 4.2 });
+          const roofPath = pointsToSkPath(extruded.roof, true) ?? path;
+          const compiledWalls: CompiledExtrudedWall[] = [];
+
+          for (const wall of extruded.walls) {
+            const wallPath = pointsToSkPath(wall.points, true);
+            if (wallPath) {
+              let wallFill = '#94A3B8';
+              let wallStroke = '#64748B';
+
+              if (item.isDestination) {
+                // Tienda destino: caras extruidas iluminadas con gradación zafiro
+                if (wall.faceType === 'south') {
+                  wallFill = '#1E40AF';
+                  wallStroke = '#1E3A8A';
+                } else if (wall.faceType === 'east') {
+                  wallFill = '#2563EB';
+                  wallStroke = '#1D4ED8';
+                } else {
+                  wallFill = '#3B82F6';
+                  wallStroke = '#2563EB';
+                }
+              } else {
+                // Tienda regular: paredes arquitectónicas sombreadas según orientación
+                if (wall.faceType === 'south') {
+                  // Cara frontal orientada al pasillo / sur (sombra marcada como en la captura)
+                  wallFill = '#64748B';
+                  wallStroke = '#475569';
+                } else if (wall.faceType === 'east') {
+                  // Cara lateral derecha
+                  wallFill = '#94A3B8';
+                  wallStroke = '#64748B';
+                } else {
+                  // Cara lateral izquierda
+                  wallFill = '#CBD5E1';
+                  wallStroke = '#94A3B8';
+                }
+              }
+
+              compiledWalls.push({
+                path: wallPath,
+                fill: wallFill,
+                stroke: wallStroke,
+              });
+            }
+          }
+
           stores.push({
             id: item.id,
             path,
+            roofPath,
+            walls: compiledWalls,
             fill: item.fill,
             stroke: item.stroke,
             isDestination: item.isDestination,
