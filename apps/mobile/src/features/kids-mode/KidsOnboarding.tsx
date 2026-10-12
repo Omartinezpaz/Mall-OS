@@ -13,6 +13,7 @@ import {
   type AgeGroup,
   AGE_GROUP_CONFIG,
 } from './kids-data';
+import { KIDS_IMAGES } from './kids-images';
 
 interface KidsOnboardingProps {
   onStart: (ageGroup: AgeGroup, name: string, avatar: string, isFamilyMode: boolean) => void;
@@ -51,7 +52,7 @@ export const KidsOnboarding: React.FC<KidsOnboardingProps> = ({ onStart, onClose
       {/* Hero Intro with Treasure Map Graphic Banner */}
       <View style={styles.heroBannerCard}>
         <Image
-          source={require('../../../assets/kids/mapa_del_tesoro.jpg')}
+          source={KIDS_IMAGES.paginaMpt}
           style={styles.heroBgImage}
           resizeMode="cover"
         />
@@ -171,7 +172,7 @@ export const KidsOnboarding: React.FC<KidsOnboardingProps> = ({ onStart, onClose
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F9FA',
   },
   contentContainer: {
     paddingHorizontal: 20,
@@ -184,12 +185,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   badgePill: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#FDE68A',
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
   },
   badgePillText: {
     color: '#D97706',
@@ -201,23 +207,30 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 1,
   },
   heroBannerCard: {
     borderRadius: 20,
     overflow: 'hidden',
     position: 'relative',
     marginBottom: 20,
-    borderWidth: 1.5,
-    borderColor: '#FDE68A',
-    shadowColor: '#F59E0B',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
     elevation: 4,
-    minHeight: 110,
+    minHeight: 115,
   },
   heroBgImage: {
     ...StyleSheet.absoluteFillObject,
@@ -260,18 +273,23 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   ageSelectorContainer: {
-    gap: 10,
+    gap: 12,
     marginBottom: 14,
   },
   ageCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1.5,
+    padding: 14,
+    borderRadius: 18,
+    borderWidth: 1,
     borderColor: '#E2E8F0',
     backgroundColor: '#FFFFFF',
     gap: 12,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   ageEmojiBox: {
     width: 44,
@@ -331,15 +349,20 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   avatarItem: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1.5,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
     borderColor: '#E2E8F0',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
   },
   avatarEmoji: {
     fontSize: 24,
@@ -347,14 +370,19 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: 14,
-    height: 48,
+    height: 50,
     gap: 10,
     marginBottom: 14,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   nameInput: {
     flex: 1,
@@ -365,17 +393,22 @@ const styles = StyleSheet.create({
   familyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    padding: 12,
+    padding: 14,
     gap: 10,
     marginBottom: 20,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
   },
   familyCardActive: {
     borderColor: '#10B981',
-    backgroundColor: '#ECFDF5',
+    backgroundColor: '#F0FDF4',
   },
   familyIconBox: {
     width: 40,

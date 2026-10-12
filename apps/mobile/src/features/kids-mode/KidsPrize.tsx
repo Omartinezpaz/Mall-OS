@@ -136,7 +136,7 @@ export const KidsPrize: React.FC<KidsPrizeProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F8F9FA',
   },
   contentContainer: {
     paddingHorizontal: 16,
@@ -171,6 +171,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 1,
   },
   centerHero: {
     alignItems: 'center',
@@ -186,7 +191,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
-    elevation: 3,
+    shadowColor: '#F59E0B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   heroTitle: {
     fontSize: 22,
@@ -203,10 +212,14 @@ const styles = StyleSheet.create({
   voucherCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    borderWidth: 2,
+    borderWidth: 1,
     overflow: 'hidden',
     marginBottom: 16,
-    elevation: 3,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
   },
   voucherTopHeader: {
     paddingVertical: 8,

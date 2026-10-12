@@ -16,6 +16,7 @@ import {
   AGE_GROUP_CONFIG,
 } from './kids-data';
 import { useKidsMode } from './useKidsMode';
+import { KIDS_IMAGES, getStationIllustration } from './kids-images';
 
 interface KidsTreasureMapProps {
   onOpenRiddle: (index: number) => void;
@@ -144,7 +145,7 @@ export const KidsTreasureMap: React.FC<KidsTreasureMapProps> = ({
       {/* Visual Treasure Map Header Banner */}
       <View style={styles.treasureHeaderBanner}>
         <Image
-          source={require('../../../assets/kids/mapa_del_tesoro.jpg')}
+          source={KIDS_IMAGES.paginaMpt}
           style={styles.treasureHeaderBannerImg}
           resizeMode="cover"
         />
@@ -160,7 +161,7 @@ export const KidsTreasureMap: React.FC<KidsTreasureMapProps> = ({
       </View>
 
       {/* Top Profile Card */}
-      <View style={[styles.profileCard, { borderColor: config.color, backgroundColor: config.bgTint }]}>
+      <View style={[styles.profileCard, { borderColor: '#E2E8F0' }]}>
         <View style={styles.profileRow}>
           <View style={[styles.avatarBadge, { backgroundColor: config.color }]}>
             <Text style={styles.avatarText}>{avatar}</Text>
@@ -332,13 +333,11 @@ export const KidsTreasureMap: React.FC<KidsTreasureMapProps> = ({
             >
               {/* Glass Header with Store Background Image */}
               <View style={[styles.stationHeaderGlass, isLocked && { borderBottomWidth: 0 }]}>
-                {riddle.storeImageUrl ? (
-                  <Image
-                    source={{ uri: riddle.storeImageUrl }}
-                    style={styles.stationHeaderImage}
-                    resizeMode="cover"
-                  />
-                ) : null}
+                <Image
+                  source={getStationIllustration(ageGroup, idx)}
+                  style={styles.stationHeaderImage}
+                  resizeMode="cover"
+                />
 
                 {/* Glass Frosted Overlay */}
                 <View
@@ -537,7 +536,7 @@ export const KidsTreasureMap: React.FC<KidsTreasureMapProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F8F9FA',
   },
   contentContainer: {
     paddingHorizontal: 16,
@@ -547,15 +546,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     position: 'relative',
-    marginBottom: 12,
-    borderWidth: 1.5,
-    borderColor: '#FDE68A',
-    shadowColor: '#F59E0B',
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
     elevation: 4,
-    minHeight: 110,
+    minHeight: 115,
     justifyContent: 'flex-end',
   },
   treasureHeaderBannerImg: {
@@ -607,10 +606,17 @@ const styles = StyleSheet.create({
     textShadowRadius: 5,
   },
   profileCard: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    borderWidth: 1.5,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 14,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
   },
   profileRow: {
     flexDirection: 'row',
@@ -863,11 +869,18 @@ const styles = StyleSheet.create({
     color: '#92400E',
   },
   flowExplainer: {
-    backgroundColor: '#EEF2F6',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginBottom: 14,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
   },
   flowExplainerText: {
     fontSize: 11,
@@ -903,27 +916,28 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   stationsList: {
-    gap: 12,
+    gap: 14,
   },
   stationCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: '#E2E8F0',
     overflow: 'hidden',
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.09,
+    shadowRadius: 10,
     elevation: 3,
   },
   stationCardCompleted: {
-    backgroundColor: '#F0FDF4',
+    backgroundColor: '#FFFFFF',
     borderColor: '#86EFAC',
   },
   stationCardLocked: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFFFF',
     borderColor: '#E2E8F0',
+    opacity: 0.9,
   },
   stationHeaderGlass: {
     position: 'relative',
