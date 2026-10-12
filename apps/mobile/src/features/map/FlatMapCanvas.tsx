@@ -993,40 +993,79 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             strokeWidth={1.2}
           />
 
-          {/* Capa 1: Pasillos peatonales en capas transparentes estilo Google Maps */}
+          {/* Capa 1: Pasillos peatonales en capas transparentes multicapa estilo Google Maps (Por debajo del avatar y rutas) */}
           {compiled.corridors.map((c) => {
             const currentScale = baseScale * zoom.value;
             return (
               <React.Fragment key={c.id}>
-                {/* 1.1 Base del pasillo translúcida (gris perla azulado Google Maps) */}
+                {/* 1.0 Sombra de profundidad ambiental exterior (Ambient Floor Drop Shadow) */}
+                <Path
+                  path={c.path}
+                  color="rgba(15, 23, 42, 0.08)"
+                  style="stroke"
+                  strokeWidth={4.8 / currentScale}
+                  strokeCap="round"
+                  strokeJoin="round"
+                />
+                {/* 1.1 Sombra de contacto perimetral */}
+                <Path
+                  path={c.path}
+                  color="rgba(15, 23, 42, 0.12)"
+                  style="stroke"
+                  strokeWidth={2.4 / currentScale}
+                  strokeCap="round"
+                  strokeJoin="round"
+                />
+                {/* 1.2 Base sólida de calzada (Gris perla arquitectónico Google Maps) */}
                 <Path
                   path={c.path}
                   color="#EEF2F6"
                   style="fill"
-                  opacity={0.88}
+                  opacity={0.94}
                 />
-                {/* 1.2 Borde exterior de calzada peatonal nítido */}
+                {/* 1.3 Cordón de andén exterior (Curb / delimitación con locales comerciales) */}
                 <Path
                   path={c.path}
                   color="#CBD5E1"
                   style="stroke"
-                  strokeWidth={1.3 / currentScale}
-                  opacity={0.75}
+                  strokeWidth={1.4 / currentScale}
+                  opacity={0.85}
                 />
-                {/* 1.3 Superficie de tránsito peatonal blanca transparente (piso pulido con reflejo Google Maps) */}
+                {/* 1.4 Superficie de pavimento peatonal pulido (blanco perla translúcido reflectante) */}
                 <Path
                   path={c.path}
                   color="#FFFFFF"
                   style="fill"
-                  opacity={0.72}
+                  opacity={0.78}
                 />
-                {/* 1.4 Borde fino arquitectónico interno */}
+                {/* 1.5 Franja interior de zócalo comercial frente a vitrinas */}
                 <Path
                   path={c.path}
                   color="#E2E8F0"
                   style="stroke"
-                  strokeWidth={0.6 / currentScale}
-                  opacity={0.55}
+                  strokeWidth={0.8 / currentScale}
+                  opacity={0.65}
+                />
+                {/* 1.6 Eje central de circulación peatonal punteado discreto */}
+                <Path
+                  path={c.path}
+                  color="#CBD5E1"
+                  style="stroke"
+                  strokeWidth={0.9 / currentScale}
+                  opacity={0.40}
+                >
+                  <DashPathEffect
+                    intervals={[6 / currentScale, 10 / currentScale]}
+                    phase={0}
+                  />
+                </Path>
+                {/* 1.7 Ribete superior de brillo arquitectónico */}
+                <Path
+                  path={c.path}
+                  color="#FFFFFF"
+                  style="stroke"
+                  strokeWidth={0.4 / currentScale}
+                  opacity={0.70}
                 />
               </React.Fragment>
             );
