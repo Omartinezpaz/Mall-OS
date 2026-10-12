@@ -25,12 +25,10 @@ import {
   RadialGradient,
   vec,
   Skia,
-  DashPathEffect,
 } from '@shopify/react-native-skia';
 import {
   useSharedValue,
   useDerivedValue,
-  useFrameCallback,
   withSpring,
   type SharedValue,
 } from 'react-native-reanimated';
@@ -245,49 +243,6 @@ function isPointInsidePolygon(point: Point, polygon: Point[]): boolean {
   return inside;
 }
 
-interface RadarWaveProps {
-  x: number;
-  y: number;
-  pulse: SharedValue<number>;
-  offset: number;
-  rMin: number;
-  rMax: number;
-  currentScale: number;
-}
-
-const RadarWave: React.FC<RadarWaveProps> = React.memo(function RadarWave({
-  x,
-  y,
-  pulse,
-  offset,
-  rMin,
-  rMax,
-  currentScale,
-}) {
-  const r = useDerivedValue(() => {
-    'worklet';
-    const p = (pulse.value + offset) % 1;
-    return rMin + p * (rMax - rMin);
-  });
-  const op = useDerivedValue(() => {
-    'worklet';
-    const p = (pulse.value + offset) % 1;
-    return Math.max(0, (1 - p) * 0.85);
-  });
-  const fillOp = useDerivedValue(() => {
-    'worklet';
-    const p = (pulse.value + offset) % 1;
-    return Math.max(0, (1 - p) * 0.16);
-  });
-
-  return (
-    <>
-      <Circle cx={x} cy={y} r={r} color="#0284C7" style="fill" opacity={fillOp} />
-      <Circle cx={x} cy={y} r={r} color="#0284C7" style="stroke" strokeWidth={1.8 / currentScale} opacity={op} />
-    </>
-  );
-});
-
 interface FlatMapUserAvatarWithEffectsProps {
   x: number;
   y: number;
@@ -295,7 +250,6 @@ interface FlatMapUserAvatarWithEffectsProps {
   destination?: { x: number; y: number };
   nextRoutePoint?: Point;
   currentScale: number;
-  pulse: SharedValue<number>;
   userAvatarImage?: any;
 }
 
@@ -307,7 +261,6 @@ export const FlatMapUserAvatarWithEffects: React.FC<FlatMapUserAvatarWithEffects
     destination,
     nextRoutePoint,
     currentScale,
-    pulse,
     userAvatarImage,
   }) {
     // 1. Calcular ángulo direccional hacia rumbo actual, próximo punto de ruta o destino
@@ -440,10 +393,46 @@ export const FlatMapUserAvatarWithEffects: React.FC<FlatMapUserAvatarWithEffects
           />
         </Circle>
 
-        {/* E. Radar: Ondas concéntricas estilo gota de agua en expansión constante */}
-        <RadarWave x={x} y={y} pulse={pulse} offset={0.666} rMin={rMin} rMax={rMax} currentScale={currentScale} />
-        <RadarWave x={x} y={y} pulse={pulse} offset={0.333} rMin={rMin} rMax={rMax} currentScale={currentScale} />
-        <RadarWave x={x} y={y} pulse={pulse} offset={0} rMin={rMin} rMax={rMax} currentScale={currentScale} />
+        {/* E. Radar: Aura holográfica y anillos concéntricos arquitectónicos (Google Maps Indoor GPS) */}
+        <Circle cx={x} cy={y} r={rMax}>
+          <RadialGradient
+            c={vec(x, y)}
+            r={rMax}
+            colors={[
+              'rgba(2, 132, 199, 0.22)',
+              'rgba(2, 132, 199, 0.10)',
+              'rgba(2, 132, 199, 0.02)',
+              'transparent',
+            ]}
+          />
+        </Circle>
+        <Circle
+          cx={x}
+          cy={y}
+          r={rMax}
+          color="#0284C7"
+          style="stroke"
+          strokeWidth={1.2 / currentScale}
+          opacity={0.30}
+        />
+        <Circle
+          cx={x}
+          cy={y}
+          r={(rMin + rMax) / 2}
+          color="#0284C7"
+          style="stroke"
+          strokeWidth={1.4 / currentScale}
+          opacity={0.50}
+        />
+        <Circle
+          cx={x}
+          cy={y}
+          r={rMin}
+          color="#0284C7"
+          style="stroke"
+          strokeWidth={1.6 / currentScale}
+          opacity={0.75}
+        />
 
         {/* F. Avatar Pin con Foto Real y Puntero al Suelo (Efecto 3D Google Maps / AR) */}
         {/* 1. Sombra elíptica en el suelo */}
@@ -605,12 +594,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
   const cameraY = useSharedValue(initialOffsetY);
   const INITIAL_ZOOM = 1.0;
   const zoom = useSharedValue(INITIAL_ZOOM);
-  const pulse = useSharedValue(0);
-  const routeDashPhase = useSharedValue(0);
-  const dashPhase = useDerivedValue(() => {
-    const s = baseScale * zoom.value;
-    return routeDashPhase.value / (s > 0 ? s : 1);
-  });
 
   // Zoom dinámico de aproximación al destino (Dynamic Approach Zoom estilo Google Maps)
   const targetNavZoom = useMemo(() => {
@@ -640,15 +623,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
   const hasInitialized = useRef<boolean>(false);
   const prevIsNavigatingRef = useRef<boolean>(false);
 
-  // 4. Animaciones continuas de pulso y flujo de ruta con delta time dinámico (60Hz / 90Hz / 120Hz)
-  useFrameCallback((frameInfo) => {
-    const dt = frameInfo.timeSincePreviousFrame
-      ? Math.min(0.05, frameInfo.timeSincePreviousFrame / 1000)
-      : 1 / 60;
-    pulse.value = (pulse.value + dt * 0.35) % 1;
-    // Flujo continuo hacia el destino sin saltos bruscos (ciclo exacto al período del dash: 16 * 10 = 160)
-    routeDashPhase.value = (routeDashPhase.value - dt * 36) % 160;
-  });
+
 
   // Centrado inicial solo si no se encuentra en navegación activa
   useEffect(() => {
@@ -1410,27 +1385,20 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             );
           })}
 
-          {/* Capa 5.1: Tramo restante con dash animado de flujo continuo hacia el destino */}
+          {/* Capa 5.1: Tramo de ruta continuo de alta visibilidad estilo Google Maps */}
           {compiled.routes.map((r, idx) => {
-            const strokeW = 3.2 / currentScale;
-            const dashOn = 10.0 / currentScale;
-            const dashOff = 6.0 / currentScale;
+            const strokeW = 3.6 / currentScale;
             return (
               <React.Fragment key={`route-rem-${idx}`}>
                 {r.remainingPath && (
                   <Path
                     path={r.remainingPath}
-                    color="#3B82F6"
+                    color="#2563EB"
                     style="stroke"
                     strokeWidth={strokeW}
                     strokeCap="round"
                     strokeJoin="round"
-                  >
-                    <DashPathEffect
-                      intervals={[dashOn, dashOff]}
-                      phase={dashPhase}
-                    />
-                  </Path>
+                  />
                 )}
               </React.Fragment>
             );
@@ -1809,7 +1777,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                 destination={dest ? { x: dest.x, y: dest.y } : undefined}
                 nextRoutePoint={nextRoutePt}
                 currentScale={currentScale}
-                pulse={pulse}
                 userAvatarImage={userAvatarImage}
               />
             );
