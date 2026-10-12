@@ -438,26 +438,36 @@ export default function HomeScreen() {
             styles.heroHeaderBackground,
             {
               paddingTop: topSafe + 6,
-              minHeight: Math.round(windowWidth * 0.75),
+              height: Math.round(windowWidth * 0.75),
             },
           ]}
         >
           {/* Foto del mall en pantalla completa en toda la cabecera sin recortes ni espacios negros */}
           <Image
             source={activeHeroImage}
-            style={StyleSheet.absoluteFillObject}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: windowWidth,
+              height: Math.round(windowWidth * 0.75),
+            }}
             resizeMode="cover"
           />
 
           {/* Overlay sutil para protección visual y alto contraste */}
           <View
-            style={[
-              StyleSheet.absoluteFillObject,
-              { backgroundColor: 'rgba(15, 23, 42, 0.16)' },
-            ]}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: windowWidth,
+              height: Math.round(windowWidth * 0.75),
+              backgroundColor: 'rgba(15, 23, 42, 0.16)',
+            }}
           />
 
-          {/* Fila superior: Logo DEMO MALL OS + Notificaciones + Perfil */}
+          {/* Fila superior: Logo DEMO + Notificaciones + Perfil */}
           <View style={styles.topBar}>
             <TouchableOpacity
               style={styles.brandRow}
@@ -466,11 +476,10 @@ export default function HomeScreen() {
               onLongPress={() => setShowAnalyticsModal(true)}
             >
               <View style={styles.brandEmblemBox}>
-                <MallOsLogo size={22} variant="white" />
+                <MallOsLogo size={28} />
               </View>
               <View style={styles.brandTextColumn}>
                 <Text style={styles.brandTitle}>DEMO</Text>
-                <Text style={styles.brandSubtitle}>MALL OS</Text>
               </View>
             </TouchableOpacity>
 
