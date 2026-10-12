@@ -28,6 +28,7 @@ import { MapOffersCarousel } from '../../src/features/map/MapOffersCarousel';
 import { GlassSurface } from '../../src/components/GlassSurface';
 import { AppIcon } from '../../src/components/AppIcon';
 import { MallOsSpriteIcon } from '../../src/components/MallOsSpriteIcon';
+import { MallOsLogo } from '../../src/components/MallOsLogo';
 import { useAccessibleMode } from '../../src/features/accessible/useAccessibleMode';
 import { useWalkSimulation } from '../../src/features/map/useWalkSimulation';
 import { useKidsMode } from '../../src/features/kids-mode/useKidsMode';
@@ -508,10 +509,17 @@ export default function MapaScreen() {
           <View style={styles.exploreHeaderContainer}>
             <View style={styles.exploreHeader}>
               <View style={styles.brandBadge}>
-                <Text style={styles.brandTitle}>MALL DEMO</Text>
-                <Text style={styles.brandSubtitle}>
-                  {openFloorCount} de {currentFloorStores.length} locales · {timeFormatted}
-                </Text>
+                <View style={styles.brandRowContainer}>
+                  <View style={styles.brandLogoBox}>
+                    <MallOsLogo size={20} />
+                  </View>
+                  <View style={styles.brandTextColumn}>
+                    <Text style={styles.brandTitle}>MALL OS</Text>
+                    <Text style={styles.brandSubtitle}>
+                      {openFloorCount} de {currentFloorStores.length} locales · {timeFormatted}
+                    </Text>
+                  </View>
+                </View>
                 {isAccessibleMode && (
                   <View style={styles.accessibleBadge}>
                     <MallOsSpriteIcon name="accesible" size={11} showCircle={false} color="#0284C7" />
@@ -890,8 +898,8 @@ const styles = StyleSheet.create({
   brandBadge: {
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderWidth: 1.2,
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
@@ -899,6 +907,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
+  },
+  brandRowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  brandLogoBox: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: '#EFF6FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+  },
+  brandTextColumn: {
+    justifyContent: 'center',
   },
   brandTitle: {
     color: '#2563EB', // Azul Cobalto
@@ -910,7 +936,7 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontSize: 10,
     fontWeight: '600',
-    marginTop: 2,
+    marginTop: 1,
   },
   topRightControls: {
     flexDirection: 'row',

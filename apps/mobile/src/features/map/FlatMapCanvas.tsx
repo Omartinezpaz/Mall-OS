@@ -96,49 +96,49 @@ function getPlazaTheme(label: string = '', id: string = '') {
   const norm = `${label} ${id}`.toLowerCase();
   if (norm.includes('fuente') || norm.includes('water')) {
     return {
-      fill: '#E0F2FE', // Azul agua pastel suave
-      stroke: '#38BDF8', // Celeste nítido
-      glow: 'rgba(56, 189, 248, 0.22)',
-      ink: '#0369A1',
+      fill: '#D2E3FC', // Azul agua suave Google Maps
+      stroke: '#1A73E8', // Azul nítido Google Maps
+      glow: 'rgba(26, 115, 232, 0.16)',
+      ink: '#174EA6',
     };
   }
   if (norm.includes('jardin') || norm.includes('jardín') || norm.includes('garden')) {
     return {
-      fill: '#DCFCE7', // Verde menta pastel suave
-      stroke: '#4ADE80', // Verde fresco
-      glow: 'rgba(74, 222, 128, 0.22)',
-      ink: '#15803D',
+      fill: '#CEEAD6', // Verde vegetal suave Google Maps (Paseo Los Próceres)
+      stroke: '#34A853', // Verde orgánico Google Maps
+      glow: 'rgba(52, 168, 83, 0.16)',
+      ink: '#137333',
     };
   }
   if (norm.includes('central') || norm.includes('centro') || norm.includes('feria')) {
     return {
-      fill: '#FEF3C7', // Ámbar cálido pastel suave
-      stroke: '#FBBF24', // Ámbar dorado
-      glow: 'rgba(251, 191, 36, 0.22)',
-      ink: '#B45309',
+      fill: '#FEF7E0', // Amarillo arena comercial suave Google Maps
+      stroke: '#FBBC04', // Dorado cálido Google Maps
+      glow: 'rgba(251, 188, 4, 0.16)',
+      ink: '#B06000',
     };
   }
   if (norm.includes('arte') || norm.includes('art')) {
     return {
-      fill: '#EDE9FE', // Lavanda pastel suave
-      stroke: '#A78BFA', // Violeta claro
-      glow: 'rgba(167, 139, 250, 0.22)',
-      ink: '#6D28D9',
+      fill: '#F3E8FD', // Lavanda suave Google Maps
+      stroke: '#A142F4', // Púrpura suave
+      glow: 'rgba(161, 66, 244, 0.16)',
+      ink: '#7627BB',
     };
   }
   if (norm.includes('musica') || norm.includes('música') || norm.includes('music')) {
     return {
-      fill: '#E0E7FF', // Índigo pastel suave
-      stroke: '#818CF8', // Azul índigo claro
-      glow: 'rgba(129, 140, 248, 0.22)',
-      ink: '#4338CA',
+      fill: '#E8EAED', // Gris perla neutro Google Maps
+      stroke: '#5F6368', // Gris medio
+      glow: 'rgba(95, 99, 104, 0.14)',
+      ink: '#3C4043',
     };
   }
   return {
-    fill: '#F1F5F9',
-    stroke: '#94A3B8',
-    glow: 'rgba(148, 163, 184, 0.18)',
-    ink: '#334155',
+    fill: '#F1F3F4',
+    stroke: '#BDC1C6',
+    glow: 'rgba(189, 193, 198, 0.14)',
+    ink: '#3C4043',
   };
 }
 
@@ -955,16 +955,24 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
         </Circle>
 
         <Group transform={transform}>
-          {/* Sombra suave de la losa del centro comercial */}
+          {/* Sombra ambiental difusa de la losa del centro comercial (2 capas) */}
+          <RoundedRect
+            x={compiled.viewBox.x - 16}
+            y={compiled.viewBox.y - 12}
+            width={compiled.viewBox.w + 32}
+            height={compiled.viewBox.h + 32}
+            r={28}
+            color="rgba(15, 23, 42, 0.06)"
+          />
           <RoundedRect
             x={compiled.viewBox.x - 18}
             y={compiled.viewBox.y - 14}
             width={compiled.viewBox.w + 36}
             height={compiled.viewBox.h + 36}
             r={28}
-            color="rgba(15, 23, 42, 0.05)"
+            color="rgba(15, 23, 42, 0.03)"
           />
-          {/* Losa arquitectónica blanca */}
+          {/* Losa arquitectónica base con acabado translúcido blanco perla estilo Google Maps */}
           <RoundedRect
             x={compiled.viewBox.x - 20}
             y={compiled.viewBox.y - 20}
@@ -972,6 +980,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             height={compiled.viewBox.h + 40}
             r={28}
             color="#FFFFFF"
+            opacity={0.95}
           />
           <RoundedRect
             x={compiled.viewBox.x - 20}
@@ -981,34 +990,56 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             r={28}
             color="#E2E8F0"
             style="stroke"
-            strokeWidth={1}
+            strokeWidth={1.2}
           />
 
-          {/* Capa 1: Pasillos (Caminerías con borde arquitectónico para destacarse claramente) */}
-          {compiled.corridors.map((c) => (
-            <React.Fragment key={c.id}>
-              <Path
-                path={c.path}
-                color="#FFFFFF"
-                style="fill"
-              />
-              <Path
-                path={c.path}
-                color="#E2E8F0"
-                style="stroke"
-                strokeWidth={1 / (baseScale * zoom.value)}
-              />
-            </React.Fragment>
-          ))}
+          {/* Capa 1: Pasillos peatonales en capas transparentes estilo Google Maps */}
+          {compiled.corridors.map((c) => {
+            const currentScale = baseScale * zoom.value;
+            return (
+              <React.Fragment key={c.id}>
+                {/* 1.1 Base del pasillo translúcida (gris perla azulado Google Maps) */}
+                <Path
+                  path={c.path}
+                  color="#EEF2F6"
+                  style="fill"
+                  opacity={0.88}
+                />
+                {/* 1.2 Borde exterior de calzada peatonal nítido */}
+                <Path
+                  path={c.path}
+                  color="#CBD5E1"
+                  style="stroke"
+                  strokeWidth={1.3 / currentScale}
+                  opacity={0.75}
+                />
+                {/* 1.3 Superficie de tránsito peatonal blanca transparente (piso pulido con reflejo Google Maps) */}
+                <Path
+                  path={c.path}
+                  color="#FFFFFF"
+                  style="fill"
+                  opacity={0.72}
+                />
+                {/* 1.4 Borde fino arquitectónico interno */}
+                <Path
+                  path={c.path}
+                  color="#E2E8F0"
+                  style="stroke"
+                  strokeWidth={0.6 / currentScale}
+                  opacity={0.55}
+                />
+              </React.Fragment>
+            );
+          })}
 
-          {/* Capa 2: Zonas temáticas/cardinales */}
+          {/* Capa 2: Zonas temáticas/cardinales con tinte translúcido suave */}
           {compiled.zones.map((z) => (
             <Path
               key={z.id}
               path={z.path}
               color={z.color}
               style="fill"
-              opacity={0.06}
+              opacity={0.07}
             />
           ))}
 
@@ -1066,30 +1097,31 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             );
           })}
 
-          {/* Capa 4: Plazas con diseño arquitectónico suave y anillos concéntricos sutiles */}
+          {/* Capa 4: Plazas con diseño orgánico translúcido y senderos concéntricos estilo Google Maps */}
           {compiled.plazas.map((p) => {
             const currentScale = baseScale * zoom.value;
             const theme = getPlazaTheme(p.label, p.id);
             return (
               <React.Fragment key={p.id}>
-                {/* 1. Halo exterior suave */}
+                {/* 4.1 Halo exterior suave translúcido */}
                 <Circle
                   cx={p.cx}
                   cy={p.cy}
-                  r={p.r + 4 / currentScale}
+                  r={p.r + 3.5 / currentScale}
                   color={theme.glow}
                   style="fill"
+                  opacity={0.4}
                 />
-                {/* 2. Cuerpo de la plaza en tono pastel suave */}
+                {/* 4.2 Cuerpo de la plaza en capa transparente suave estilo Google Maps (Los Próceres) */}
                 <Circle
                   cx={p.cx}
                   cy={p.cy}
                   r={p.r}
                   color={theme.fill}
                   style="fill"
-                  opacity={0.92}
+                  opacity={0.66}
                 />
-                {/* 3. Borde arquitectónico de la plaza */}
+                {/* 4.3 Borde orgánico nítido de la plaza */}
                 <Circle
                   cx={p.cx}
                   cy={p.cy}
@@ -1097,30 +1129,40 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                   color={theme.stroke}
                   style="stroke"
                   strokeWidth={1.2 / currentScale}
+                  opacity={0.88}
                 />
-                {/* 4. Anillo interior decorativo estilo rotonda */}
+                {/* 4.4 Sendero peatonal concéntrico exterior (caminería interna de plaza) */}
                 <Circle
                   cx={p.cx}
                   cy={p.cy}
-                  r={p.r * 0.58}
+                  r={p.r * 0.74}
                   color={theme.stroke}
                   style="stroke"
-                  strokeWidth={0.75 / currentScale}
-                  opacity={0.6}
+                  strokeWidth={0.8 / currentScale}
+                  opacity={0.45}
                 />
-                {/* 5. Punto central */}
+                {/* 4.5 Rotonda peatonal interna blanca translúcida */}
+                <Circle
+                  cx={p.cx}
+                  cy={p.cy}
+                  r={p.r * 0.46}
+                  color="#FFFFFF"
+                  style="stroke"
+                  strokeWidth={0.9 / currentScale}
+                  opacity={0.75}
+                />
+                {/* 4.6 Punto focal central */}
                 <Circle
                   cx={p.cx}
                   cy={p.cy}
                   r={2.2 / currentScale}
                   color={theme.ink}
                   style="fill"
-                  opacity={0.8}
+                  opacity={0.80}
                 />
               </React.Fragment>
             );
           })}
-
           {/* Capa 4.1: Mobiliario arquitectónico: Jardineras (plantas) y Bancas (asientos) */}
           {compiled.props.map((prop) => {
             const currentScale = baseScale * zoom.value;
