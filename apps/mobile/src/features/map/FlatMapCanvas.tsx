@@ -245,6 +245,49 @@ function isPointInsidePolygon(point: Point, polygon: Point[]): boolean {
   return inside;
 }
 
+interface RadarWaveProps {
+  x: number;
+  y: number;
+  pulse: SharedValue<number>;
+  offset: number;
+  rMin: number;
+  rMax: number;
+  currentScale: number;
+}
+
+const RadarWave: React.FC<RadarWaveProps> = React.memo(function RadarWave({
+  x,
+  y,
+  pulse,
+  offset,
+  rMin,
+  rMax,
+  currentScale,
+}) {
+  const r = useDerivedValue(() => {
+    'worklet';
+    const p = (pulse.value + offset) % 1;
+    return rMin + p * (rMax - rMin);
+  });
+  const op = useDerivedValue(() => {
+    'worklet';
+    const p = (pulse.value + offset) % 1;
+    return Math.max(0, (1 - p) * 0.85);
+  });
+  const fillOp = useDerivedValue(() => {
+    'worklet';
+    const p = (pulse.value + offset) % 1;
+    return Math.max(0, (1 - p) * 0.16);
+  });
+
+  return (
+    <>
+      <Circle cx={x} cy={y} r={r} color="#0284C7" style="fill" opacity={fillOp} />
+      <Circle cx={x} cy={y} r={r} color="#0284C7" style="stroke" strokeWidth={1.8 / currentScale} opacity={op} />
+    </>
+  );
+});
+
 interface FlatMapUserAvatarWithEffectsProps {
   x: number;
   y: number;
@@ -282,60 +325,19 @@ export const FlatMapUserAvatarWithEffects: React.FC<FlatMapUserAvatarWithEffects
     }
 
     // 2. Ondas Expansivas de Radar estilo Gota de Agua (Ripple Effect)
-    // Tres ondas concéntricas desfasadas (0, 0.33, 0.66) que nacen en el centro y se expanden hacia afuera de forma continua
     const rMin = 7.5 / currentScale;
     const rMax = 54 / currentScale;
-
-    // Onda 1
-    const r1 = useDerivedValue(() => {
-      const p = pulse.value;
-      return rMin + p * (rMax - rMin);
-    });
-    const op1 = useDerivedValue(() => {
-      const p = pulse.value;
-      return Math.max(0, (1 - p) * 0.85);
-    });
-    const fillOp1 = useDerivedValue(() => {
-      const p = pulse.value;
-      return Math.max(0, (1 - p) * 0.16);
-    });
-
-    // Onda 2 (desfasada 33%)
-    const r2 = useDerivedValue(() => {
-      const p = (pulse.value + 0.333) % 1;
-      return rMin + p * (rMax - rMin);
-    });
-    const op2 = useDerivedValue(() => {
-      const p = (pulse.value + 0.333) % 1;
-      return Math.max(0, (1 - p) * 0.85);
-    });
-    const fillOp2 = useDerivedValue(() => {
-      const p = (pulse.value + 0.333) % 1;
-      return Math.max(0, (1 - p) * 0.16);
-    });
-
-    // Onda 3 (desfasada 66%)
-    const r3 = useDerivedValue(() => {
-      const p = (pulse.value + 0.666) % 1;
-      return rMin + p * (rMax - rMin);
-    });
-    const op3 = useDerivedValue(() => {
-      const p = (pulse.value + 0.666) % 1;
-      return Math.max(0, (1 - p) * 0.85);
-    });
-    const fillOp3 = useDerivedValue(() => {
-      const p = (pulse.value + 0.666) % 1;
-      return Math.max(0, (1 - p) * 0.16);
-    });
 
     // 3. Efecto Linterna: Haz de luz potente y visible que ilumina el pasillo hacia el destino
     const beamLength = 80;
     const halfSpread = 0.44; // ~25° hacia cada lado (apertura total de 50°)
-    const startAngle = effectiveHeading - halfSpread;
-    const endAngle = effectiveHeading + halfSpread;
+    const innerBeamLength = 105;
+    const innerHalfSpread = 0.18; // ~10° hacia cada lado
     const SAMPLES = 16;
 
     const flashlightPath = useMemo(() => {
+      const startAngle = effectiveHeading - halfSpread;
+      const endAngle = effectiveHeading + halfSpread;
       const p = Skia.Path.Make();
       p.moveTo(x, y);
       for (let s = 0; s <= SAMPLES; s++) {
@@ -344,15 +346,12 @@ export const FlatMapUserAvatarWithEffects: React.FC<FlatMapUserAvatarWithEffects
       }
       p.close();
       return p;
-    }, [x, y, startAngle, endAngle]);
+    }, [x, y, effectiveHeading]);
 
     // Haz central de alta potencia (High-Beam core focalizado)
-    const innerBeamLength = 105;
-    const innerHalfSpread = 0.18; // ~10° hacia cada lado
-    const innerStartAngle = effectiveHeading - innerHalfSpread;
-    const innerEndAngle = effectiveHeading + innerHalfSpread;
-
     const innerBeamPath = useMemo(() => {
+      const innerStartAngle = effectiveHeading - innerHalfSpread;
+      const innerEndAngle = effectiveHeading + innerHalfSpread;
       const p = Skia.Path.Make();
       p.moveTo(x, y);
       for (let s = 0; s <= SAMPLES; s++) {
@@ -361,28 +360,32 @@ export const FlatMapUserAvatarWithEffects: React.FC<FlatMapUserAvatarWithEffects
       }
       p.close();
       return p;
-    }, [x, y, innerStartAngle, innerEndAngle]);
+    }, [x, y, effectiveHeading]);
 
     // Líneas de contorno de haz para dar definición de haz de linterna nítido
     const beamRayPath = useMemo(() => {
+      const startAngle = effectiveHeading - halfSpread;
+      const endAngle = effectiveHeading + halfSpread;
       const p = Skia.Path.Make();
       p.moveTo(x, y);
       p.lineTo(x + beamLength * Math.cos(startAngle), y + beamLength * Math.sin(startAngle));
       p.moveTo(x, y);
       p.lineTo(x + beamLength * Math.cos(endAngle), y + beamLength * Math.sin(endAngle));
       return p;
-    }, [x, y, startAngle, endAngle]);
+    }, [x, y, effectiveHeading]);
 
     // 4. Flecha Direccional de Cabecera (Chevron blanco de precisión)
-    const tipLen = 14 / currentScale;
-    const wingLen = 7.5 / currentScale;
-    const tipX = x + Math.cos(effectiveHeading) * tipLen;
-    const tipY = y + Math.sin(effectiveHeading) * tipLen;
-    const leftX = x + Math.cos(effectiveHeading + 2.5) * wingLen;
-    const leftY = y + Math.sin(effectiveHeading + 2.5) * wingLen;
-    const rightX = x + Math.cos(effectiveHeading - 2.5) * wingLen;
-    const rightY = y + Math.sin(effectiveHeading - 2.5) * wingLen;
-    const arrowPath = `M ${tipX} ${tipY} L ${leftX} ${leftY} L ${x} ${y} L ${rightX} ${rightY} Z`;
+    const arrowPath = useMemo(() => {
+      const tipLen = 14 / currentScale;
+      const wingLen = 7.5 / currentScale;
+      const tipX = x + Math.cos(effectiveHeading) * tipLen;
+      const tipY = y + Math.sin(effectiveHeading) * tipLen;
+      const leftX = x + Math.cos(effectiveHeading + 2.5) * wingLen;
+      const leftY = y + Math.sin(effectiveHeading + 2.5) * wingLen;
+      const rightX = x + Math.cos(effectiveHeading - 2.5) * wingLen;
+      const rightY = y + Math.sin(effectiveHeading - 2.5) * wingLen;
+      return `M ${tipX} ${tipY} L ${leftX} ${leftY} L ${x} ${y} L ${rightX} ${rightY} Z`;
+    }, [x, y, effectiveHeading, currentScale]);
 
     return (
       <Group>
@@ -438,17 +441,9 @@ export const FlatMapUserAvatarWithEffects: React.FC<FlatMapUserAvatarWithEffects
         </Circle>
 
         {/* E. Radar: Ondas concéntricas estilo gota de agua en expansión constante */}
-        {/* Onda 3 (exterior en ciclo) */}
-        <Circle cx={x} cy={y} r={r3} color="#0284C7" style="fill" opacity={fillOp3} />
-        <Circle cx={x} cy={y} r={r3} color="#0284C7" style="stroke" strokeWidth={1.8 / currentScale} opacity={op3} />
-
-        {/* Onda 2 (media en ciclo) */}
-        <Circle cx={x} cy={y} r={r2} color="#0284C7" style="fill" opacity={fillOp2} />
-        <Circle cx={x} cy={y} r={r2} color="#0284C7" style="stroke" strokeWidth={1.8 / currentScale} opacity={op2} />
-
-        {/* Onda 1 (naciente en ciclo) */}
-        <Circle cx={x} cy={y} r={r1} color="#0284C7" style="fill" opacity={fillOp1} />
-        <Circle cx={x} cy={y} r={r1} color="#0284C7" style="stroke" strokeWidth={1.8 / currentScale} opacity={op1} />
+        <RadarWave x={x} y={y} pulse={pulse} offset={0.666} rMin={rMin} rMax={rMax} currentScale={currentScale} />
+        <RadarWave x={x} y={y} pulse={pulse} offset={0.333} rMin={rMin} rMax={rMax} currentScale={currentScale} />
+        <RadarWave x={x} y={y} pulse={pulse} offset={0} rMin={rMin} rMax={rMax} currentScale={currentScale} />
 
         {/* F. Avatar Pin con Foto Real y Puntero al Suelo (Efecto 3D Google Maps / AR) */}
         {/* 1. Sombra elíptica en el suelo */}
@@ -645,12 +640,14 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
   const hasInitialized = useRef<boolean>(false);
   const prevIsNavigatingRef = useRef<boolean>(false);
 
-  // 4. Animaciones continuas a 60fps (pulso del avatar y flujo de ruta hacia el destino)
+  // 4. Animaciones continuas de pulso y flujo de ruta con delta time dinámico (60Hz / 90Hz / 120Hz)
   useFrameCallback((frameInfo) => {
-    const dt = 1 / 60;
+    const dt = frameInfo.timeSincePreviousFrame
+      ? Math.min(0.05, frameInfo.timeSincePreviousFrame / 1000)
+      : 1 / 60;
     pulse.value = (pulse.value + dt * 0.35) % 1;
-    // Flujo continuo hacia el destino (velocidad media y armónica)
-    routeDashPhase.value = (routeDashPhase.value - dt * 36) % 1000;
+    // Flujo continuo hacia el destino sin saltos bruscos (ciclo exacto al período del dash: 16 * 10 = 160)
+    routeDashPhase.value = (routeDashPhase.value - dt * 36) % 160;
   });
 
   // Centrado inicial solo si no se encuentra en navegación activa
@@ -923,6 +920,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
     ? (-userHeading - Math.PI / 2)
     : 0;
   const compassNeedleDeg = (currentRotation * 180) / Math.PI - northAngleDeg;
+  const currentScale = baseScale * zoom.value;
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
@@ -994,10 +992,8 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
           />
 
           {/* Capa 1: Pasillos peatonales en capas transparentes multicapa estilo Google Maps (Por debajo del avatar y rutas) */}
-          {compiled.corridors.map((c) => {
-            const currentScale = baseScale * zoom.value;
-            return (
-              <React.Fragment key={c.id}>
+          {compiled.corridors.map((c) => (
+            <React.Fragment key={c.id}>
                 {/* 1.0 Sombra de profundidad ambiental exterior */}
                 <Path
                   path={c.path}
@@ -1055,8 +1051,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                   opacity={0.70}
                 />
               </React.Fragment>
-            );
-          })}
+          ))}
 
           {/* Capa 2: Zonas temáticas/cardinales con tinte translúcido suave */}
           {compiled.zones.map((z) => (
@@ -1071,7 +1066,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 3: Locales comerciales con Extrusión 2.5D de Polígonos (Paredes Sombreadas hacia Pasillos y Techo) */}
           {compiled.stores.map((s) => {
-            const currentScale = baseScale * zoom.value;
             const isTarget = s.id === selectedStoreId || s.isDestination;
             return (
               <React.Fragment key={s.id}>
@@ -1125,7 +1119,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 4: Plazas con diseño orgánico translúcido y senderos concéntricos estilo Google Maps */}
           {compiled.plazas.map((p) => {
-            const currentScale = baseScale * zoom.value;
             const theme = getPlazaTheme(p.label, p.id);
             return (
               <React.Fragment key={p.id}>
@@ -1400,7 +1393,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 5.0: Halo exterior de la ruta (Glow translúcido azul zafiro) */}
           {compiled.routes.map((r, idx) => {
-            const currentScale = baseScale * zoom.value;
             const haloStrokeW = 8.5 / currentScale;
             return (
               <React.Fragment key={`route-halo-${idx}`}>
@@ -1420,7 +1412,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 5.1: Tramo restante con dash animado de flujo continuo hacia el destino */}
           {compiled.routes.map((r, idx) => {
-            const currentScale = baseScale * zoom.value;
             const strokeW = 3.2 / currentScale;
             const dashOn = 10.0 / currentScale;
             const dashOff = 6.0 / currentScale;
@@ -1447,7 +1438,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 5.2: Tramo inmediato (sólido y vibrante, guía el próximo tramo) */}
           {compiled.routes.map((r, idx) => {
-            const currentScale = baseScale * zoom.value;
             const immStrokeW = 4.4 / currentScale;
             return (
               <React.Fragment key={`route-imm-${idx}`}>
@@ -1555,7 +1545,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 6: Pin de Destino con Faro de Luz en Suelo y Billboard con LOGO OFICIAL de Tienda */}
           {compiled.destinationPins.map((dp, i) => {
-            const currentScale = baseScale * zoom.value;
             const pinTheme = getCategoryPinTheme(dp.category);
 
             // Anillos de faro / beacon de destino en el suelo
@@ -1806,7 +1795,6 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
 
           {/* Capa 9 (Z-Index Máximo Absoluto): Avatar del Usuario sobre cualquier elemento del mapa, con Linterna Potente y Radar Onda Expansiva (Gota de Agua) */}
           {compiled.userPins.map((up, i) => {
-            const currentScale = baseScale * zoom.value;
             const dest = compiled.destinationPins[0];
             const nextRoutePt = compiled.routes.length > 0 && compiled.routes[0].points.length > 1
               ? compiled.routes[0].points[1]
