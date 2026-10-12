@@ -481,7 +481,8 @@ export function buildScene(map: MallMapData, opts: SceneOptions): Scene {
           ],
         };
       }
-      case 'escalator': {
+      case 'escalator':
+      case 'stairs': {
         const r = p.rect;
         const alongY = r.h >= r.w;
         const out: SceneItem[] = [...box(r, 0, 2, '#94A3B8', '#FFFFFF')];

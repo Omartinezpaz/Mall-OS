@@ -41,6 +41,7 @@ export function propRect(p: MapProp): Rect | null {
     case 'elevator':
     case 'fountain':
     case 'escalator':
+    case 'stairs':
       return p.rect;
     case 'glass':
     case 'railing':

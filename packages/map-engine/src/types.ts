@@ -119,7 +119,7 @@ export type MapProp =
   | { id: string; kind: 'fountain'; rect: Rect }
   | { id: string; kind: 'sign'; x: number; y: number; text: string; direction?: 'left' | 'right' | 'up' | 'down' }
   /** `flow`: extremo del eje largo hacia el que se mueven los peldaños ('min' = coordenada menor, 'max' = mayor). */
-  | { id: string; kind: 'escalator'; rect: Rect; flow?: 'min' | 'max' }
+  | { id: string; kind: 'escalator' | 'stairs'; rect: Rect; flow?: 'min' | 'max' }
   | { id: string; kind: 'glass'; from: Point; to: Point }
   /** Insignia flotante (baños, información, cajero…). No ocupa espacio. */
   | { id: string; kind: 'poi'; poi: PoiKind; x: number; y: number; z?: number };
