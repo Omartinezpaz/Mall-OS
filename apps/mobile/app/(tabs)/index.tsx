@@ -442,15 +442,30 @@ export default function HomeScreen() {
             },
           ]}
         >
-          {/* Foto del mall en pantalla completa en toda la cabecera */}
+          {/* Foto del mall en pantalla completa en toda la cabecera sin recortes ni espacios negros */}
           <Image
             source={activeHeroImage}
-            style={[StyleSheet.absoluteFillObject, { width: '100%', height: '100%' }]}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: windowWidth,
+              height: Math.round(windowWidth * 0.75),
+            }}
             resizeMode="cover"
           />
 
           {/* Overlay sutil para protección visual y alto contraste */}
-          <View style={styles.heroDarkOverlay} />
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: windowWidth,
+              height: Math.round(windowWidth * 0.75),
+              backgroundColor: 'rgba(15, 23, 42, 0.16)',
+            }}
+          />
 
           {/* Fila superior: Logo DEMO MALL OS + Notificaciones + Perfil */}
           <View style={styles.topBar}>
