@@ -998,12 +998,12 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             const currentScale = baseScale * zoom.value;
             return (
               <React.Fragment key={c.id}>
-                {/* 1.0 Sombra de profundidad ambiental exterior (Ambient Floor Drop Shadow) */}
+                {/* 1.0 Sombra de profundidad ambiental exterior */}
                 <Path
                   path={c.path}
                   color="rgba(15, 23, 42, 0.08)"
                   style="stroke"
-                  strokeWidth={4.8 / currentScale}
+                  strokeWidth={3.8 / currentScale}
                   strokeCap="round"
                   strokeJoin="round"
                 />
@@ -1012,7 +1012,7 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                   path={c.path}
                   color="rgba(15, 23, 42, 0.12)"
                   style="stroke"
-                  strokeWidth={2.4 / currentScale}
+                  strokeWidth={2.0 / currentScale}
                   strokeCap="round"
                   strokeJoin="round"
                 />
@@ -1021,50 +1021,37 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                   path={c.path}
                   color="#EEF2F6"
                   style="fill"
-                  opacity={0.94}
+                  opacity={0.92}
                 />
                 {/* 1.3 Cordón de andén exterior (Curb / delimitación con locales comerciales) */}
                 <Path
                   path={c.path}
                   color="#CBD5E1"
                   style="stroke"
-                  strokeWidth={1.4 / currentScale}
-                  opacity={0.85}
+                  strokeWidth={1.3 / currentScale}
+                  opacity={0.82}
                 />
                 {/* 1.4 Superficie de pavimento peatonal pulido (blanco perla translúcido reflectante) */}
                 <Path
                   path={c.path}
                   color="#FFFFFF"
                   style="fill"
-                  opacity={0.78}
+                  opacity={0.76}
                 />
                 {/* 1.5 Franja interior de zócalo comercial frente a vitrinas */}
                 <Path
                   path={c.path}
                   color="#E2E8F0"
                   style="stroke"
-                  strokeWidth={0.8 / currentScale}
+                  strokeWidth={0.7 / currentScale}
                   opacity={0.65}
                 />
-                {/* 1.6 Eje central de circulación peatonal punteado discreto */}
-                <Path
-                  path={c.path}
-                  color="#CBD5E1"
-                  style="stroke"
-                  strokeWidth={0.9 / currentScale}
-                  opacity={0.40}
-                >
-                  <DashPathEffect
-                    intervals={[6 / currentScale, 10 / currentScale]}
-                    phase={0}
-                  />
-                </Path>
-                {/* 1.7 Ribete superior de brillo arquitectónico */}
+                {/* 1.6 Ribete superior de brillo arquitectónico */}
                 <Path
                   path={c.path}
                   color="#FFFFFF"
                   style="stroke"
-                  strokeWidth={0.4 / currentScale}
+                  strokeWidth={0.35 / currentScale}
                   opacity={0.70}
                 />
               </React.Fragment>
