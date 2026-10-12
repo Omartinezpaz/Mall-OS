@@ -261,12 +261,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 24,
     overflow: 'hidden',
-    backgroundColor: '#0F172A',
+    backgroundColor: 'rgba(15, 23, 42, 0.22)',
     borderWidth: 1.2,
     borderColor: 'rgba(255, 255, 255, 0.25)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.55,
+    shadowOpacity: 0.35,
     shadowRadius: 20,
     elevation: 12,
     zIndex: 45,
@@ -277,10 +277,11 @@ const styles = StyleSheet.create({
   bgImage: {
     width: '100%',
     height: '100%',
+    opacity: 0.15,
   },
   darkGradientOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(10, 15, 30, 0.72)', // Tono oscuro balanceado para ver la fachada clara pero con máximo contraste
+    backgroundColor: 'rgba(10, 15, 30, 0.12)',
   },
   header: {
     flexDirection: 'row',
@@ -394,7 +395,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    backgroundColor: 'rgba(15, 23, 42, 0.30)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -404,7 +405,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     padding: 12,
     borderRadius: 14,
-    backgroundColor: 'rgba(15, 23, 42, 0.78)',
+    backgroundColor: 'rgba(15, 23, 42, 0.25)',
     borderWidth: 1,
     borderColor: 'rgba(16, 185, 129, 0.5)',
     gap: 6,
@@ -495,7 +496,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   offerCard: {
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+    backgroundColor: 'rgba(15, 23, 42, 0.28)',
     borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(245, 158, 11, 0.5)',
@@ -570,7 +571,7 @@ const styles = StyleSheet.create({
   },
   secondaryCatalogBtn: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     borderWidth: 1.2,
     borderColor: 'rgba(255, 255, 255, 0.4)',
     flexDirection: 'row',
