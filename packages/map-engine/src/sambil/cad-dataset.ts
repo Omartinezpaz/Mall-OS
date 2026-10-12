@@ -1211,7 +1211,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 397,
     "w": 36,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-63",
     "polygon": [
       {
         "x": 35,
@@ -1257,7 +1257,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 404,
     "w": 15,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-62",
     "polygon": [
       {
         "x": 67,
@@ -1291,7 +1291,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 404,
     "w": 15,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-62",
     "polygon": [
       {
         "x": 82,
@@ -1325,7 +1325,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 70,
     "w": 141,
     "h": 131,
-    "doorNodeId": "",
+    "doorNodeId": "node-76",
     "polygon": [
       {
         "x": 64,
@@ -1383,7 +1383,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 71,
     "w": 82,
     "h": 94,
-    "doorNodeId": "",
+    "doorNodeId": "node-77",
     "polygon": [
       {
         "x": 155,
@@ -1433,7 +1433,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 142,
     "w": 128,
     "h": 80,
-    "doorNodeId": "",
+    "doorNodeId": "node-76",
     "polygon": [
       {
         "x": 59,
@@ -1475,7 +1475,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 110,
     "w": 14,
     "h": 49,
-    "doorNodeId": "",
+    "doorNodeId": "node-78",
     "polygon": [
       {
         "x": 223,
@@ -1517,7 +1517,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 204,
     "w": 51,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-74",
     "polygon": [
       {
         "x": 103,
@@ -1563,7 +1563,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 203,
     "w": 82,
     "h": 71,
-    "doorNodeId": "",
+    "doorNodeId": "node-73",
     "polygon": [
       {
         "x": 121,
@@ -1613,7 +1613,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 378,
     "w": 36,
     "h": 19,
-    "doorNodeId": "",
+    "doorNodeId": "node-63",
     "polygon": [
       {
         "x": 35,
@@ -1651,7 +1651,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 363,
     "w": 33,
     "h": 17,
-    "doorNodeId": "",
+    "doorNodeId": "node-65",
     "polygon": [
       {
         "x": 70,
@@ -1693,7 +1693,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 351,
     "w": 38,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-66",
     "polygon": [
       {
         "x": 64,
@@ -1735,7 +1735,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 334,
     "w": 42,
     "h": 17,
-    "doorNodeId": "",
+    "doorNodeId": "node-68",
     "polygon": [
       {
         "x": 40,
@@ -1773,7 +1773,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 320,
     "w": 34,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-68",
     "polygon": [
       {
         "x": 78,
@@ -1815,7 +1815,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 306,
     "w": 33,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-69",
     "polygon": [
       {
         "x": 80,
@@ -1861,7 +1861,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 266,
     "w": 38,
     "h": 43,
-    "doorNodeId": "",
+    "doorNodeId": "node-70",
     "polygon": [
       {
         "x": 87,
@@ -1907,7 +1907,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 242,
     "w": 45,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-71",
     "polygon": [
       {
         "x": 96,
@@ -1957,7 +1957,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 216,
     "w": 63,
     "h": 79,
-    "doorNodeId": "",
+    "doorNodeId": "node-71",
     "polygon": [
       {
         "x": 109,
@@ -2015,7 +2015,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 398,
     "w": 16,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-60",
     "polygon": [
       {
         "x": 104,
@@ -2049,7 +2049,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 379,
     "w": 26,
     "h": 19,
-    "doorNodeId": "",
+    "doorNodeId": "node-58",
     "polygon": [
       {
         "x": 120,
@@ -2087,7 +2087,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 366,
     "w": 25,
     "h": 13,
-    "doorNodeId": "",
+    "doorNodeId": "node-58",
     "polygon": [
       {
         "x": 120,
@@ -2125,7 +2125,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 354,
     "w": 12,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-57",
     "polygon": [
       {
         "x": 106,
@@ -2167,7 +2167,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 356,
     "w": 6,
     "h": 6,
-    "doorNodeId": "",
+    "doorNodeId": "node-56",
     "polygon": [
       {
         "x": 106,
@@ -2201,7 +2201,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 355,
     "w": 8,
     "h": 7,
-    "doorNodeId": "",
+    "doorNodeId": "node-56",
     "polygon": [
       {
         "x": 112,
@@ -2235,7 +2235,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 346,
     "w": 14,
     "h": 66,
-    "doorNodeId": "",
+    "doorNodeId": "node-55",
     "polygon": [
       {
         "x": 133,
@@ -2289,7 +2289,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 332,
     "w": 43,
     "h": 81,
-    "doorNodeId": "",
+    "doorNodeId": "door-local_117",
     "polygon": [
       {
         "x": 173,
@@ -2355,7 +2355,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 333,
     "w": 14,
     "h": 52,
-    "doorNodeId": "",
+    "doorNodeId": "node-38-bhype",
     "polygon": [
       {
         "x": 179,
@@ -2389,7 +2389,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 333,
     "w": 16,
     "h": 69,
-    "doorNodeId": "",
+    "doorNodeId": "node-39-bunny",
     "polygon": [
       {
         "x": 192,
@@ -2431,7 +2431,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 333,
     "w": 27,
     "h": 69,
-    "doorNodeId": "",
+    "doorNodeId": "node-41",
     "polygon": [
       {
         "x": 224,
@@ -2473,7 +2473,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 333,
     "w": 19,
     "h": 41,
-    "doorNodeId": "",
+    "doorNodeId": "node-42",
     "polygon": [
       {
         "x": 224,
@@ -2515,7 +2515,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 334,
     "w": 28,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-42",
     "polygon": [
       {
         "x": 249,
@@ -2565,7 +2565,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 334,
     "w": 15,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-43",
     "polygon": [
       {
         "x": 267,
@@ -2607,7 +2607,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 334,
     "w": 15,
     "h": 49,
-    "doorNodeId": "",
+    "doorNodeId": "node-44",
     "polygon": [
       {
         "x": 274,
@@ -2641,7 +2641,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 334,
     "w": 28,
     "h": 70,
-    "doorNodeId": "",
+    "doorNodeId": "node-46",
     "polygon": [
       {
         "x": 289,
@@ -2683,7 +2683,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 334,
     "w": 31,
     "h": 71,
-    "doorNodeId": "",
+    "doorNodeId": "node-140",
     "polygon": [
       {
         "x": 322,
@@ -2729,7 +2729,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 361,
     "w": 26,
     "h": 44,
-    "doorNodeId": "",
+    "doorNodeId": "node-140",
     "polygon": [
       {
         "x": 344,
@@ -2779,7 +2779,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 350,
     "w": 20,
     "h": 55,
-    "doorNodeId": "",
+    "doorNodeId": "node-139",
     "polygon": [
       {
         "x": 383,
@@ -2833,7 +2833,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 335,
     "w": 46,
     "h": 84,
-    "doorNodeId": "",
+    "doorNodeId": "node-139",
     "polygon": [
       {
         "x": 424,
@@ -2895,7 +2895,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 336,
     "w": 19,
     "h": 37,
-    "doorNodeId": "",
+    "doorNodeId": "node-137",
     "polygon": [
       {
         "x": 415,
@@ -2929,7 +2929,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 337,
     "w": 56,
     "h": 84,
-    "doorNodeId": "",
+    "doorNodeId": "node-137",
     "polygon": [
       {
         "x": 434,
@@ -2995,7 +2995,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 338,
     "w": 13,
     "h": 61,
-    "doorNodeId": "",
+    "doorNodeId": "node-135",
     "polygon": [
       {
         "x": 466,
@@ -3029,7 +3029,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 338,
     "w": 67,
     "h": 84,
-    "doorNodeId": "",
+    "doorNodeId": "node-135",
     "polygon": [
       {
         "x": 486,
@@ -3083,7 +3083,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 316,
     "w": 157,
     "h": 104,
-    "doorNodeId": "",
+    "doorNodeId": "node-146",
     "polygon": [
       {
         "x": 610,
@@ -3181,7 +3181,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 303,
     "w": 25,
     "h": 16,
-    "doorNodeId": "",
+    "doorNodeId": "node-150",
     "polygon": [
       {
         "x": 557,
@@ -3223,7 +3223,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 295,
     "w": 10,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-151",
     "polygon": [
       {
         "x": 532,
@@ -3257,7 +3257,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 295,
     "w": 15,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-151",
     "polygon": [
       {
         "x": 522,
@@ -3291,7 +3291,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 283,
     "w": 20,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-132",
     "polygon": [
       {
         "x": 504,
@@ -3375,7 +3375,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 264,
     "w": 37,
     "h": 25,
-    "doorNodeId": "",
+    "doorNodeId": "node-148",
     "polygon": [
       {
         "x": 545,
@@ -3417,7 +3417,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 250,
     "w": 37,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-94",
     "polygon": [
       {
         "x": 533,
@@ -3451,7 +3451,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 240,
     "w": 36,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-94",
     "polygon": [
       {
         "x": 523,
@@ -3519,7 +3519,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 215,
     "w": 26,
     "h": 47,
-    "doorNodeId": "",
+    "doorNodeId": "node-96",
     "polygon": [
       {
         "x": 494,
@@ -3573,7 +3573,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 221,
     "w": 21,
     "h": 41,
-    "doorNodeId": "",
+    "doorNodeId": "node-97",
     "polygon": [
       {
         "x": 461,
@@ -3619,7 +3619,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 236,
     "w": 23,
     "h": 26,
-    "doorNodeId": "",
+    "doorNodeId": "node-99",
     "polygon": [
       {
         "x": 448,
@@ -3661,7 +3661,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 247,
     "w": 20,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-99",
     "polygon": [
       {
         "x": 449,
@@ -3703,7 +3703,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 258,
     "w": 21,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-100",
     "polygon": [
       {
         "x": 429,
@@ -3737,7 +3737,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 274,
     "w": 18,
     "h": 17,
-    "doorNodeId": "",
+    "doorNodeId": "node-102",
     "polygon": [
       {
         "x": 416,
@@ -3771,7 +3771,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 281,
     "w": 23,
     "h": 23,
-    "doorNodeId": "",
+    "doorNodeId": "node-102",
     "polygon": [
       {
         "x": 410,
@@ -3805,7 +3805,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 294,
     "w": 26,
     "h": 23,
-    "doorNodeId": "",
+    "doorNodeId": "node-104",
     "polygon": [
       {
         "x": 399,
@@ -3851,7 +3851,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 297,
     "w": 15,
     "h": 20,
-    "doorNodeId": "",
+    "doorNodeId": "node-129",
     "polygon": [
       {
         "x": 425,
@@ -3885,7 +3885,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 267,
     "w": 28,
     "h": 50,
-    "doorNodeId": "",
+    "doorNodeId": "node-129",
     "polygon": [
       {
         "x": 453,
@@ -3923,7 +3923,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 267,
     "w": 39,
     "h": 50,
-    "doorNodeId": "",
+    "doorNodeId": "node-131",
     "polygon": [
       {
         "x": 480,
@@ -3965,7 +3965,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 181,
     "w": 26,
     "h": 34,
-    "doorNodeId": "",
+    "doorNodeId": "node-110",
     "polygon": [
       {
         "x": 442,
@@ -4023,7 +4023,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 199,
     "w": 28,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-110",
     "polygon": [
       {
         "x": 414,
@@ -4057,7 +4057,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 176,
     "w": 19,
     "h": 30,
-    "doorNodeId": "",
+    "doorNodeId": "node-112",
     "polygon": [
       {
         "x": 423,
@@ -4099,7 +4099,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 198,
     "w": 39,
     "h": 35,
-    "doorNodeId": "",
+    "doorNodeId": "node-110",
     "polygon": [
       {
         "x": 404,
@@ -4133,7 +4133,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 208,
     "w": 40,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-109",
     "polygon": [
       {
         "x": 395,
@@ -4205,7 +4205,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 246,
     "w": 29,
     "h": 28,
-    "doorNodeId": "",
+    "doorNodeId": "node-106",
     "polygon": [
       {
         "x": 384,
@@ -4239,7 +4239,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 259,
     "w": 20,
     "h": 32,
-    "doorNodeId": "",
+    "doorNodeId": "node-144",
     "polygon": [
       {
         "x": 392,
@@ -4281,7 +4281,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 238,
     "w": 25,
     "h": 47,
-    "doorNodeId": "",
+    "doorNodeId": "node-144",
     "polygon": [
       {
         "x": 384,
@@ -4335,7 +4335,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 247,
     "w": 16,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-143",
     "polygon": [
       {
         "x": 360,
@@ -4369,7 +4369,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 247,
     "w": 27,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-143",
     "polygon": [
       {
         "x": 345,
@@ -4411,7 +4411,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 246,
     "w": 47,
     "h": 69,
-    "doorNodeId": "",
+    "doorNodeId": "node-49",
     "polygon": [
       {
         "x": 319,
@@ -4445,7 +4445,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 246,
     "w": 19,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-49",
     "polygon": [
       {
         "x": 263,
@@ -4487,7 +4487,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 263,
     "w": 18,
     "h": 51,
-    "doorNodeId": "",
+    "doorNodeId": "node-49",
     "polygon": [
       {
         "x": 253,
@@ -4521,7 +4521,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 263,
     "w": 14,
     "h": 51,
-    "doorNodeId": "",
+    "doorNodeId": "node-51",
     "polygon": [
       {
         "x": 221,
@@ -4555,7 +4555,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 263,
     "w": 41,
     "h": 51,
-    "doorNodeId": "",
+    "doorNodeId": "node-51",
     "polygon": [
       {
         "x": 221,
@@ -4593,7 +4593,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 279,
     "w": 14,
     "h": 34,
-    "doorNodeId": "",
+    "doorNodeId": "node-53",
     "polygon": [
       {
         "x": 175,
@@ -4631,7 +4631,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 275,
     "w": 36,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-53",
     "polygon": [
       {
         "x": 166,
@@ -4685,7 +4685,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 256,
     "w": 32,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-127",
     "polygon": [
       {
         "x": 143,
@@ -4723,7 +4723,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 242,
     "w": 33,
     "h": 33,
-    "doorNodeId": "",
+    "doorNodeId": "node-pasillo C2",
     "polygon": [
       {
         "x": 155,
@@ -4757,7 +4757,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 229,
     "w": 28,
     "h": 31,
-    "doorNodeId": "",
+    "doorNodeId": "node-126",
     "polygon": [
       {
         "x": 201,
@@ -4799,7 +4799,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 217,
     "w": 26,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-126",
     "polygon": [
       {
         "x": 208,
@@ -4841,7 +4841,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 210,
     "w": 27,
     "h": 45,
-    "doorNodeId": "",
+    "doorNodeId": "node-124",
     "polygon": [
       {
         "x": 195,
@@ -4895,7 +4895,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 215,
     "w": 14,
     "h": 40,
-    "doorNodeId": "",
+    "doorNodeId": "node-123",
     "polygon": [
       {
         "x": 222,
@@ -4933,7 +4933,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 195,
     "w": 27,
     "h": 60,
-    "doorNodeId": "",
+    "doorNodeId": "node-122",
     "polygon": [
       {
         "x": 252,
@@ -4991,7 +4991,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 179,
     "w": 25,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-121",
     "polygon": [
       {
         "x": 252,
@@ -5045,7 +5045,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 172,
     "w": 25,
     "h": 66,
-    "doorNodeId": "",
+    "doorNodeId": "node-120",
     "polygon": [
       {
         "x": 291,
@@ -5091,7 +5091,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 168,
     "w": 19,
     "h": 70,
-    "doorNodeId": "",
+    "doorNodeId": "node-119",
     "polygon": [
       {
         "x": 310,
@@ -5125,7 +5125,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 167,
     "w": 28,
     "h": 72,
-    "doorNodeId": "",
+    "doorNodeId": "node-118",
     "polygon": [
       {
         "x": 310,
@@ -5175,7 +5175,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 172,
     "w": 18,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-118",
     "polygon": [
       {
         "x": 346,
@@ -5209,7 +5209,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 172,
     "w": 15,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-116",
     "polygon": [
       {
         "x": 346,
@@ -5243,7 +5243,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 172,
     "w": 15,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-115",
     "polygon": [
       {
         "x": 360,
@@ -5277,7 +5277,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 171,
     "w": 13,
     "h": 55,
-    "doorNodeId": "",
+    "doorNodeId": "node-114",
     "polygon": [
       {
         "x": 374,
@@ -5315,7 +5315,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 171,
     "w": 15,
     "h": 39,
-    "doorNodeId": "",
+    "doorNodeId": "node-113",
     "polygon": [
       {
         "x": 386,
@@ -5349,7 +5349,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 119,
     "w": 36,
     "h": 45,
-    "doorNodeId": "",
+    "doorNodeId": "door-local_118",
     "polygon": [
       {
         "x": 243,
@@ -5411,7 +5411,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 120,
     "w": 11,
     "h": 32,
-    "doorNodeId": "",
+    "doorNodeId": "node-80",
     "polygon": [
       {
         "x": 292,
@@ -5449,7 +5449,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 120,
     "w": 12,
     "h": 29,
-    "doorNodeId": "",
+    "doorNodeId": "node-81",
     "polygon": [
       {
         "x": 304,
@@ -5487,7 +5487,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 112,
     "w": 16,
     "h": 35,
-    "doorNodeId": "",
+    "doorNodeId": "node-82",
     "polygon": [
       {
         "x": 304,
@@ -5541,7 +5541,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 119,
     "w": 18,
     "h": 26,
-    "doorNodeId": "",
+    "doorNodeId": "node-83",
     "polygon": [
       {
         "x": 325,
@@ -5579,7 +5579,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 119,
     "w": 18,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-83",
     "polygon": [
       {
         "x": 338,
@@ -5613,7 +5613,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 119,
     "w": 19,
     "h": 22,
-    "doorNodeId": "",
+    "doorNodeId": "node-86",
     "polygon": [
       {
         "x": 356,
@@ -5647,7 +5647,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 89,
     "w": 17,
     "h": 60,
-    "doorNodeId": "",
+    "doorNodeId": "node-86",
     "polygon": [
       {
         "x": 388,
@@ -5693,7 +5693,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 91,
     "w": 15,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-87",
     "polygon": [
       {
         "x": 389,
@@ -5743,7 +5743,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 97,
     "w": 30,
     "h": 61,
-    "doorNodeId": "",
+    "doorNodeId": "node-87",
     "polygon": [
       {
         "x": 401,
@@ -5793,7 +5793,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 103,
     "w": 34,
     "h": 65,
-    "doorNodeId": "",
+    "doorNodeId": "node-89",
     "polygon": [
       {
         "x": 431,
@@ -5855,7 +5855,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 113,
     "w": 30,
     "h": 48,
-    "doorNodeId": "",
+    "doorNodeId": "node-90",
     "polygon": [
       {
         "x": 458,
@@ -5909,7 +5909,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 125,
     "w": 37,
     "h": 44,
-    "doorNodeId": "",
+    "doorNodeId": "node-91",
     "polygon": [
       {
         "x": 485,
@@ -5967,7 +5967,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 148,
     "w": 49,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-92",
     "polygon": [
       {
         "x": 492,
@@ -6009,7 +6009,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 163,
     "w": 51,
     "h": 44,
-    "doorNodeId": "",
+    "doorNodeId": "node-92",
     "polygon": [
       {
         "x": 541,
@@ -6059,7 +6059,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 171,
     "w": 51,
     "h": 49,
-    "doorNodeId": "",
+    "doorNodeId": "node-152",
     "polygon": [
       {
         "x": 550,
@@ -6093,7 +6093,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 194,
     "w": 68,
     "h": 72,
-    "doorNodeId": "",
+    "doorNodeId": "node-153",
     "polygon": [
       {
         "x": 563,
@@ -6147,7 +6147,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 229,
     "w": 74,
     "h": 82,
-    "doorNodeId": "",
+    "doorNodeId": "node-entrada A2",
     "polygon": [
       {
         "x": 585,
@@ -6237,7 +6237,7 @@ export const sambilchacaoStores: MapStore[] = [
     "y": 280,
     "w": 32,
     "h": 28,
-    "doorNodeId": "",
+    "doorNodeId": "node-145",
     "polygon": [
       {
         "x": 612,
@@ -6990,7 +6990,7 @@ export const sambilchacaoNodes: NavNode[] = [
     "x": 277,
     "y": 109,
     "connections": [
-      "node-155"
+      "node-pasillo-baño A"
     ]
   },
   {
@@ -7020,7 +7020,7 @@ export const sambilchacaoNodes: NavNode[] = [
       "node-pasillo B4",
       "node-79",
       "node-121",
-      "node-155"
+      "node-pasillo-baño A"
     ]
   },
   {

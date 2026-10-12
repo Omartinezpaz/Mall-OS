@@ -953,28 +953,59 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             r={28}
             color="rgba(15, 23, 42, 0.03)"
           />
-          {/* Losa arquitectónica base con acabado translúcido blanco perla estilo Google Maps */}
-          <RoundedRect
-            x={compiled.viewBox.x - 20}
-            y={compiled.viewBox.y - 20}
-            width={compiled.viewBox.w + 40}
-            height={compiled.viewBox.h + 40}
-            r={28}
-            color="#FFFFFF"
-            opacity={0.95}
-          />
-          <RoundedRect
-            x={compiled.viewBox.x - 20}
-            y={compiled.viewBox.y - 20}
-            width={compiled.viewBox.w + 40}
-            height={compiled.viewBox.h + 40}
-            r={28}
-            color="#E2E8F0"
-            style="stroke"
-            strokeWidth={1.2}
-          />
+          {/* Losa arquitectónica base: Polígono real de planta (footprint) en la capa de fondo */}
+          {compiled.footprintPath ? (
+            <Group>
+              {/* Sombra ambiental del edificio completo */}
+              <Path
+                path={compiled.footprintPath}
+                color="rgba(15, 23, 42, 0.12)"
+                style="stroke"
+                strokeWidth={8 / currentScale}
+                strokeCap="round"
+                strokeJoin="round"
+              />
+              {/* Cuerpo del edificio / planta (Gris perla cálido arquitectónico Google Maps) */}
+              <Path
+                path={compiled.footprintPath}
+                color="#F1F5F9"
+                style="fill"
+                opacity={0.98}
+              />
+              {/* Muro exterior perimetral del edificio */}
+              <Path
+                path={compiled.footprintPath}
+                color="#94A3B8"
+                style="stroke"
+                strokeWidth={1.8 / currentScale}
+                opacity={0.90}
+              />
+            </Group>
+          ) : (
+            <Group>
+              <RoundedRect
+                x={compiled.viewBox.x - 20}
+                y={compiled.viewBox.y - 20}
+                width={compiled.viewBox.w + 40}
+                height={compiled.viewBox.h + 40}
+                r={28}
+                color="#F1F5F9"
+                opacity={0.98}
+              />
+              <RoundedRect
+                x={compiled.viewBox.x - 20}
+                y={compiled.viewBox.y - 20}
+                width={compiled.viewBox.w + 40}
+                height={compiled.viewBox.h + 40}
+                r={28}
+                color="#94A3B8"
+                style="stroke"
+                strokeWidth={1.4}
+              />
+            </Group>
+          )}
 
-          {/* Capa 1: Pasillos peatonales en capas transparentes multicapa estilo Google Maps (Por debajo del avatar y rutas) */}
+          {/* Capa 1: Pasillos peatonales claramente diferenciados (Calzada peatonal en blanco pulido con bordes nítidos sobre la planta) */}
           {compiled.corridors.map((c) => (
             <React.Fragment key={c.id}>
                 {/* 1.0 Sombra de profundidad perimetral suave */}
@@ -986,27 +1017,20 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                   strokeCap="round"
                   strokeJoin="round"
                 />
-                {/* 1.1 Base sólida de pavimento de pasillo (Gris arquitectónico limpio / cálido) */}
+                {/* 1.1 Base sólida de pavimento de pasillo (Blanco puro pulido reflectante) */}
                 <Path
                   path={c.path}
-                  color="#E2E8F0"
+                  color="#FFFFFF"
                   style="fill"
-                  opacity={0.96}
+                  opacity={0.98}
                 />
-                {/* 1.2 Superficie peatonal central (Gris suave de alto contraste contra tiendas y fondo) */}
+                {/* 1.2 Delimitación nítida con vitrinas y locales comerciales */}
                 <Path
                   path={c.path}
-                  color="#EDF2F7"
-                  style="fill"
-                  opacity={0.88}
-                />
-                {/* 1.3 Delimitación nítida con vitrinas y locales comerciales */}
-                <Path
-                  path={c.path}
-                  color="#94A3B8"
+                  color="#CBD5E1"
                   style="stroke"
-                  strokeWidth={0.9 / currentScale}
-                  opacity={0.85}
+                  strokeWidth={0.8 / currentScale}
+                  opacity={0.90}
                 />
               </React.Fragment>
           ))}
@@ -1061,15 +1085,15 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
                   path={s.roofPath}
                   color={isTarget ? '#EFF6FF' : s.fill}
                   style="fill"
-                  opacity={s.isVisible ? 1 : 0.25}
+                  opacity={s.isVisible ? 1 : 0.35}
                 />
                 {/* 4. Contorno arquitectónico del techo */}
                 <Path
                   path={s.roofPath}
-                  color={isTarget ? '#2563EB' : s.stroke}
+                  color={isTarget ? '#2563EB' : (s.stroke || '#94A3B8')}
                   style="stroke"
-                  strokeWidth={isTarget ? 2.6 / currentScale : 0.85 / currentScale}
-                  opacity={s.isVisible ? 1 : 0.35}
+                  strokeWidth={isTarget ? 2.6 / currentScale : 1.1 / currentScale}
+                  opacity={s.isVisible ? 1 : 0.45}
                 />
               </React.Fragment>
             );

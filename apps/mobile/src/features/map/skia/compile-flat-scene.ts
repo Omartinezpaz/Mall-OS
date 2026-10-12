@@ -73,6 +73,7 @@ export interface CompiledFlatUserTrailSegment {
 }
 
 export interface CompiledFlatScene {
+  footprintPath: SkPath | null;
   corridors: CompiledFlatCorridor[];
   zones: CompiledFlatZone[];
   stores: CompiledFlatStore[];
@@ -323,7 +324,10 @@ export function compileFlatScene(scene: FlatScene): CompiledFlatScene {
     }
   }
 
+  const footprintPath = scene.footprint ? pointsToSkPath(scene.footprint, true) : null;
+
   return {
+    footprintPath,
     corridors,
     zones,
     stores,

@@ -104,7 +104,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 397,
     "w": 36,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-63",
+    "slug": "liah_spa",
+    "aliases": ["liah_spa","liah","liah-spa"],
     "polygon": [
       {
         "x": 35,
@@ -150,7 +152,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 404,
     "w": 15,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-62",
     "polygon": [
       {
         "x": 67,
@@ -184,7 +186,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 404,
     "w": 15,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-62",
     "polygon": [
       {
         "x": 82,
@@ -218,7 +220,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 70,
     "w": 141,
     "h": 131,
-    "doorNodeId": "",
+    "doorNodeId": "node-76",
+    "slug": "tijerazo",
+    "aliases": ["tijerazo","tiendas_tijerazo"],
     "polygon": [
       {
         "x": 64,
@@ -276,7 +280,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 71,
     "w": 82,
     "h": 94,
-    "doorNodeId": "",
+    "doorNodeId": "node-77",
+    "slug": "macuto",
+    "aliases": ["macuto"],
     "polygon": [
       {
         "x": 155,
@@ -326,7 +332,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 142,
     "w": 128,
     "h": 80,
-    "doorNodeId": "",
+    "doorNodeId": "node-76",
+    "slug": "lc_waikiki",
+    "aliases": ["lc_waikiki","lcwaikiki"],
     "polygon": [
       {
         "x": 59,
@@ -368,7 +376,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 110,
     "w": 14,
     "h": 49,
-    "doorNodeId": "",
+    "doorNodeId": "node-78",
     "polygon": [
       {
         "x": 223,
@@ -410,7 +418,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 204,
     "w": 51,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-74",
+    "slug": "palacio_del_blumer",
+    "aliases": ["palacio_del_blumer","palacio-del-blumer","palacio_blumer"],
     "polygon": [
       {
         "x": 103,
@@ -456,7 +466,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 203,
     "w": 82,
     "h": 71,
-    "doorNodeId": "",
+    "doorNodeId": "node-73",
+    "slug": "bath_body",
+    "aliases": ["bath_body","bath_and_body_works","bath_body_works","bath-body-works","bbw"],
     "polygon": [
       {
         "x": 121,
@@ -506,7 +518,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 378,
     "w": 36,
     "h": 19,
-    "doorNodeId": "",
+    "doorNodeId": "node-63",
+    "slug": "sansa",
+    "aliases": ["sansa"],
     "polygon": [
       {
         "x": 35,
@@ -544,7 +558,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 363,
     "w": 33,
     "h": 17,
-    "doorNodeId": "",
+    "doorNodeId": "node-65",
     "polygon": [
       {
         "x": 70,
@@ -586,7 +600,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 351,
     "w": 38,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-66",
     "polygon": [
       {
         "x": 64,
@@ -628,7 +642,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 334,
     "w": 42,
     "h": 17,
-    "doorNodeId": "",
+    "doorNodeId": "node-68",
     "polygon": [
       {
         "x": 40,
@@ -666,7 +680,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 320,
     "w": 34,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-68",
     "polygon": [
       {
         "x": 78,
@@ -708,7 +722,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 306,
     "w": 33,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-69",
     "polygon": [
       {
         "x": 80,
@@ -754,7 +768,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 266,
     "w": 38,
     "h": 43,
-    "doorNodeId": "",
+    "doorNodeId": "node-70",
     "polygon": [
       {
         "x": 87,
@@ -800,7 +814,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 242,
     "w": 45,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-71",
+    "slug": "estivaneli",
+    "aliases": ["estivaneli"],
     "polygon": [
       {
         "x": 96,
@@ -850,7 +866,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 216,
     "w": 63,
     "h": 79,
-    "doorNodeId": "",
+    "doorNodeId": "node-71",
+    "slug": "banco_del_tesoro",
+    "aliases": ["banco_del_tesoro","tesoro"],
     "polygon": [
       {
         "x": 109,
@@ -908,7 +926,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 398,
     "w": 16,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-60",
     "polygon": [
       {
         "x": 104,
@@ -942,7 +960,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 379,
     "w": 26,
     "h": 19,
-    "doorNodeId": "",
+    "doorNodeId": "node-58",
     "polygon": [
       {
         "x": 120,
@@ -980,7 +998,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 366,
     "w": 25,
     "h": 13,
-    "doorNodeId": "",
+    "doorNodeId": "node-58",
     "polygon": [
       {
         "x": 120,
@@ -1018,7 +1036,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 354,
     "w": 12,
     "h": 14,
-    "doorNodeId": "",
+    "doorNodeId": "node-57",
     "polygon": [
       {
         "x": 106,
@@ -1060,7 +1078,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 356,
     "w": 6,
     "h": 6,
-    "doorNodeId": "",
+    "doorNodeId": "node-56",
     "polygon": [
       {
         "x": 106,
@@ -1094,7 +1112,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 355,
     "w": 8,
     "h": 7,
-    "doorNodeId": "",
+    "doorNodeId": "node-56",
     "polygon": [
       {
         "x": 112,
@@ -1128,7 +1146,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 346,
     "w": 14,
     "h": 66,
-    "doorNodeId": "",
+    "doorNodeId": "node-55",
     "polygon": [
       {
         "x": 133,
@@ -1182,7 +1200,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 332,
     "w": 43,
     "h": 81,
-    "doorNodeId": "",
+    "doorNodeId": "door-local_117",
+    "slug": "victoria_secret",
+    "aliases": ["victoria_secret","victorias_secret"],
     "polygon": [
       {
         "x": 173,
@@ -1248,7 +1268,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 333,
     "w": 14,
     "h": 52,
-    "doorNodeId": "",
+    "doorNodeId": "node-38-bhype",
     "polygon": [
       {
         "x": 179,
@@ -1282,7 +1302,8 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 333,
     "w": 16,
     "h": 69,
-    "doorNodeId": "",
+    "doorNodeId": "node-39-bunny",
+    "aliases": ["psycho_bunny","psyco_bunny"],
     "polygon": [
       {
         "x": 192,
@@ -1324,7 +1345,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 333,
     "w": 27,
     "h": 69,
-    "doorNodeId": "",
+    "doorNodeId": "node-41",
     "polygon": [
       {
         "x": 224,
@@ -1366,7 +1387,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 333,
     "w": 19,
     "h": 41,
-    "doorNodeId": "",
+    "doorNodeId": "node-42",
     "polygon": [
       {
         "x": 224,
@@ -1408,7 +1429,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 334,
     "w": 28,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-42",
     "polygon": [
       {
         "x": 249,
@@ -1458,7 +1479,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 334,
     "w": 15,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-43",
+    "slug": "skechers",
+    "aliases": ["skechers"],
     "polygon": [
       {
         "x": 267,
@@ -1500,7 +1523,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 334,
     "w": 15,
     "h": 49,
-    "doorNodeId": "",
+    "doorNodeId": "node-44",
     "polygon": [
       {
         "x": 274,
@@ -1534,7 +1557,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 334,
     "w": 28,
     "h": 70,
-    "doorNodeId": "",
+    "doorNodeId": "node-46",
     "polygon": [
       {
         "x": 289,
@@ -1576,7 +1599,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 334,
     "w": 31,
     "h": 71,
-    "doorNodeId": "",
+    "doorNodeId": "node-140",
     "polygon": [
       {
         "x": 322,
@@ -1622,7 +1645,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 361,
     "w": 26,
     "h": 44,
-    "doorNodeId": "",
+    "doorNodeId": "node-140",
     "polygon": [
       {
         "x": 344,
@@ -1672,7 +1695,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 350,
     "w": 20,
     "h": 55,
-    "doorNodeId": "",
+    "doorNodeId": "node-139",
     "polygon": [
       {
         "x": 383,
@@ -1726,7 +1749,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 335,
     "w": 46,
     "h": 84,
-    "doorNodeId": "",
+    "doorNodeId": "node-139",
     "polygon": [
       {
         "x": 424,
@@ -1788,7 +1811,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 336,
     "w": 19,
     "h": 37,
-    "doorNodeId": "",
+    "doorNodeId": "node-137",
     "polygon": [
       {
         "x": 415,
@@ -1822,7 +1845,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 337,
     "w": 56,
     "h": 84,
-    "doorNodeId": "",
+    "doorNodeId": "node-137",
+    "slug": "farmatodo",
+    "aliases": ["farmatodo"],
     "polygon": [
       {
         "x": 434,
@@ -1888,7 +1913,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 338,
     "w": 13,
     "h": 61,
-    "doorNodeId": "",
+    "doorNodeId": "node-135",
     "polygon": [
       {
         "x": 466,
@@ -1922,7 +1947,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 338,
     "w": 67,
     "h": 84,
-    "doorNodeId": "",
+    "doorNodeId": "node-135",
+    "slug": "pull_bear",
+    "aliases": ["pull_bear","pull_and_bear"],
     "polygon": [
       {
         "x": 486,
@@ -1976,7 +2003,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 316,
     "w": 157,
     "h": 104,
-    "doorNodeId": "",
+    "doorNodeId": "node-146",
+    "slug": "cines_unidos",
+    "aliases": ["cines_unidos"],
     "polygon": [
       {
         "x": 610,
@@ -2074,7 +2103,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 303,
     "w": 25,
     "h": 16,
-    "doorNodeId": "",
+    "doorNodeId": "node-150",
     "polygon": [
       {
         "x": 557,
@@ -2116,7 +2145,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 295,
     "w": 10,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-151",
     "polygon": [
       {
         "x": 532,
@@ -2150,7 +2179,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 295,
     "w": 15,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-151",
     "polygon": [
       {
         "x": 522,
@@ -2184,7 +2213,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 283,
     "w": 20,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-132",
+    "slug": "mario_hernandez",
+    "aliases": ["mario_hernandez"],
     "polygon": [
       {
         "x": 504,
@@ -2227,6 +2258,8 @@ export const storesSambilAutopista: MapStore[] = [
     "w": 20,
     "h": 23,
     "doorNodeId": "door-local_48",
+    "slug": "crocs",
+    "aliases": ["crocs"],
     "polygon": [
       {
         "x": 557,
@@ -2268,7 +2301,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 264,
     "w": 37,
     "h": 25,
-    "doorNodeId": "",
+    "doorNodeId": "node-148",
     "polygon": [
       {
         "x": 545,
@@ -2310,7 +2343,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 250,
     "w": 37,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-94",
     "polygon": [
       {
         "x": 533,
@@ -2344,7 +2377,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 240,
     "w": 36,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-94",
     "polygon": [
       {
         "x": 523,
@@ -2412,7 +2445,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 215,
     "w": 26,
     "h": 47,
-    "doorNodeId": "",
+    "doorNodeId": "node-96",
     "polygon": [
       {
         "x": 494,
@@ -2466,7 +2499,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 221,
     "w": 21,
     "h": 41,
-    "doorNodeId": "",
+    "doorNodeId": "node-97",
     "polygon": [
       {
         "x": 461,
@@ -2512,7 +2545,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 236,
     "w": 23,
     "h": 26,
-    "doorNodeId": "",
+    "doorNodeId": "node-99",
     "polygon": [
       {
         "x": 448,
@@ -2554,7 +2587,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 247,
     "w": 20,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-99",
     "polygon": [
       {
         "x": 449,
@@ -2596,7 +2629,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 258,
     "w": 21,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-100",
     "polygon": [
       {
         "x": 429,
@@ -2630,7 +2663,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 274,
     "w": 18,
     "h": 17,
-    "doorNodeId": "",
+    "doorNodeId": "node-102",
     "polygon": [
       {
         "x": 416,
@@ -2664,7 +2697,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 281,
     "w": 23,
     "h": 23,
-    "doorNodeId": "",
+    "doorNodeId": "node-102",
     "polygon": [
       {
         "x": 410,
@@ -2698,7 +2731,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 294,
     "w": 26,
     "h": 23,
-    "doorNodeId": "",
+    "doorNodeId": "node-104",
     "polygon": [
       {
         "x": 399,
@@ -2744,7 +2777,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 297,
     "w": 15,
     "h": 20,
-    "doorNodeId": "",
+    "doorNodeId": "node-129",
     "polygon": [
       {
         "x": 425,
@@ -2778,7 +2811,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 267,
     "w": 28,
     "h": 50,
-    "doorNodeId": "",
+    "doorNodeId": "node-129",
     "polygon": [
       {
         "x": 453,
@@ -2816,7 +2849,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 267,
     "w": 39,
     "h": 50,
-    "doorNodeId": "",
+    "doorNodeId": "node-131",
     "polygon": [
       {
         "x": 480,
@@ -2858,7 +2891,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 181,
     "w": 26,
     "h": 34,
-    "doorNodeId": "",
+    "doorNodeId": "node-110",
     "polygon": [
       {
         "x": 442,
@@ -2916,7 +2949,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 199,
     "w": 28,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-110",
     "polygon": [
       {
         "x": 414,
@@ -2950,7 +2983,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 176,
     "w": 19,
     "h": 30,
-    "doorNodeId": "",
+    "doorNodeId": "node-112",
     "polygon": [
       {
         "x": 423,
@@ -2992,7 +3025,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 198,
     "w": 39,
     "h": 35,
-    "doorNodeId": "",
+    "doorNodeId": "node-110",
     "polygon": [
       {
         "x": 404,
@@ -3026,7 +3059,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 208,
     "w": 40,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-109",
     "polygon": [
       {
         "x": 395,
@@ -3098,7 +3131,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 246,
     "w": 29,
     "h": 28,
-    "doorNodeId": "",
+    "doorNodeId": "node-106",
     "polygon": [
       {
         "x": 384,
@@ -3132,7 +3165,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 259,
     "w": 20,
     "h": 32,
-    "doorNodeId": "",
+    "doorNodeId": "node-144",
     "polygon": [
       {
         "x": 392,
@@ -3174,7 +3207,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 238,
     "w": 25,
     "h": 47,
-    "doorNodeId": "",
+    "doorNodeId": "node-144",
     "polygon": [
       {
         "x": 384,
@@ -3228,7 +3261,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 247,
     "w": 16,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-143",
     "polygon": [
       {
         "x": 360,
@@ -3262,7 +3295,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 247,
     "w": 27,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-143",
     "polygon": [
       {
         "x": 345,
@@ -3304,7 +3337,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 246,
     "w": 47,
     "h": 69,
-    "doorNodeId": "",
+    "doorNodeId": "node-49",
+    "slug": "tommy",
+    "aliases": ["tommy","tommy_hilfiger"],
     "polygon": [
       {
         "x": 319,
@@ -3338,7 +3373,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 246,
     "w": 19,
     "h": 68,
-    "doorNodeId": "",
+    "doorNodeId": "node-49",
     "polygon": [
       {
         "x": 263,
@@ -3380,7 +3415,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 263,
     "w": 18,
     "h": 51,
-    "doorNodeId": "",
+    "doorNodeId": "node-49",
+    "slug": "banco_provincial",
+    "aliases": ["banco_provincial","provincial","bbva"],
     "polygon": [
       {
         "x": 253,
@@ -3414,7 +3451,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 263,
     "w": 14,
     "h": 51,
-    "doorNodeId": "",
+    "doorNodeId": "node-51",
+    "slug": "james_bark",
+    "aliases": ["james_bark"],
     "polygon": [
       {
         "x": 221,
@@ -3448,7 +3487,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 263,
     "w": 41,
     "h": 51,
-    "doorNodeId": "",
+    "doorNodeId": "node-51",
+    "slug": "mng",
+    "aliases": ["mng","mango","mango_mng"],
     "polygon": [
       {
         "x": 221,
@@ -3486,7 +3527,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 279,
     "w": 14,
     "h": 34,
-    "doorNodeId": "",
+    "doorNodeId": "node-53",
     "polygon": [
       {
         "x": 175,
@@ -3524,7 +3565,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 275,
     "w": 36,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-53",
     "polygon": [
       {
         "x": 166,
@@ -3578,7 +3619,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 256,
     "w": 32,
     "h": 24,
-    "doorNodeId": "",
+    "doorNodeId": "node-127",
     "polygon": [
       {
         "x": 143,
@@ -3616,7 +3657,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 242,
     "w": 33,
     "h": 33,
-    "doorNodeId": "",
+    "doorNodeId": "node-pasillo C2",
     "polygon": [
       {
         "x": 155,
@@ -3650,7 +3691,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 229,
     "w": 28,
     "h": 31,
-    "doorNodeId": "",
+    "doorNodeId": "node-126",
     "polygon": [
       {
         "x": 201,
@@ -3692,7 +3733,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 217,
     "w": 26,
     "h": 38,
-    "doorNodeId": "",
+    "doorNodeId": "node-126",
     "polygon": [
       {
         "x": 208,
@@ -3734,7 +3775,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 210,
     "w": 27,
     "h": 45,
-    "doorNodeId": "",
+    "doorNodeId": "node-124",
     "polygon": [
       {
         "x": 195,
@@ -3788,7 +3829,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 215,
     "w": 14,
     "h": 40,
-    "doorNodeId": "",
+    "doorNodeId": "node-123",
     "polygon": [
       {
         "x": 222,
@@ -3826,7 +3867,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 195,
     "w": 27,
     "h": 60,
-    "doorNodeId": "",
+    "doorNodeId": "node-122",
     "polygon": [
       {
         "x": 252,
@@ -3884,7 +3925,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 179,
     "w": 25,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-121",
+    "slug": "bellagio",
+    "aliases": ["bellagio","joyeria_bellagio"],
     "polygon": [
       {
         "x": 252,
@@ -3938,7 +3981,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 172,
     "w": 25,
     "h": 66,
-    "doorNodeId": "",
+    "doorNodeId": "node-120",
     "polygon": [
       {
         "x": 291,
@@ -3984,7 +4027,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 168,
     "w": 19,
     "h": 70,
-    "doorNodeId": "",
+    "doorNodeId": "node-119",
     "polygon": [
       {
         "x": 310,
@@ -4018,7 +4061,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 167,
     "w": 28,
     "h": 72,
-    "doorNodeId": "",
+    "doorNodeId": "node-118",
     "polygon": [
       {
         "x": 310,
@@ -4068,7 +4111,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 172,
     "w": 18,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-118",
+    "slug": "converse",
+    "aliases": ["converse"],
     "polygon": [
       {
         "x": 346,
@@ -4102,7 +4147,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 172,
     "w": 15,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-116",
     "polygon": [
       {
         "x": 346,
@@ -4136,7 +4181,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 172,
     "w": 15,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-115",
     "polygon": [
       {
         "x": 360,
@@ -4170,7 +4215,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 171,
     "w": 13,
     "h": 55,
-    "doorNodeId": "",
+    "doorNodeId": "node-114",
     "polygon": [
       {
         "x": 374,
@@ -4208,7 +4253,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 171,
     "w": 15,
     "h": 39,
-    "doorNodeId": "",
+    "doorNodeId": "node-113",
     "polygon": [
       {
         "x": 386,
@@ -4242,7 +4287,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 119,
     "w": 36,
     "h": 45,
-    "doorNodeId": "",
+    "doorNodeId": "door-local_118",
+    "slug": "jump",
+    "aliases": ["jump"],
     "polygon": [
       {
         "x": 243,
@@ -4304,7 +4351,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 120,
     "w": 11,
     "h": 32,
-    "doorNodeId": "",
+    "doorNodeId": "node-80",
     "polygon": [
       {
         "x": 292,
@@ -4342,7 +4389,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 120,
     "w": 12,
     "h": 29,
-    "doorNodeId": "",
+    "doorNodeId": "node-81",
     "polygon": [
       {
         "x": 304,
@@ -4380,7 +4427,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 112,
     "w": 16,
     "h": 35,
-    "doorNodeId": "",
+    "doorNodeId": "node-82",
     "polygon": [
       {
         "x": 304,
@@ -4434,7 +4481,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 119,
     "w": 18,
     "h": 26,
-    "doorNodeId": "",
+    "doorNodeId": "node-83",
     "polygon": [
       {
         "x": 325,
@@ -4472,7 +4519,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 119,
     "w": 18,
     "h": 21,
-    "doorNodeId": "",
+    "doorNodeId": "node-83",
+    "slug": "hang_ten",
+    "aliases": ["hang_ten"],
     "polygon": [
       {
         "x": 338,
@@ -4506,7 +4555,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 119,
     "w": 19,
     "h": 22,
-    "doorNodeId": "",
+    "doorNodeId": "node-86",
     "polygon": [
       {
         "x": 356,
@@ -4540,7 +4589,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 89,
     "w": 17,
     "h": 60,
-    "doorNodeId": "",
+    "doorNodeId": "node-86",
     "polygon": [
       {
         "x": 388,
@@ -4586,7 +4635,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 91,
     "w": 15,
     "h": 59,
-    "doorNodeId": "",
+    "doorNodeId": "node-87",
     "polygon": [
       {
         "x": 389,
@@ -4636,7 +4685,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 97,
     "w": 30,
     "h": 61,
-    "doorNodeId": "",
+    "doorNodeId": "node-87",
+    "slug": "las_villas",
+    "aliases": ["las_villas","perfumeria_las_villas"],
     "polygon": [
       {
         "x": 401,
@@ -4686,7 +4737,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 103,
     "w": 34,
     "h": 65,
-    "doorNodeId": "",
+    "doorNodeId": "node-89",
+    "slug": "springfield",
+    "aliases": ["springfield"],
     "polygon": [
       {
         "x": 431,
@@ -4748,7 +4801,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 113,
     "w": 30,
     "h": 48,
-    "doorNodeId": "",
+    "doorNodeId": "node-90",
+    "slug": "sportland",
+    "aliases": ["sportland"],
     "polygon": [
       {
         "x": 458,
@@ -4802,7 +4857,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 125,
     "w": 37,
     "h": 44,
-    "doorNodeId": "",
+    "doorNodeId": "node-91",
+    "slug": "bnc",
+    "aliases": ["bnc","banco_nacional_de_credito","local_bnc"],
     "polygon": [
       {
         "x": 485,
@@ -4860,7 +4917,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 148,
     "w": 49,
     "h": 36,
-    "doorNodeId": "",
+    "doorNodeId": "node-92",
     "polygon": [
       {
         "x": 492,
@@ -4902,7 +4959,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 163,
     "w": 51,
     "h": 44,
-    "doorNodeId": "",
+    "doorNodeId": "node-92",
+    "slug": "optica_billi",
+    "aliases": ["optica_billi"],
     "polygon": [
       {
         "x": 541,
@@ -4952,7 +5011,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 171,
     "w": 51,
     "h": 49,
-    "doorNodeId": "",
+    "doorNodeId": "node-152",
+    "slug": "womens_secret",
+    "aliases": ["womens_secret","women_secret"],
     "polygon": [
       {
         "x": 550,
@@ -4986,7 +5047,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 194,
     "w": 68,
     "h": 72,
-    "doorNodeId": "",
+    "doorNodeId": "node-153",
+    "slug": "stradivarius",
+    "aliases": ["stradivarius"],
     "polygon": [
       {
         "x": 563,
@@ -5040,7 +5103,9 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 229,
     "w": 74,
     "h": 82,
-    "doorNodeId": "",
+    "doorNodeId": "node-entrada A2",
+    "slug": "bershka",
+    "aliases": ["bershka"],
     "polygon": [
       {
         "x": 585,
@@ -5130,7 +5195,7 @@ export const storesSambilAutopista: MapStore[] = [
     "y": 280,
     "w": 32,
     "h": 28,
-    "doorNodeId": "",
+    "doorNodeId": "node-145",
     "polygon": [
       {
         "x": 612,
@@ -5302,6 +5367,32 @@ export const floorAutopistaData: MapFloor = {
   "level": 1,
   "width": 720,
   "height": 540,
+  "orientation": {
+    "northAngle": -2.356194
+  },
+  "zones": [
+    {
+      "id": "zone-norte",
+      "label": "Zona Norte (Tijerazo)",
+      "cardinal": "north",
+      "color": "#3B82F6",
+      "polygon": [{ "x": 50, "y": 50 }, { "x": 250, "y": 50 }, { "x": 250, "y": 220 }, { "x": 50, "y": 220 }]
+    },
+    {
+      "id": "zone-sur",
+      "label": "Zona Sur (Cines / Entrada A)",
+      "cardinal": "south",
+      "color": "#EF4444",
+      "polygon": [{ "x": 550, "y": 300 }, { "x": 720, "y": 300 }, { "x": 720, "y": 440 }, { "x": 550, "y": 440 }]
+    },
+    {
+      "id": "zone-central",
+      "label": "Plaza Central",
+      "cardinal": "center",
+      "color": "#F59E0B",
+      "polygon": [{ "x": 300, "y": 260 }, { "x": 420, "y": 260 }, { "x": 420, "y": 380 }, { "x": 300, "y": 380 }]
+    }
+  ],
   "footprint": [
     {
       "x": 61,
@@ -6257,7 +6348,7 @@ export const nodesAutopista: NavNode[] = [
     "x": 277,
     "y": 109,
     "connections": [
-      "node-155"
+      "node-pasillo-baño A"
     ]
   },
   {
@@ -6287,7 +6378,7 @@ export const nodesAutopista: NavNode[] = [
       "node-pasillo B4",
       "node-79",
       "node-121",
-      "node-155"
+      "node-pasillo-baño A"
     ]
   },
   {

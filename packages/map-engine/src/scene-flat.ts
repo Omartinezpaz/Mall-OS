@@ -234,6 +234,8 @@ export interface FlatScene {
   items: FlatSceneItem[];
   /** ViewBox en coords del plano. El renderer lo proyecta a pantalla. */
   viewBox: Rect;
+  /** Polígono perimetral del plano del piso (losa de planta). */
+  footprint?: Point[];
   /** Metadatos para el HUD y orientación. */
   meta: {
     /** Cantidad de locales visibles en el viewport. */
@@ -997,6 +999,7 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
   return {
     items,
     viewBox,
+    footprint: floor.footprint && floor.footprint.length >= 3 ? floor.footprint : undefined,
     meta: {
       visibleStoreCount: visibleStores.length,
       viewportRadius: Math.max(viewBox.w, viewBox.h) / 2,
