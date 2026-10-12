@@ -66,25 +66,9 @@ export default function LoginScreen() {
     setIsSigningIn(true);
     try {
       await signInWithGoogle();
-      setTimeout(() => {
-        router.replace('/(tabs)');
-      }, 350);
+      router.replace('/(tabs)');
     } catch (err) {
       console.log('[Login] Error Google auth:', err);
-      // Fallback a invitado seguro si hay error en demo
-      await signInAsGuest();
-      router.replace('/(tabs)');
-    } finally {
-      setIsSigningIn(false);
-    }
-  };
-
-  const handleGuestLogin = async () => {
-    if (isSigningIn) return;
-    setIsSigningIn(true);
-    try {
-      await signInAsGuest();
-      router.replace('/(tabs)');
     } finally {
       setIsSigningIn(false);
     }
@@ -123,7 +107,7 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={styles.skipBtn}
           activeOpacity={0.75}
-          onPress={handleGuestLogin}
+          onPress={() => router.replace('/(tabs)')}
         >
           <Text style={styles.skipBtnText}>Saltar</Text>
         </TouchableOpacity>
@@ -147,7 +131,6 @@ export default function LoginScreen() {
           />
         </View>
 
-        <Text style={styles.brandTitle}>Mall OS</Text>
         <Text style={styles.brandTagline}>El Sistema Operativo del Centro Comercial</Text>
         <Text style={styles.brandSub}>
           Navegación en interiores, tiendas, catálogo y concierge inteligente
@@ -171,16 +154,6 @@ export default function LoginScreen() {
               <Text style={styles.googleButtonText}>Continuar con Google</Text>
             </>
           )}
-        </TouchableOpacity>
-
-        {/* Botón Secundario: Explorar como Invitado */}
-        <TouchableOpacity
-          style={styles.guestButton}
-          activeOpacity={0.8}
-          onPress={handleGuestLogin}
-          disabled={isSigningIn}
-        >
-          <Text style={styles.guestButtonText}>Continuar como Invitado</Text>
         </TouchableOpacity>
 
         {/* Indicadores de Puntos Inferiores (Estilo Onboarding) */}
@@ -284,10 +257,10 @@ const styles = StyleSheet.create({
     textShadowRadius: 6,
   },
   brandTagline: {
-    color: '#E0E7FF',
-    fontSize: 15,
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '700',
-    marginTop: 6,
+    marginTop: 16,
     textAlign: 'center',
     letterSpacing: 0.2,
   },

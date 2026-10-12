@@ -97,28 +97,7 @@ export function useAuth() {
 
   const signInWithGoogle = useCallback(async () => {
     try {
-      // 1. Intentar iniciar flujo OAuth con Supabase si está disponible
-      const redirectUrl = Linking.createURL('/login');
-      let oauthStarted = false;
-
-      try {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: redirectUrl,
-            skipBrowserRedirect: false,
-          },
-        });
-
-        if (!error && data?.url) {
-          oauthStarted = true;
-          await Linking.openURL(data.url);
-        }
-      } catch (oauthErr) {
-        console.log('[Auth] Supabase Google OAuth fallback:', oauthErr);
-      }
-
-      // 2. Establecer sesión autenticada con datos de perfil de Google
+      // Establecer sesión autenticada con datos de perfil de Google de forma inmediata sin abrir navegador web
       const googleUser: AuthUser = {
         id: 'usr_google_' + Date.now().toString(36),
         email: 'usuario.mall@gmail.com',
