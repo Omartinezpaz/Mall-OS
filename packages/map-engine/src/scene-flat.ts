@@ -178,7 +178,7 @@ export interface FlatZone {
 export interface FlatProp {
   kind: 'prop';
   id: string;
-  propKind: 'bench' | 'planter' | 'tree';
+  propKind: 'bench' | 'planter' | 'tree' | 'escalator' | 'stairs' | 'elevator';
   x: number;
   y: number;
   w?: number;
@@ -189,7 +189,7 @@ export interface FlatProp {
 export interface FlatPoi {
   kind: 'poi';
   id: string;
-  poiKind: 'wc' | 'atm' | 'info' | 'escalator' | 'elevator';
+  poiKind: 'wc' | 'atm' | 'info' | 'escalator' | 'elevator' | 'stairs';
   x: number;
   y: number;
   label?: string;
@@ -877,8 +877,76 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     }
   }
 
-  // --- 11. Puntos de Interés / Servicios: Símbolos de Baños (WC) y Ascensores ---
+  // --- 11. Mobiliario Arquitectónico y Conexiones Verticales (Props del Plano) ---
+  if (floor.props && floor.props.length > 0) {
+    for (const prop of floor.props) {
+      if (prop.kind === 'stairs' || prop.kind === 'escalator') {
+        items.push({
+          kind: 'prop',
+          id: prop.id,
+          propKind: prop.kind,
+          x: prop.rect.x,
+          y: prop.rect.y,
+          w: prop.rect.w,
+          h: prop.rect.h,
+        });
+        items.push({
+          kind: 'poi',
+          id: `poi-${prop.id}`,
+          poiKind: prop.kind,
+          x: prop.rect.x + prop.rect.w / 2,
+          y: prop.rect.y + prop.rect.h / 2,
+          label: prop.kind === 'escalator' ? 'Escalera Mecánica' : 'Escaleras',
+        });
+      } else if (prop.kind === 'elevator') {
+        items.push({
+          kind: 'prop',
+          id: prop.id,
+          propKind: 'elevator',
+          x: prop.rect.x,
+          y: prop.rect.y,
+          w: prop.rect.w,
+          h: prop.rect.h,
+        });
+        items.push({
+          kind: 'poi',
+          id: `poi-${prop.id}`,
+          poiKind: 'elevator',
+          x: prop.rect.x + prop.rect.w / 2,
+          y: prop.rect.y + prop.rect.h / 2,
+          label: 'Ascensor',
+        });
+      } else if (prop.kind === 'poi') {
+        items.push({
+          kind: 'poi',
+          id: prop.id,
+          poiKind: prop.poi,
+          x: prop.x,
+          y: prop.y,
+        });
+      }
+    }
+  }
+
+  // --- 12. Puntos de Interés / Servicios: Símbolos de Baños (WC) y Ascensores ---
   const isAccessible = opts.accessibleOnly ?? false;
+
+  // Baños identificados en locales comerciales (baño A, baño B)
+  for (const s of stores) {
+    const sName = s.name.toLowerCase();
+    if (sName.includes('baño') || sName.includes('wc') || s.category === 'restroom') {
+      const c = storeCenter(s);
+      items.push({
+        kind: 'poi',
+        id: `poi-wc-${s.id}`,
+        poiKind: 'wc',
+        x: c.x,
+        y: c.y,
+        label: s.name,
+      });
+    }
+  }
+
   const floorWcs = [
     { id: 'poi-wc-1', poiKind: 'wc' as const, x: 200, y: 78, label: isAccessible ? 'WC Accesible' : 'Baños' },
     { id: 'poi-wc-2', poiKind: 'wc' as const, x: 495, y: 78, label: isAccessible ? 'WC Accesible' : 'Baños' },
@@ -892,18 +960,16 @@ export function buildFlatScene(map: MallMapData, opts: FlatSceneOptions): FlatSc
     });
   }
 
-  if (isAccessible) {
-    const floorElevs = [
-      { id: 'poi-elev-1', poiKind: 'elevator' as const, x: 352, y: 248, label: 'Ascensor' },
-      { id: 'poi-elev-2', poiKind: 'elevator' as const, x: 74, y: 248, label: 'Ascensor' },
-      { id: 'poi-elev-3', poiKind: 'elevator' as const, x: 586, y: 248, label: 'Ascensor' },
-    ];
-    for (const el of floorElevs) {
-      items.push({
-        kind: 'poi',
-        ...el,
-      });
-    }
+  const floorElevs = [
+    { id: 'poi-elev-1', poiKind: 'elevator' as const, x: 352, y: 248, label: 'Ascensor Central' },
+    { id: 'poi-elev-2', poiKind: 'elevator' as const, x: 74, y: 248, label: 'Ascensor Jardín' },
+    { id: 'poi-elev-3', poiKind: 'elevator' as const, x: 586, y: 248, label: 'Ascensor Música' },
+  ];
+  for (const el of floorElevs) {
+    items.push({
+      kind: 'poi',
+      ...el,
+    });
   }
 
   // --- 12. Personas / Siluetas de Peatones en Pasillos ---

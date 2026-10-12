@@ -1260,12 +1260,123 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
               );
             }
 
+            if (prop.propKind === 'stairs' || prop.propKind === 'escalator') {
+              const pW = prop.w ?? 14;
+              const pH = prop.h ?? 14;
+              const isEsc = prop.propKind === 'escalator';
+              return (
+                <Group key={prop.id}>
+                  {/* Sombra de la caja de escaleras */}
+                  <RoundedRect
+                    x={prop.x - pW / 2}
+                    y={prop.y - pH / 2 + 1}
+                    width={pW}
+                    height={pH}
+                    r={2.5}
+                    color="rgba(15, 23, 42, 0.12)"
+                  />
+                  {/* Base de acero arquitectónico */}
+                  <RoundedRect
+                    x={prop.x - pW / 2}
+                    y={prop.y - pH / 2}
+                    width={pW}
+                    height={pH}
+                    r={2.5}
+                    color={isEsc ? '#EFF6FF' : '#F8FAFC'}
+                  />
+                  <RoundedRect
+                    x={prop.x - pW / 2}
+                    y={prop.y - pH / 2}
+                    width={pW}
+                    height={pH}
+                    r={2.5}
+                    color={isEsc ? '#3B82F6' : '#94A3B8'}
+                    style="stroke"
+                    strokeWidth={0.9 / currentScale}
+                  />
+                  {/* Peldaños estriados */}
+                  {[-3.5, 0, 3.5].map((off, sIdx) => (
+                    <RoundedRect
+                      key={`step-${prop.id}-${sIdx}`}
+                      x={prop.x - pW / 2 + 2}
+                      y={prop.y + off - 1}
+                      width={pW - 4}
+                      height={2}
+                      r={0.6}
+                      color={isEsc ? '#93C5FD' : '#CBD5E1'}
+                    />
+                  ))}
+                  {/* Pasamanos de seguridad */}
+                  <RoundedRect
+                    x={prop.x - pW / 2 + 0.8}
+                    y={prop.y - pH / 2 + 1}
+                    width={1.2}
+                    height={pH - 2}
+                    r={0.6}
+                    color={isEsc ? '#1D4ED8' : '#475569'}
+                  />
+                  <RoundedRect
+                    x={prop.x + pW / 2 - 2.0}
+                    y={prop.y - pH / 2 + 1}
+                    width={1.2}
+                    height={pH - 2}
+                    r={0.6}
+                    color={isEsc ? '#1D4ED8' : '#475569'}
+                  />
+                </Group>
+              );
+            }
+
+            if (prop.propKind === 'elevator') {
+              const eW = prop.w ?? 13;
+              const eH = prop.h ?? 13;
+              return (
+                <Group key={prop.id}>
+                  <RoundedRect
+                    x={prop.x - eW / 2}
+                    y={prop.y - eH / 2 + 1}
+                    width={eW}
+                    height={eH}
+                    r={2.2}
+                    color="rgba(15, 23, 42, 0.14)"
+                  />
+                  {/* Cabina de cristal templado panorámico */}
+                  <RoundedRect
+                    x={prop.x - eW / 2}
+                    y={prop.y - eH / 2}
+                    width={eW}
+                    height={eH}
+                    r={2.2}
+                    color="rgba(224, 242, 254, 0.90)"
+                  />
+                  <RoundedRect
+                    x={prop.x - eW / 2}
+                    y={prop.y - eH / 2}
+                    width={eW}
+                    height={eH}
+                    r={2.2}
+                    color="#0284C7"
+                    style="stroke"
+                    strokeWidth={1.0 / currentScale}
+                  />
+                  {/* Puertas de ascensor */}
+                  <RoundedRect
+                    x={prop.x - 0.4}
+                    y={prop.y - eH / 2 + 1.5}
+                    width={0.8}
+                    height={eH - 3}
+                    r={0.4}
+                    color="#0369A1"
+                  />
+                </Group>
+              );
+            }
+
             return null;
           })}
 
           {/* Capa 4.2: Siluetas de peatones / personas en pasillos */}
           {compiled.pedestrians.map((ped) => {
-            const currentScale = baseScale * zoom.value;
             const shoulderW = 4.8 / currentScale;
             const shoulderH = 2.4 / currentScale;
             const headR = 1.4 / currentScale;
@@ -1313,56 +1424,116 @@ export const FlatMapCanvas = React.forwardRef<FlatMapCanvasHandle, FlatMapCanvas
             );
           })}
 
-          {/* Capa 4.3: Puntos de Interés de Servicios: Baños (WC) y Ascensores */}
-          {compiled.pois.map((poi) => {
+          {/* Capa 4.3: Badges de Puntos de Interés / Servicios Oficiales estilo Google Maps (Baños, Escaleras, Ascensores, Cajeros) */}
+          {compiled.pois.map((poi, pIdx) => {
+            const isWc = poi.poiKind === 'wc';
             const isElev = poi.poiKind === 'elevator';
-            const isAcc = poi.id.includes('acc') || (poi.label && poi.label.toLowerCase().includes('accesible'));
-            const poiText = isElev ? 'Ascensor' : (isAcc ? 'WC Acc' : 'WC');
-            const poiW = isElev ? 32 : (isAcc ? 28 : 18);
-            const poiH = 11;
-            const textOffset = isElev ? 13 : (isAcc ? 11 : 6.5);
-            const bgColor = isAcc || isElev ? '#F0F9FF' : '#EFF6FF';
-            const strokeColor = isAcc || isElev ? '#0284C7' : '#3B82F6';
-            const textColor = isAcc || isElev ? '#0369A1' : '#1D4ED8';
+            const isEsc = poi.poiKind === 'escalator';
+            const isStairs = poi.poiKind === 'stairs';
+            const isAtm = poi.poiKind === 'atm';
+
+            // Configuración cromática y visual oficial por servicio
+            let badgeBg = '#4F46E5';     // WC / Baños: Índigo oficial Google Maps
+            let strokeColor = '#3730A3';
+            let iconText = 'WC';
+            let subLabel = 'Baños';
+
+            if (isElev) {
+              badgeBg = '#0284C7';       // Ascensor: Cian / Azul institucional
+              strokeColor = '#0369A1';
+              iconText = '⇅';
+              subLabel = 'Ascensor';
+            } else if (isEsc) {
+              badgeBg = '#2563EB';       // Escalera Mecánica: Azul Cobalto
+              strokeColor = '#1D4ED8';
+              iconText = '⇡⇣';
+              subLabel = 'Mecánica';
+            } else if (isStairs) {
+              badgeBg = '#475569';       // Escaleras fijas: Gris Pizarra
+              strokeColor = '#334155';
+              iconText = '≡';
+              subLabel = 'Escaleras';
+            } else if (isAtm) {
+              badgeBg = '#059669';       // Cajero ATM: Esmeralda
+              strokeColor = '#047857';
+              iconText = '$';
+              subLabel = 'Cajero';
+            }
+
+            const badgeR = 8.5;
+            const pillW = Math.max(22, (subLabel.length * 4.6) + 8);
+            const pillH = 10;
 
             return (
-              <React.Fragment key={poi.id}>
-                {/* Sombra sutil */}
-                <RoundedRect
-                  x={poi.x - poiW / 2}
-                  y={poi.y - poiH / 2 + 1}
-                  width={poiW}
-                  height={poiH}
-                  r={poiH / 2}
-                  color="rgba(15, 23, 42, 0.10)"
+              <Group key={`poi-badge-${poi.id || pIdx}`}>
+                {/* 1. Sombra de contacto del badge */}
+                <Circle
+                  cx={poi.x}
+                  cy={poi.y + 1.2}
+                  r={badgeR}
+                  color="rgba(15, 23, 42, 0.22)"
                 />
-                {/* Cápsula de servicio estilo Apple Maps */}
-                <RoundedRect
-                  x={poi.x - poiW / 2}
-                  y={poi.y - poiH / 2}
-                  width={poiW}
-                  height={poiH}
-                  r={poiH / 2}
-                  color={bgColor}
+                {/* 2. Anillo exterior blanco de alto contraste */}
+                <Circle
+                  cx={poi.x}
+                  cy={poi.y}
+                  r={badgeR + 1.4}
+                  color="#FFFFFF"
+                  style="fill"
                 />
-                <RoundedRect
-                  x={poi.x - poiW / 2}
-                  y={poi.y - poiH / 2}
-                  width={poiW}
-                  height={poiH}
-                  r={poiH / 2}
-                  color={strokeColor}
+                <Circle
+                  cx={poi.x}
+                  cy={poi.y}
+                  r={badgeR + 1.4}
+                  color="rgba(15, 23, 42, 0.12)"
                   style="stroke"
-                  strokeWidth={0.85}
+                  strokeWidth={0.8}
                 />
+                {/* 3. Círculo temático de color vibrante */}
+                <Circle
+                  cx={poi.x}
+                  cy={poi.y}
+                  r={badgeR}
+                  color={badgeBg}
+                  style="fill"
+                />
+                {/* 4. Símbolo gráfico centrado en el badge */}
                 <SkiaText
-                  x={poi.x - textOffset}
+                  x={poi.x - (iconText.length === 2 ? 6.2 : iconText.length === 1 ? 2.8 : 4.5)}
                   y={poi.y + 2.8}
-                  text={poiText}
+                  text={iconText}
                   font={fontPoi}
-                  color={textColor}
+                  color="#FFFFFF"
                 />
-              </React.Fragment>
+                {/* 5. Pastilla blanca flotante con nombre de servicio */}
+                <Group>
+                  <RoundedRect
+                    x={poi.x - pillW / 2}
+                    y={poi.y + badgeR + 2}
+                    width={pillW}
+                    height={pillH}
+                    r={pillH / 2}
+                    color="#FFFFFF"
+                  />
+                  <RoundedRect
+                    x={poi.x - pillW / 2}
+                    y={poi.y + badgeR + 2}
+                    width={pillW}
+                    height={pillH}
+                    r={pillH / 2}
+                    color={strokeColor}
+                    style="stroke"
+                    strokeWidth={0.7}
+                  />
+                  <SkiaText
+                    x={poi.x - (subLabel.length * 4.2) / 2}
+                    y={poi.y + badgeR + 9.0}
+                    text={subLabel}
+                    font={fontPoi}
+                    color={strokeColor}
+                  />
+                </Group>
+              </Group>
             );
           })}
 

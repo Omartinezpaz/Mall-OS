@@ -599,7 +599,58 @@ export const sambilchacaoFloors: MapFloor[] = [
       }
     ],
     "obstacles": [],
-    "props": []
+    "props": [
+      {
+        "id": "v-pj-1",
+        "kind": "stairs",
+        "rect": {
+          "x": 72,
+          "y": 250,
+          "w": 14,
+          "h": 14
+        }
+      },
+      {
+        "id": "v-plf-1",
+        "kind": "stairs",
+        "rect": {
+          "x": 180,
+          "y": 73,
+          "w": 14,
+          "h": 14
+        }
+      },
+      {
+        "id": "v-pc-1",
+        "kind": "stairs",
+        "rect": {
+          "x": 350,
+          "y": 250,
+          "w": 14,
+          "h": 14
+        }
+      },
+      {
+        "id": "v-pea-1",
+        "kind": "stairs",
+        "rect": {
+          "x": 530,
+          "y": 73,
+          "w": 14,
+          "h": 14
+        }
+      },
+      {
+        "id": "v-plm-1",
+        "kind": "stairs",
+        "rect": {
+          "x": 584,
+          "y": 250,
+          "w": 14,
+          "h": 14
+        }
+      }
+    ]
   },
   {
     "id": "floor-acuario",
@@ -6229,7 +6280,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_117",
     "name": "baño B",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 172,
@@ -6271,7 +6322,7 @@ export const sambilchacaoStores: MapStore[] = [
   {
     "id": "local_118",
     "name": "baño A",
-    "category": "fashion",
+    "category": "services",
     "floorId": "floor-autopista",
     "height": 13,
     "x": 237,
