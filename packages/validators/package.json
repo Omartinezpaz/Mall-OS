@@ -6,13 +6,15 @@
   "types": "./src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "test": "tsx --test src/*.test.ts"
   },
   "dependencies": {
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@mallos/config": "workspace:*",
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4"
   }
 }

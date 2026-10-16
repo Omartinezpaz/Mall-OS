@@ -23,6 +23,7 @@ import {
   useAccessibleMode,
 } from '../accessible/useAccessibleMode';
 import { track } from '../../lib/analytics';
+import { streamConciergeChat, type ConciergeApiMessage } from './conciergeApi';
 
 // ============================================================================
 // Tipos de Estado y Eventos de la State Machine
@@ -680,72 +681,146 @@ export function useConcierge(options?: { isAccessibleMode?: boolean }) {
               return;
             }
 
-            // 1. Matching en los 12 Intents Informativos
-            const infoMatch = findMatchingInfoIntent(raw);
-            if (infoMatch) {
-              track('concierge_intent_matched', {
-                intentId: infoMatch.id,
-                category: infoMatch.label,
-              });
-              const resp = isAccessible && infoMatch.accessibleResponse
-                ? infoMatch.accessibleResponse
-                : infoMatch.response;
+            const runLocalFallback = () => {
+              // 1. Matching en los 12 Intents Informativos
+              const infoMatch = findMatchingInfoIntent(raw);
+              if (infoMatch) {
+                track('concierge_intent_matched', {
+                  intentId: infoMatch.id,
+                  category: infoMatch.label,
+                });
+                const resp = isAccessible && infoMatch.accessibleResponse
+                  ? infoMatch.accessibleResponse
+                  : infoMatch.response;
 
-              let actionCta: ConciergeMessage['actionCta'] = undefined;
-              if (resp.actionType === 'route' && resp.targetNodeId) {
-                actionCta = {
-                  label: resp.actionLabel || 'Trazar ruta en el mapa',
-                  actionType: 'navigate',
-                  targetId: resp.targetStoreId || resp.targetNodeId,
-                };
-              } else if (resp.actionType === 'toggle') {
-                actionCta = {
-                  label: isAccessible ? 'Desactivar modo accesible' : (resp.actionLabel || 'Activar modo accesible'),
-                  actionType: 'toggle_accessible',
-                };
-              } else if (resp.actionType === 'open_screen' && resp.actionPayload) {
-                actionCta = {
-                  label: resp.actionLabel || 'Abrir',
-                  actionType: 'open_screen',
-                  payload: resp.actionPayload,
-                };
+                let actionCta: ConciergeMessage['actionCta'] = undefined;
+                if (resp.actionType === 'route' && resp.targetNodeId) {
+                  actionCta = {
+                    label: resp.actionLabel || 'Trazar ruta en el mapa',
+                    actionType: 'navigate',
+                    targetId: resp.targetStoreId || resp.targetNodeId,
+                  };
+                } else if (resp.actionType === 'toggle') {
+                  actionCta = {
+                    label: isAccessible ? 'Desactivar modo accesible' : (resp.actionLabel || 'Activar modo accesible'),
+                    actionType: 'toggle_accessible',
+                  };
+                } else if (resp.actionType === 'open_screen' && resp.actionPayload) {
+                  actionCta = {
+                    label: resp.actionLabel || 'Abrir',
+                    actionType: 'open_screen',
+                    payload: resp.actionPayload,
+                  };
+                }
+
+                setIsThinking(false);
+                appendAssistantMessage(resp.body, {
+                  intent: infoMatch,
+                  infoResponse: resp,
+                  actionCta,
+                });
+                return;
               }
 
-              setIsThinking(false);
-              appendAssistantMessage(resp.body, {
-                intent: infoMatch,
-                infoResponse: resp,
-                actionCta,
+              // 2. Matching en Subcategorías Comerciales
+              const matchedSub = SUBCATEGORIES.find((s) => {
+                const normSearch = s.searchableText;
+                const normInput = raw
+                  .toLowerCase()
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '');
+                const inputWords = normInput.split(/\s+/);
+                return inputWords.some((w) => w.length >= 3 && normSearch.includes(w));
               });
-              return;
-            }
 
-            // 2. Matching en Subcategorías Comerciales
-            const matchedSub = SUBCATEGORIES.find((s) => {
-              const normSearch = s.searchableText;
-              const normInput = raw
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '');
-              const inputWords = normInput.split(/\s+/);
-              return inputWords.some((w) => w.length >= 3 && normSearch.includes(w));
+              if (matchedSub) {
+                setIsThinking(false);
+                dispatch({ type: 'SELECT_SUBCATEGORY', subcategoryId: matchedSub.id });
+                return;
+              }
+
+              // 3. Fallback inteligente a categorías principales
+              setIsThinking(false);
+              appendAssistantMessage(
+                `Entiendo que buscas "${raw}". Puedes elegir una categoría principal o consultarme por baños, Wi-Fi, horarios o estacionamiento:`,
+                {
+                  categories: PARENT_CATEGORIES,
+                }
+              );
+            };
+
+            // Intentar streaming con Gemini vía API del servidor con fallback transparente
+            const apiMessages: ConciergeApiMessage[] = globalStore.messages
+              .slice(-6)
+              .map((m) => ({
+                role: m.sender === 'user' ? 'user' : 'assistant',
+                content: m.text,
+              }));
+
+            const assistantMsgId = `bot_${Date.now()}`;
+            let hasReceivedStreamedContent = false;
+            let targetAssistantMsg: ConciergeMessage | null = null;
+
+            streamConciergeChat({
+              messages: apiMessages,
+              mallId: 'sambil-chacao',
+              onTextChunk: (chunk) => {
+                if (!hasReceivedStreamedContent) {
+                  hasReceivedStreamedContent = true;
+                  setIsThinking(false);
+                  targetAssistantMsg = {
+                    id: assistantMsgId,
+                    sender: 'assistant',
+                    text: chunk,
+                    timestamp: formatTime(new Date()),
+                  };
+                  globalStore.messages = [...globalStore.messages, targetAssistantMsg];
+                } else if (targetAssistantMsg) {
+                  targetAssistantMsg.text += chunk;
+                  // Forzar actualización de inmutabilidad para re-renderizado
+                  globalStore.messages = [...globalStore.messages];
+                }
+                notifyListeners();
+              },
+              onToolResult: (toolName, result) => {
+                if (targetAssistantMsg && result && typeof result === 'object') {
+                  const res = result as Record<string, unknown>;
+                  if (toolName === 'getRoute' && res.storeId) {
+                    targetAssistantMsg.actionCta = {
+                      label: `Guiarme a ${res.storeName || 'la tienda'}`,
+                      actionType: 'navigate',
+                      targetId: String(res.storeId),
+                    };
+                  } else if (toolName === 'getStoreDetails' && res.id) {
+                    targetAssistantMsg.actionCta = {
+                      label: `Ver en el mapa`,
+                      actionType: 'navigate',
+                      targetId: String(res.id),
+                    };
+                  }
+                  globalStore.messages = [...globalStore.messages];
+                  notifyListeners();
+                }
+              },
+              onDone: () => {
+                setIsThinking(false);
+                persistStateImmediately();
+              },
+              onError: () => {
+                // Si la red falla o excede el timeout de 2s antes de emitir texto, conmutar a intents locales
+                if (!hasReceivedStreamedContent) {
+                  runLocalFallback();
+                } else {
+                  setIsThinking(false);
+                  persistStateImmediately();
+                }
+              },
+            }).catch(() => {
+              if (!hasReceivedStreamedContent) {
+                runLocalFallback();
+              }
             });
-
-            if (matchedSub) {
-              setIsThinking(false);
-              dispatch({ type: 'SELECT_SUBCATEGORY', subcategoryId: matchedSub.id });
-              return;
-            }
-
-            // 3. Fallback inteligente
-            setIsThinking(false);
-            appendAssistantMessage(
-              `Entiendo que buscas "${raw}". Puedes elegir una categoría principal o consultarme por baños, Wi-Fi, horarios o estacionamiento:`,
-              {
-                categories: PARENT_CATEGORIES,
-              }
-            );
-          }, 600);
+          }, 300);
           break;
         }
 

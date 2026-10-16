@@ -13,6 +13,7 @@
     "@mallos/design-tokens": "workspace:*",
     "@mallos/types": "workspace:*",
     "@mallos/validators": "workspace:*",
+    "@google/genai": "^2.29.1",
     "@supabase/supabase-js": "^2.45.4",
     "next": "^14.2.13",
     "react": "^18.3.1",

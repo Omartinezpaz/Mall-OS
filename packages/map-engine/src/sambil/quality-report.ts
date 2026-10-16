@@ -1,6 +1,7 @@
 import type { MallMapData } from '../types';
 import { validateMapData } from '../validate';
 import { findRoute } from '../routing';
+import { LEVEL_AUTOPISTA } from './constants';
 
 export interface MapQualityReport {
   mallSlug: string;
@@ -28,15 +29,18 @@ export interface MapQualityReport {
 }
 
 export function generateMallQualityReport(mall: MallMapData): MapQualityReport {
-  const validationIssues = validateMapData(mall);
-  const errors = validationIssues.filter((i) => i.severity === 'error');
+  const allIssues = validateMapData(mall);
+  const errors = allIssues.filter((i) => i.severity === 'error');
 
   const doors = mall.nodes.filter((n) => n.kind === 'door');
   const verticalNodes = mall.nodes.filter((n) => n.kind === 'stairs' || n.kind === 'elevator');
   const propsCount = mall.floors.reduce((acc, f) => acc + (f.props?.length ?? 0), 0);
 
-  // Check reachability for all stores from entrance
-  const entranceNode = mall.nodes.find((n) => n.kind === 'entrance') ?? mall.nodes[0];
+  // Check reachability for all stores from entrance, prioritizing ground entrance on LEVEL_AUTOPISTA
+  const entranceNode =
+    mall.nodes.find((n) => n.kind === 'entrance' && n.floorId === LEVEL_AUTOPISTA) ??
+    mall.nodes.find((n) => n.kind === 'entrance') ??
+    mall.nodes[0];
   const unreachableStoreIds: string[] = [];
 
   if (entranceNode) {
@@ -52,11 +56,30 @@ export function generateMallQualityReport(mall: MallMapData): MapQualityReport {
     }
   }
 
-  const outOfBounds = errors.filter((e) => e.code === 'NODE_OUT_OF_BOUNDS' || e.code === 'STORE_OUT_OF_BOUNDS' || e.code === 'PROP_OUT_OF_BOUNDS').length;
-  const overlaps = errors.filter((e) => e.code === 'EDGE_CROSSES_OBSTACLE').length;
-  const invalidRectangles = errors.filter((e) => e.code === 'INVALID_DIMENSIONS').length;
+  const outOfBounds = errors.filter(
+    (e) =>
+      e.code === 'NODE_OUT_OF_BOUNDS' ||
+      e.code === 'OUT_OF_BOUNDS' ||
+      e.code === 'PROP_OUT_OF_BOUNDS' ||
+      e.code === 'OBSTACLE_OUT_OF_BOUNDS'
+  ).length;
+  const overlaps = errors.filter((e) => e.code === 'STORES_OVERLAP').length;
+  const invalidRectangles = errors.filter(
+    (e) =>
+      e.code === 'INVALID_STORE_DIMENSIONS' ||
+      e.code === 'INVALID_FLOOR_DIMENSIONS' ||
+      e.code === 'INVALID_AREA_DIMENSIONS' ||
+      e.code === 'INVALID_OBSTACLE_DIMENSIONS' ||
+      e.code === 'INVALID_PROP_DIMENSIONS'
+  ).length;
 
-  const brokenEdges = errors.filter((e) => e.code === 'DISCONNECTED_NODE' || e.code === 'NODE_NOT_FOUND').length;
+  const brokenEdges = allIssues.filter(
+    (e) =>
+      e.code === 'DISCONNECTED_NODE' ||
+      e.code === 'MISSING_NODE_REF' ||
+      e.code === 'EDGE_CROSSES_OBSTACLE' ||
+      e.code === 'MISSING_DOOR_NODE'
+  ).length;
   const invalidVerticalLinks = errors.filter((e) => e.code === 'INVALID_VERTICAL_LINK').length;
   const blockedDoors = errors.filter((e) => e.code === 'DOOR_NODE_BLOCKED').length;
 
@@ -109,7 +132,7 @@ export function generateMallQualityReport(mall: MallMapData): MapQualityReport {
       blockedDoors,
     },
     unreachableStoreIds,
-    rawValidationIssuesCount: validationIssues.length,
+    rawValidationIssuesCount: allIssues.length,
     isValid,
     formattedSummary,
   };

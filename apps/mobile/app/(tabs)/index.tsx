@@ -22,6 +22,7 @@ import { useAuth } from '../../src/features/auth/useAuth';
 import { GoogleLogo } from '../../src/components/GoogleLogo';
 import { AnimatedConciergeAvatar } from '../../src/features/concierge/AnimatedConciergeAvatar';
 import { AnalyticsDashboardModal } from '../../src/components/AnalyticsDashboardModal';
+import { useCommunity } from '../../src/features/community/useCommunity';
 import {
   LEVEL_AUTOPISTA,
   LEVEL_ACUARIO,
@@ -348,6 +349,7 @@ const SAMBIL_ANCHORS: Array<{
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { activeInMall } = useCommunity();
   const insets = useSafeAreaInsets();
   const topSafe = Math.max(insets.top, StatusBar.currentHeight ?? 0, 24);
   const loyalty = useLoyaltyStore();
@@ -582,6 +584,17 @@ export default function HomeScreen() {
                 <AppIcon name="star" size={13} color="#F59E0B" />
               </View>
               <Text style={styles.quickActionText}>{loyalty.points} pts</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.quickActionChip}
+              activeOpacity={0.8}
+              onPress={() => router.push('/comunidad')}
+            >
+              <View style={[styles.quickActionIconCircle, { backgroundColor: '#F0FDF4' }]}>
+                <AppIcon name="person" size={13} color="#10B981" />
+              </View>
+              <Text style={styles.quickActionText}>Comunidad ({activeInMall.length})</Text>
             </TouchableOpacity>
           </View>
 

@@ -70,6 +70,8 @@ export default function MapaScreen() {
     originStoreId?: string;
     kidsMode?: string;
     playerName?: string;
+    communityContact?: string;
+    contactRelation?: string;
     t?: string;
   }>();
   const kids = useKidsMode();
@@ -94,6 +96,7 @@ export default function MapaScreen() {
   const [activeRoute, setActiveRoute] = useState<RouteResult | null>(null);
   const [userStartNodeId, setUserStartNodeId] = useState<string>('node-plaza Jardin');
   const currentUserNodeIdRef = useRef<string>('node-plaza Jardin');
+  const arrivalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Acertijo activo de Modo Niño según la tienda seleccionada
   const activeKidsRiddle = useMemo(() => {
@@ -245,7 +248,10 @@ export default function MapaScreen() {
         setShowKidsArrival(false);
         setHasArrived(true);
         // Permitir que el usuario aprecie la llegada a la puerta con el badge de destino alcanzado
-        setTimeout(() => {
+        if (arrivalTimerRef.current) {
+          clearTimeout(arrivalTimerRef.current);
+        }
+        arrivalTimerRef.current = setTimeout(() => {
           setShowStorefrontHUD(true);
         }, 850);
         if (selectedStoreId) {
@@ -328,7 +334,9 @@ export default function MapaScreen() {
         }
       }
     } else if (walk.position) {
-      const nearest = findNearestNode(sambilMall, targetFloorId, walk.position);
+      // Buscar nodo origen en el piso ACTUAL del usuario (selectedLevel),
+      // no en targetFloorId, permitiendo que la ruta inter-piso trace el camino correcto al ascensor/escalera
+      const nearest = findNearestNode(sambilMall, selectedLevel, walk.position);
       if (nearest) {
         originNodeId = nearest.id;
       }
@@ -404,8 +412,20 @@ export default function MapaScreen() {
         onDone: () => setKidsAudioPhase('idle'),
         onError: () => setKidsAudioPhase('idle'),
       });
+    } else {
+      const rawContactName = Array.isArray(params.communityContact) ? params.communityContact[0] : params.communityContact;
+      if (rawContactName) {
+        audioManager.speak({
+          text: `Trazando ruta para encontrarte con ${rawContactName}.`,
+          priority: 'high',
+          language: 'es-VE',
+          pitch: 1.0,
+          rate: 0.95,
+          delayMs: 300,
+        });
+      }
     }
-  }, [params.storeId, params.originStoreId, params.kidsMode, params.playerName, params.t, handleSelectStore, kids.playerName, activeKidsRiddle?.number, activeKidsRiddle?.storeName]);
+  }, [params.storeId, params.originStoreId, params.kidsMode, params.playerName, params.communityContact, params.contactRelation, params.t, handleSelectStore, kids.playerName, activeKidsRiddle?.number, activeKidsRiddle?.storeName]);
 
   // Manejar filtro por categoría
   const handleSelectCategory = useCallback((categoryId: string | null) => {

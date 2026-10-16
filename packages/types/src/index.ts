@@ -39,4 +39,52 @@ export interface RedeemedCouponResult {
   redeemed_at: string;
 }
 
+export interface CommunityContact {
+  id: string;
+  user_id: string;
+  contact_user_id: string;
+  nickname: string;
+  relation: 'family' | 'friend' | 'partner' | 'child';
+  status: 'pending' | 'accepted' | 'blocked';
+  visible_to_contact: boolean;
+  created_at: string;
+}
+
+export interface CommunityInvite {
+  id: string;
+  from_user_id: string;
+  code: string;
+  expires_at: string;
+  accepted_by?: string | null;
+  accepted_at?: string | null;
+  created_at: string;
+}
+
+export interface CommunityLocation {
+  user_id: string;
+  mall_id: string;
+  floor_id: string;
+  zone_store_id?: string | null;
+  zone_name: string;
+  is_in_mall: boolean;
+  is_kids_mode_active: boolean;
+  kids_mode_challenge?: string | null;
+  is_sharing: boolean;
+  updated_at: string;
+}
+
+export interface CommunityTier {
+  user_id: string;
+  tier: 'free' | 'premium';
+  max_contacts: number;
+  updated_at: string;
+}
+
+export interface CommunityMemberWithLocation extends CommunityContact {
+  location?: CommunityLocation | null;
+  avatar_color?: string;
+  monogram?: string;
+  minutes_ago?: number;
+}
+
 import type { Database } from './database.types';

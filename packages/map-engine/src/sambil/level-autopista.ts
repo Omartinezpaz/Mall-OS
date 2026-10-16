@@ -6055,7 +6055,7 @@ export const nodesAutopista: NavNode[] = [
   {
     "id": "node-entrada A1",
     "floorId": "floor-autopista",
-    "kind": "corridor",
+    "kind": "entrance",
     "x": 646,
     "y": 304,
     "connections": [
@@ -6271,7 +6271,8 @@ export const nodesAutopista: NavNode[] = [
       "node-99",
       "node-109",
       "node-110",
-      "node-98"
+      "node-98",
+      "node-97"
     ]
   },
   {
@@ -6528,7 +6529,8 @@ export const nodesAutopista: NavNode[] = [
     "connections": [
       "node-entrada A1",
       "node-plaza musica",
-      "node-146"
+      "node-146",
+      "node-145"
     ]
   },
   {
@@ -7145,7 +7147,9 @@ export const nodesAutopista: NavNode[] = [
     "kind": "corridor",
     "x": 462,
     "y": 224,
-    "connections": []
+    "connections": [
+      "node-pasillo F2"
+    ]
   },
   {
     "id": "node-98",
@@ -7624,7 +7628,9 @@ export const nodesAutopista: NavNode[] = [
     "kind": "corridor",
     "x": 631,
     "y": 296,
-    "connections": []
+    "connections": [
+      "node-entrada A2"
+    ]
   },
   {
     "id": "node-146",

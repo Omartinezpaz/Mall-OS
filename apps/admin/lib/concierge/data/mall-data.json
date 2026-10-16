@@ -1,0 +1,292 @@
+{
+  "malls": [
+    {
+      "id": "a0000000-0000-0000-0000-000000000001",
+      "slug": "los-nuevos-teques",
+      "name": "Centro Comercial Los Nuevos Teques",
+      "city": "Los Teques",
+      "floors": ["Planta Baja (PB)", "Piso 1 (P1)"],
+      "stores": [
+        {
+          "id": "s0000000-0000-0000-0000-000000000001",
+          "name": "Supermercado San Diego",
+          "slug": "supermercado-san-diego",
+          "category": "supermercados",
+          "floor": "Planta Baja (PB)",
+          "unit": "PB-01",
+          "phone": "+584120000001",
+          "openingHours": "Lun-Sáb 08:00 - 20:00, Dom 09:00 - 18:00",
+          "description": "Cadena de supermercados con víveres, carnes y frescos."
+        },
+        {
+          "id": "s0000000-0000-0000-0000-000000000002",
+          "name": "Panadería y Pastelería Los Cedros",
+          "slug": "panaderia-los-cedros",
+          "category": "gastronomia",
+          "floor": "Planta Baja (PB)",
+          "unit": "PB-02",
+          "phone": "+584120000002",
+          "openingHours": "Lun-Sáb 06:30 - 20:00, Dom 07:00 - 14:00",
+          "description": "Panadería artesanal, desayunos, café express y dulces."
+        },
+        {
+          "id": "s0000000-0000-0000-0000-000000000003",
+          "name": "Charcutería La Estancia",
+          "slug": "charcuteria-la-estancia",
+          "category": "alimentos",
+          "floor": "Planta Baja (PB)",
+          "unit": "PB-03",
+          "phone": "+584120000003",
+          "openingHours": "Lun-Sáb 08:00 - 19:00",
+          "description": "Quesos nacionales e importados, embutidos y delicateses."
+        },
+        {
+          "id": "s0000000-0000-0000-0000-000000000004",
+          "name": "Farmacia SAAS",
+          "slug": "farmacia-saas",
+          "category": "salud",
+          "floor": "Planta Baja (PB)",
+          "unit": "PB-04",
+          "phone": "+584120000004",
+          "openingHours": "Lun-Sáb 08:00 - 21:00, Dom 09:00 - 19:00",
+          "description": "Medicamentos, artículos de cuidado personal y primeros auxilios."
+        },
+        {
+          "id": "s0000000-0000-0000-0000-000000000005",
+          "name": "Fitness Club Los Teques",
+          "slug": "fitness-club-los-teques",
+          "category": "deportes",
+          "floor": "Piso 1 (P1)",
+          "unit": "P1-01",
+          "phone": "+584120000006",
+          "openingHours": "Lun-Vie 06:00 - 21:00, Sáb 08:00 - 16:00",
+          "description": "Centro de entrenamiento, pesas, cardio y clases dirigidas."
+        }
+      ],
+      "offers": [
+        {
+          "id": "o0000000-0000-0000-0000-000000000001",
+          "storeId": "s0000000-0000-0000-0000-000000000002",
+          "storeName": "Panadería y Pastelería Los Cedros",
+          "title": "Combo Café con Leche + Pastel",
+          "benefitLabel": "Combo Especial",
+          "description": "Disfruta un café con leche grande y pastel de hojaldre de cortesía."
+        },
+        {
+          "id": "o0000000-0000-0000-0000-000000000002",
+          "storeId": "s0000000-0000-0000-0000-000000000005",
+          "storeName": "Fitness Club Los Teques",
+          "title": "Pase de Cortesía 1 Día de Entrenamiento",
+          "benefitLabel": "Pase 1 Día Gratis",
+          "description": "Entrena gratis un día completo en nuestras instalaciones."
+        }
+      ]
+    },
+    {
+      "id": "sambil-chacao",
+      "slug": "sambil-chacao",
+      "name": "Centro Sambil Chacao",
+      "city": "Caracas",
+      "openingHours": "Lun-Sáb 10:00 - 21:00, Dom 12:00 - 20:00",
+      "floors": ["Nivel Autopista (L1)", "Nivel Acuario (L2)", "Nivel Libertador (L3)", "Nivel Feria (L4)", "Nivel Diversión (L5)"],
+      "stores": [
+        {
+          "id": "zara",
+          "name": "ZARA",
+          "slug": "zara",
+          "category": "moda",
+          "floor": "Nivel Acuario (L2)",
+          "unit": "AC-12",
+          "openingHours": "Lun-Sáb 10:00 - 21:00, Dom 12:00 - 20:00",
+          "description": "Moda contemporánea, colecciones Woman, Man y Kids con ropa infantil y regalos."
+        },
+        {
+          "id": "nike",
+          "name": "Nike Store",
+          "slug": "nike",
+          "category": "deportes",
+          "floor": "Nivel Libertador (L3)",
+          "unit": "LIB-04",
+          "openingHours": "Lun-Sáb 10:00 - 21:00, Dom 12:00 - 20:00",
+          "description": "Calzado deportivo, zapatos de running, ropa de alto rendimiento y accesorios."
+        },
+        {
+          "id": "farmatodo",
+          "name": "Farmatodo",
+          "slug": "farmatodo",
+          "category": "salud",
+          "floor": "Nivel Autopista (L1)",
+          "unit": "AUTO-02",
+          "openingHours": "24 Horas (Abierto 24/7)",
+          "description": "Farmacia de autoservicio, dermocosmética, accesorios de telefonía móvil, cables y cargadores iPhone."
+        },
+        {
+          "id": "cines_unidos",
+          "name": "Cines Unidos",
+          "slug": "cines-unidos",
+          "category": "entretenimiento",
+          "floor": "Nivel Feria (L4)",
+          "unit": "FER-01",
+          "openingHours": "Lun-Dom 12:00 - 22:30",
+          "description": "Salas de cine premium, películas familiares, cartelera infantil los fines de semana y candy bar."
+        },
+        {
+          "id": "mcdonalds",
+          "name": "McDonald's & McCafé",
+          "slug": "mcdonalds",
+          "category": "gastronomia",
+          "floor": "Nivel Feria (L4)",
+          "unit": "FER-15",
+          "openingHours": "Lun-Dom 10:00 - 22:00",
+          "description": "Hamburguesas clásicas Big Mac y Cuarto de Libra, papas fritas, helados y McCafé con café espresso, frappés y wifi para trabajar."
+        },
+        {
+          "id": "tijerazo",
+          "name": "Tijerazo",
+          "slug": "tijerazo",
+          "category": "hogar",
+          "floor": "Nivel Autopista (L1)",
+          "unit": "AUTO-20",
+          "openingHours": "Lun-Sáb 10:00 - 20:00, Dom 11:00 - 19:00",
+          "description": "Tienda por departamentos con ropa, calzado, artículos del hogar y departamento infantil de juguetes."
+        },
+        {
+          "id": "bath_and_body_works",
+          "name": "Bath & Body Works",
+          "slug": "bath-and-body-works",
+          "category": "belleza",
+          "floor": "Nivel Acuario (L2)",
+          "unit": "AC-08",
+          "openingHours": "Lun-Sáb 10:00 - 21:00, Dom 12:00 - 20:00",
+          "description": "Fragancias corporales, velas aromáticas, cremas, geles de baño y sets de regalo."
+        },
+        {
+          "id": "palacio_del_blumer",
+          "name": "Palacio del Blumer",
+          "slug": "palacio-del-blumer",
+          "category": "moda",
+          "floor": "Nivel Autopista (L1)",
+          "unit": "AUTO-08",
+          "openingHours": "Lun-Sáb 10:00 - 20:00, Dom 12:00 - 19:00",
+          "description": "Lencería, pijamas y ropa interior para toda la familia."
+        },
+        {
+          "id": "samsung_clx",
+          "name": "Samsung CLX",
+          "slug": "samsung-clx",
+          "category": "tecnologia",
+          "floor": "Nivel Autopista (L1)",
+          "unit": "AUTO-04",
+          "openingHours": "Lun-Sáb 10:00 - 21:00, Dom 12:00 - 20:00",
+          "description": "Smartphones Galaxy, tablets, accesorios, cargadores de carga rápida y audio oficial, ubicado al lado de Farmatodo."
+        },
+        {
+          "id": "toyland_jugueteria",
+          "name": "Juguetería Toyland",
+          "slug": "toyland-jugueteria",
+          "category": "ninos",
+          "floor": "Nivel Diversión (L5)",
+          "unit": "DIV-03",
+          "openingHours": "Lun-Dom 11:00 - 20:00",
+          "description": "Juegos de mesa, muñecas, figuras de acción, Legos y regalos ideales para niños y niñas de todas las edades."
+        }
+      ],
+      "offers": [
+        {
+          "id": "off_sambil_01",
+          "storeId": "palacio_del_blumer",
+          "storeName": "Palacio del Blumer",
+          "title": "Gran Reapertura: 20% DCTO en toda la tienda",
+          "benefitLabel": "20% OFF",
+          "description": "Aprovecha el descuento especial por reapertura en Nivel Autopista Local 8."
+        },
+        {
+          "id": "off_sambil_02",
+          "storeId": "zara",
+          "storeName": "ZARA",
+          "title": "Mid Season Sale hasta 30% OFF",
+          "benefitLabel": "Hasta 30% OFF",
+          "description": "Selección de prendas de temporada en colección Woman, Man y Kids."
+        },
+        {
+          "id": "off_sambil_03",
+          "storeId": "nike",
+          "storeName": "Nike Store",
+          "title": "15% OFF en Calzado de Running y Deportivo",
+          "benefitLabel": "15% OFF",
+          "description": "Presenta el cupón de Mall OS y obtén 15% en calzado deportivo Pegasus, Air Max y Zoom."
+        }
+      ]
+    },
+    {
+      "id": "la-cascada-carrizal",
+      "slug": "la-cascada-carrizal",
+      "name": "Centro Comercial La Cascada",
+      "city": "Carrizal",
+      "openingHours": "Lun-Sáb 09:30 - 20:30, Dom 11:00 - 19:30",
+      "floors": ["Nivel PB", "Nivel 1"],
+      "stores": [
+        {
+          "id": "cascada_cinex",
+          "name": "Cinex La Cascada",
+          "slug": "cinex-la-cascada",
+          "category": "entretenimiento",
+          "floor": "Nivel 1",
+          "unit": "L1-01",
+          "openingHours": "Lun-Dom 13:00 - 22:00",
+          "description": "Complejo cinematográfico con salas digitales, estrenos familiares y cartelera infantil."
+        },
+        {
+          "id": "cascada_feria",
+          "name": "Feria de la Comida La Cascada",
+          "slug": "feria-de-la-comida",
+          "category": "gastronomia",
+          "floor": "Nivel 1",
+          "unit": "L1-FERIA",
+          "openingHours": "Lun-Dom 11:00 - 21:00",
+          "description": "Variedad gastronómica con locales de hamburguesas artesanales, pizzas, comida rápida y opciones criollas."
+        },
+        {
+          "id": "cascada_cafe",
+          "name": "Café Gourmet La Cascada",
+          "slug": "cafe-gourmet-la-cascada",
+          "category": "gastronomia",
+          "floor": "Nivel PB",
+          "unit": "PB-14",
+          "openingHours": "Lun-Sáb 08:00 - 20:00, Dom 09:00 - 18:00",
+          "description": "Cafetería tranquila con ambiente relajado, mesas amplias, tomas eléctricas y wifi para trabajar."
+        },
+        {
+          "id": "cascada_tecnologia",
+          "name": "TecnoStore Cascada",
+          "slug": "tecnostore-cascada",
+          "category": "tecnologia",
+          "floor": "Nivel PB",
+          "unit": "PB-08",
+          "openingHours": "Lun-Sáb 10:00 - 20:00",
+          "description": "Accesorios para teléfonos móviles, cargadores certificados para iPhone y Android, protectores y audífonos."
+        },
+        {
+          "id": "cascada_calzado",
+          "name": "Mundo Calzado La Cascada",
+          "slug": "mundo-calzado-la-cascada",
+          "category": "calzado",
+          "floor": "Nivel PB",
+          "unit": "PB-22",
+          "openingHours": "Lun-Sáb 10:00 - 20:00, Dom 11:00 - 18:00",
+          "description": "Zapatos deportivos, casuales y calzado escolar para toda la familia."
+        }
+      ],
+      "offers": [
+        {
+          "id": "off_cascada_01",
+          "storeId": "cascada_calzado",
+          "storeName": "Mundo Calzado La Cascada",
+          "title": "2x1 en segunda unidad de Calzado Deportivo",
+          "benefitLabel": "2x1 Calzado",
+          "description": "Promoción especial de temporada en calzado deportivo seleccionado."
+        }
+      ]
+    }
+  ]
+}

@@ -929,6 +929,86 @@ test('Modo Accesible: findRoute devuelve null si solo existen escaleras para lle
   assert.strictEqual(route, null, 'Debe devolver null si no hay camino accesible');
 });
 
+// ---------- Tests de Regresión TDD: Integridad y Reporte de Calidad ----------
+test('Regresión Topológica: Autopista tiene al menos un nodo entrance oficial', () => {
+  const autopistaEntrances = sambilMall.nodes.filter(
+    (n) => n.floorId === LEVEL_AUTOPISTA && n.kind === 'entrance'
+  );
+  assert.ok(
+    autopistaEntrances.length >= 1,
+    'El Nivel Autopista debe tener al menos un nodo con kind === entrance para sembrar correctamente el grafo'
+  );
+  assert.ok(
+    autopistaEntrances.some((n) => n.id === 'node-entrada A1'),
+    'El nodo-entrada A1 debe estar catalogado como entrance'
+  );
+});
 
+test('Regresión Topológica: quality-report enruta desde la entrada de Autopista', () => {
+  const report = generateMallQualityReport(sambilMall);
+  // La entrada seleccionada en Autopista debe alcanzar los locales
+  assert.strictEqual(report.navigationErrors.unreachableStores, 0);
+  assert.deepStrictEqual(report.unreachableStoreIds, []);
+});
 
+test('Regresión Topológica: generateMallQualityReport es válido en Sambil Chacao', () => {
+  const report = generateMallQualityReport(sambilMall);
+  assert.strictEqual(report.isValid, true, 'El reporte de calidad debe ser válido (isValid: true)');
+});
 
+test('Regresión Property-Based: consistencia matemática exacta entre quality-report y validateMapData', () => {
+  const report = generateMallQualityReport(sambilMall);
+  const allIssues = validateMapData(sambilMall);
+  const errors = allIssues.filter((i) => i.severity === 'error');
+
+  // Invariante 1: Solapes geométricos
+  const expectedOverlaps = errors.filter((e) => e.code === 'STORES_OVERLAP').length;
+  assert.strictEqual(
+    report.geometryErrors.overlaps,
+    expectedOverlaps,
+    'report.geometryErrors.overlaps debe coincidir con STORES_OVERLAP'
+  );
+
+  // Invariante 2: Dimensiones inválidas
+  const expectedInvalidDims = errors.filter(
+    (e) =>
+      e.code === 'INVALID_STORE_DIMENSIONS' ||
+      e.code === 'INVALID_FLOOR_DIMENSIONS' ||
+      e.code === 'INVALID_AREA_DIMENSIONS' ||
+      e.code === 'INVALID_OBSTACLE_DIMENSIONS' ||
+      e.code === 'INVALID_PROP_DIMENSIONS'
+  ).length;
+  assert.strictEqual(
+    report.geometryErrors.invalidRectangles,
+    expectedInvalidDims,
+    'report.geometryErrors.invalidRectangles debe coincidir con los códigos reales de dimensiones'
+  );
+
+  // Invariante 3: Fuera de límites
+  const expectedOutOfBounds = errors.filter(
+    (e) =>
+      e.code === 'NODE_OUT_OF_BOUNDS' ||
+      e.code === 'OUT_OF_BOUNDS' ||
+      e.code === 'PROP_OUT_OF_BOUNDS' ||
+      e.code === 'OBSTACLE_OUT_OF_BOUNDS'
+  ).length;
+  assert.strictEqual(
+    report.geometryErrors.outOfBounds,
+    expectedOutOfBounds,
+    'report.geometryErrors.outOfBounds debe coincidir con códigos de out of bounds'
+  );
+
+  // Invariante 4: Aristas rotas y colisiones de grafo
+  const expectedBrokenEdges = allIssues.filter(
+    (i) =>
+      i.code === 'DISCONNECTED_NODE' ||
+      i.code === 'MISSING_NODE_REF' ||
+      i.code === 'EDGE_CROSSES_OBSTACLE' ||
+      i.code === 'MISSING_DOOR_NODE'
+  ).length;
+  assert.strictEqual(
+    report.navigationErrors.brokenEdges,
+    expectedBrokenEdges,
+    'report.navigationErrors.brokenEdges debe coincidir con aristas rotas y cruces de obstáculos'
+  );
+});

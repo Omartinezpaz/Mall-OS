@@ -3,7 +3,13 @@ import type { MallMapData, NavNode, NavNodeKind } from './types';
 
 /** Velocidad de marcha para estimar tiempo (m/s). */
 export const WALK_SPEED_M_S = 1.2;
-/** Coste (en metros) de cambiar de piso por escalera o ascensor. */
+/** Coste (en metros) de cambiar de piso por escalera fija o mecánica. */
+export const VERTICAL_STAIRS_COST_METERS = 15;
+/** Coste (en metros) de cambiar de piso por escalera mecánica. */
+export const VERTICAL_ESCALATOR_COST_METERS = 15;
+/** Coste (en metros) de cambiar de piso por ascensor (incluye tiempo de espera y llamada). */
+export const VERTICAL_ELEVATOR_COST_METERS = 20;
+/** Coste genérico vertical (compatibilidad hacia atrás). */
 export const VERTICAL_COST_METERS = 15;
 
 export interface RouteResult {
@@ -58,11 +64,17 @@ export function edgeCost(map: MallMapData, a: NavNode, b: NavNode, options?: Rou
     if (options?.accessibleOnly) {
       // En modo accesible solo se transita entre pisos por ascensor
       if (a.kind === 'elevator' || b.kind === 'elevator') {
-        return VERTICAL_COST_METERS / map.metersPerUnit;
+        return VERTICAL_ELEVATOR_COST_METERS / map.metersPerUnit;
       }
       return 1e7;
     }
-    return VERTICAL_COST_METERS / map.metersPerUnit;
+    if (a.kind === 'elevator' || b.kind === 'elevator') {
+      return VERTICAL_ELEVATOR_COST_METERS / map.metersPerUnit;
+    }
+    if (a.kind === 'stairs' || b.kind === 'stairs') {
+      return VERTICAL_STAIRS_COST_METERS / map.metersPerUnit;
+    }
+    return VERTICAL_ESCALATOR_COST_METERS / map.metersPerUnit;
   }
   return distance(a, b);
 }

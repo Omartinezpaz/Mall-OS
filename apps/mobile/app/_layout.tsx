@@ -63,6 +63,7 @@ export default function RootLayout() {
         <Stack.Screen name="cupon/[id]" options={{ title: 'Mi Cupón' }} />
         <Stack.Screen name="kids-mode" options={{ title: 'Exploradores del Mall', headerShown: false, presentation: 'modal' }} />
         <Stack.Screen name="concierge" options={{ title: 'Asistente Concierge', presentation: 'modal', headerShown: false }} />
+        <Stack.Screen name="comunidad" options={{ title: 'Mi Comunidad', presentation: 'modal', headerShown: false }} />
       </Stack>
     </QueryClientProvider>
   );

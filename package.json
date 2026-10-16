@@ -9,6 +9,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "test:concierge": "pnpm --filter @mallos/admin exec tsx ../../scripts/test-concierge-scenarios.ts",
     "ota": "pnpm --filter @mallos/mobile ota",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,js}\""
   },
